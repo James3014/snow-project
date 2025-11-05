@@ -1,0 +1,96 @@
+resort_id: "iwate_shizukuishi"
+names:
+  zh: "雫石滑雪場"
+  en: "Shizukuishi Ski Resort"
+  ja: "雫石スキー場"
+country_code: "JP"
+region: "Iwate Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 39.78556
+  lng: 140.90833
+season:
+  estimated_open: "2025-12-20"
+  estimated_close: "2026-03-22"
+official_site: "https://www.princehotels.co.jp/ski/shizukuishi/"
+description:
+  highlights:
+    - "阿斯匹靈粉雪"
+    - "世界錦標賽遺產"
+    - "CAT Skiing"
+    - "高倉溫泉"
+  tagline: "在1993年世界錦標賽的傳奇賽道上，體驗日本東北的頂級粉雪。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "CAT Skiing"
+snow_stats:
+  lifts: 6
+  courses_total: 20
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.25
+  advanced_ratio: 0.45
+  longest_run: 2.6
+  vertical_drop: 721
+  night_ski: false
+  notes: "以其極乾的『阿斯匹靈粉雪』聞名，雪質卓越。"
+courses:
+  - name: "Joyful"
+    level: "intermediate"
+    tags: ["cruising", "long-run"]
+    description: "長而寬闊的中級雪道，適合享受高速巡航的樂趣。"
+    notes: ""
+  - name: "Daini Sailer A (第二ザイラーA)"
+    level: "advanced"
+    tags: ["steep", "un-groomed", "moguls"]
+    description: "雪場最陡峭的雪道之一，最大斜度34度，充滿挑戰性的貓跳地形。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 6100
+      student: 5500
+      senior: 5500
+      child: 0
+      notes: "小學生(12歲及以下)免費。"
+    - type: "4-hour"
+      adult: 5500
+      student: 4900
+      senior: 4900
+      child: 0
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 6000
+      child_price: 4500
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 5850
+      child_price: 4500
+      notes: ""
+  notes: "提供『自由更換』服務，可在雙板和單板之間更換一次。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Morioka Station"
+        duration_minutes: 130
+        notes: "搭乘東北新幹線。"
+    bus:
+      - route: "Morioka Station → Shizukuishi Ski Resort"
+        duration_minutes: 50
+        notes: "有接駁巴士服務。"
+    self_drive:
+      - route: "Tohoku Expressway → Morioka IC"
+        duration_minutes: 40
+        notes: "交流道出口後約30-40分鐘車程。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.princehotels.co.jp/ski/shizukuishi/"
+notes: "曾為1993年高山滑雪世界錦標賽的舉辦地，擁有獨特的CAT Skiing體驗。"

@@ -1,0 +1,102 @@
+catalog_version: "2025-10-19"
+maintainers:
+  owner_team: user-core
+  contact: platform-data@skidiy.example
+  update_policy: >
+    核心事件需經 user-core 變更審查會議核准後，才能新增或升級版本。
+    子專案上報的自訂事件可以使用 `custom_events` 清單，自行維護 schema。
+
+core_events:
+  - event_type: resort.visited
+    version: 1
+    source_project: resort-services
+    status: active
+    description: >
+      使用者造訪滑雪場後由 resort-services 上報，用於統計與推播建議。
+    payload_schema:
+      type: object
+      required: [resort_id, date]
+      properties:
+        resort_id:
+          type: string
+          description: Resort 資料庫中的唯一識別碼。
+          minLength: 1
+        date:
+          type: string
+          format: date
+          description: 造訪日期（ISO8601 日期）。
+      additionalProperties: false
+
+  - event_type: snowbuddy.match.request.sent
+    version: 1
+    source_project: snowbuddy-matching
+    status: active
+    description: >
+      Snowbuddy 送審配對請求時上報，供後續行為分析與推播。
+    payload_schema:
+      type: object
+      required: [request_id, target_user_id]
+      properties:
+        request_id:
+          type: string
+          minLength: 1
+        target_user_id:
+          type: string
+          format: uuid
+        metadata:
+          type: object
+          description: 可選擇附帶 UI 來源或推薦權重。
+      additionalProperties: true
+
+  - event_type: snowbuddy.match.request.accepted
+    version: 1
+    source_project: snowbuddy-matching
+    status: active
+    description: >
+      使用者接受配對請求時，上報觸發後續排課或通知。
+    payload_schema:
+      type: object
+      required: [request_id]
+      properties:
+        request_id:
+          type: string
+          minLength: 1
+        initiator_user_id:
+          type: string
+          format: uuid
+      additionalProperties: true
+
+  - event_type: snowbuddy.match.request.declined
+    version: 1
+    source_project: snowbuddy-matching
+    status: active
+    description: >
+      使用者拒絕配對請求時，上報供行為分析與通知。
+    payload_schema:
+      type: object
+      required: [request_id]
+      properties:
+        request_id:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          description: 使用者輸入或系統推論之拒絕原因。
+      additionalProperties: true
+
+custom_event_guidelines:
+  schema_requirements:
+    - 所有事件必須包含 `event_type`, `version`, `source_project`, `occurred_at`, `payload`。
+    - 自訂事件寫入時若提供 `schema_url`，需指向可公開查詢的 JSON Schema。
+    - 事件 payload 需使用 JSON，可接受額外欄位。
+  validation_process:
+    - 核心事件（列在 `core_events`）由 user-core 於寫入時驗證。
+    - 自訂事件由子專案自行驗證，user-core 只檢查最低欄位。
+  contribution_steps:
+    - 建立 PR 更新 `specs/shared/event_catalog.yaml` 並提供 schema 範例與使用案例。
+    - 在 PR 中標記 user-core 維護者，確認是否升級為核心事件。
+    - 批准後同步更新 `platform/user_core/services/event_schema_registry.py` 的對應條目。
+
+deprecation_policy:
+  - 升級核心事件版本時，需同時保留既有版本至少 30 天。
+  - 若事件不再使用，將 `status` 設為 `deprecated` 並公告淘汰時程。

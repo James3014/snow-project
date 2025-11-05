@@ -1,0 +1,95 @@
+resort_id: "myoko_lotte_arai"
+names:
+  zh: "樂天新井度假村"
+  en: "Lotte Arai Resort"
+  ja: "ロッテアライリゾート"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.990889
+  lng: 138.18139
+season:
+  estimated_open: "2024-12-14"
+  estimated_close: "2025-05-11"
+official_site: "https://www.lottehotel.com/arai-resort/ja.html"
+description:
+  highlights:
+    - "豪華粉雪勝地"
+    - "五星級酒店體驗"
+    - "自由滑雪"
+    - "非壓雪區"
+  tagline: "奢華享受與極限自由滑雪的融合，一個重生後的豪華粉雪勝地。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Zipline"
+  - "Tubing Park"
+  - "Bouldering"
+snow_stats:
+  lifts: 5
+  courses_total: 14
+  beginner_ratio: 0.36
+  intermediate_ratio: 0.36
+  advanced_ratio: 0.28
+  longest_run: 7.0
+  vertical_drop: 951
+  night_ski: false
+  notes: "雪場高達70-84%的區域為非壓雪區，是自由滑雪者的天堂。"
+courses:
+  - name: "Myoko Long Run"
+    level: "beginner"
+    tags: ["long-run", "beginner-friendly"]
+    description: "位於度假村底部的寬闊平緩雪道。"
+    notes: ""
+  - name: "Be Free"
+    level: "intermediate"
+    tags: ["cruising"]
+    description: "富有變化的中等坡度壓雪道，適合提升技巧。"
+    notes: ""
+  - name: "Mamushi Gaeshi"
+    level: "advanced"
+    tags: ["steep", "un-groomed"]
+    description: "度假村內標示為黑線的挑戰雪道之一。"
+    notes: ""
+  - name: "Zendana Bowl"
+    level: "advanced"
+    tags: ["powder", "off-piste", "bowl"]
+    description: "十個經過雪崩控制的指定自由滑雪區之一，提供開放式碗狀地形。"
+    notes: "需具備相應技能和安全意識。"
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (Economy Class)"
+      adult: 7500
+      child: 5000
+      senior: 7000
+      notes: "兒童為7-18歲，長者為60歲以上。"
+    - type: "1-day (First Class)"
+      adult: 9500
+      child: 6000
+      senior: 9000
+      notes: "提供提前30分鐘搭乘纜車等優先權益。"
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "主要的租賃店為Salomon Station，提供高品質的Salomon裝備，包括粉雪專用寬板。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Joetsu-Myoko Station"
+        duration_minutes: 120
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Joetsu-Myoko Station → Lotte Arai Resort"
+        duration_minutes: 30
+        notes: "度假村提供免費接駁車，但必須提前預約。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.lottehotel.com/arai-resort/ja.html"
+  - "https://en.wikipedia.org/wiki/Lotte_Arai_Resort"
+notes: "由韓國樂天集團接手翻新，定位高端國際市場，以其豪華設施和廣闊的自由滑雪區聞名。"

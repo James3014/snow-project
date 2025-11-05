@@ -1,0 +1,91 @@
+resort_id: "nagano_nozawa_onsen"
+names:
+  zh: "野澤溫泉滑雪場"
+  en: "Nozawa Onsen Snow Resort"
+  ja: "野沢温泉スキー場"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.920031
+  lng: 138.451976
+season:
+  estimated_open: "2024-12-01"
+  estimated_close: "2025-05-06"
+official_site: "http://www.nozawaski.com/"
+description:
+  highlights:
+    - "雪國之魂"
+    - "溫泉文化"
+    - "道祖神火祭"
+    - "粉雪"
+  tagline: "在擁有千年歷史的溫泉村落，體驗最地道的日本滑雪文化。"
+amenities:
+  - "Onsen"
+  - "Kids Park"
+  - "Night Skiing"
+snow_stats:
+  lifts: 20
+  courses_total: 36
+  beginner_ratio: 0.40
+  intermediate_ratio: 0.30
+  advanced_ratio: 0.30
+  longest_run: 10.0
+  vertical_drop: 1085
+  night_ski: true
+  notes: "以其廣闊多樣的地形和豐富的天然降雪聞名。"
+courses:
+  - name: "Skyline Course"
+    level: "intermediate"
+    tags: ["long-run", "scenic-view", "ridge"]
+    description: "長達4,500米的傳奇山脊雪道，沿途風景令人嘆為觀止。"
+    notes: ""
+  - name: "Challenge 39° Wall"
+    level: "advanced"
+    tags: ["steep", "moguls", "un-groomed"]
+    description: "雪場最著名的挑戰，最大坡度達39度的陡峭雪牆。"
+    notes: ""
+  - name: "Uenotaira"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "plateau"]
+    description: "位於半山的寬闊平緩高原區，是初學者練習的理想場所。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 7300
+      child: 4400
+      senior: 5900
+      notes: ""
+    - type: "2-day"
+      adult: 13500
+      child: 8100
+      senior: 10900
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Standard Ski/Snowboard Set"
+      adult_price: 5500
+      child_price: 4100
+      notes: "價格參考自Salomon Station。"
+  notes: "村莊內有多家獨立租賃店可供選擇。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Iiyama Station"
+        duration_minutes: 100
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Iiyama Station → Nozawa Onsen"
+        duration_minutes: 25
+        notes: "搭乘野澤溫泉Liner巴士。"
+  international:
+    airports: []
+  remarks: "村內有免費接駁巴士。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "http://www.nozawaski.com/"
+notes: "以其13座免費的公共溫泉『外湯』和每年1月15日的道祖神火祭聞名。"

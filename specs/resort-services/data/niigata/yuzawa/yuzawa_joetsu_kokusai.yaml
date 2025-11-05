@@ -1,0 +1,106 @@
+resort_id: "yuzawa_joetsu_kokusai"
+names:
+  zh: "上越國際滑雪場"
+  en: "Joetsu Kokusai Ski Resort"
+  ja: "上越国際スキー場"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 37.025112
+  lng: 138.806549
+season:
+  estimated_open: "2024-12-07"
+  estimated_close: "2025-04-06"
+official_site: "https://www.jkokusai.co.jp/"
+description:
+  highlights:
+    - "四山連峰"
+    - "日本最大級別"
+    - "家庭友善"
+    - "車站直結"
+  tagline: "橫跨四座山的廣闊滑雪聯合體，適合所有人的雪國。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Night Skiing"
+snow_stats:
+  lifts: 25
+  courses_total: 22
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.50
+  advanced_ratio: 0.20
+  longest_run: 6.0
+  vertical_drop: 817
+  night_ski: true
+  notes: "雪場由四個主要區域組成，區域間的連接纜車有時較平坦，對單板滑雪者可能稍有不便。"
+courses:
+  - name: "Panorama Course"
+    level: "beginner"
+    tags: ["long-run", "beginner-friendly"]
+    description: "位於東區飯店前的寬闊緩坡，適合初學者。"
+    notes: ""
+  - name: "大別当チャンピオンコース (Osawa Champion Course)"
+    level: "advanced"
+    tags: ["steep", "moguls"]
+    description: "位於南區，是雪場官方標示中最陡峭的滑道之一，最大坡度38度。"
+    notes: ""
+  - name: "長峰コース (Nagamine Course)"
+    level: "intermediate"
+    tags: ["cruising"]
+    description: "位於北區，以其優美的中級壓雪道而聞名，雪質佳且相對寧靜。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 5500
+      child: 3500
+      senior: 4300
+      notes: ""
+    - type: "1-day + Night"
+      adult: 5800
+      child: 3800
+      senior: 4600
+      notes: ""
+    - type: "Night Ski"
+      adult: 2000
+      child: 1500
+      senior: 1500
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 6000
+      child_price: 3500
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 8000
+      child_price: 6000
+      notes: ""
+  notes: "飯店內設有Salomon官方租賃店。"
+transportation:
+  domestic:
+    train:
+      - from: "Echigo-Yuzawa Station"
+        to: "Joetsu Kokusai Skiing Ground Mae Station"
+        duration_minutes: 15
+        notes: "搭乘JR上越線，車站出口即是滑雪場。"
+    shinkansen:
+      - from: "Tokyo"
+        to: "Echigo-Yuzawa Station"
+        duration_minutes: 80
+        notes: "搭乘上越新幹線後轉乘上越線。"
+    self_drive:
+      - route: "Kan-Etsu Expressway → Shiozawa-Ishiuchi IC"
+        duration_minutes: 7
+        notes: "交流道出口後約7分鐘車程。"
+  international:
+    airports: []
+  remarks: "擁有專屬火車站是其最大交通優勢。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.jkokusai.co.jp/"
+notes: "以其與Hotel Green Plaza Joetsu結合的歐洲風格建築聞名，是日本泡沫經濟時代滑雪度假村的代表之一。"

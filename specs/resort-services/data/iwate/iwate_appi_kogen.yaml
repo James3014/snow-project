@@ -1,0 +1,99 @@
+resort_id: "iwate_appi_kogen"
+names:
+  zh: "安比高原滑雪場"
+  en: "Appi Kogen Ski Resort"
+  ja: "安比高原スキー場"
+country_code: "JP"
+region: "Iwate Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 40.002249
+  lng: 140.970610
+season:
+  estimated_open: "2024-12-01"
+  estimated_close: "2025-04-06"
+official_site: "https://www.appi.co.jp/"
+description:
+  highlights:
+    - "阿斯匹靈粉雪"
+    - "長距離巡航天堂"
+    - "樹林滑雪"
+    - "世界滑雪大獎"
+  tagline: "在日本東北的頂級滑雪度假村，體驗傳說中的『阿斯匹靈粉雪』。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Night Skiing"
+  - "Kids Park"
+snow_stats:
+  lifts: 11
+  courses_total: 21
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.30
+  longest_run: 5.5
+  vertical_drop: 805
+  night_ski: true
+  notes: "以其極度乾爽、細緻的『阿斯匹靈粉雪』聞名。"
+courses:
+  - name: "Yamabato Course (山鳩雪道)"
+    level: "beginner"
+    tags: ["long-run", "beginner-friendly", "scenic-view"]
+    description: "長達5.5公里的標誌性雪道，讓新手也能體驗從山頂滑至山麓的完整旅程。"
+    notes: ""
+  - name: "Hayabusa Course (隼雪道)"
+    level: "intermediate"
+    tags: ["long-run", "wide", "cruising"]
+    description: "長3公里的寬闊壓雪道，是進行高速大迴轉滑行的理想場所。"
+    notes: ""
+  - name: "Daini Sailer A (第二ザイラーA)"
+    level: "advanced"
+    tags: ["steep", "un-groomed", "moguls"]
+    description: "雪場最陡峭的雪道之一，最大斜度34度，充滿挑戰性的貓跳地形。"
+    notes: ""
+  - name: "Attack (Tree Run Zone)"
+    level: "advanced"
+    tags: ["tree-run", "powder", "off-piste"]
+    description: "官方開放的六個樹林滑雪區中最大、最具挑戰性的一個。"
+    notes: "進入需登記並佩戴安全帽。"
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (Blue Pass)"
+      adult: 7000
+      notes: "標準全山纜車票。"
+    - type: "1-day (Gold Pass)"
+      adult: 9000
+      notes: "增加主要纜車的優先搭乘權。"
+    - type: "1-day (Black Pass)"
+      adult: 33000
+      notes: "頂級VIP通行證，包含雪貓滑雪等特權。"
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Standard Ski/Snowboard Set"
+      adult_price: 7000
+      child_price: 4500
+      notes: "住宿客可享折扣。"
+    - item: "Premium Ski/Snowboard Set"
+      adult_price: 10000
+      notes: ""
+  notes: "由Salomon及Atomic合作的Mountain Station提供。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Morioka Station"
+        duration_minutes: 130
+        notes: "搭乘東北新幹線。"
+    bus:
+      - route: "Morioka Station → Appi Kogen"
+        duration_minutes: 60
+        notes: "有頻繁的接駁巴士服務。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.appi.co.jp/"
+notes: "由IHG洲際酒店集團管理，提供從ANA假日到ANA洲際的多層次頂級住宿體驗。"

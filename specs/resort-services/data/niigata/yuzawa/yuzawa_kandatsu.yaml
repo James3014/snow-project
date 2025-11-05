@@ -1,0 +1,92 @@
+resort_id: "yuzawa_kandatsu"
+names:
+  zh: "神立高原滑雪場"
+  en: "Kandatsu Snow Resort"
+  ja: "神立スノーリゾート"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.91139
+  lng: 138.81250
+season:
+  estimated_open: "2025-12-12"
+  estimated_close: "2026-04-19"
+official_site: "https://www.kandatsu.com/"
+description:
+  highlights:
+    - "日夜滑雪娛樂中心"
+    - "交通便利"
+    - "溫泉"
+    - "地形公園"
+  tagline: "專為現代都市生活方式設計的24小時娛樂中心。"
+amenities:
+  - "Onsen"
+  - "Night Skiing"
+  - "Terrain Park"
+snow_stats:
+  lifts: 5
+  courses_total: 16
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.30
+  longest_run: 3.5
+  vertical_drop: 440
+  night_ski: true
+  notes: "以其超長的夜間滑雪時間和完善的溫泉假眠設施聞名。"
+courses:
+  - name: "Pollux"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide"]
+    description: "長1,100公尺，平均寬度達50公尺的寬敞主滑道。"
+    notes: ""
+  - name: "Pegasus"
+    level: "intermediate"
+    tags: ["cruising"]
+    description: "坡度適中，適合希望展現技巧的中級滑雪者。"
+    notes: ""
+  - name: "Orion"
+    level: "advanced"
+    tags: ["steep", "un-groomed"]
+    description: "神立難度最高的雪道，最大坡度達到45度。"
+    notes: ""
+  - name: "Hercules"
+    level: "advanced"
+    tags: ["moguls", "un-groomed"]
+    description: "曾舉辦過貓跳滑雪比賽的知名饅頭坡。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (online)"
+      adult: 5200
+      notes: "此為網路預購價。"
+    - type: "Night Ski"
+      adult: 3600
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "官方租賃店『KSR Rental』提供Burton Step On®快速穿脫系統。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Echigo-Yuzawa Station"
+        duration_minutes: 70
+        notes: "搭乘上越新幹線。"
+    bus:
+      - route: "Echigo-Yuzawa Station → Kandatsu Snow Resort"
+        duration_minutes: 10
+        notes: "有免費接駁巴士。"
+    self_drive:
+      - route: "Kan-Etsu Expressway → Yuzawa IC"
+        duration_minutes: 3
+        notes: "交流道出口後僅需約3分鐘車程，停車免費。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.kandatsu.com/"
+notes: "以其『零日住宿滑雪』模式聞名，提供溫泉與假眠設施，吸引大量首都圈遊客。"

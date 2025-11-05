@@ -1,0 +1,99 @@
+resort_id: "fukushima_nekoma_mountain"
+names:
+  zh: "星野集團 NEKOMA MOUNTAIN"
+  en: "Hoshino Resorts NEKOMA MOUNTAIN"
+  ja: "星野リゾート ネコマ マウンテン"
+country_code: "JP"
+region: "Fukushima Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 37.60
+  lng: 140.04
+season:
+  estimated_open: "2024-12-01"
+  estimated_close: "2025-05-06"
+official_site: "https://www.nekoma.co.jp/"
+description:
+  highlights:
+    - "雙峰合一"
+    - "超微細雪"
+    - "磐梯山溫泉飯店"
+    - "地形公園"
+  tagline: "在磐梯山體驗兩種截然不同的滑雪樂趣，從陽光巡航到極致粉雪。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Terrain Park"
+  - "Night Skiing"
+snow_stats:
+  lifts: 13
+  courses_total: 33
+  beginner_ratio: 0.35
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.25
+  longest_run: 4.0
+  vertical_drop: 586
+  night_ski: true
+  notes: "由原Alts磐梯(南區)和貓魔(北區)兩個雪場合併而成。"
+courses:
+  - name: "Deep 1"
+    level: "advanced"
+    tags: ["powder", "un-groomed", "steep"]
+    description: "北區的標誌性雪道，長達1200公尺的粉雪天堂，最大坡度33度。"
+    notes: ""
+  - name: "White Valley 2"
+    level: "advanced"
+    tags: ["powder", "un-groomed", "moguls"]
+    description: "南區的非壓雪雪道，坡度適中，適合高速粉雪滑行與練習饅頭。"
+    notes: ""
+  - name: "Frozen 2"
+    level: "advanced"
+    tags: ["powder", "un-groomed", "scenic-view"]
+    description: "降雪後的晴天景色絕美，起點坡度較大，可長距離暢快滑行。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (online)"
+      adult: 5200
+      student: 3800
+      child: 2500
+      notes: ""
+    - type: "1-day (window)"
+      adult: 5700
+      student: 4100
+      child: 2700
+      senior: 5200
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Standard Ski/Snowboard Set"
+      adult_price: 4700
+      child_price: 3100
+      notes: ""
+    - item: "Premium Ski/Snowboard Set"
+      adult_price: 6300
+      child_price: 4200
+      notes: ""
+  notes: ""
+transportation:
+  domestic:
+    bus:
+      - route: "Koriyama Station → Nekoma Mountain South Area"
+        duration_minutes: 90
+        notes: "需預約的收費接駁巴士。"
+      - route: "Bandaimachi Station → Nekoma Mountain South Area"
+        duration_minutes: 15
+        notes: "免費接駁巴士，服務於磐梯山溫泉飯店住客。"
+      - route: "Inawashiro Station → Nekoma Mountain North Area"
+        duration_minutes: 40
+        notes: "免費接駁巴士，需預約。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.nekoma.co.jp/"
+notes: "南區適合家庭與中級者，北區以其『超微細雪』成為粉雪聖地。"

@@ -1,0 +1,106 @@
+resort_id: "myoko_ikenotaira"
+names:
+  zh: "妙高池之平溫泉滑雪場"
+  en: "Ikenotaira Onsen Alpenblick Ski Resort"
+  ja: "池の平温泉アルペンブリックスキー場"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.87250
+  lng: 138.17194
+season:
+  estimated_open: "2024-12-14"
+  estimated_close: "2025-03-30"
+official_site: "https://alpenblick-resort.com/"
+description:
+  highlights:
+    - "新手天堂"
+    - "超寬廣雪道"
+    - "溫泉"
+    - "家庭友善"
+  tagline: "專為建立滑雪信心而生的新手天堂，擁有全國頂級的超寬廣雪道。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+snow_stats:
+  lifts: 5
+  courses_total: 10
+  beginner_ratio: 0.50
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.10
+  longest_run: 4.0
+  night_ski: false
+  notes: "雪道極度寬闊，部分區域達400米，非常適合初學者練習。"
+courses:
+  - name: "Happy Gelande (ハッピーゲレンデ)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide"]
+    description: "長約1,400公尺，平均坡度8度，寬敞的空間讓新手可以安心練習。"
+    notes: ""
+  - name: "Dream Course (ドリームコース)"
+    level: "beginner"
+    tags: ["beginner-friendly", "gentle-slope"]
+    description: "全長1,100公尺，平均坡度僅7度，是全雪場最平緩的雪道之一。"
+    notes: ""
+  - name: "Yamabato Rinkan Course (やまばと林間コース)"
+    level: "beginner"
+    tags: ["long-run", "tree-lined"]
+    description: "連接多條雪道，組成總長4公里的長程滑行路線，穿梭於寧靜的林間。"
+    notes: ""
+  - name: "Kayaba Course (カヤバコース)"
+    level: "intermediate"
+    tags: ["wide", "cruising"]
+    description: "位於雪場上半部的中級雪道，保持著非常寬闊的特點，適合練習S形轉彎。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 5600
+      student: 4800
+      senior: 4800
+      child: 3400
+      notes: ""
+    - type: "4-hour"
+      adult: 4500
+      student: 3900
+      senior: 3900
+      child: 2700
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 5000
+      child_price: 3900
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 5000
+      child_price: 3900
+      notes: ""
+  notes: "價格參考自skiarea.md內的2024-2025雪季租賃費用表。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station → Myoko-Kogen Station"
+        duration_minutes: 180
+        notes: "搭乘北陸新幹線至長野後轉地方列車。"
+    bus:
+      - route: "Tokyo → Myoko area"
+        duration_minutes: null
+        notes: "有直達夜間巴士。"
+    self_drive:
+      - route: "Joshinetsu Expressway → Myoko-Kogen IC"
+        duration_minutes: null
+        notes: "交流道出口後約5分鐘車程。"
+  international:
+    airports: []
+  remarks: "從妙高高原站有接駁巴士或計程車，約10-15分鐘車程。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://alpenblick-resort.com/"
+  - "https://en.wikipedia.org/wiki/Ikenotaira_Onsen_Ski_Resort"
+notes: "以其極度寬闊的雪道聞名，對初學者非常友好。"

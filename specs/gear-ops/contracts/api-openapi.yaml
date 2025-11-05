@@ -1,0 +1,839 @@
+openapi: 3.1.0
+info:
+  title: SkiDIY Gear Operations API
+  version: 0.1.0
+  description: Manage gear inventory, inspections, reminders, marketplace listings, trades, and recommendations.
+servers:
+  - url: https://api.skidiy.local/gear
+    description: Placeholder
+
+tags:
+  - name: Gear
+    description: Gear inventory management
+  - name: Inspections
+    description: Gear inspection records
+  - name: Reminders
+    description: Reminder scheduling and status
+  - name: Marketplace
+    description: Listings and trades
+  - name: Recommendations
+    description: Care recommendations and safety flags
+
+paths:
+  /gear:
+    post:
+      tags: [Gear]
+      summary: Create gear item
+      operationId: createGearItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GearItemCreate'
+      responses:
+        '201':
+          description: Gear created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearItem'
+        '422':
+          description: Validation error
+    get:
+      tags: [Gear]
+      summary: List gear
+      operationId: listGearItems
+      parameters:
+        - $ref: '#/components/parameters/UserIdQuery'
+        - in: query
+          name: usage_type
+          schema:
+            $ref: '#/components/schemas/GearUsageType'
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/GearStatus'
+      responses:
+        '200':
+          description: Gear list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearItemList'
+
+  /gear/{gear_id}:
+    get:
+      tags: [Gear]
+      summary: Retrieve gear
+      operationId: getGearItem
+      parameters:
+        - $ref: '#/components/parameters/GearId'
+      responses:
+        '200':
+          description: Gear detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearItem'
+        '404':
+          description: Not found
+    patch:
+      tags: [Gear]
+      summary: Update gear metadata
+      operationId: updateGearItem
+      parameters:
+        - $ref: '#/components/parameters/GearId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GearItemUpdate'
+      responses:
+        '200':
+          description: Updated gear
+    delete:
+      tags: [Gear]
+      summary: Archive gear
+      operationId: archiveGearItem
+      parameters:
+        - $ref: '#/components/parameters/GearId'
+      responses:
+        '204':
+          description: Archived
+
+  /gear/{gear_id}/inspections:
+    post:
+      tags: [Inspections]
+      summary: Record inspection
+      operationId: createInspection
+      parameters:
+        - $ref: '#/components/parameters/GearId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GearInspectionCreate'
+      responses:
+        '201':
+          description: Inspection recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearInspection'
+    get:
+      tags: [Inspections]
+      summary: List inspections for gear
+      operationId: listGearInspections
+      parameters:
+        - $ref: '#/components/parameters/GearId'
+      responses:
+        '200':
+          description: Inspection list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearInspectionList'
+
+  /reminders:
+    get:
+      tags: [Reminders]
+      summary: List reminders
+      operationId: listReminders
+      parameters:
+        - $ref: '#/components/parameters/UserIdQuery'
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/ReminderStatus'
+      responses:
+        '200':
+          description: Reminder list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearReminderList'
+
+  /reminders/{reminder_id}:
+    patch:
+      tags: [Reminders]
+      summary: Update reminder status
+      operationId: updateReminder
+      parameters:
+        - $ref: '#/components/parameters/ReminderId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GearReminderUpdate'
+      responses:
+        '200':
+          description: Updated reminder
+
+  /marketplace/listings:
+    post:
+      tags: [Marketplace]
+      summary: Create listing
+      operationId: createListing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GearListingCreate'
+      responses:
+        '201':
+          description: Listing created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearListing'
+    get:
+      tags: [Marketplace]
+      summary: Search listings
+      operationId: listListings
+      parameters:
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/ListingStatus'
+        - in: query
+          name: location
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            $ref: '#/components/schemas/GearCategory'
+      responses:
+        '200':
+          description: Listing list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearListingList'
+
+  /marketplace/listings/{listing_id}:
+    patch:
+      tags: [Marketplace]
+      summary: Update listing status
+      operationId: updateListing
+      parameters:
+        - $ref: '#/components/parameters/ListingId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GearListingUpdate'
+      responses:
+        '200':
+          description: Updated listing
+
+  /marketplace/trades:
+    post:
+      tags: [Marketplace]
+      summary: Initiate trade
+      operationId: createTrade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GearTradeCreate'
+      responses:
+        '201':
+          description: Trade created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearTrade'
+
+  /marketplace/trades/{trade_id}:
+    patch:
+      tags: [Marketplace]
+      summary: Update trade status
+      operationId: updateTrade
+      parameters:
+        - $ref: '#/components/parameters/TradeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GearTradeUpdate'
+      responses:
+        '200':
+          description: Updated trade
+
+  /recommendations:
+    get:
+      tags: [Recommendations]
+      summary: List recommendations for user
+      operationId: listRecommendations
+      parameters:
+        - $ref: '#/components/parameters/UserIdQuery'
+      responses:
+        '200':
+          description: Recommendation list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearRecommendationList'
+
+  /safety/flags:
+    post:
+      tags: [Recommendations]
+      summary: Create safety flag
+      operationId: createGearSafetyFlag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GearSafetyFlagCreate'
+      responses:
+        '201':
+          description: Safety flag created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearSafetyFlag'
+    get:
+      tags: [Recommendations]
+      summary: List safety flags
+      operationId: listGearSafetyFlags
+      parameters:
+        - $ref: '#/components/parameters/UserIdQuery'
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/SafetyFlagStatus'
+      responses:
+        '200':
+          description: Safety flag list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GearSafetyFlagList'
+
+components:
+  parameters:
+    UserIdQuery:
+      in: query
+      name: user_id
+      schema:
+        type: string
+        format: uuid
+    GearId:
+      in: path
+      name: gear_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ReminderId:
+      in: path
+      name: reminder_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ListingId:
+      in: path
+      name: listing_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    TradeId:
+      in: path
+      name: trade_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    GearItemCreate:
+      type: object
+      required:
+        - user_id
+        - name
+        - category
+        - usage_type
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        category:
+          $ref: '#/components/schemas/GearCategory'
+        brand:
+          type: string
+        model:
+          type: string
+        usage_type:
+          $ref: '#/components/schemas/GearUsageType'
+        condition_status:
+          $ref: '#/components/schemas/GearCondition'
+        photos:
+          type: array
+          items:
+            type: string
+            format: uri
+        purchase_date:
+          type: string
+          format: date
+        purchase_price:
+          type: number
+        currency:
+          $ref: '#/components/schemas/Currency'
+        notes:
+          type: string
+
+    GearItem:
+      allOf:
+        - $ref: '#/components/schemas/GearItemCreate'
+        - type: object
+          required:
+            - gear_id
+            - created_at
+            - updated_at
+            - status
+          properties:
+            gear_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/GearStatus'
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+
+    GearItemList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GearItem'
+
+    GearItemUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        condition_status:
+          $ref: '#/components/schemas/GearCondition'
+        usage_type:
+          $ref: '#/components/schemas/GearUsageType'
+        notes:
+          type: string
+
+    GearInspectionCreate:
+      type: object
+      required:
+        - performed_by
+        - performed_at
+        - checklist
+        - overall_result
+      properties:
+        performed_by:
+          type: string
+          format: uuid
+        performed_at:
+          type: string
+          format: date-time
+        checklist:
+          type: array
+          items:
+            $ref: '#/components/schemas/InspectionItem'
+        overall_result:
+          $ref: '#/components/schemas/InspectionOutcome'
+        next_inspection_date:
+          type: string
+          format: date
+          nullable: true
+        attachments:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    GearInspection:
+      allOf:
+        - $ref: '#/components/schemas/GearInspectionCreate'
+        - type: object
+          required:
+            - inspection_id
+            - created_at
+          properties:
+            inspection_id:
+              type: string
+              format: uuid
+            created_at:
+              type: string
+              format: date-time
+
+    GearInspectionList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GearInspection'
+
+    GearReminderList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GearReminder'
+
+    GearReminder:
+      type: object
+      required:
+        - reminder_id
+        - gear_id
+        - type
+        - next_trigger_at
+      properties:
+        reminder_id:
+          type: string
+          format: uuid
+        gear_id:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/ReminderType'
+        frequency_days:
+          type: integer
+          nullable: true
+        next_trigger_at:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ReminderStatus'
+        notification_channels:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    GearReminderUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ReminderStatus'
+        next_trigger_at:
+          type: string
+          format: date-time
+
+    GearListingCreate:
+      type: object
+      required:
+        - gear_id
+        - seller_user_id
+        - price
+        - currency
+      properties:
+        gear_id:
+          type: string
+          format: uuid
+        seller_user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        currency:
+          $ref: '#/components/schemas/Currency'
+        location:
+          type: string
+        trade_options:
+          type: array
+          items:
+            type: string
+
+    GearListing:
+      allOf:
+        - $ref: '#/components/schemas/GearListingCreate'
+        - type: object
+          required:
+            - listing_id
+            - status
+            - created_at
+          properties:
+            listing_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/ListingStatus'
+            created_at:
+              type: string
+              format: date-time
+            published_at:
+              type: string
+              format: date-time
+              nullable: true
+            expires_at:
+              type: string
+              format: date-time
+              nullable: true
+
+    GearListingUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ListingStatus'
+        price:
+          type: number
+        trade_options:
+          type: array
+          items:
+            type: string
+
+    GearListingList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GearListing'
+
+    GearTradeCreate:
+      type: object
+      required:
+        - listing_id
+        - buyer_user_id
+        - seller_user_id
+        - agreed_price
+        - currency
+      properties:
+        listing_id:
+          type: string
+          format: uuid
+        buyer_user_id:
+          type: string
+          format: uuid
+        seller_user_id:
+          type: string
+          format: uuid
+        agreed_price:
+          type: number
+        currency:
+          $ref: '#/components/schemas/Currency'
+        payment_method:
+          $ref: '#/components/schemas/PaymentMethod'
+
+    GearTrade:
+      allOf:
+        - $ref: '#/components/schemas/GearTradeCreate'
+        - type: object
+          required:
+            - trade_id
+            - status
+          properties:
+            trade_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/TradeStatus'
+            completed_at:
+              type: string
+              format: date-time
+              nullable: true
+            dispute_notes:
+              type: string
+              nullable: true
+
+    GearTradeUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/TradeStatus'
+        dispute_notes:
+          type: string
+
+    GearRecommendationList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GearRecommendation'
+
+    GearRecommendation:
+      type: object
+      required:
+        - recommendation_id
+        - gear_id
+        - type
+        - message
+        - generated_at
+      properties:
+        recommendation_id:
+          type: string
+          format: uuid
+        gear_id:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/RecommendationType'
+        message:
+          type: string
+        trigger_source:
+          $ref: '#/components/schemas/RecommendationSource'
+        generated_at:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/RecommendationStatus'
+
+    GearSafetyFlagCreate:
+      type: object
+      required:
+        - gear_id
+        - reported_by
+        - flag_type
+      properties:
+        gear_id:
+          type: string
+          format: uuid
+        reported_by:
+          type: string
+          format: uuid
+        flag_type:
+          $ref: '#/components/schemas/SafetyFlagType'
+        details:
+          type: string
+
+    GearSafetyFlag:
+      allOf:
+        - $ref: '#/components/schemas/GearSafetyFlagCreate'
+        - type: object
+          required:
+            - flag_id
+            - status
+            - created_at
+          properties:
+            flag_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/SafetyFlagStatus'
+            created_at:
+              type: string
+              format: date-time
+            resolved_at:
+              type: string
+              format: date-time
+              nullable: true
+            resolution_notes:
+              type: string
+
+    GearSafetyFlagList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GearSafetyFlag'
+
+    GearCategory:
+      type: string
+      enum: [ski, snowboard, helmet, goggles, protective, other]
+
+    GearUsageType:
+      type: string
+      enum: [personal, teaching, rental]
+
+    GearCondition:
+      type: string
+      enum: [excellent, good, needs_attention, unsafe]
+
+    GearStatus:
+      type: string
+      enum: [active, archived]
+
+    InspectionItem:
+      type: object
+      required:
+        - item
+        - status
+      properties:
+        item:
+          type: string
+        status:
+          type: string
+          enum: [ok, needs_attention, fail]
+        notes:
+          type: string
+          nullable: true
+        photo_url:
+          type: string
+          format: uri
+          nullable: true
+
+    InspectionOutcome:
+      type: string
+      enum: [pass, attention, fail]
+
+    ReminderType:
+      type: string
+      enum: [inspection, maintenance, replacement, trade_followup]
+
+    ReminderStatus:
+      type: string
+      enum: [scheduled, paused, completed]
+
+    ListingStatus:
+      type: string
+      enum: [draft, published, reserved, sold, cancelled]
+
+    TradeStatus:
+      type: string
+      enum: [in_progress, completed, cancelled, disputed]
+
+    PaymentMethod:
+      type: string
+      enum: [cash, transfer, escrow, other]
+
+    Currency:
+      type: string
+      enum: [TWD, HKD, CNY, JPY, USD]
+
+    RecommendationType:
+      type: string
+      enum: [maintenance, upgrade, replacement, offer]
+
+    RecommendationSource:
+      type: string
+      enum: [inspection, usage, trade_history, manual]
+
+    RecommendationStatus:
+      type: string
+      enum: [sent, acknowledged, dismissed]
+
+    SafetyFlagType:
+      type: string
+      enum: [unsafe, fraud, policy_violation, other]
+
+    SafetyFlagStatus:
+      type: string
+      enum: [open, reviewing, resolved]

@@ -1,0 +1,85 @@
+resort_id: "yuzawa_naeba"
+names:
+  zh: "苗場滑雪場"
+  en: "Naeba Ski Resort"
+  ja: "苗場スキー場"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.791
+  lng: 138.785
+season:
+  estimated_open: "2024-12-07"
+  estimated_close: "2025-04-06"
+official_site: "https://www.princehotels.co.jp/ski/naeba/"
+description:
+  highlights:
+    - "便捷巨擘"
+    - "雙峰魅力"
+    - "家庭樂園"
+    - "龍之纜車"
+  tagline: "透過龍之纜車與神樂相連，體驗苗場的現代便利與神樂的原始壯麗。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Night Skiing"
+snow_stats:
+  lifts: 13
+  courses_total: 24
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.30
+  longest_run: 4.0
+  vertical_drop: 889
+  night_ski: true
+  notes: "與神樂滑雪場由日本最長的『龍之纜車』相連。"
+courses:
+  - name: "Takenokodaira Trail (筍平雪道)"
+    level: "beginner"
+    tags: ["beginner-friendly", "scenic-view"]
+    description: "適合新手的熱門路線。"
+    notes: ""
+  - name: "Men's Riesen Slalom Trail (男子大迴轉雪道)"
+    level: "advanced"
+    tags: ["steep", "olympic"]
+    description: "曾舉辦世界盃比賽的傳奇賽道。"
+    notes: ""
+  - name: "World Cup Mogul Trail"
+    level: "advanced"
+    tags: ["moguls", "un-groomed"]
+    description: "充滿挑戰性的貓跳雪道。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (Mt. Naeba Joint Ticket)"
+      adult: 7200
+      child: 0
+      notes: "此為與神樂滑雪場的共通券價格。12歲及以下兒童免費。"
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Full Set (Gear + Wear)"
+      adult_price: 6000
+      notes: ""
+  notes: "苗場王子大飯店內設有租賃服務。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Echigo-Yuzawa Station"
+        duration_minutes: 80
+        notes: "搭乘上越新幹線。"
+    bus:
+      - route: "Echigo-Yuzawa Station → Naeba Prince Hotel"
+        duration_minutes: 50
+        notes: "有付費路線巴士及飯店住客免費接駁車（需預約）。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.princehotels.co.jp/ski/naeba/"
+notes: "以其巨大的王子大飯店和完善的設施聞名，是日本泡沫經濟時代滑雪度假村的代表。"

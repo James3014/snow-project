@@ -1,0 +1,665 @@
+openapi: 3.1.0
+info:
+  title: SkiDIY Knowledge Engagement API
+  version: 0.1.0
+  description: APIs for question bank, quizzes, skill profiles, assignments, achievements.
+servers:
+  - url: https://api.skidiy.local/knowledge
+    description: Placeholder
+
+tags:
+  - name: Questions
+  - name: Quizzes
+  - name: Skills
+  - name: Assignments
+  - name: Achievements
+
+paths:
+  /questions:
+    get:
+      tags: [Questions]
+      summary: List questions
+      operationId: listQuestions
+      parameters:
+        - in: query
+          name: subject
+          schema:
+            $ref: '#/components/schemas/QuestionSubject'
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/QuestionStatus'
+      responses:
+        '200':
+          description: Question list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionList'
+    post:
+      tags: [Questions]
+      summary: Create question
+      operationId: createQuestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionCreate'
+      responses:
+        '201':
+          description: Question created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+
+  /questions/{question_id}:
+    get:
+      tags: [Questions]
+      summary: Retrieve question
+      operationId: getQuestion
+      parameters:
+        - $ref: '#/components/parameters/QuestionId'
+      responses:
+        '200':
+          description: Question detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+    patch:
+      tags: [Questions]
+      summary: Update question
+      operationId: updateQuestion
+      parameters:
+        - $ref: '#/components/parameters/QuestionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionUpdate'
+      responses:
+        '200':
+          description: Updated question
+
+  /quizzes:
+    post:
+      tags: [Quizzes]
+      summary: Start quiz session
+      operationId: createQuizSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizSessionCreate'
+      responses:
+        '201':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSession'
+
+  /quizzes/{session_id}:
+    get:
+      tags: [Quizzes]
+      summary: Retrieve quiz session
+      operationId: getQuizSession
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Session detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSession'
+
+  /quizzes/{session_id}/answer:
+    post:
+      tags: [Quizzes]
+      summary: Submit answer
+      operationId: submitQuizAnswer
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizAnswerSubmit'
+      responses:
+        '200':
+          description: Answer recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAnswer'
+
+  /quizzes/{session_id}/complete:
+    post:
+      tags: [Quizzes]
+      summary: Complete quiz session
+      operationId: completeQuizSession
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Session completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSession'
+
+  /skills/{user_id}:
+    get:
+      tags: [Skills]
+      summary: Retrieve skill profile
+      operationId: getSkillProfile
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      responses:
+        '200':
+          description: Skill profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillProfile'
+    put:
+      tags: [Skills]
+      summary: Manual skill update (admin)
+      operationId: updateSkillProfile
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillProfileUpdate'
+      responses:
+        '200':
+          description: Updated profile
+
+  /assignments:
+    get:
+      tags: [Assignments]
+      summary: List assignments
+      operationId: listAssignments
+      parameters:
+        - $ref: '#/components/parameters/UserIdQuery'
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/AssignmentStatus'
+      responses:
+        '200':
+          description: Assignment list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentList'
+    post:
+      tags: [Assignments]
+      summary: Create assignment
+      operationId: createAssignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentCreate'
+      responses:
+        '201':
+          description: Assignment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+
+  /assignments/{assignment_id}:
+    get:
+      tags: [Assignments]
+      summary: Retrieve assignment
+      operationId: getAssignment
+      parameters:
+        - $ref: '#/components/parameters/AssignmentId'
+      responses:
+        '200':
+          description: Assignment detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+    patch:
+      tags: [Assignments]
+      summary: Update assignment status
+      operationId: updateAssignment
+      parameters:
+        - $ref: '#/components/parameters/AssignmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentUpdate'
+      responses:
+        '200':
+          description: Updated assignment
+
+  /assignments/{assignment_id}/submissions:
+    post:
+      tags: [Assignments]
+      summary: Submit assignment result
+      operationId: createSubmission
+      parameters:
+        - $ref: '#/components/parameters/AssignmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionCreate'
+      responses:
+        '201':
+          description: Submission created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+    get:
+      tags: [Assignments]
+      summary: List submissions
+      operationId: listSubmissions
+      parameters:
+        - $ref: '#/components/parameters/AssignmentId'
+      responses:
+        '200':
+          description: Submission list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionList'
+
+  /achievements:
+    get:
+      tags: [Achievements]
+      summary: List achievement logs
+      operationId: listAchievements
+      parameters:
+        - $ref: '#/components/parameters/UserIdQuery'
+      responses:
+        '200':
+          description: Achievement list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementList'
+
+components:
+  parameters:
+    QuestionId:
+      in: path
+      name: question_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    SessionId:
+      in: path
+      name: session_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    AssignmentId:
+      in: path
+      name: assignment_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    UserIdPath:
+      in: path
+      name: user_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    UserIdQuery:
+      in: query
+      name: user_id
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    QuestionCreate:
+      type: object
+      required: [language, subject, difficulty, question_type, prompt]
+      properties:
+        language:
+          type: string
+        subject:
+          $ref: '#/components/schemas/QuestionSubject'
+        difficulty:
+          $ref: '#/components/schemas/QuestionDifficulty'
+        question_type:
+          $ref: '#/components/schemas/QuestionType'
+        prompt:
+          type: string
+        options:
+          type: array
+          items: {type: string}
+        correct_answer:
+          type: array
+          items: {type: string}
+        explanation:
+          type: string
+        tags:
+          type: array
+          items: {type: string}
+
+    Question:
+      allOf:
+        - $ref: '#/components/schemas/QuestionCreate'
+        - type: object
+          required: [question_id, version, status, created_at]
+          properties:
+            question_id:
+              type: string
+              format: uuid
+            version:
+              type: integer
+            status:
+              $ref: '#/components/schemas/QuestionStatus'
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+
+    QuestionUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/QuestionStatus'
+        prompt:
+          type: string
+        options:
+          type: array
+          items: {type: string}
+        correct_answer:
+          type: array
+          items: {type: string}
+        explanation:
+          type: string
+
+    QuestionList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+
+    QuestionSubject:
+      type: string
+      enum: [gear, safety, technique, resort, history, other]
+
+    QuestionDifficulty:
+      type: string
+      enum: [beginner, intermediate, advanced]
+
+    QuestionType:
+      type: string
+      enum: [single_choice, multiple_choice, true_false, open]
+
+    QuestionStatus:
+      type: string
+      enum: [draft, published, archived]
+
+    QuizSessionCreate:
+      type: object
+      required: [user_id, config]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        config:
+          type: object
+          properties:
+            question_count:
+              type: integer
+            subject_filter:
+              type: array
+              items:
+                $ref: '#/components/schemas/QuestionSubject'
+            difficulty:
+              $ref: '#/components/schemas/QuestionDifficulty'
+
+    QuizSession:
+      type: object
+      required: [session_id, user_id, status, started_at]
+      properties:
+        session_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/QuizStatus'
+        score:
+          type: integer
+        max_score:
+          type: integer
+        started_at:
+          type: string
+          format: date-time
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    QuizStatus:
+      type: string
+      enum: [in_progress, completed, cancelled]
+
+    QuizAnswerSubmit:
+      type: object
+      required: [question_id, answers]
+      properties:
+        question_id:
+          type: string
+          format: uuid
+        answers:
+          type: array
+          items: {type: string}
+        elapsed_seconds:
+          type: integer
+
+    QuizAnswer:
+      type: object
+      required: [answer_id, question_id, is_correct]
+      properties:
+        answer_id:
+          type: string
+          format: uuid
+        session_id:
+          type: string
+          format: uuid
+        question_id:
+          type: string
+          format: uuid
+        is_correct:
+          type: boolean
+        score:
+          type: integer
+
+    SkillProfile:
+      type: object
+      required: [user_id, overall_score, updated_at]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        overall_score:
+          type: integer
+        level:
+          type: string
+          enum: [novice, advanced, expert, coach]
+        subject_scores:
+          type: object
+          additionalProperties:
+            type: integer
+        weak_topics:
+          type: array
+          items: {type: string}
+        achievement_badges:
+          type: array
+          items: {type: string}
+        updated_at:
+          type: string
+          format: date-time
+
+    SkillProfileUpdate:
+      type: object
+      properties:
+        overall_score:
+          type: integer
+        level:
+          type: string
+        subject_scores:
+          type: object
+          additionalProperties:
+            type: integer
+
+    AssignmentCreate:
+      type: object
+      required: [assigned_by, assigned_to, subject, description]
+      properties:
+        assigned_by:
+          type: string
+          format: uuid
+        assigned_to:
+          type: string
+          format: uuid
+        subject:
+          type: string
+        description:
+          type: string
+        due_at:
+          type: string
+          format: date-time
+
+    Assignment:
+      allOf:
+        - $ref: '#/components/schemas/AssignmentCreate'
+        - type: object
+          required: [assignment_id, status, created_at]
+          properties:
+            assignment_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/AssignmentStatus'
+            created_at:
+              type: string
+              format: date-time
+
+    AssignmentStatus:
+      type: string
+      enum: [pending, accepted, in_progress, submitted, approved, rejected, cancelled]
+
+    AssignmentUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/AssignmentStatus'
+        reminder_id:
+          type: string
+          format: uuid
+
+    AssignmentList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignment'
+
+    SubmissionCreate:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+        media:
+          type: array
+          items: {type: string}
+
+    Submission:
+      type: object
+      required: [submission_id, assignment_id, submitted_at, status]
+      properties:
+        submission_id:
+          type: string
+          format: uuid
+        assignment_id:
+          type: string
+          format: uuid
+        submitted_at:
+          type: string
+          format: date-time
+        content:
+          type: string
+        media:
+          type: array
+          items: {type: string}
+        coach_feedback:
+          type: string
+          nullable: true
+        coach_rating:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          enum: [under_review, approved, needs_revision]
+
+    SubmissionList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Submission'
+
+    AchievementList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achievement'
+
+    Achievement:
+      type: object
+      required: [achievement_id, user_id, badge_code, unlocked_at]
+      properties:
+        achievement_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        badge_code:
+          type: string
+        unlocked_at:
+          type: string
+          format: date-time
+

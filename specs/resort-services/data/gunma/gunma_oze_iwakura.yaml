@@ -1,0 +1,94 @@
+resort_id: "gunma_oze_iwakura"
+names:
+  zh: "尾瀨岩鞍滑雪場"
+  en: "White World Oze Iwakura"
+  ja: "ホワイトワールド尾瀬岩鞍"
+country_code: "JP"
+region: "Gunma Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.81833
+  lng: 139.21111
+season:
+  estimated_open: "2024-12-14"
+  estimated_close: "2025-04-06"
+official_site: "http://www.oze-iwakura.co.jp/"
+description:
+  highlights:
+    - "關東最大級"
+    - "Gun-Powder"
+    - "家庭友善"
+    - "溫泉"
+  tagline: "群馬的粉雪天堂，關東地區規模最大的滑雪場之一。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Night Skiing"
+snow_stats:
+  lifts: 10
+  courses_total: 18
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.30
+  longest_run: 3.2
+  vertical_drop: 697
+  night_ski: true
+  notes: "以其優質的『Gun-Powder』(群馬粉雪)聞名。"
+courses:
+  - name: "Family Course (ファミリーコース)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "gentle-slope"]
+    description: "極其寬闊的初級雪道，平均坡度僅7度。"
+    notes: ""
+  - name: "Milky Way (ミルキーウェイ)"
+    level: "intermediate"
+    tags: ["long-run", "cruising"]
+    description: "長達3,200米的標誌性中級雪道，從山頂蜿蜒而下。"
+    notes: ""
+  - name: "Expert Course"
+    level: "advanced"
+    tags: ["steep"]
+    description: "最大坡度達到40度的專家級雪道。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (weekday)"
+      adult: 5500
+      student: 4500
+      senior: 5000
+      child: 3500
+      notes: ""
+    - type: "1-day (holiday)"
+      adult: 6000
+      student: 5000
+      senior: 5500
+      child: 4000
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "雪場內設有官方租賃店，提供標準及特殊裝備如胖雪板。"
+transportation:
+  domestic:
+    bus:
+      - route: "Shinjuku → Katashina"
+        duration_minutes: null
+        notes: "季節性直達巴士『かたしなスノーエクスプレス号』，需轉乘免費接駁車。"
+    shinkansen:
+      - from: "Tokyo"
+        to: "Jomo-Kogen Station"
+        duration_minutes: 75
+        notes: "搭乘上越新幹線後需轉乘當地巴士。"
+    self_drive:
+      - route: "Kan-Etsu Expressway → Numata IC"
+        duration_minutes: 50
+        notes: "交流道出口後約40-50分鐘車程。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "http://www.oze-iwakura.co.jp/"
+notes: "雪場佈局為碗狀，所有雪道最終匯集至山腳，不易走散。"

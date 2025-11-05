@@ -1,0 +1,92 @@
+resort_id: "myoko_akakura_kanko"
+names:
+  zh: "赤倉觀光雪場"
+  en: "Akakura Kanko Resort"
+  ja: "赤倉観光リゾートスキー場"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.89519
+  lng: 138.17278
+season:
+  estimated_open: "2024-12-14"
+  estimated_close: "2025-04-06" # Akakan's season is often slightly longer
+official_site: "https://www.akr-hotel.com/win/"
+description:
+  highlights:
+    - "Ski-in/Ski-out"
+    - "粉雪"
+    - "溫泉"
+    - "適合家庭"
+  tagline: "歷史與革新交織的滑雪勝地，體驗100%天然粉雪。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "English-friendly"
+snow_stats:
+  lifts: 7
+  courses_total: 10
+  beginner_ratio: 0.40
+  intermediate_ratio: 0.30
+  advanced_ratio: 0.30
+  longest_run: 4.5 # Official data
+  vertical_drop: 760 # Official data
+  night_ski: false
+  notes: "與赤倉溫泉滑雪場有共通纜車票。"
+courses:
+  - name: "Hotel Main Slope"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide"]
+    description: "直接從標誌性的赤倉觀光飯店門前延伸開來，地勢平緩開闊。"
+    notes: ""
+  - name: "Hotel Beginner Course"
+    level: "beginner"
+    tags: ["beginner-friendly"]
+    description: "適合初學者進行熱身、練習基礎動作的理想場所。"
+    notes: ""
+  - name: "Champion A Course"
+    level: "intermediate"
+    tags: ["cruising"]
+    description: "位於雪場中段，是典型的中級紅線雪道，寬度適中，坡度穩定。"
+    notes: ""
+  - name: "Champion B Course"
+    level: "intermediate"
+    tags: ["cruising"]
+    description: "適合練習流暢的轉彎技巧。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 6500
+      student: 5400
+      senior: 5400
+      child: 4800
+      notes: "此為赤倉觀光單獨票價，另有與赤倉溫泉的共通券。"
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "雪場本身與飯店內有提供租賃服務，也可使用鄰近赤倉溫泉街上的店家。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station → Myoko-Kogen Station"
+        duration_minutes: 180
+        notes: "搭乘北陸新幹線至長野後轉地方列車前往妙高高原站。"
+    bus:
+      - route: "Tokyo (Shinjuku) → Myoko area"
+        duration_minutes: null
+        notes: "夜間巴士可直達妙高地區。"
+    self_drive:
+      - route: "Joshinetsu Expressway → Myoko-Kogen IC"
+        duration_minutes: null
+        notes: "交流道出口後約10分鐘車程可達雪場。"
+  international:
+    airports: []
+  remarks: "從妙高高原站有免費接駁巴士，需預約。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.akr-hotel.com/win/"
+notes: "又稱Akakan。飯店歷史悠久，是日本高原度假飯店的先驅之一。"

@@ -1,0 +1,90 @@
+resort_id: "hokkaido_niseko_moiwa"
+names:
+  zh: "二世谷Moiwa滑雪場"
+  en: "Niseko Moiwa Ski Resort"
+  ja: "ニセコモイワスキー場"
+country_code: "JP"
+region: "Hokkaido"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 42.848039
+  lng: 140.629644
+season:
+  estimated_open: "2024-11-30"
+  estimated_close: "2025-04-06"
+official_site: "https://niseko-moiwa.jp/"
+description:
+  highlights:
+    - "粉雪"
+    - "人潮稀少"
+    - "私人感"
+    - "樹林滑雪"
+  tagline: "享受ニセコ的優質粉雪，體驗私人般的滑雪時光。"
+amenities:
+  - "Onsen (nearby)"
+snow_stats:
+  lifts: 3
+  courses_total: 8
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.30
+  longest_run: 2.0
+  vertical_drop: 450
+  night_ski: false
+  notes: "相較於ニセコユナイテッド，人潮較少，更能享受粉雪。"
+courses:
+  - name: "Giant Run (ジャイアントコース)"
+    level: "advanced"
+    tags: ["powder", "un-groomed", "steep"]
+    description: "平均斜度24度以上的上級者非壓雪區。"
+    notes: ""
+  - name: "Shirakaba Slope (白樺コース)"
+    level: "intermediate"
+    tags: ["tree-run", "powder"]
+    description: "穿梭於白樺樹林間的熱門樹林滑雪道。"
+    notes: ""
+  - name: "Sky Slope (スカイコース)"
+    level: "intermediate"
+    tags: ["scenic-view", "long-run"]
+    description: "可欣賞羊蹄山景色的2公里展望雪道。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (regular season)"
+      adult: 11000
+      notes: "網路預購價為9,900日圓。"
+    - type: "4-hour"
+      adult: 10000
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 5800
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 6300
+      notes: ""
+  notes: ""
+transportation:
+  domestic:
+    train:
+      - from: "Sapporo"
+        to: "Niseko Station"
+        duration_minutes: 90
+        notes: "搭乘JR函館本線。"
+    bus:
+      - route: "Niseko Station → Niseko Moiwa"
+        duration_minutes: 15
+        notes: "有巴士服務。"
+      - route: "New Chitose Airport (CTS) → Niseko Moiwa"
+        duration_minutes: 120
+        notes: "可搭乘リゾートライナー等機場巴士。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "https://niseko-moiwa.jp/"
+  - "https://en.wikipedia.org/wiki/Niseko_Moiwa_Ski_Resort"
+notes: "獨立於Niseko United之外，因此人潮較少，更能享受粉雪。"

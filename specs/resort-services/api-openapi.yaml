@@ -1,0 +1,361 @@
+openapi: 3.1.0
+info:
+  title: SkiDIY Resort Services API
+  version: 0.1.0
+  description: >
+    Provides comprehensive information about ski resorts, including location,
+    stats, amenities, and transportation.
+servers:
+  - url: https://api.skidiy.local/resort-services
+    description: Placeholder for the Resort Services API
+
+tags:
+  - name: Resorts
+    description: Endpoints for accessing ski resort data.
+
+paths:
+  /resorts:
+    get:
+      tags: [Resorts]
+      summary: List and search for ski resorts
+      operationId: listResorts
+      parameters:
+        - in: query
+          name: region
+          schema:
+            type: string
+          description: Filter resorts by region (e.g., 'Niigata Prefecture', 'Nagano Prefecture').
+        - in: query
+          name: country_code
+          schema:
+            type: string
+            pattern: '^[A-Z]{2}$'
+          description: Filter resorts by ISO 3166-1 alpha-2 country code.
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: Full-text search query on resort names and descriptions.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+            maximum: 200
+          description: Maximum number of results to return.
+        - in: query
+          name: cursor
+          schema:
+            type: string
+          description: Pagination cursor.
+      responses:
+        '200':
+          description: A paginated list of ski resorts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResortList'
+
+  /resorts/{resort_id}:
+    get:
+      tags: [Resorts]
+      summary: Get resort by ID
+      operationId: getResortById
+      parameters:
+        - in: path
+          name: resort_id
+          required: true
+          schema:
+            type: string
+          description: The unique identifier for the ski resort.
+      responses:
+        '200':
+          description: Detailed information for a single ski resort.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resort'
+        '404':
+          description: Resort not found.
+
+components:
+  schemas:
+    Names:
+      type: object
+      properties:
+        zh:
+          type: string
+        en:
+          type: string
+        ja:
+          type: string
+
+    Coordinates:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: float
+        lng:
+          type: number
+          format: float
+
+    Season:
+      type: object
+      properties:
+        estimated_open:
+          type: string
+          format: date
+        estimated_close:
+          type: string
+          format: date
+        season_notes:
+          type: string
+
+    Description:
+      type: object
+      properties:
+        highlights:
+          type: array
+          items:
+            type: string
+        tagline:
+          type: string
+        resort_type:
+          type: string
+        snow_quality:
+          type: string
+
+    Amenities:
+      type: object
+      properties:
+        general:
+          type: array
+          items:
+            type: string
+        kids_facilities:
+          type: boolean
+        onsen_availability:
+          type: boolean
+
+    SnowStats:
+      type: object
+      properties:
+        lifts:
+          type: integer
+        courses_total:
+          type: integer
+        beginner_ratio:
+          type: number
+          format: float
+        intermediate_ratio:
+          type: number
+          format: float
+        advanced_ratio:
+          type: number
+          format: float
+        longest_run:
+          type: number
+          format: float
+        vertical_drop:
+          type: integer
+        elevation_range:
+          type: string
+        park_features:
+          type: array
+          items:
+            type: string
+        night_ski:
+          type: boolean
+        notes:
+          type: string
+
+    Course:
+      type: object
+      properties:
+        name:
+          type: string
+        level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        tags:
+          type: array
+          items:
+            type: string
+        length:
+          type: number
+          format: float
+        elevation_diff:
+          type: integer
+        avg_slope:
+          type: number
+          format: float
+        description:
+          type: string
+        notes:
+          type: string
+
+    TicketType:
+      type: object
+      properties:
+        type:
+          type: string
+        adult:
+          type: integer
+        student:
+          type: integer
+        child:
+          type: integer
+        senior:
+          type: integer
+        notes:
+          type: string
+
+    Pricing:
+      type: object
+      properties:
+        last_verified:
+          type: string
+          format: date
+        ticket_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketType'
+
+    RentalItem:
+      type: object
+      properties:
+        item:
+          type: string
+        adult_price:
+          type: integer
+        child_price:
+          type: integer
+        notes:
+          type: string
+
+    Rental:
+      type: object
+      properties:
+        last_verified:
+          type: string
+          format: date
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RentalItem'
+        notes:
+          type: string
+
+    TransportationDetail:
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        duration_minutes:
+          type: integer
+        notes:
+          type: string
+
+    Transportation:
+      type: object
+      properties:
+        domestic:
+          type: object
+          properties:
+            shinkansen:
+              type: array
+              items:
+                $ref: '#/components/schemas/TransportationDetail'
+            bus:
+              type: array
+              items:
+                $ref: '#/components/schemas/TransportationDetail'
+            self_drive:
+              type: array
+              items:
+                $ref: '#/components/schemas/TransportationDetail'
+            train:
+              type: array
+              items:
+                $ref: '#/components/schemas/TransportationDetail'
+        international:
+          type: object
+          properties:
+            airports:
+              type: array
+              items:
+                type: object
+        remarks:
+          type: string
+
+    ResortSummary:
+      type: object
+      properties:
+        resort_id:
+          type: string
+        names:
+          $ref: '#/components/schemas/Names'
+        region:
+          type: string
+        country_code:
+          type: string
+        tagline:
+          type: string
+
+    Resort:
+      type: object
+      properties:
+        resort_id:
+          type: string
+        names:
+          $ref: '#/components/schemas/Names'
+        country_code:
+          type: string
+        region:
+          type: string
+        timezone:
+          type: string
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        season:
+          $ref: '#/components/schemas/Season'
+        official_site:
+          type: string
+          format: uri
+        description:
+          $ref: '#/components/schemas/Description'
+        amenities:
+          $ref: '#/components/schemas/Amenities'
+        snow_stats:
+          $ref: '#/components/schemas/SnowStats'
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Course'
+        pricing:
+          $ref: '#/components/schemas/Pricing'
+        rental:
+          $ref: '#/components/schemas/Rental'
+        transportation:
+          $ref: '#/components/schemas/Transportation'
+        content_sources:
+          type: array
+          items:
+            type: string
+            format: uri
+        notes:
+          type: string
+
+    ResortList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResortSummary'
+        next_cursor:
+          type: string
+          nullable: true

@@ -1,0 +1,96 @@
+resort_id: "hakuba_tsugaike_kogen"
+names:
+  zh: "白馬栂池高原滑雪場"
+  en: "Hakuba Tsugaike Kogen Ski Resort"
+  ja: "栂池高原スキー場"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.75056
+  lng: 137.86444
+season:
+  estimated_open: "2024-12-01"
+  estimated_close: "2025-05-06"
+official_site: "https://www.tsugaike.gr.jp/"
+description:
+  highlights:
+    - "初學者天堂"
+    - "友善巨人"
+    - "超寬闊雪道"
+    - "家庭友善"
+  tagline: "在北阿爾卑斯的友善巨人上，體驗日本最寬闊的初學者雪道。"
+amenities:
+  - "Onsen"
+  - "Kids Park"
+  - "Night Skiing"
+snow_stats:
+  lifts: 19
+  courses_total: 10
+  beginner_ratio: 0.80
+  intermediate_ratio: 0.0
+  advanced_ratio: 0.20
+  longest_run: 4.9
+  vertical_drop: 904
+  night_ski: true
+  notes: "雪道80%為初中級，對初學者極為友善。"
+courses:
+  - name: "Kane-no-naru-oka Slopes (鐘鳴之丘)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "gentle-slope"]
+    description: "度假村標誌性的初學者天堂，以其驚人的1,200米寬度和平均僅8度的平緩坡度而聞名。"
+    notes: ""
+  - name: "Han-no-ki (榿木)"
+    level: "intermediate"
+    tags: ["long-run", "cruising"]
+    description: "長達3公里的雪道，坡度變化豐富，適合進階中的滑雪者。"
+    notes: ""
+  - name: "Uma-no-se (馬之背)"
+    level: "advanced"
+    tags: ["steep", "moguls"]
+    description: "地形如馬背般狹窄，最大坡度達到32度，佈滿了巨大的天然雪丘。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 7500
+      child: 4400
+      notes: "此為常規雪季價格。"
+    - type: "2-day"
+      adult: 13200
+      child: 8000
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Standard Ski/Snowboard Set"
+      adult_price: 5000
+      child_price: 3500
+      notes: "價格參考自Rental Sports Arai。"
+    - item: "Premium Ski/Snowboard Set"
+      adult_price: 7000
+      notes: "價格參考自Rental Sports Arai。"
+  notes: "村內有多家租賃店可供選擇。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station"
+        duration_minutes: 100
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Nagano Station → Tsugaike Kogen"
+        duration_minutes: 90
+        notes: "搭乘Alpico特快巴士。"
+      - route: "Shinjuku → Tsugaike Kogen"
+        duration_minutes: 330
+        notes: "有直達高速巴士。"
+  international:
+    airports: []
+  remarks: "白馬谷內有接駁巴士，持有白馬谷通票可免費搭乘。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.tsugaike.gr.jp/"
+  - "https://en.wikipedia.org/wiki/Tsugaike_Kogen_Ski_Resort"
+notes: "以其極度寬闊的初學者雪道聞名，是家庭滑雪的首選之一。"

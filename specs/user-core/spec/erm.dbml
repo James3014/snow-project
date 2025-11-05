@@ -1,0 +1,93 @@
+// 使用者核心資料模型（DBML）— 以現有 SQLAlchemy 模型對齊
+
+Table user_profiles {
+  user_id uuid [pk]
+  legacy_ids json
+  preferred_language varchar(10)
+  experience_level varchar(50)
+  coach_cert_level varchar(100) [null]
+  bio text [null]
+  preferred_resorts json [null]
+  teaching_languages json [null]
+  legal_consent json [null]
+  audit_log json [null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  status varchar [not null] // 列舉: active | inactive | merged
+}
+
+Table user_roles {
+  user_id uuid [not null, ref: > user_profiles.user_id]
+  role varchar [not null] // 列舉: student | coach
+
+  indexes {
+    (user_id, role) [unique] // 每位使用者的角色唯一
+  }
+}
+
+Table user_locale_profiles {
+  user_id uuid [ref: > user_profiles.user_id]
+  country_code varchar(2)
+  local_identifier text [null] // 遮罩後的在地身分識別（不建議存明文）
+  local_identifier_hash varchar [not null] // 由 country_code + 正規化識別 + 鹽 計算
+  verification_status varchar [not null] // 列舉: unverified | pending | verified（在地身分驗證狀態）
+  metadata_json json [null]
+  updated_at timestamp [not null]
+
+  indexes {
+    (user_id, country_code) [pk] // 複合主鍵
+    (country_code, local_identifier_hash) [unique] // 跨使用者去重
+  }
+}
+
+Table legacy_mappings {
+  legacy_system varchar [pk]
+  legacy_key varchar [pk]
+  user_id uuid [not null, ref: > user_profiles.user_id]
+  notes text [null]
+  created_at timestamp [not null]
+}
+
+Table behavior_events {
+  event_id uuid [pk]
+  user_id uuid [not null, ref: > user_profiles.user_id]
+  source_project varchar [not null]
+  event_type varchar [not null]
+  occurred_at timestamp [not null]
+  recorded_at timestamp [not null]
+  payload json [not null]
+  version int [not null, default: 1]
+}
+
+Table notification_preferences {
+  user_id uuid [ref: > user_profiles.user_id]
+  channel varchar
+  topic varchar
+  status varchar [not null] // 列舉: opt-in | opt-out | paused（授權狀態）
+  frequency varchar [not null] // 列舉: immediate | daily | weekly | monthly（頻率）
+  last_updated_at timestamp [not null]
+  audited_by varchar [null]
+  consent_source varchar [null]
+  consent_recorded_at timestamp [null]
+
+  indexes {
+    (user_id, channel, topic) [pk] // 複合主鍵
+  }
+}
+
+Table change_feed {
+  id uuid [pk]
+  entity_type varchar [not null]
+  entity_id uuid [not null]
+  change_type varchar [not null]
+  payload json
+  audit_summary json [null] // 例如 { actor_type, actor_id, reason, at }
+  published_at timestamp [not null]
+}
+
+// 關聯定義
+Ref: user_roles.user_id > user_profiles.user_id
+Ref: user_locale_profiles.user_id > user_profiles.user_id
+Ref: legacy_mappings.user_id > user_profiles.user_id
+Ref: behavior_events.user_id > user_profiles.user_id
+Ref: notification_preferences.user_id > user_profiles.user_id

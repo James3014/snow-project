@@ -1,0 +1,97 @@
+resort_id: "myoko_akakura_onsen"
+names:
+  zh: "赤倉溫泉滑雪場"
+  en: "Akakura Onsen Ski Resort"
+  ja: "赤倉温泉スキー場"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.89195179
+  lng: 138.16327333
+season:
+  estimated_open: "2024-12-14"
+  estimated_close: "2025-03-30"
+official_site: "https://akakura-ski.com/"
+description:
+  highlights:
+    - "粉雪品質佳"
+    - "適合新手與家庭"
+    - "夜間滑雪"
+    - "溫泉街體驗"
+  tagline: "新手與家庭的粉雪天堂，結合百年溫泉鄉與友善雪道"
+amenities:
+  - "Kids Park"
+  - "Night Skiing"
+  - "Onsen Town"
+  - "Rental Shops"
+  - "English-friendly Ski Schools"
+snow_stats:
+  lifts: 14
+  courses_total: 17
+  beginner_ratio: 0.5
+  intermediate_ratio: 0.3
+  advanced_ratio: 0.2
+  night_ski: true
+  notes: "初級雪道比例高，適合練習；與赤倉觀光雪場有聯票。雪道比例為約略值。"
+courses:
+  - name: "パノラマコース (Panorama Course)"
+    level: "beginner"
+    tags: ["wide", "long", "night-skiing", "beginner-friendly"]
+    description: "寬闊且綿長的主雪道，提供充足空間練習全制動與S形轉彎"
+    notes: "妙高地區唯一每日夜滑雪道"
+  - name: "エレガントコース (Elegant Course)"
+    level: "beginner"
+    tags: ["tree-lined", "family-friendly"]
+    description: "被森林包圍的林間雪道，自山頂一路滑到山麓"
+    notes: "適合家庭共同滑行"
+  - name: "関見ゲレンデ (Sekimi Gelande)"
+    level: "beginner"
+    tags: ["gentle-slope", "practice-area"]
+    description: "坡度平緩的一枚バーン，纜車人潮較少"
+    notes: "適合反覆練習基本技巧"
+  - name: "ユートピアAコース (Utopia A Course)"
+    level: "intermediate"
+    tags: ["groomed", "cruising", "intermediate"]
+    description: "壓雪品質佳的巡航雪道，適合提升轉彎節奏"
+    notes: ""
+  - name: "モーグルチャレンジコース (Mogul Challenge Course)"
+    level: "advanced"
+    tags: ["moguls", "un-groomed", "steep", "powder", "advanced"]
+    description: "最大坡度約43度的未壓雪挑戰區，提供天然粉雪饅頭"
+    notes: "需具備高級技巧"
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 7000
+      senior: 5600
+      child: 2500
+      notes: "價格單位為日圓 (JPY)"
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "官網提供租借服務，但未列出詳細價格。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station → Myoko-Kogen Station"
+        duration_minutes: 180
+        notes: "搭乘北陸新幹線至長野後轉地方列車前往妙高高原站"
+    bus:
+      - route: "Tokyo (Shinjuku) → Myoko area"
+        duration_minutes: null
+        notes: "夜間巴士可直達妙高地區，適合 maximizing 滑雪時間"
+    self_drive:
+      - route: "Joshinetsu Expressway → Myoko-Kogen IC"
+        duration_minutes: null
+        notes: "交流道出口後約9分鐘車程可達雪場"
+  international:
+    airports: []
+  remarks: "交通資料需再補充更精確的班次與時間，含國際航點轉乘"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://akakura-ski.com/"
+  - "https://mapion.co.jp"
+notes: "票價與租借價格易變動，待後續更新。雪道比例為約略值，待更精確資料。"

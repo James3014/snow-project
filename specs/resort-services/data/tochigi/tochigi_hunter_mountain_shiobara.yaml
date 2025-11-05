@@ -1,0 +1,98 @@
+resort_id: "tochigi_hunter_mountain_shiobara"
+names:
+  zh: "獵人山鹽原滑雪場"
+  en: "Hunter Mountain Shiobara"
+  ja: "ハンターマウンテン塩原"
+country_code: "JP"
+region: "Tochigi Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.93806
+  lng: 139.75278
+season:
+  estimated_open: "2024-11-30"
+  estimated_close: "2025-04-20"
+official_site: "https://www.hunter.co.jp/"
+description:
+  highlights:
+    - "首都圈最大級"
+    - "交通便利"
+    - "家庭友善"
+    - "人工造雪"
+  tagline: "首都圈居民及國際旅客進行當日往返或短途滑雪旅行的首選目的地。"
+amenities:
+  - "Onsen"
+  - "Kids Park"
+  - "Terrain Park"
+snow_stats:
+  lifts: 6
+  courses_total: 12
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.30
+  longest_run: 3.0
+  vertical_drop: 500
+  night_ski: false
+  notes: "擁有覆蓋全雪場的人工造雪系統，雪況穩定可靠。"
+courses:
+  - name: "Broadway"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "gentle-slope"]
+    description: "極度寬闊平緩的雪道，是初學者天堂。"
+    notes: ""
+  - name: "Madison Avenue"
+    level: "intermediate"
+    tags: ["cruising", "wide"]
+    description: "位於山頂區域，寬闊的壓雪中斜坡，適合提升技巧。"
+    notes: ""
+  - name: "Wall Street"
+    level: "advanced"
+    tags: ["steep", "moguls", "un-groomed"]
+    description: "雪場最陡峭的雪道之一，充滿挑戰性的貓跳路線。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 6000
+      child: 5000
+      senior: 5500
+      notes: ""
+    - type: "4-hour"
+      adult: 5700
+      child: 4700
+      senior: 5200
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 5500
+      child_price: 3800
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 5000
+      notes: ""
+  notes: "建議線上預約以節省時間。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nasu-Shiobara Station"
+        duration_minutes: 75
+        notes: "搭乘東北新幹線。"
+    bus:
+      - route: "Nasu-Shiobara Station → Hunter Mountain"
+        duration_minutes: 80
+        notes: "免費接駁巴士，必須提前預約。"
+    self_drive:
+      - route: "Tohoku Expressway → Nishinasuno-Shiobara IC"
+        duration_minutes: 30
+        notes: "交流道出口後約30分鐘車程。"
+  international:
+    airports: []
+  remarks: "週末及假日停車收費1,000日圓，平日免費。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.hunter.co.jp/"
+notes: "週末人潮極為擁擠，建議平日前往或提早抵達。"

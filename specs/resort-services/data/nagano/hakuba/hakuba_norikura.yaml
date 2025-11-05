@@ -1,0 +1,78 @@
+resort_id: "hakuba_norikura"
+names:
+  zh: "白馬乗鞍溫泉滑雪場"
+  en: "Hakuba Norikura Onsen Ski Resort"
+  ja: "白馬乗鞍温泉スキー場"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.763616
+  lng: 137.876077
+season:
+  estimated_open: "2024-12-14"
+  estimated_close: "2025-04-06"
+official_site: "https://www.hakunori.com/"
+description:
+  highlights:
+    - "100%自然降雪"
+    - "家庭友善"
+    - "粉雪秘境"
+    - "寵物友善"
+  tagline: "白馬山谷北端的粉雪秘境，享受100%純天然雪。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Dog-friendly"
+snow_stats:
+  lifts: 9
+  courses_total: 14
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.50
+  advanced_ratio: 0.20
+  longest_run: 2.5
+  vertical_drop: 600
+  night_ski: false
+  notes: "與白馬Cortina滑雪場緊密相連，可購買共通券。"
+courses:
+  - name: "Hakunori Family Course (はくのりファミリーコース)"
+    level: "beginner"
+    tags: ["beginner-friendly", "gentle-slope"]
+    description: "平均斜度僅5度的平緩坡道，適合家庭和初學者。"
+    notes: ""
+  - name: "Expert Course"
+    level: "advanced"
+    tags: ["steep", "un-groomed"]
+    description: "最大斜度38度的黑線雪道，充滿挑戰。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (Joint with Cortina)"
+      adult: 5800
+      child: 3500
+      senior: 5200
+      notes: "此為與白馬Cortina滑雪場的共通券價格。小學生以下免費。"
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "飯店內設有租賃店，也可使用周邊獨立店家。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station"
+        duration_minutes: 100
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Nagano Station → Hakuba Norikura"
+        duration_minutes: 90
+        notes: "搭乘Alpico特快巴士。"
+  international:
+    airports: []
+  remarks: "白馬谷內有接駁巴士，可連接其他雪場。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.hakunori.com/"
+notes: "以其寧靜的氛圍和優質的粉雪著稱，是白馬谷內相對不擁擠的選擇。"

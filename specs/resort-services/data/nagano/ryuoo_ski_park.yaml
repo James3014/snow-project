@@ -1,0 +1,100 @@
+resort_id: "nagano_ryuoo_ski_park"
+names:
+  zh: "竜王滑雪公園"
+  en: "Ryuoo Ski Park"
+  ja: "竜王スキーパーク"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.787377
+  lng: 138.448212
+season:
+  estimated_open: "2024-12-07"
+  estimated_close: "2025-03-30"
+official_site: "http://www.ryuoo.com/"
+description:
+  highlights:
+    - "雲海"
+    - "SORA terrace"
+    - "粉雪"
+    - "木落しコース"
+  tagline: "在海拔1,770公尺的雲端奇景中，體驗極致粉雪。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "SORA terrace"
+snow_stats:
+  lifts: 8
+  courses_total: 12
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.30
+  longest_run: 1.37
+  vertical_drop: 1080
+  night_ski: true
+  notes: "以其山頂的SORA terrace觀景台和壯麗的雲海聞名。"
+courses:
+  - name: "Kiotoshi Course (木落しコース)"
+    level: "advanced"
+    tags: ["powder", "un-groomed", "steep", "tree-run"]
+    description: "雪場的傳奇非壓雪粉雪道，最大斜度36度，充滿挑戰。"
+    notes: "必須佩戴安全帽方可進入。"
+  - name: "A Course"
+    level: "beginner"
+    tags: ["long-run", "beginner-friendly"]
+    description: "長達1,370公尺的初級雪道，位於Skyland區域。"
+    notes: ""
+  - name: "Green Course"
+    level: "intermediate"
+    tags: ["cruising"]
+    description: "位於中腹的中級雪道，適合練習轉彎。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 5500
+      child: 2500
+      notes: "通常期間 (12/21 - 3/23) 價格。"
+    - type: "Half-day"
+      adult: 4400
+      child: 1800
+      notes: ""
+    - type: "Night Ski"
+      adult: 2200
+      child: 1200
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 5500
+      child_price: 4000
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 5000
+      child_price: 3500
+      notes: ""
+  notes: "SPICY Rental提供安全帽租借。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Iiyama Station"
+        duration_minutes: 110
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Iiyama Station → Ryuoo Ski Park"
+        duration_minutes: 35
+        notes: "需預約的接駁巴士。"
+      - route: "Yudanaka Station → Ryuoo Ski Park"
+        duration_minutes: 30
+        notes: "有免費接駁巴士。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "http://www.ryuoo.com/"
+notes: "雪場分為三個區域，山頂的Skyland區雪質最佳，風景壯麗。"

@@ -1,0 +1,114 @@
+resort_id: "myoko_suginohara"
+names:
+  zh: "妙高杉之原滑雪場"
+  en: "Myoko Suginohara Ski Resort"
+  ja: "妙高杉ノ原スキー場"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.86346
+  lng: 138.13715
+season:
+  estimated_open: "2024-12-21"
+  estimated_close: "2025-03-23"
+official_site: "https://www.princehotels.co.jp/ski/myoko_suginohara/"
+description:
+  highlights:
+    - "日本最長雪道"
+    - "中級者天堂"
+    - "粉雪"
+  tagline: "無盡滑降的王國，體驗8.5公里的燃燒大腿直線滑降巡航路線"
+amenities:
+  - "Terrain Park"
+snow_stats:
+  lifts: 5 # Inferred from text, 1 gondola, 4 lifts
+  courses_total: 17 # Inferred from text
+  beginner_ratio: 0.4
+  intermediate_ratio: 0.4
+  advanced_ratio: 0.2
+  longest_run: 8.5
+  night_ski: false
+  notes: "兒童12歲及以下纜車票免費。"
+courses:
+  - name: "杜鵑花雪道 (Shakunage Trail, E1)"
+    level: "intermediate"
+    tags: ["long-run-part"]
+    description: "8.5公里長雪道的上段，擁有開闊的視野。"
+    notes: ""
+  - name: "全景雪道 (Panorama Trail, D1/B2)"
+    level: "beginner"
+    tags: ["long-run-part", "cruising"]
+    description: "8.5公里長雪道的中段，坡度平緩，適合享受速度與風景。"
+    notes: ""
+  - name: "白樺雪道 (Shirakaba Trail, A1)"
+    level: "beginner"
+    tags: ["long-run-part", "tree-lined"]
+    description: "8.5公里長雪道的下段，蜿蜒穿過優雅的白樺林。"
+    notes: ""
+  - name: "家庭雪道 (Family R Trail, B1)"
+    level: "beginner"
+    tags: ["long-run-part"]
+    description: "8.5公里長雪道的終點，平緩地引導滑雪者回到基地。"
+    notes: ""
+  - name: "超級巨人雪道 (Super Giant Trail)"
+    level: "advanced"
+    tags: ["steep"]
+    description: "最大坡度達38度的黑線挑戰。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 7000
+      student: 6400
+      senior: 6400
+      child: 0
+      notes: "兒童12歲及以下免費。學生為13-18歲，長者為55歲以上。"
+    - type: "2-day"
+      adult: 13000
+      student: 12000
+      senior: 12000
+      child: 0
+      notes: "需連續兩日使用。"
+    - type: "4-hour"
+      adult: 6200
+      student: 5700
+      senior: 5700
+      child: 0
+      notes: "從首次通過票閘起計算4小時。"
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 5500
+      child_price: 4000
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 4500
+      child_price: 3500
+      notes: ""
+  notes: "價格參考自skiarea.md內的2024-2025雪季租賃費用表。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station → Myoko-Kogen Station"
+        duration_minutes: 180
+        notes: "搭乘北陸新幹線至長野後轉地方列車。"
+    bus:
+      - route: "Tokyo (Shinjuku) → Myoko-Kogen Station"
+        duration_minutes: null
+        notes: "有直達夜間巴士。"
+    self_drive:
+      - route: "Joshinetsu Expressway → Myoko-Kogen IC"
+        duration_minutes: null
+        notes: "交流道出口後約9分鐘車程。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.princehotels.co.jp/ski/myoko_suginohara/"
+  - "https://mapcarta.com"
+notes: "兒童12歲及以下纜車票免費是一大特色。"

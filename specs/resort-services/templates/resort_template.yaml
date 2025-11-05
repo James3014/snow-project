@@ -1,0 +1,61 @@
+resort_id: ""                # 系統識別碼，全小寫，底線分隔，例如 myoko_akakura_onsen
+names:
+  zh: ""
+  en: ""
+  ja: ""
+country_code: ""             # 國家代碼 (ISO 3166-1 alpha-2)，例如 JP
+region: ""                   # 地區 / 都道府縣，例如 Niigata Prefecture
+timezone: ""                 # IANA 時區，例如 Asia/Tokyo
+coordinates:
+  lat: null                 # 緯度，例如 36.89195
+  lng: null                 # 經度，例如 138.16327
+season:
+  estimated_open: ""          # YYYY-MM-DD
+  estimated_close: ""         # YYYY-MM-DD
+official_site: ""             # 官方網站 URL
+description:
+  highlights: []             # 特色標籤陣列，例如 ["粉雪品質佳", "適合家庭"]
+  tagline: ""                 # 一句吸引人的宣傳標語
+amenities:
+  - ""                       # 設施陣列，例如 ["Kids Park", "Night Skiing", "Onsen Town"]
+snow_stats:
+  lifts: null                 # 纜車總數
+  courses_total: null         # 雪道總數
+  beginner_ratio: null        # 初級雪道比例 (0.0 - 1.0)
+  intermediate_ratio: null    # 中級雪道比例 (0.0 - 1.0)
+  advanced_ratio: null        # 高級雪道比例 (0.0 - 1.0)
+  night_ski: false            # 是否有夜滑 (true/false)
+  notes: ""                   # 雪況相關備註
+courses: []                   # 雪道詳細資料，待後續填寫
+  # - name: "Course Name"
+  #   level: "beginner"       # beginner, intermediate, advanced
+  #   tags: []                # 例如 ["moguls", "powder", "family-friendly"]
+  #   description: ""
+  #   notes: ""
+pricing:
+  last_verified: ""           # YYYY-MM-DD，價格資訊的最後確認日期
+  ticket_types: []            # 票種明細
+    # - type: "1-day"         # 票種，例如 1-day, 4-hour, night
+    #   adult: null
+    #   senior: null
+    #   child: null
+    #   notes: "價格單位為日圓 (JPY)"
+rental:
+  last_verified: ""           # YYYY-MM-DD，租借資訊的最後確認日期
+  items: []                   # 租借品項
+    # - item: "Ski Set"
+    #   adult_price: null
+    #   child_price: null
+    #   notes: ""
+  notes: ""                   # 租借相關備註
+transportation:
+  domestic:
+    shinkansen: []            # {from, to, duration_minutes, notes}
+    bus: []                   # {route, duration_minutes, notes}
+    self_drive: []            # {route, duration_minutes, notes}
+  international:
+    airports: []              # {airport_code, transfer_options, notes}
+  remarks: ""                 # 交通的綜合備註
+content_sources:
+  - ""                        # 資料來源 URL 或文件路徑
+notes: ""                     # 關於此筆資料的整體備註

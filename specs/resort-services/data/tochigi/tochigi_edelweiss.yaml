@@ -1,0 +1,94 @@
+resort_id: "tochigi_edelweiss"
+names:
+  zh: "エーデルワイススキーリゾート"
+  en: "Edelweiss Ski Resort"
+  ja: "エーデルワイススキーリゾート"
+country_code: "JP"
+region: "Tochigi Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.925031
+  lng: 139.748848
+season:
+  estimated_open: "2024-12-21"
+  estimated_close: "2025-03-30"
+official_site: "https://edelsnow.com/"
+description:
+  highlights:
+    - "家庭滑雪天堂"
+    - "人潮稀少"
+    - "高CP值"
+    - "溫泉"
+  tagline: "日光地區靜謐的家庭滑雪天堂，享受無壓力的滑雪氛圍。"
+amenities:
+  - "Onsen"
+  - "Kids Park"
+snow_stats:
+  lifts: 5
+  courses_total: 10
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.30
+  longest_run: 1.8
+  vertical_drop: 280
+  night_ski: false
+  notes: "雪場每週三為固定休息日。"
+courses:
+  - name: "Family Gelande (ファミリーゲレンデ)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "gentle-slope"]
+    description: "極度平緩寬闊的雪道，是兒童滑雪初體驗的絕佳場所。"
+    notes: ""
+  - name: "Center Course (センターコース)"
+    level: "intermediate"
+    tags: ["cruising"]
+    description: "雪場主要滑道之一，地形多變，適合中級滑雪者。"
+    notes: ""
+  - name: "Dynamic Course (ダイナミックコース)"
+    level: "advanced"
+    tags: ["steep"]
+    description: "沿主纜車線下的高級雪道，最大斜度30度。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (weekday)"
+      adult: 3500
+      child: 3000
+      senior: 3000
+      notes: ""
+    - type: "1-day (holiday)"
+      adult: 5400
+      child: 3900
+      senior: 4800
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 5300
+      child_price: 3500
+      notes: ""
+  notes: "場內及周邊皆有租賃店。"
+transportation:
+  domestic:
+    train:
+      - from: "Tokyo"
+        to: "Kinugawa-Onsen Station"
+        duration_minutes: 120
+        notes: "搭乘東武鐵道。"
+    bus:
+      - route: "Kinugawa-Onsen Station → Edelweiss Ski Resort"
+        duration_minutes: 45
+        notes: "免費接駁巴士，僅限週末假日且需預約。"
+    self_drive:
+      - route: "Nikko-Utsunomiya Expressway → Imaichi IC"
+        duration_minutes: 60
+        notes: "交流道出口後約60分鐘車程，停車免費。"
+  international:
+    airports: []
+  remarks: "平日無公共交通，主要為自駕型雪場。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://edelsnow.com/"
+notes: "以其稀少的人潮和高性價比的平日價格聞名，但需注意週三固定休息。"

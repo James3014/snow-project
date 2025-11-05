@@ -1,0 +1,925 @@
+openapi: 3.1.0
+info:
+  title: SkiDIY User Core Service
+  description: Manages user profiles, preferences, and behavior events for the SkiDIY
+    platform.
+  version: 1.0.0
+paths:
+  /users/:
+    get:
+      tags:
+      - User Profiles
+      summary: Read Users
+      operationId: read_users_users__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfile'
+                title: Response Read Users Users  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - User Profiles
+      summary: Create User
+      operationId: create_user_users__post
+      parameters:
+      - name: X-Actor-Id
+        in: header
+        required: false
+        schema:
+          type: string
+          default: system
+          title: X-Actor-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/{user_id}:
+    get:
+      tags:
+      - User Profiles
+      summary: Read User
+      operationId: read_user_users__user_id__get
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - User Profiles
+      summary: Update User Profile
+      operationId: update_user_profile_users__user_id__put
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      - name: X-Actor-Id
+        in: header
+        required: false
+        schema:
+          type: string
+          default: system
+          title: X-Actor-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - User Profiles
+      summary: Deactivate User Profile
+      operationId: deactivate_user_profile_users__user_id__delete
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      - name: X-Actor-Id
+        in: header
+        required: false
+        schema:
+          type: string
+          default: system
+          title: X-Actor-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/{user_id}/merge:
+    post:
+      tags:
+      - User Profiles
+      summary: Merge User Profile
+      operationId: merge_user_profile_users__user_id__merge_post
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      - name: X-Actor-Id
+        in: header
+        required: false
+        schema:
+          type: string
+          default: system
+          title: X-Actor-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserMergeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /events/:
+    post:
+      tags:
+      - Behavior Events
+      summary: Create Event For User
+      operationId: create_event_for_user_events__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BehaviorEventCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BehaviorEvent'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /events/by-user/{user_id}:
+    get:
+      tags:
+      - Behavior Events
+      summary: Read Events For User
+      operationId: read_events_for_user_events_by_user__user_id__get
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          title: Limit
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/EventSortField'
+          - type: 'null'
+          description: 排序欄位，必填，可選值：occurred_at、recorded_at。
+          title: Sort By
+        description: 排序欄位，必填，可選值：occurred_at、recorded_at。
+      - name: order
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortOrder'
+          description: 排序方向，可選 asc 或 desc，預設 desc。
+          default: desc
+        description: 排序方向，可選 asc 或 desc，預設 desc。
+      - name: source_project
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: 依事件來源專案過濾，可傳入多值。
+          title: Source Project
+        description: 依事件來源專案過濾，可傳入多值。
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BehaviorEvent'
+                title: Response Read Events For User Events By User  User Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/{user_id}/preferences:
+    get:
+      tags:
+      - Notification Preferences
+      summary: Read Preferences For User
+      operationId: read_preferences_for_user_users__user_id__preferences_get
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationPreference'
+                title: Response Read Preferences For User Users  User Id  Preferences
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Notification Preferences
+      summary: Upsert Preference For User
+      operationId: upsert_preference_for_user_users__user_id__preferences_put
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      - name: X-Actor-Id
+        in: header
+        required: false
+        schema:
+          type: string
+          default: system
+          title: X-Actor-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationPreferenceCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /health:
+    get:
+      summary: Health Check
+      description: Provides a simple health check endpoint to verify the service is
+        running.
+      operationId: health_check_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    BehaviorEvent:
+      properties:
+        source_project:
+          type: string
+          title: Source Project
+        event_type:
+          type: string
+          title: Event Type
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+        version:
+          type: integer
+          title: Version
+          default: 1
+        schema_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Schema Url
+        occurred_at:
+          type: string
+          format: date-time
+          title: Occurred At
+        event_id:
+          type: string
+          format: uuid4
+          title: Event Id
+        user_id:
+          type: string
+          format: uuid4
+          title: User Id
+        recorded_at:
+          type: string
+          format: date-time
+          title: Recorded At
+      type: object
+      required:
+      - source_project
+      - event_type
+      - payload
+      - occurred_at
+      - event_id
+      - user_id
+      - recorded_at
+      title: BehaviorEvent
+    BehaviorEventCreate:
+      properties:
+        source_project:
+          type: string
+          title: Source Project
+        event_type:
+          type: string
+          title: Event Type
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+        version:
+          type: integer
+          title: Version
+          default: 1
+        schema_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Schema Url
+        occurred_at:
+          type: string
+          format: date-time
+          title: Occurred At
+        user_id:
+          type: string
+          format: uuid4
+          title: User Id
+      type: object
+      required:
+      - source_project
+      - event_type
+      - payload
+      - occurred_at
+      - user_id
+      title: BehaviorEventCreate
+    EventSortField:
+      type: string
+      enum:
+      - occurred_at
+      - recorded_at
+      title: EventSortField
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    LegalConsent:
+      properties:
+        privacy_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Privacy Version
+        marketing_opt_in:
+          type: boolean
+          title: Marketing Opt In
+          default: false
+        consented_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Consented At
+      type: object
+      title: LegalConsent
+    LocaleProfile:
+      properties:
+        country_code:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Country Code
+        local_identifier:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Local Identifier
+        verification_status:
+          $ref: '#/components/schemas/LocaleVerificationStatus'
+          default: unverified
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+      type: object
+      required:
+      - country_code
+      title: LocaleProfile
+    LocaleVerificationStatus:
+      type: string
+      enum:
+      - unverified
+      - pending
+      - verified
+      title: LocaleVerificationStatus
+    NotificationFrequency:
+      type: string
+      enum:
+      - immediate
+      - daily
+      - weekly
+      - monthly
+      title: NotificationFrequency
+    NotificationPreference:
+      properties:
+        channel:
+          type: string
+          title: Channel
+        topic:
+          type: string
+          title: Topic
+        status:
+          $ref: '#/components/schemas/NotificationStatus'
+        frequency:
+          $ref: '#/components/schemas/NotificationFrequency'
+          default: immediate
+        audited_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audited By
+        consent_source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Consent Source
+        consent_recorded_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Consent Recorded At
+        user_id:
+          type: string
+          format: uuid4
+          title: User Id
+        last_updated_at:
+          type: string
+          format: date-time
+          title: Last Updated At
+      type: object
+      required:
+      - channel
+      - topic
+      - status
+      - user_id
+      - last_updated_at
+      title: NotificationPreference
+    NotificationPreferenceCreate:
+      properties:
+        channel:
+          type: string
+          title: Channel
+        topic:
+          type: string
+          title: Topic
+        status:
+          $ref: '#/components/schemas/NotificationStatus'
+        frequency:
+          $ref: '#/components/schemas/NotificationFrequency'
+          default: immediate
+        audited_by:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audited By
+        consent_source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Consent Source
+        consent_recorded_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Consent Recorded At
+      type: object
+      required:
+      - channel
+      - topic
+      - status
+      title: NotificationPreferenceCreate
+    NotificationStatus:
+      type: string
+      enum:
+      - opt-in
+      - opt-out
+      - paused
+      title: NotificationStatus
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: SortOrder
+    UserMergeRequest:
+      properties:
+        duplicate_user_id:
+          type: string
+          format: uuid4
+          title: Duplicate User Id
+      type: object
+      required:
+      - duplicate_user_id
+      title: UserMergeRequest
+    UserProfile:
+      properties:
+        preferred_language:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Preferred Language
+        experience_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Experience Level
+        roles:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Roles
+          default: []
+        coach_cert_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coach Cert Level
+        bio:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bio
+        preferred_resorts:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Preferred Resorts
+        teaching_languages:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Teaching Languages
+        legal_consent:
+          anyOf:
+          - $ref: '#/components/schemas/LegalConsent'
+          - type: 'null'
+        audit_log:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Audit Log
+        locale_profiles:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LocaleProfile'
+            type: array
+          - type: 'null'
+          title: Locale Profiles
+        status:
+          $ref: '#/components/schemas/UserStatus'
+          default: active
+        user_id:
+          type: string
+          format: uuid4
+          title: User Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - user_id
+      - created_at
+      - updated_at
+      title: UserProfile
+    UserProfileCreate:
+      properties:
+        preferred_language:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Preferred Language
+        experience_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Experience Level
+        roles:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Roles
+          default: []
+        coach_cert_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coach Cert Level
+        bio:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bio
+        preferred_resorts:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Preferred Resorts
+        teaching_languages:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Teaching Languages
+        legal_consent:
+          anyOf:
+          - $ref: '#/components/schemas/LegalConsent'
+          - type: 'null'
+        audit_log:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Audit Log
+        locale_profiles:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LocaleProfile'
+            type: array
+          - type: 'null'
+          title: Locale Profiles
+        status:
+          $ref: '#/components/schemas/UserStatus'
+          default: active
+        legacy_ids:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Legacy Ids
+      type: object
+      title: UserProfileCreate
+    UserProfileUpdate:
+      properties:
+        preferred_language:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Preferred Language
+        experience_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Experience Level
+        roles:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Roles
+          default: []
+        coach_cert_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coach Cert Level
+        bio:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bio
+        preferred_resorts:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Preferred Resorts
+        teaching_languages:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Teaching Languages
+        legal_consent:
+          anyOf:
+          - $ref: '#/components/schemas/LegalConsent'
+          - type: 'null'
+        audit_log:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Audit Log
+        locale_profiles:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LocaleProfile'
+            type: array
+          - type: 'null'
+          title: Locale Profiles
+        status:
+          $ref: '#/components/schemas/UserStatus'
+          default: active
+      type: object
+      title: UserProfileUpdate
+    UserStatus:
+      type: string
+      enum:
+      - active
+      - inactive
+      - merged
+      title: UserStatus
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

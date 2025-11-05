@@ -1,0 +1,99 @@
+resort_id: "yuzawa_naspa_ski_garden"
+names:
+  zh: "NASPA滑雪花園"
+  en: "NASPA Ski Garden"
+  ja: "NASPAスキーガーデン"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.926483
+  lng: 138.808487
+season:
+  estimated_open: "2024-12-20"
+  estimated_close: "2025-04-06"
+official_site: "https://naspa.co.jp/ski/"
+description:
+  highlights:
+    - "僅限滑雪者 (Skiers-Only)"
+    - "家庭友善"
+    - "安全"
+    - "Pingu合作"
+  tagline: "專為傳統滑雪者、家庭及重視寧靜和高品質服務體驗客群的專屬避風港。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Pool"
+snow_stats:
+  lifts: 5
+  courses_total: 8
+  beginner_ratio: 0.40
+  intermediate_ratio: 0.50
+  advanced_ratio: 0.10
+  longest_run: 2.2
+  vertical_drop: 260
+  night_ski: false
+  notes: "雪場完全禁止單板滑雪，營造了更安全的滑雪環境。"
+courses:
+  - name: "F Course"
+    level: "beginner"
+    tags: ["beginner-friendly"]
+    description: "坡度極為平緩，非常適合首次上板的滑雪者。"
+    notes: ""
+  - name: "H Course"
+    level: "beginner"
+    tags: ["long-run", "cruising"]
+    description: "長達1,600米的蜿蜒雪道，讓初學者也能享受到長距離滑行的樂趣。"
+    notes: ""
+  - name: "G Course"
+    level: "intermediate"
+    tags: ["wide", "moguls"]
+    description: "最為寬闊的中級雪道，並設有波浪地形增加趣味性。"
+    notes: ""
+  - name: "C/D Courses"
+    level: "advanced"
+    tags: ["un-groomed", "steep", "moguls"]
+    description: "未經壓雪的高級雪道，最大坡度可達38度，充滿挑戰。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 7000
+      child: 4800
+      notes: "成人為中學生以上，兒童為小學生以下。"
+    - type: "5-hour"
+      adult: 5800
+      child: 3800
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski Set"
+      adult_price: 6000
+      child_price: 5000
+      notes: ""
+  notes: "飯店住客可享折扣。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Echigo-Yuzawa Station"
+        duration_minutes: 80
+        notes: "搭乘上越新幹線。"
+    bus:
+      - route: "Echigo-Yuzawa Station → NASPA New Otani Hotel"
+        duration_minutes: 5
+        notes: "有免費接駁巴士。"
+    self_drive:
+      - route: "Kan-Etsu Expressway → Yuzawa IC"
+        duration_minutes: 5
+        notes: "交流道出口後約5分鐘車程。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://naspa.co.jp/ski/"
+notes: "以其『僅限滑雪者』的政策而聞名，與NASPA新大谷飯店深度整合。"

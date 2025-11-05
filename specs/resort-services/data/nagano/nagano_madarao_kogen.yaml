@@ -1,0 +1,107 @@
+resort_id: "nagano_madarao_kogen"
+names:
+  zh: "斑尾高原滑雪場"
+  en: "Madarao Mountain Resort"
+  ja: "斑尾高原スキー場"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.85250
+  lng: 138.28972
+season:
+  estimated_open: "2024-12-14"
+  estimated_close: "2025-03-30"
+official_site: "http://www.madarao.jp/"
+description:
+  highlights:
+    - "Madapow粉雪"
+    - "樹林滑雪"
+    - "非壓雪"
+    - "家庭友善"
+  tagline: "日本樹林滑道數量第一的粉雪聖地，60%的區域為非壓雪。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Night Skiing"
+snow_stats:
+  lifts: 11
+  courses_total: 31
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.35
+  advanced_ratio: 0.35
+  longest_run: 2.5
+  vertical_drop: 440
+  night_ski: true
+  notes: "與Tangram Ski Circus相連，可購買共通券。"
+courses:
+  - name: "SAWA - Natural Pipe"
+    level: "advanced"
+    tags: ["powder", "tree-run", "natural-pipe"]
+    description: "利用天然沢狀地形形成的U型管，可在兩側雪牆上進行各種動作。"
+    notes: ""
+  - name: "NINJA"
+    level: "advanced"
+    tags: ["powder", "tree-run", "jump"]
+    description: "設有高達7公尺的木製跳台，是高手展現技巧的舞台。"
+    notes: ""
+  - name: "Powder Wave II"
+    level: "advanced"
+    tags: ["powder", "long-run"]
+    description: "長達1,500公尺的長距離粉雪道，充滿自然起伏的地形。"
+    notes: ""
+  - name: "Crystal Bowl"
+    level: "advanced"
+    tags: ["powder", "steep", "bowl"]
+    description: "位於雪場中央的碗狀地形，雪質極佳，是體驗『沒頂』感覺的絕佳地點。"
+    notes: ""
+  - name: "Kamoshika Course"
+    level: "beginner"
+    tags: ["tree-run", "family-friendly", "beginner-friendly"]
+    description: "家庭冒險區的一部分，坡度平緩，是樹林滑雪新手的理想入門之選。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 6500
+      child: 3500
+      senior: 6000
+      notes: "此為斑尾單山票價，另有與Tangram的共通券。"
+    - type: "2-day"
+      adult: 11500
+      child: 6000
+      senior: 10500
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Standard Ski/Snowboard Set"
+      adult_price: 7400
+      child_price: 5900
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 5200
+      child_price: 4400
+      notes: ""
+  notes: "由Shirakaba Rental提供，設有專門的Powder Station。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Iiyama Station"
+        duration_minutes: 110
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Iiyama Station → Madarao Kogen"
+        duration_minutes: 30
+        notes: "有接駁巴士服務。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "http://www.madarao.jp/"
+  - "https://en.wikipedia.org/wiki/Madarao_Mountain_Resort"
+notes: "以其豐富的樹林滑雪道和非壓雪區域聞名，是粉雪愛好者的天堂。"

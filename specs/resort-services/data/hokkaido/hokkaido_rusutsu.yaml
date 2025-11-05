@@ -1,0 +1,84 @@
+resort_id: "hokkaido_rusutsu"
+names:
+  zh: "留壽都度假村"
+  en: "Rusutsu Resort"
+  ja: "ルスツリゾート"
+country_code: "JP"
+region: "Hokkaido"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 42.74750
+  lng: 140.89639
+season:
+  estimated_open: "2024-11-30"
+  estimated_close: "2025-03-31"
+official_site: "https://rusutsu.com/"
+description:
+  highlights:
+    - "北海道最大單一度假村"
+    - "粉雪天堂"
+    - "家庭友善"
+    - "樹林滑雪"
+  tagline: "北海道規模最大的單一度假村，一個提供全年景點的大型多功能目的地。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Indoor Wave Pool"
+  - "Night Skiing"
+snow_stats:
+  lifts: 18
+  courses_total: 37
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.30
+  longest_run: 3.5
+  vertical_drop: 594
+  night_ski: true
+  notes: "以其極乾的『香檳粉雪』和寬鬆的林間滑雪政策聞名。"
+courses:
+  - name: "West Mountain"
+    level: "beginner"
+    tags: ["beginner-friendly", "family-friendly"]
+    description: "家庭和初學者的活動中心，擁有寬闊平緩的雪道。"
+    notes: ""
+  - name: "East Mountain"
+    level: "intermediate"
+    tags: ["cruising"]
+    description: "作為通往伊索拉山的橋樑，為中級滑雪者提供了絕佳的地形。"
+    notes: ""
+  - name: "Mt. Isola"
+    level: "advanced"
+    tags: ["powder", "tree-run", "bowl"]
+    description: "粉雪愛好者的聖地，擁有廣闊且易於進入的林間滑雪區和粉雪碗狀坡。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 14500
+      notes: "此為旺季窗口售價，線上預購或淡季有折扣。"
+    - type: "25-hour"
+      adult: 33000
+      notes: "可在雪季內不連續使用。"
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "提供Salomon和Atomic品牌的裝備。"
+transportation:
+  domestic:
+    bus:
+      - route: "New Chitose Airport (CTS) → Rusutsu Resort"
+        duration_minutes: 120
+        notes: "有多家巴士公司提供直達服務，需預約。"
+      - route: "Sapporo → Rusutsu Resort"
+        duration_minutes: 120
+        notes: "有免費接駁車，需預約。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://rusutsu.com/"
+  - "https://en.wikipedia.org/wiki/Rusutsu_Resort"
+notes: "Epic Pass合作夥伴，為持卡人提供連續5天的滑雪權益。"

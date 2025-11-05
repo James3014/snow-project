@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=skidiy
+      - POSTGRES_PASSWORD=skidiy
+      - POSTGRES_DB=user_core_db
+    ports:
+      - "5432:5432"
+
+  user-core:
+    build:
+      context: .
+      dockerfile: platform/user_core/Dockerfile
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+    environment:
+      - USER_CORE_DB_URL=postgresql://skidiy:skidiy@db:5432/user_core_db
+
+  resort-api:
+    build:
+      context: .
+      dockerfile: resort_api/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./resort_api/app:/app/app
+      - ./specs:/app/specs
+    environment:
+      - USER_CORE_API_URL=http://user-core:8001
+
+  snowbuddy-matching:
+    build:
+      context: .
+      dockerfile: snowbuddy_matching/Dockerfile
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./snowbuddy_matching/app:/app/app
+    environment:
+      - USER_CORE_API_URL=http://user-core:8001
+      - RESORT_SERVICES_API_URL=http://resort-api:8000
+      - REDIS_URL=redis://redis:6379
+
+volumes:
+  postgres_data:
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"

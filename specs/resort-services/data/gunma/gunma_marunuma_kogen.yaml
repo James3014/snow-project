@@ -1,0 +1,102 @@
+resort_id: "gunma_marunuma_kogen"
+names:
+  zh: "丸沼高原滑雪場"
+  en: "Marunuma Kogen Ski Resort"
+  ja: "丸沼高原スキー場"
+country_code: "JP"
+region: "Gunma Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.81389
+  lng: 139.33333
+season:
+  estimated_open: "2024-11-29"
+  estimated_close: "2025-05-06"
+official_site: "https://www.marunuma.jp/winter/en/"
+description:
+  highlights:
+    - "高海拔粉雪"
+    - "4公里長滑道"
+    - "超長雪季"
+    - "地形公園"
+  tagline: "在關東地區體驗可與北海道相媲美的頂級高山雪況。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Terrain Park"
+snow_stats:
+  lifts: 8
+  courses_total: 20
+  beginner_ratio: 0.45
+  intermediate_ratio: 0.45
+  advanced_ratio: 0.10
+  longest_run: 4.0
+  vertical_drop: 600
+  night_ski: false
+  notes: "以其高達2,000米的山頂海拔和優質的『超細粉雪』聞名。"
+courses:
+  - name: "Karakura Course (からくらコース)"
+    level: "intermediate"
+    tags: ["cruising", "scenic-view"]
+    description: "從山頂出發的初始雪道，視野開闊，雪質極佳。"
+    notes: ""
+  - name: "Silver Course (シルバーコース)"
+    level: "advanced"
+    tags: ["steep", "un-groomed", "moguls"]
+    description: "長755公尺、最大坡度32度的未壓雪猛獸級雪道。"
+    notes: ""
+  - name: "Blue Course (ブルーコース)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide"]
+    description: "位於山腳的寬闊練習雪道，坡度穩定在9度。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (weekday)"
+      adult: 5500
+      student: 5500
+      senior: 5500
+      child: 2500
+      notes: ""
+    - type: "1-day (holiday)"
+      adult: 6000
+      student: 5500
+      senior: 5500
+      child: 2500
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 5500
+      child_price: 4500
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 4000
+      child_price: 2500
+      notes: ""
+  notes: "場內及周邊皆有租賃店。"
+transportation:
+  domestic:
+    bus:
+      - route: "Shinjuku → Marunuma Kogen"
+        duration_minutes: null
+        notes: "季節性直達巴士『かたしなスノーエクスプレス号』。"
+    shinkansen:
+      - from: "Tokyo"
+        to: "Jomo-Kogen Station"
+        duration_minutes: 75
+        notes: "搭乘上越新幹線後需轉乘當地巴士。"
+    self_drive:
+      - route: "Kan-Etsu Expressway → Numata IC"
+        duration_minutes: 50
+        notes: "交流道出口後需行駛約50分鐘山路，冬季路況具挑戰性。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.marunuma.jp/winter/en/"
+notes: "交通是其最大挑戰，但回報是卓越的雪質和相對不擁擠的環境。"

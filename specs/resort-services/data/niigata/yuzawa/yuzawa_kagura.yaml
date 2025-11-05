@@ -1,0 +1,84 @@
+resort_id: "yuzawa_kagura"
+names:
+  zh: "神樂滑雪場"
+  en: "Kagura Ski Resort"
+  ja: "かぐらスキー場"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.892908
+  lng: 138.775558
+season:
+  estimated_open: "2024-11-23"
+  estimated_close: "2025-05-18"
+official_site: "https://www.princehotels.co.jp/ski/kagura/"
+description:
+  highlights:
+    - "粉雪天堂"
+    - "超長雪季"
+    - "野雪"
+    - "三大區域"
+  tagline: "由三個區域組成的廣闊粉雪天堂，享受日本最長的雪季之一。"
+amenities:
+  - "Onsen (nearby)"
+  - "Ski-in/Ski-out Hotel (Wada Goya)"
+snow_stats:
+  lifts: 24
+  courses_total: 23
+  beginner_ratio: 0.35
+  intermediate_ratio: 0.35
+  advanced_ratio: 0.30
+  longest_run: 6.0
+  vertical_drop: 1225
+  night_ski: false
+  notes: "以其卓越的粉雪品質和超長的雪季聞名。"
+courses:
+  - name: "Kagura Main Slope (かぐらメインゲレンデ)"
+    level: "intermediate"
+    tags: ["powder", "cruising"]
+    description: "位於神樂區，是體驗優質粉雪的代表性中級雪道。"
+    notes: ""
+  - name: "Tashiro Area"
+    level: "beginner"
+    tags: ["beginner-friendly", "scenic-view"]
+    description: "田代區以風景如畫、坡度平緩著稱，適合初學者。"
+    notes: ""
+  - name: "Mitsumata Area"
+    level: "beginner"
+    tags: ["family-friendly"]
+    description: "三俣區設有多樣化的設施，適合家庭活動。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 7200
+      child: 0
+      notes: "小學生及以下免費。"
+    - type: "Half-day"
+      adult: 5000
+      child: 0
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "三俣站附近的Kagura Powder Station提供專業的粉雪裝備租賃。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Echigo-Yuzawa Station"
+        duration_minutes: 80
+        notes: "搭乘上越新幹線。"
+    bus:
+      - route: "Echigo-Yuzawa Station → Kagura"
+        duration_minutes: 20
+        notes: "有路線巴士前往三俣站。"
+  international:
+    airports: []
+  remarks: "與苗場滑雪場由龍纜車相連。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.princehotels.co.jp/ski/kagura/"
+notes: "由神樂、三俣、田代三個區域組成，是日本最大的滑雪場之一。"

@@ -1,0 +1,102 @@
+resort_id: "gunma_minakami_kogen"
+names:
+  zh: "水上高原滑雪度假村"
+  en: "Minakami Kogen Ski Resort"
+  ja: "水上高原スキーリゾート"
+country_code: "JP"
+region: "Gunma Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.854654
+  lng: 139.076318
+season:
+  estimated_open: "2024-12-19"
+  estimated_close: "2025-03-27"
+official_site: "https://www.minakami-ski.jp/"
+description:
+  highlights:
+    - "家庭樂園"
+    - "狗拉雪橇"
+    - "寶可夢雪祭"
+    - "溫泉"
+  tagline: "專為家庭打造的日本雪國冬季仙境，提供豐富的非滑雪活動。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Dog Sledding"
+  - "Snowmobiling"
+  - "Night Skiing"
+snow_stats:
+  lifts: 4
+  courses_total: 12
+  beginner_ratio: 0.40
+  intermediate_ratio: 0.30
+  advanced_ratio: 0.30
+  longest_run: 3.0
+  vertical_drop: 398
+  night_ski: true
+  notes: "以其豐富的雪上活動聞名，是家庭度假的首選。"
+courses:
+  - name: "Sui Sui Family Course (すいすいファミリーコース)"
+    level: "beginner"
+    tags: ["beginner-friendly", "family-friendly"]
+    description: "專為新手設計的練習坡道。"
+    notes: ""
+  - name: "Kumabokkosu Course (熊ぼっこすコース)"
+    level: "advanced"
+    tags: ["un-groomed", "powder", "moguls"]
+    description: "一條未經壓雪的滑雪道，上面有天然形成的雪丘和粉雪。"
+    notes: ""
+  - name: "Forest Exploration Course (林間きらめきコース)"
+    level: "intermediate"
+    tags: ["tree-lined", "cruising"]
+    description: "穿梭於落葉松和白樺林之間的林間雪道。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 5200
+      student: 4600
+      senior: 4600
+      child: 3300
+      notes: ""
+    - type: "Family 1-day"
+      adult: 6000
+      child: 7900
+      notes: "包含成人1名+兒童1名或成人1名+兒童2名等多種組合。"
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Full Set (Gear + Wear)"
+      adult_price: 7000
+      child_price: 5000
+      notes: ""
+    - item: "Gear Set (Skis/Board + Boots)"
+      adult_price: 4500
+      child_price: 3000
+      notes: ""
+  notes: "安全帽免費租借（需押金）。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Jomo-Kogen Station"
+        duration_minutes: 80
+        notes: "搭乘上越新幹線。"
+    bus:
+      - route: "Jomo-Kogen Station → Minakami Kogen Hotel 200"
+        duration_minutes: 60
+        notes: "免費接駁巴士，必須提前預約。"
+    self_drive:
+      - route: "Kan-Etsu Expressway → Minakami IC"
+        duration_minutes: null
+        notes: ""
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.minakami-ski.jp/"
+notes: "以其寶可夢主題兒童樂園和本州唯一的狗拉雪橇體驗為特色。"

@@ -1,0 +1,90 @@
+resort_id: "hakuba_iwatake"
+names:
+  zh: "白馬岩岳滑雪場"
+  en: "Hakuba Iwatake Snow Field"
+  ja: "白馬岩岳スノーフィールド"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.716652
+  lng: 137.859097
+season:
+  estimated_open: "2024-12-13"
+  estimated_close: "2025-03-30"
+official_site: "https://iwatake-mountain-resort.com/"
+description:
+  highlights:
+    - "360度全景"
+    - "山岳度假村"
+    - "HAKUBA MOUNTAIN HARBOR"
+    - "THE CITY BAKERY"
+  tagline: "坐擁白馬谷靈魂的360度全景視野。"
+amenities:
+  - "Onsen"
+  - "Kids Park"
+  - "Yoo-Hoo! SWING"
+snow_stats:
+  lifts: 12
+  courses_total: 26
+  beginner_ratio: 0.30
+  intermediate_ratio: 0.50
+  advanced_ratio: 0.20
+  longest_run: 3.3
+  vertical_drop: 539
+  night_ski: false
+  notes: "以其山頂的360度全景視野和HAKUBA MOUNTAIN HARBOR而聞名。"
+courses:
+  - name: "South Slope"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "scenic-view"]
+    description: "位於山頂的極致寬闊緩坡，被譽為白馬地區初學者的首選。"
+    notes: ""
+  - name: "Sunny Valley Course"
+    level: "intermediate"
+    tags: ["long-run", "cruising"]
+    description: "全長3,300米的長距離雪道，提供了持久而愉悅的滑行體驗。"
+    notes: ""
+  - name: "DANGAN"
+    level: "advanced"
+    tags: ["steep"]
+    description: "雪場最陡峭的壓雪道，最大坡度35度。"
+    notes: ""
+  - name: "VIEW A"
+    level: "advanced"
+    tags: ["powder", "un-groomed", "bowl"]
+    description: "位於岩岳後山碗型雪區的非壓雪粉雪道，以其劇烈的地形起伏和溝壑地形著稱。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (online)"
+      adult: 5900
+      child: 3600
+      notes: ""
+    - type: "2-day (online)"
+      adult: 10500
+      child: 6200
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "山麓區域有多家雪具店，如Spicy Rentals和Woody Rental。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station"
+        duration_minutes: 100
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Nagano Station → Hakuba Iwatake"
+        duration_minutes: 90
+        notes: "搭乘Alpico特快巴士。"
+  international:
+    airports: []
+  remarks: "白馬谷內有接駁巴士，持有白馬谷通票可免費搭乘。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://iwatake-mountain-resort.com/"
+notes: "以其山頂的HAKUBA MOUNTAIN HARBOR和THE CITY BAKERY成為四季皆宜的山岳度假村。"

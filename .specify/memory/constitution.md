@@ -1,50 +1,42 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# DIYSKI Platform Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Data-First Pragmatism
+以資料結構為起點：先釐清「滑雪使用者帳號」的主檔與子紀錄（基本資料、歷史行為、推播偏好、雪場/雪伴/裝備等）如何關聯，確保任何功能都能追溯到可靠的資料真實來源。
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Zero Special-Case Thinking
+消除多餘條件判斷：遇到分支邏輯，優先調整資料模型或流程串接，讓特殊情況回歸常態案例，再考慮寫 if/else。
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Never Break Userspace
+維持向後兼容：既有教練與學生的工作流程不可被破壞；若要改動既有資料結構或 API，必須提供遷移計畫與回滾方案。
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Ship Reality-Backed Value
+只為真實痛點投入：先用實際使用者回饋或營運數據驗證需求的必要性，再與開發複雜度相比，避免過度設計。
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Ruthless Simplicity
+保持實作短小精悍：函數、流程、文件都應聚焦一個目的，避免超過三層縮排、避免不必要的抽象；簡單可維護比「炫技」更重要。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Domain Guardrails
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- **主索引**：每位使用者以 `User ID` 為核心鍵，其他資料表透過此鍵串聯。
+- **基本資料模組**：暱稱、語言、滑雪經驗、角色、教練資質、擅長雪場、教學語言等欄位須分模組儲存，支援教練/學生雙重身份。
+- **行為紀錄**：所有操作類型（新增空堂、滑雪紀錄、裝備檢查等）需具備時間戳，統一事件格式以便追蹤。
+- **服務偏好**：推播設定、雪伴媒合偏好、交通查詢歷史等需獨立表格，允許依場景分群分析。
+- **延伸模組**：雪場紀錄、裝備檢查、雪具買賣、知識測驗、排課等資料要明確標記角色（教練/學生）與用途（個人/教學），支援後續推薦邏輯。
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Delivery Workflow
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+1. **需求確認**：以 Linus 的三問檢查（真問題？有更簡單方案？會破壞什麼？），並用中文敘述確認理解。
+2. **資料優先審查**：先畫出資料流向與擁有者，再決定模組邊界；沒有資料共識不得進入細部實作。
+3. **方案校驗**：每個決策須列出「避免了哪些特殊情況」「是否破壞既有流程」「怎麼回應真實需求」。
+4. **實作守則**：保持函數短小、測試先行、記錄必要的遷移與回滾策略。
+5. **評審輸出**：交付前自檢「品味評分」「致命問題」「改進方向」，沿用 Linus 溝通模板確保評審一致性。
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- 此憲章優先於其他流程文件，任何偏離都需明確理由與補救措施。
+- 修訂需經資料模型審查、向後相容性評估、實際需求證據佐證，並同步更新相關指引（如 `LINUS_GUIDE.md`）。
+- 專案維護者負責定期檢視 `.codex` 與 `.specify` 內容，確保工具腳本符合上述原則。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.1 | **Ratified**: 2025-10-14 | **Last Amended**: 2025-10-14

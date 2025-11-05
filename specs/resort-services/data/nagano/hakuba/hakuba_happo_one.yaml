@@ -1,0 +1,104 @@
+resort_id: "hakuba_happo_one"
+names:
+  zh: "白馬八方尾根滑雪場"
+  en: "Hakuba Happo-one Ski Resort"
+  ja: "白馬八方尾根スキー場"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.702528
+  lng: 137.836806
+season:
+  estimated_open: "2024-12-01"
+  estimated_close: "2025-05-06"
+official_site: "https://www.happo-one.jp/"
+description:
+  highlights:
+    - "奧運級挑戰"
+    - "Japow粉雪"
+    - "國際化氛圍"
+    - "長距離滑道"
+  tagline: "在1998年長野奧運賽道上，體驗世界級的挑戰與壯麗。"
+amenities:
+  - "Onsen"
+  - "Kids Park"
+  - "Night Skiing"
+snow_stats:
+  lifts: 27
+  courses_total: 16
+  beginner_ratio: 0.20
+  intermediate_ratio: 0.50
+  advanced_ratio: 0.30
+  longest_run: 8.0
+  vertical_drop: 1071
+  night_ski: true
+  notes: "曾為1998年長野冬奧會高山速降賽主辦地。"
+courses:
+  - name: "Sakka Slope (咲花ゲレンデ)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "gentle-slope", "family-friendly"]
+    description: "公認的最佳新手天堂，擁有寬闊、平緩的雪道和兒童公園。"
+    notes: ""
+  - name: "Nakiyama Slope (名木山ゲレンデ)"
+    level: "beginner"
+    tags: ["beginner-friendly", "night-skiing"]
+    description: "另一個重要的初級區，設有名木山雪地樂園，也是夜間滑雪的場地。"
+    notes: ""
+  - name: "Riesen Slalom Course (リーゼンスラローム)"
+    level: "intermediate"
+    tags: ["long-run", "wide", "cruising"]
+    description: "雪場的招牌路線，全長超過3公里，地形豐富多變，道面寬闊。"
+    notes: ""
+  - name: "Skyline Course (スカイラインコース)"
+    level: "intermediate"
+    tags: ["long-run", "scenic-view"]
+    description: "風景優美的長距離巡航雪道，雪質通常保持得很好。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (online)"
+      adult: 7700
+      child: 3850
+      notes: "兒童為6-17歲。"
+    - type: "2-day (online)"
+      adult: 15300
+      child: 7700
+      notes: ""
+    - type: "Debut Ticket (1-day)"
+      adult: 4500
+      child: 2200
+      notes: "僅限名木山和咲花區域的特定纜車。"
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Standard Ski/Snowboard Set"
+      adult_price: 6500
+      notes: "價格參考自Spicy Rentals。"
+    - item: "Premium Ski/Snowboard Set"
+      adult_price: 9000
+      notes: "價格參考自Spicy Rentals。"
+  notes: "白馬村有多家大型連鎖租賃店如Rhythm Japan, Central Snowsports, Spicy Rentals。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station"
+        duration_minutes: 100
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Nagano Station → Hakuba Happo Bus Terminal"
+        duration_minutes: 90
+        notes: "搭乘Alpico特快巴士。"
+      - route: "Shinjuku → Hakuba Happo Bus Terminal"
+        duration_minutes: 300
+        notes: "有直達高速巴士。"
+  international:
+    airports: []
+  remarks: "白馬谷內有免費接駁巴士（需持白馬谷通票）。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.happo-one.jp/"
+  - "https://en.wikipedia.org/wiki/Hakuba_Happo-one_Winter_Resort"
+notes: "白馬谷的核心滑雪場，以其奧運歷史、巨大規模和挑戰性地形聞名。"

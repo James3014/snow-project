@@ -1,0 +1,100 @@
+resort_id: "hakuba_cortina"
+names:
+  zh: "白馬Cortina滑雪場"
+  en: "Hakuba Cortina Ski Resort"
+  ja: "白馬コルチナスキー場"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.776543
+  lng: 137.888657
+season:
+  estimated_open: "2024-12-14"
+  estimated_close: "2025-03-30"
+official_site: "https://www.hgp.co.jp/cortina/ski/"
+description:
+  highlights:
+    - "粉雪天堂"
+    - "樹林滑雪聖地"
+    - "100%純天然雪"
+    - "自由滑行"
+  tagline: "白馬山谷最北端的粉雪天堂與樹林滑雪聖地。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Night Skiing"
+snow_stats:
+  lifts: 7
+  courses_total: 16
+  beginner_ratio: 0.40
+  intermediate_ratio: 0.30
+  advanced_ratio: 0.30
+  longest_run: 3.5
+  vertical_drop: 530
+  night_ski: true
+  notes: "以其極為開放的非壓雪(off-piste)樹林滑行政策聞名。"
+courses:
+  - name: "Ikenota Gelande (池の田ゲレンデ)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "gentle-slope"]
+    description: "位於飯店正前方的寬闊緩坡，是理想的初學者區域。"
+    notes: ""
+  - name: "Hiedayama Course 2 (稗田山コース2)"
+    level: "advanced"
+    tags: ["steep", "powder", "un-groomed"]
+    description: "雪場的王牌雪道，最大斜度42度，是粉雪愛好者的聖地。"
+    notes: ""
+  - name: "Giant Course (ジャイアントコース)"
+    level: "advanced"
+    tags: ["steep", "un-groomed"]
+    description: "僅在最佳雪況時開放的夢幻雪道，最大斜度37度。"
+    notes: ""
+  - name: "Itadaira Course (板平コース)"
+    level: "advanced"
+    tags: ["moguls", "un-groomed"]
+    description: "坡度穩定的非壓雪雪道，適合進行充滿力量感的滑行。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (Joint with Norikura)"
+      adult: 5800
+      child: 3500
+      senior: 5200
+      notes: "此為與白馬乗鞍溫泉滑雪場的共通券價格。"
+    - type: "4-hour"
+      adult: 5000
+      child: 3000
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 5000
+      child_price: 3500
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 6250
+      child_price: 4750
+      notes: ""
+  notes: "飯店內設有租賃中心。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station"
+        duration_minutes: 100
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Nagano Station → Hakuba Cortina"
+        duration_minutes: 120
+        notes: "搭乘Alpico特快巴士。"
+  international:
+    airports: []
+  remarks: "白馬谷內有接駁巴士，可連接其他雪場。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.hgp.co.jp/cortina/ski/"
+notes: "以其極致的粉雪和自由的樹林滑雪政策聞名，是中高級滑雪者的天堂。"

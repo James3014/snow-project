@@ -1,0 +1,98 @@
+resort_id: "fukushima_inawashiro"
+names:
+  zh: "猪苗代滑雪場"
+  en: "Inawashiro Ski Resort"
+  ja: "猪苗代スキー場"
+country_code: "JP"
+region: "Fukushima Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 37.58139
+  lng: 140.09250
+season:
+  estimated_open: "2024-12-20"
+  estimated_close: "2025-03-23"
+official_site: "https://www.inawashiro-ski.com/"
+description:
+  highlights:
+    - "絕景滑雪場"
+    - "猪苗代湖景"
+    - "高CP值"
+    - "平日免費"
+  tagline: "在壯麗的猪苗代湖全景下，享受無與倫比的高性價比滑雪體驗。"
+amenities:
+  - "Ski-in/Ski-out Hotel"
+  - "Night Skiing"
+snow_stats:
+  lifts: 9
+  courses_total: 18
+  beginner_ratio: 0.40
+  intermediate_ratio: 0.30
+  advanced_ratio: 0.30
+  longest_run: 3.0
+  vertical_drop: 650
+  night_ski: true
+  notes: "以其獨創的『いなスキ！クラブ』會員平日纜車免費政策聞名。"
+courses:
+  - name: "Chuo Line (中央ライン)"
+    level: "intermediate"
+    tags: ["cruising"]
+    description: "適合中級滑雪者享受長距離巡航樂趣的雪道。"
+    notes: ""
+  - name: "Akahani Giant Slalom Course (赤埴大回転コース)"
+    level: "advanced"
+    tags: ["moguls", "un-groomed", "steep"]
+    description: "位於ミネロ區的王牌雪道，以其大面積、不規則的天然饅頭地形聞名。"
+    notes: ""
+  - name: "Hayama Course (葉山コース)"
+    level: "beginner"
+    tags: ["beginner-friendly", "gentle-slope"]
+    description: "坡度僅8-12度的平緩雪道，適合初學者練習。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (Weekday, Member)"
+      adult: 0
+      child: 0
+      notes: "需加入免費的『いなスキ！クラブ』會員。"
+    - type: "1-day (Weekend, Member)"
+      adult: 2800
+      child: 1400
+      notes: "需加入免費的『いなスキ！クラブ』會員。"
+    - type: "1-day (Non-Member)"
+      adult: 5600
+      child: 2800
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 4500
+      child_price: 3600
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 3500
+      child_price: 2500
+      notes: ""
+  notes: "建議提前線上預約以享折扣。"
+transportation:
+  domestic:
+    bus:
+      - route: "Inawashiro Station → Inawashiro Ski Resort"
+        duration_minutes: 15
+        notes: "免費接駁巴士，無需預約。"
+      - route: "Koriyama Station → Inawashiro Ski Resort"
+        duration_minutes: 80
+        notes: "免費接駁巴士，必須提前一日預約。"
+    self_drive:
+      - route: "Ban-etsu Expressway → Inawashiro-Bandaikogen IC"
+        duration_minutes: 10
+        notes: "交流道出口後約10分鐘車程，有2000個免費停車位。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.inawashiro-ski.com/"
+notes: "南向坡面，晴天率高，但午後雪況可能變差。晨間滑雪是體驗最佳雪質的好時機。"

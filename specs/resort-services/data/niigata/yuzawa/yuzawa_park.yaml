@@ -1,0 +1,101 @@
+resort_id: "yuzawa_park"
+names:
+  zh: "湯澤公園滑雪場"
+  en: "Yuzawa Park Resort"
+  ja: "湯沢パークスキー場"
+country_code: "JP"
+region: "Niigata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.926857
+  lng: 138.855754
+season:
+  estimated_open: "2024-12-21"
+  estimated_close: "2025-03-31"
+official_site: "http://www.park-resort.com/"
+description:
+  highlights:
+    - "私房景點"
+    - "人潮稀少"
+    - "家庭友善"
+    - "高CP值"
+  tagline: "越後湯澤靜謐角落的滑雪私房景點，享受無壓力的滑雪體驗。"
+amenities:
+  - "Onsen"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+snow_stats:
+  lifts: 3
+  courses_total: 11
+  beginner_ratio: 0.40
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.20
+  longest_run: 0.58
+  vertical_drop: 210
+  night_ski: false
+  notes: "雪道普遍不長，多數在500米左右，適合初學者反覆練習。"
+courses:
+  - name: "Family Course (ファミリーコース)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "gentle-slope"]
+    description: "飯店正前方的寬闊緩坡，是初學者的理想練習場地。"
+    notes: "由一座老式的單人纜車服務，對新手可能稍具挑戰。"
+  - name: "Skyline Course (スカイラインコース)"
+    level: "beginner"
+    tags: ["cruising"]
+    description: "適合已有初步基礎的初學者進階練習。"
+    notes: ""
+  - name: "Galaxy Course (銀河コース)"
+    level: "beginner"
+    tags: ["tree-lined"]
+    description: "穿梭於美麗杉木林中的林間道，坡度平緩，適合悠閒滑行。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 4500
+      student: 3500
+      senior: 3500
+      child: 2500
+      notes: ""
+    - type: "Half-day"
+      adult: 3500
+      student: 2500
+      senior: 2500
+      child: 2000
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 4500
+      child_price: 3500
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 4000
+      child_price: 3000
+      notes: ""
+  notes: ""
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Echigo-Yuzawa Station"
+        duration_minutes: 80
+        notes: "搭乘上越新幹線。"
+    bus:
+      - route: "Echigo-Yuzawa Station → Yuzawa Park Hotel"
+        duration_minutes: 10
+        notes: "有免費接駁巴士。"
+    self_drive:
+      - route: "Kan-Etsu Expressway → Yuzawa IC"
+        duration_minutes: 6
+        notes: "交流道出口後約6分鐘車程。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "http://www.park-resort.com/"
+notes: "以其稀少的人潮和高性價比聞名，但部分纜車設施較為老舊。"

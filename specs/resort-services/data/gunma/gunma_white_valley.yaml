@@ -1,0 +1,81 @@
+resort_id: "gunma_white_valley"
+names:
+  zh: "群馬White Valley滑雪場"
+  en: "Gunma White Valley Ski Resort"
+  ja: "群馬みなかみホワイトバレースキー場"
+country_code: "JP"
+region: "Gunma Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.79639
+  lng: 138.96111
+season:
+  estimated_open: "2024-12-21"
+  estimated_close: "2025-03-20"
+official_site: "https://www.whitevalley.jp/"
+description:
+  highlights:
+    - "粉雪愛好者的私房景點"
+    - "非壓雪"
+    - "人潮稀少"
+    - "在地感"
+  tagline: "水上地區的粉雪秘密基地，享受無人打擾的滑雪時光。"
+amenities:
+  - "Onsen (nearby)"
+snow_stats:
+  lifts: 2
+  courses_total: 5
+  beginner_ratio: 0.20
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.40
+  longest_run: 1.0
+  vertical_drop: 380
+  night_ski: false
+  notes: "雪場大部分上半部區域在降雪後刻意不壓雪。"
+courses:
+  - name: "Fantasy Course"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide"]
+    description: "位於第1纜車旁的寬闊初學者雪道。"
+    notes: ""
+  - name: "White Heaven Course"
+    level: "intermediate"
+    tags: ["long-run", "scenic-view"]
+    description: "從山頂延伸而下，是雪場最長的雪道，可欣賞壯麗雪景。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 5200
+      child: 2700
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Full Set (Gear + Wear)"
+      adult_price: 7000
+      notes: ""
+  notes: ""
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Jomo-Kogen Station"
+        duration_minutes: 75
+        notes: "搭乘上越新幹線後需轉乘當地巴士。"
+    bus:
+      - route: "Minakami Station → White Valley"
+        duration_minutes: 10
+        notes: "有免費接駁巴士，但班次有限。"
+    self_drive:
+      - route: "Kan-Etsu Expressway → Minakami IC"
+        duration_minutes: 15
+        notes: "交流道出口後約7公里。"
+  international:
+    airports: []
+  remarks: "每週三、四為固定休息日。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.whitevalley.jp/"
+notes: "以其非壓雪的粉雪道和人潮稀少的特點，成為在地滑雪高手的私房景點。"

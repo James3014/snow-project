@@ -1,0 +1,81 @@
+resort_id: "hokkaido_tomamu"
+names:
+  zh: "星野集團TOMAMU度假村"
+  en: "Hoshino Resorts TOMAMU"
+  ja: "星野リゾート トマム"
+country_code: "JP"
+region: "Hokkaido"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 43.066793
+  lng: 142.634809
+season:
+  estimated_open: "2024-12-01"
+  estimated_close: "2025-04-06"
+official_site: "https://www.snowtomamu.jp/"
+description:
+  highlights:
+    - "自然奇觀度假村"
+    - "愛絲冰城"
+    - "微笑海灘"
+    - "霧冰平台"
+    - "粉雪"
+  tagline: "在佔地廣達1,000公頃的山林間，體驗全方位的北海道冬季奇觀。"
+amenities:
+  - "Onsen (nearby)"
+  - "Ski-in/Ski-out Hotel"
+  - "Kids Park"
+  - "Indoor Wave Pool"
+  - "Ice Village"
+snow_stats:
+  lifts: 6
+  courses_total: 29
+  beginner_ratio: 0.35
+  intermediate_ratio: 0.50
+  advanced_ratio: 0.15
+  longest_run: 4.2
+  vertical_drop: 699
+  night_ski: true
+  notes: "以其多樣化的非滑雪設施聞名，是家庭度假的頂級選擇。"
+courses:
+  - name: "Silver Bell"
+    level: "beginner"
+    tags: ["long-run", "beginner-friendly"]
+    description: "長達3,500公尺的初級雪道，適合新手練習。"
+    notes: ""
+  - name: "Glory"
+    level: "advanced"
+    tags: ["powder", "un-groomed"]
+    description: "專家限定的非壓雪粉雪區。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 7500
+      notes: "此為參考價格，實際價格請查詢官網。"
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Full Set (Gear + Wear)"
+      adult_price: 9800 # Converted from USD, rough estimate
+      notes: "價格為美元換算，僅供參考。"
+  notes: "提供高品質的Atomic和Salomon雪具。"
+transportation:
+  domestic:
+    train:
+      - from: "New Chitose Airport"
+        to: "Tomamu Station"
+        duration_minutes: 90
+        notes: "搭乘JR，需在南千歲站轉乘。"
+    bus:
+      - route: "New Chitose Airport → Tomamu"
+        duration_minutes: 120
+        notes: "有度假村直達巴士，需預約。"
+  international:
+    airports: []
+  remarks: ""
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.snowtomamu.jp/"
+notes: "以其愛絲冰城、微笑海灘、霧冰平台等獨特的非滑雪體驗而聞名。"

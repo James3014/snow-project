@@ -1,0 +1,88 @@
+resort_id: "nagano_karuizawa_prince"
+names:
+  zh: "輕井澤王子大飯店滑雪場"
+  en: "Karuizawa Prince Hotel Ski Resort"
+  ja: "軽井沢プリンスホテルスキー場"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.33611
+  lng: 138.64611
+season:
+  estimated_open: "2024-11-01"
+  estimated_close: "2025-03-31"
+official_site: "https://www.princehotels.co.jp/ski/karuizawa/"
+description:
+  highlights:
+    - "交通便利"
+    - "人工造雪"
+    - "家庭友善"
+    - "Outlet購物"
+    - "晴天率高"
+  tagline: "從東京搭乘新幹線約1小時，享受購物與滑雪樂趣的便利型滑雪場。"
+amenities:
+  - "Kids Park"
+  - "Night Skiing"
+  - "Shopping Outlet"
+snow_stats:
+  lifts: 9
+  courses_total: 14
+  beginner_ratio: 0.58
+  intermediate_ratio: 0.21
+  advanced_ratio: 0.21
+  longest_run: 1.5
+  vertical_drop: 215
+  night_ski: true
+  notes: "擁有強大的人工造雪能力，是日本每年最早開放的滑雪場之一。"
+courses:
+  - name: "Panorama Course"
+    level: "intermediate"
+    tags: ["cruising", "scenic-view"]
+    description: "從山頂滑下，可欣賞淺間山的壯麗景色。"
+    notes: ""
+  - name: "Family Course"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide"]
+    description: "寬闊且滑行舒適的初級雪道。"
+    notes: ""
+  - name: "Ariesuka Course"
+    level: "advanced"
+    tags: ["steep"]
+    description: "最大斜度31度的上級者挑戰雪道。"
+    notes: ""
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (regular season)"
+      adult: 8800
+      student: 8300
+      senior: 8300
+      child: 0
+      notes: "小學生及以下免費。此為旺季價格，淡季有折扣。"
+rental:
+  last_verified: "2025-10-14"
+  items:
+    - item: "Ski/Snowboard Set"
+      adult_price: 6000
+      child_price: 5000
+      notes: ""
+    - item: "Wear Set"
+      adult_price: 4500
+      child_price: 3500
+      notes: ""
+  notes: ""
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Karuizawa Station"
+        duration_minutes: 60
+        notes: "搭乘北陸新幹線，車站旁即是滑雪場。"
+  international:
+    airports: []
+  remarks: "交通極為便利，是首都圈一日滑雪的熱門選擇。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.princehotels.co.jp/ski/karuizawa/"
+notes: "緊鄰輕井澤王子購物廣場，可同時享受滑雪與購物的樂趣。"

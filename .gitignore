@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.venv/
+venv/
+env/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.hypothesis/
+.tox/
+
+# Database
+*.db
+*.db-journal
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Environment specific
+.env
+.env.local
+.env.dev
+.env.test
+
+# Docker
+.dockerenv
+.dockerinit
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Project-specific temp files
+tmp/
+temp/
+test_*.db

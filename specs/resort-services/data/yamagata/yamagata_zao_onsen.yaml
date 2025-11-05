@@ -1,0 +1,86 @@
+resort_id: "yamagata_zao_onsen"
+names:
+  zh: "藏王溫泉滑雪場"
+  en: "Zao Onsen Ski Resort"
+  ja: "蔵王温泉スキー場"
+country_code: "JP"
+region: "Yamagata Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 38.164649
+  lng: 140.401617
+season:
+  estimated_open: "2024-12-07"
+  estimated_close: "2025-05-06"
+official_site: "https://www.zao-ski.or.jp/"
+description:
+  highlights:
+    - "雪怪 (Juhyo)"
+    - "強酸性溫泉"
+    - "歷史悠久"
+    - "樹冰點燈"
+  tagline: "在雪怪的神秘王國中滑行，體驗獨一無二的自然奇觀與療癒溫泉。"
+amenities:
+  - "Onsen"
+  - "Night Skiing"
+snow_stats:
+  lifts: 35
+  courses_total: 12
+  beginner_ratio: 0.40
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.20
+  longest_run: 9.0
+  vertical_drop: 881
+  night_ski: true
+  notes: "以其獨特的樹冰（雪怪）景觀聞名於世。"
+courses:
+  - name: "Juhyogen Course (樹冰原路線)"
+    level: "intermediate"
+    tags: ["scenic-view", "long-run"]
+    description: "穿梭於樹冰（雪怪）之間的長距離滑道，是獨一無二的體驗。"
+    notes: "山頂天氣多變，需注意能見度。"
+  - name: "Uwanodai Slope (上の台ゲレンデ)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "night-skiing"]
+    description: "雪場最核心的初學者區域，坡度寬闊平緩，緊鄰溫泉街。"
+    notes: ""
+  - name: "Yokokura no Kabe (横倉の壁)"
+    level: "advanced"
+    tags: ["steep", "moguls", "un-groomed"]
+    description: "最大斜度38度的傳奇雪道，充滿不規則的天然饅頭，極具挑戰性。"
+    notes: "被譽為藏王的『壁』。"
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day"
+      adult: 6300
+      student: 5500
+      child: 3200
+      notes: "此為常規雪季價格。"
+    - type: "4-hour"
+      adult: 5200
+      student: 4500
+      child: 2600
+      notes: ""
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "溫泉街上有數家雪具租賃店，如Best Rental Pro Shop。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Yamagata Station"
+        duration_minutes: 160
+        notes: "搭乘山形新幹線。"
+    bus:
+      - route: "Yamagata Station → Zao Onsen Bus Terminal"
+        duration_minutes: 40
+        notes: "搭乘山交巴士。"
+  international:
+    airports: []
+  remarks: "冬季有從仙台機場出發的直達巴士。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.zao-ski.or.jp/"
+notes: "擁有1900年歷史的溫泉古街，泉質為強酸性硫磺泉，極具特色。"

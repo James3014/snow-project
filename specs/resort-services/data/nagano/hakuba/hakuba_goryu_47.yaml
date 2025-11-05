@@ -1,0 +1,92 @@
+resort_id: "hakuba_goryu_47"
+names:
+  zh: "白馬五龍 & Hakuba47 滑雪場"
+  en: "Hakuba Goryu & Hakuba47 Winter Sports Park"
+  ja: "エイブル白馬五竜 & Hakuba47"
+country_code: "JP"
+region: "Nagano Prefecture"
+timezone: "Asia/Tokyo"
+coordinates:
+  lat: 36.662937
+  lng: 137.836664
+season:
+  estimated_open: "2024-11-30"
+  estimated_close: "2025-05-06"
+official_site: "https://www.hakubaescal.com/goryu/"
+description:
+  highlights:
+    - "雙子星結構"
+    - "初學者完美搖籃"
+    - "頂級地形公園"
+    - "溫泉"
+  tagline: "一張纜車票，暢遊兩座風格互補的山脈，從初學者的樂園到公園玩家的聖地。"
+amenities:
+  - "Onsen"
+  - "Kids Park"
+  - "Night Skiing"
+  - "Terrain Park"
+snow_stats:
+  lifts: 12
+  courses_total: 24
+  beginner_ratio: 0.35
+  intermediate_ratio: 0.40
+  advanced_ratio: 0.25
+  longest_run: 6.4
+  vertical_drop: 926
+  night_ski: true
+  notes: "由白馬五龍與Hakuba47兩個雪場組成，山頂相連，使用共通票。"
+courses:
+  - name: "Toomi Zone (とおみゲレンデ)"
+    level: "beginner"
+    tags: ["beginner-friendly", "wide", "long-run", "night-skiing"]
+    description: "位於Escal Plaza正前方的極其寬闊、綿長且坡度平緩的雪道，也是夜滑場地。"
+    notes: "Toomi第一纜車對單板初學者非常友好。"
+  - name: "Iimori Zone (いいもりゲレンデ)"
+    level: "beginner"
+    tags: ["beginner-friendly", "ski-school"]
+    description: "另一個主要的初學者天堂，Hakuba Snow Sports School的大本營所在地。"
+    notes: ""
+  - name: "Alps-daira (アルプス平ゲレンデ)"
+    level: "intermediate"
+    tags: ["scenic-view", "powder"]
+    description: "位於五龍山頂的區域，雪質優良，可欣賞壯麗山景。"
+    notes: "從此處可連接至Hakuba47。"
+  - name: "47 PARKS"
+    level: "advanced"
+    tags: ["terrain-park", "half-pipe", "freestyle"]
+    description: "日本最頂級的滑雪地形公園之一，設有大型U型槽和各級別的跳台、道具。"
+    notes: "位於Hakuba47區域。"
+pricing:
+  last_verified: "2025-10-14"
+  ticket_types:
+    - type: "1-day (online)"
+      adult: 8000
+      notes: "此為線上購買新卡的價格，包含500日圓押金。"
+    - type: "1-day (window)"
+      adult: 8500
+      notes: "現場窗口購買價格。"
+    - type: "Night Ski"
+      adult: 5500
+      notes: "夜滑需另外購票。"
+rental:
+  last_verified: "2025-10-14"
+  items: []
+  notes: "Goryu Rentals提供專為初學者設計的Burton LTR雪板和創新的Step On®系統。"
+transportation:
+  domestic:
+    shinkansen:
+      - from: "Tokyo"
+        to: "Nagano Station"
+        duration_minutes: 100
+        notes: "搭乘北陸新幹線。"
+    bus:
+      - route: "Nagano Station → Hakuba Goryu"
+        duration_minutes: 75
+        notes: "搭乘Alpico特快巴士。"
+  international:
+    airports: []
+  remarks: "白馬谷內有接駁巴士，持有白馬通票可免費搭乘。"
+content_sources:
+  - "project/specs/resort-services/skiarea.md"
+  - "https://www.hakubaescal.com/goryu/"
+notes: "對初學者極為友善，同時擁有日本頂級的地形公園，是混合能力團體的絕佳選擇。"
