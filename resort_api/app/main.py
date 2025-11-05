@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query, status
+from fastapi import FastAPI, HTTPException, Query, status, Depends
 from fastapi.responses import StreamingResponse
 from typing import List, Optional, Dict
 from datetime import date, datetime, time, UTC
@@ -11,10 +11,11 @@ from cachetools.keys import hashkey
 
 from .db import get_resorts_db
 from .models import (
-    Resort, ResortSummary, ResortList, SkiHistoryCreate, 
+    Resort, ResortSummary, ResortList, SkiHistoryCreate,
     BehaviorEventCreate, BehaviorEventPayload
 )
 from .card_generator import generate_resort_card
+from .auth_utils import get_current_user_id, get_optional_user_id
 
 app = FastAPI(
     title="SkiDIY Resort Services API",
@@ -113,16 +114,23 @@ def get_resort_by_id(resort_id: str) -> Resort:
 async def create_ski_history(
     user_id: str,
     history_item: SkiHistoryCreate,
-    authenticated_user_id: str = fastapi.Depends(
-        lambda: __import__('auth_utils', fromlist=['get_current_user_id']).get_current_user_id
-    )
+    authenticated_user_id: str = Depends(get_current_user_id)
 ):
     """
     Receives a ski history record and forwards it to the user-core service as a behavior event.
+
+    Requires authentication. Users can only create ski history for themselves.
     """
+    # Verify user can only create history for themselves
+    if user_id != authenticated_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only create ski history for yourself"
+        )
+
     if history_item.resort_id not in resorts_db_instance:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Resort with id '{history_item.resort_id}' not found."
         )
 
@@ -144,6 +152,11 @@ async def create_ski_history(
             maybe_awaitable = response.raise_for_status()
             if inspect.isawaitable(maybe_awaitable):
                 await maybe_awaitable
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"User-core service returned error {e.response.status_code}: {e.response.text}"
+        )
     except httpx.RequestError as e:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -152,7 +165,7 @@ async def create_ski_history(
 
     return {"status": "accepted"}
 
-@app.get("/resorts/{resort_id}/share-card", 
+@app.get("/resorts/{resort_id}/share-card",
          response_class=StreamingResponse,
          responses={
              200: {
@@ -162,14 +175,23 @@ async def create_ski_history(
                  "description": "Resort not found"
              }
          })
-async def get_share_card(resort_id: str, user_name: Optional[str] = Query(None), activity_date: Optional[date] = Query(None)):
-    """Generates and returns a shareable image card for a resort."""
+async def get_share_card(
+    resort_id: str,
+    user_name: Optional[str] = Query(None),
+    activity_date: Optional[date] = Query(None),
+    authenticated_user_id: Optional[str] = Depends(get_optional_user_id)
+):
+    """
+    Generates and returns a shareable image card for a resort.
+
+    Authentication is optional. If authenticated, the user's ID is available for personalization.
+    """
     resort = resorts_db_instance.get(resort_id)
     if not resort:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Resort with id '{resort_id}' not found.")
 
     image_bytes = generate_resort_card(resort, user_name, activity_date)
-    
+
     return StreamingResponse(io.BytesIO(image_bytes), media_type="image/png")
 
 

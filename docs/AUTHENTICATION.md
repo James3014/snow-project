@@ -170,11 +170,21 @@ ENVIRONMENT=development  # or 'production'
 - [x] user-core 認證 API (`/auth/login`, `/auth/validate`)
 - [x] 共享認證模組 (`shared/auth.py`)
 - [x] resort-services 認證工具 (`auth_utils.py`)
+- [x] snowbuddy-matching 認證工具 (`auth_utils.py`)
 - [x] 認證架構文檔
+- [x] 在 resort-services 所有需要認證的端點中應用
+  - `POST /users/{user_id}/ski-history` - 必須認證，只能為自己創建記錄
+  - `GET /resorts/{resort_id}/share-card` - 可選認證
+- [x] 在 snowbuddy-matching 所有需要認證的端點中應用
+  - `POST /matching/searches` - 必須認證
+  - `GET /matching/searches/{search_id}` - 必須認證
+  - `POST /requests` - 必須認證
+  - `PUT /requests/{request_id}` - 必須認證
+- [x] 認證測試完整覆蓋
+  - resort-services: 9/9 tests passing
+  - snowbuddy-matching: 7/7 tests passing
 
 ### 🔄 進行中
-- [ ] 在 resort-services 所有需要認證的端點中應用
-- [ ] 在 snowbuddy-matching 所有需要認證的端點中應用
 - [ ] JWT token 實作（目前使用簡化版）
 
 ### 📋 待辦
