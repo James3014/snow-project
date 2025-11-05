@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query, status
+from fastapi import FastAPI, HTTPException, Query, status, Depends
 from fastapi.responses import StreamingResponse
 from typing import List, Optional, Dict
 from datetime import date, datetime, time, UTC
@@ -15,6 +15,16 @@ from .models import (
     BehaviorEventCreate, BehaviorEventPayload
 )
 from .card_generator import generate_resort_card
+
+# Import auth utilities
+try:
+    from .auth_utils import get_current_user_id
+except ImportError:
+    # Fallback for development
+    async def get_current_user_id(x_user_id: Optional[str] = None) -> str:
+        if x_user_id:
+            return x_user_id
+        raise HTTPException(status_code=401, detail="Authentication required")
 
 app = FastAPI(
     title="SkiDIY Resort Services API",
@@ -111,15 +121,21 @@ def get_resort_by_id(resort_id: str) -> Resort:
 
 @app.post("/users/{user_id}/ski-history", status_code=status.HTTP_202_ACCEPTED)
 async def create_ski_history(
-    user_id: str,
+    user_id: str, 
     history_item: SkiHistoryCreate,
-    authenticated_user_id: str = fastapi.Depends(
-        lambda: __import__('auth_utils', fromlist=['get_current_user_id']).get_current_user_id
-    )
+    authenticated_user_id: str = Depends(get_current_user_id)
 ):
     """
     Receives a ski history record and forwards it to the user-core service as a behavior event.
+    Requires authentication - user can only add history for themselves.
     """
+    # Verify user can only add history for themselves
+    if user_id != authenticated_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only add ski history for yourself"
+        )
+
     if history_item.resort_id not in resorts_db_instance:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 

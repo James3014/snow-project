@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from services import db
 from models import user_profile, behavior_event, notification_preference
-from api import user_profiles, behavior_events, notification_preferences
+from api import user_profiles, behavior_events, notification_preferences, auth
 
 # Create all tables (for development only)
 user_profile.Base.metadata.create_all(bind=db.engine)
@@ -17,6 +17,7 @@ app = FastAPI(
 
 app.include_router(user_profiles.router, prefix="/users", tags=["User Profiles"])
 app.include_router(behavior_events.router, prefix="/events", tags=["Behavior Events"])
+app.include_router(auth.router, tags=["Authentication"])
 # A bit of a workaround to nest preferences under a user
 app.include_router(notification_preferences.router, prefix="/users/{user_id}/preferences", tags=["Notification Preferences"])
 
