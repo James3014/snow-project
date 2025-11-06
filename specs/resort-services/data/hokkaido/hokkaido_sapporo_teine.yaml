@@ -1,0 +1,168 @@
+resort_id: hokkaido_sapporo_teine
+names:
+  zh: 札幌手稻滑雪場
+  en: Sapporo Teine Ski Resort
+  ja: サッポロテイネスキー場
+country_code: JP
+region: Hokkaido
+timezone: Asia/Tokyo
+coordinates:
+  lat: 43.0965
+  lng: 141.2025
+season:
+  estimated_open: '2024-11-23'
+  estimated_close: '2025-05-06'
+official_site: https://sapporo-teine.com/
+description:
+  highlights:
+  - 1972年札幌冬季奧運會場地
+  - 兩大雪區
+  - 鄰近札幌市區
+  - 粉雪
+  tagline: 曾舉辦札幌冬季奧運會的歷史名場，擁有奧林匹亞和高地兩大雪區。
+amenities:
+- Onsen (nearby)
+- Restaurant
+- Rental Shop
+- Ski School
+snow_stats:
+  lifts: 15
+  courses_total: 13
+  beginner_ratio: 0.31
+  intermediate_ratio: 0.38
+  advanced_ratio: 0.31
+  longest_run: 6.0
+  vertical_drop: 683
+  night_ski: true
+  notes: 分為奧林匹亞區（Olympia Zone）和高地區（Highland Zone）兩大區域。
+courses:
+- name: ファミリーコース
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: 初級エリア
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: オリンピアゾーン初級
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: ハイランドゾーン初級
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 中級コース
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: オリンピアゾーン中級
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: ハイランドゾーン中級
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: パノラマコース
+  level: intermediate
+  tags: []
+  length: 14.0
+  avg_slope: 16.0
+  description: null
+  notes: null
+- name: 上級コース
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 26.0
+  description: null
+  notes: null
+- name: オリンピアゾーン上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: ハイランドゾーン上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: エキスパートコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: モーグルコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 33.0
+  description: null
+  notes: null
+pricing:
+  last_verified: '2025-10-14'
+  ticket_types:
+  - type: 1-day
+    adult: 6200
+    child: 3600
+    notes: 全區通用纜車券。
+  - type: 4-hour
+    adult: 5200
+    child: 3100
+    notes: ''
+rental:
+  last_verified: '2025-10-14'
+  items:
+  - item: Standard Ski/Snowboard Set
+    adult_price: 5500
+    child_price: 3500
+    notes: ''
+  notes: ''
+transportation:
+  domestic:
+    bus:
+    - route: Sapporo Station → Teine
+      duration_minutes: 60
+      notes: 有直達巴士服務。
+    self_drive:
+    - route: Sapporo City → Teine
+      duration_minutes: 40
+      notes: 從新千歲機場約60分鐘車程。
+  international:
+    airports:
+    - code: CTS
+      name: New Chitose Airport
+      distance_km: 60
+  remarks: ''
+content_sources:
+- project/specs/resort-services/skiarea.md
+- https://sapporo-teine.com/
+notes: 因舉辦1972年札幌冬季奧運會而聞名，擁有多條奧運競技賽道。
