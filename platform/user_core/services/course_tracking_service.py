@@ -13,6 +13,7 @@ from models.course_tracking import (
     CourseVisit, CourseRecommendation, UserAchievement, AchievementDefinition
 )
 from models.user_profile import UserProfile
+from models.enums import UserStatus
 from schemas.course_tracking import (
     CourseVisitCreate, CourseRecommendationCreate, CourseRecommendationUpdate,
     ResortProgress, CourseRanking, LeaderboardEntry
@@ -56,10 +57,7 @@ def record_course_visit(
         # Auto-create user profile if it doesn't exist
         user = UserProfile(
             user_id=user_id,
-            display_name=f"User-{str(user_id)[:8]}",  # Default display name
-            status="active",
-            created_by="system",
-            updated_by="system"
+            status=UserStatus.active
         )
         db.add(user)
         db.commit()
