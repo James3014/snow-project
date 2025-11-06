@@ -2,7 +2,8 @@
  * API Client Configuration
  * API 客户端配置
  */
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // API 基础配置
 const API_CONFIG = {
@@ -102,7 +103,11 @@ export const resortApiClient = createApiClient(API_CONFIG.RESORT_API);
  * 通用 API 请求方法
  */
 export class ApiClient {
-  constructor(private client: AxiosInstance) {}
+  private client: AxiosInstance;
+
+  constructor(client: AxiosInstance) {
+    this.client = client;
+  }
 
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.client.get<T>(url, config);

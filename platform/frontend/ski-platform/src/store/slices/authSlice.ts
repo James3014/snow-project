@@ -2,7 +2,8 @@
  * Authentication Slice
  * 认证状态管理
  */
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import type { User } from '@/shared/types/common';
 
 interface AuthState {

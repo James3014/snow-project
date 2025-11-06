@@ -2,7 +2,8 @@
  * Course Tracking Slice
  * 雪道追踪状态管理
  */
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import type {
   CourseVisit,
   CourseRecommendation,

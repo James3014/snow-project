@@ -7,22 +7,12 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import Card from '@/shared/components/Card';
 import ProgressBar from '@/shared/components/ProgressBar';
-
-// 临时：硬编码雪场数据
-const RESORTS = [
-  {
-    id: 'rusutsu',
-    name: 'Rusutsu Resort',
-    name_zh: '留寿都度假村',
-    location: '北海道',
-    totalCourses: 37,
-    image: '🏔️',
-  },
-];
+import { getAllResorts } from '@/shared/data/resorts';
 
 export default function ResortList() {
   const navigate = useNavigate();
   const progress = useAppSelector((state) => state.courseTracking.progress);
+  const resorts = getAllResorts();
   const [stats, setStats] = useState({
     totalResorts: 0,
     visitedResorts: 0,
@@ -37,15 +27,15 @@ export default function ResortList() {
       (sum, p) => sum + p.completed_courses.length,
       0
     );
-    const totalCourses = RESORTS.reduce((sum, r) => sum + r.totalCourses, 0);
+    const totalCourses = resorts.reduce((sum, r) => sum + r.snow_stats.courses_total, 0);
 
     setStats({
-      totalResorts: RESORTS.length,
+      totalResorts: resorts.length,
       visitedResorts,
       totalCourses,
       completedCourses,
     });
-  }, [progress]);
+  }, [progress, resorts]);
 
   const getResortProgress = (resortId: string) => {
     const resortProgress = progress[resortId];
@@ -97,33 +87,48 @@ export default function ResortList() {
 
       {/* 雪场列表 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {RESORTS.map((resort) => {
-          const progressPercent = getResortProgress(resort.id);
-          const completed = getCompletedCount(resort.id);
+        {resorts.map((resort) => {
+          const progressPercent = getResortProgress(resort.resort_id);
+          const completed = getCompletedCount(resort.resort_id);
+          const totalCourses = resort.snow_stats.courses_total;
 
           return (
             <Card
-              key={resort.id}
+              key={resort.resort_id}
               hover
-              onClick={() => navigate(`/resorts/${resort.id}`)}
+              onClick={() => navigate(`/resorts/${resort.resort_id}`)}
             >
               <Card.Body className="space-y-4">
                 {/* 图标 */}
-                <div className="text-6xl text-center">{resort.image}</div>
+                <div className="text-6xl text-center">🏔️</div>
 
                 {/* 雪场名称 */}
                 <div className="text-center">
-                  <h3 className="text-lg font-bold text-gray-900">{resort.name_zh}</h3>
-                  <p className="text-sm text-gray-600">{resort.name}</p>
-                  <p className="text-xs text-gray-500 mt-1">📍 {resort.location}</p>
+                  <h3 className="text-lg font-bold text-gray-900">{resort.names.zh}</h3>
+                  <p className="text-sm text-gray-600">{resort.names.en}</p>
+                  <p className="text-xs text-gray-500 mt-1">📍 {resort.region}</p>
                 </div>
+
+                {/* 雪场亮点 */}
+                {resort.description && (
+                  <div className="flex flex-wrap gap-1 justify-center">
+                    {resort.description.highlights.slice(0, 2).map((highlight, idx) => (
+                      <span
+                        key={idx}
+                        className="text-xs bg-primary-50 text-primary-600 px-2 py-1 rounded"
+                      >
+                        {highlight}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 {/* 进度 */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">完成进度</span>
                     <span className="font-semibold">
-                      {completed} / {resort.totalCourses}
+                      {completed} / {totalCourses}
                     </span>
                   </div>
                   <ProgressBar
@@ -135,7 +140,7 @@ export default function ResortList() {
 
                 {/* 快速操作 */}
                 <div className="flex justify-between text-xs text-gray-500 pt-2 border-t">
-                  <span>{resort.totalCourses} 条雪道</span>
+                  <span>🎿 {totalCourses} 条雪道</span>
                   {progressPercent > 0 && (
                     <span className="text-primary-600 font-medium">
                       {progressPercent.toFixed(0)}% 完成
@@ -149,7 +154,7 @@ export default function ResortList() {
       </div>
 
       {/* 提示信息 */}
-      {RESORTS.length === 0 && (
+      {resorts.length === 0 && (
         <div className="text-center py-12">
           <div className="text-gray-400 text-6xl mb-4">🏔️</div>
           <p className="text-gray-600">暂无雪场数据</p>

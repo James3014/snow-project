@@ -2,7 +2,7 @@
  * Card Component
  * 卡片组件
  */
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface CardProps {
   children: ReactNode;

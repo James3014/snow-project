@@ -32,15 +32,25 @@ export default function ToastContainer() {
   );
 }
 
-function Toast({ toast, onClose }: { toast: any; onClose: () => void }) {
-  const bgColors = {
+interface ToastProps {
+  toast: {
+    id: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+    message: string;
+    duration?: number;
+  };
+  onClose: () => void;
+}
+
+function Toast({ toast, onClose }: ToastProps) {
+  const bgColors: Record<ToastProps['toast']['type'], string> = {
     success: 'bg-green-500',
     error: 'bg-red-500',
     warning: 'bg-yellow-500',
     info: 'bg-blue-500',
   };
 
-  const icons = {
+  const icons: Record<ToastProps['toast']['type'], string> = {
     success: '✓',
     error: '✕',
     warning: '⚠',

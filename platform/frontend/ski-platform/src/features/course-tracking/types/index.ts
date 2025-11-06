@@ -120,6 +120,7 @@ export interface UserAchievement {
 export interface UserAchievementWithDetails extends UserAchievement {
   name_zh: string;
   name_en: string;
+  description?: string;
   icon: string;
   category: string;
 }

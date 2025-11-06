@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { courseTrackingApi } from '../api/courseTrackingApi';
 import { setProgress, setVisits, addVisit, addToast } from '@/store/slices/courseTrackingSlice';
+import { getResortById } from '@/shared/data/resorts';
+import { getDifficultyLabel, getDifficultyEmoji } from '@/shared/utils/helpers';
 import Card from '@/shared/components/Card';
 import Button from '@/shared/components/Button';
 import Badge from '@/shared/components/Badge';
@@ -18,19 +20,20 @@ export default function ResortDetail() {
   const userId = useAppSelector((state) => state.auth.user?.user_id);
   const progress = useAppSelector((state) => state.courseTracking.progress[resortId || '']);
   const [loading, setLoading] = useState(false);
+  const resort = getResortById(resortId || '');
 
   useEffect(() => {
-    if (userId && resortId) {
+    if (userId && resortId && resort) {
       loadData();
     }
   }, [userId, resortId]);
 
   const loadData = async () => {
-    if (!userId || !resortId) return;
+    if (!userId || !resortId || !resort) return;
     setLoading(true);
     try {
       const [progressData, visitsData] = await Promise.all([
-        courseTrackingApi.progress.getResortProgress(userId, resortId, 37),
+        courseTrackingApi.progress.getResortProgress(userId, resortId, resort.snow_stats.courses_total),
         courseTrackingApi.visits.list(userId, resortId),
       ]);
       dispatch(setProgress({ resortId, progress: progressData }));
@@ -62,54 +65,144 @@ export default function ResortDetail() {
   };
 
   if (loading) return <div className="text-center py-12">加载中...</div>;
+  if (!resort) return <div className="text-center py-12">未找到雪场信息</div>;
   if (!progress) return <div className="text-center py-12">暂无数据</div>;
 
-  const groupedCourses = {
-    beginner: ['Family Course / ファミリーコース', 'Isola Course / イゾラコース'],
-    intermediate: ['Isola 2 Course / イゾラ2コース', 'Wonder Course / ワンダーコース'],
-    advanced: ['Super East Course / スーパーイーストコース', 'White Lover Course / ホワイトラバーコース'],
-  };
+  // 按难度分组课程
+  const groupedCourses = resort.courses.reduce(
+    (acc, course) => {
+      if (!acc[course.level]) {
+        acc[course.level] = [];
+      }
+      acc[course.level].push(course);
+      return acc;
+    },
+    {} as Record<string, typeof resort.courses>
+  );
+
+  const levelOrder: Array<'beginner' | 'intermediate' | 'advanced'> = ['beginner', 'intermediate', 'advanced'];
+  const levelColors = {
+    beginner: 'success',
+    intermediate: 'info',
+    advanced: 'danger',
+  } as const;
 
   return (
     <div className="space-y-6">
+      {/* 顶部信息 */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">留寿都度假村</h1>
-          <p className="text-gray-600">Rusutsu Resort</p>
+          <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
+          <p className="text-gray-600">{resort.names.en}</p>
+          <p className="text-sm text-gray-500 mt-1">📍 {resort.region}</p>
         </div>
         <Button onClick={() => navigate('/resorts')}>返回</Button>
       </div>
 
+      {/* 雪场信息卡片 */}
+      {resort.description && (
+        <Card>
+          <Card.Body>
+            <p className="text-gray-700 mb-3">{resort.description.tagline}</p>
+            <div className="flex flex-wrap gap-2">
+              {resort.description.highlights.map((highlight, idx) => (
+                <Badge key={idx} variant="info">
+                  {highlight}
+                </Badge>
+              ))}
+            </div>
+          </Card.Body>
+        </Card>
+      )}
+
+      {/* 进度卡片 */}
       <Card>
         <Card.Body>
-          <ProgressBar
-            percentage={progress.completion_percentage}
-            label={`完成进度: ${progress.completed_courses.length} / 37`}
-          />
+          <div className="space-y-3">
+            <ProgressBar
+              percentage={progress.completion_percentage}
+              label={`完成进度: ${progress.completed_courses.length} / ${resort.snow_stats.courses_total}`}
+            />
+            <div className="grid grid-cols-3 gap-4 text-center text-sm pt-2">
+              <div>
+                <div className="text-2xl font-bold text-green-600">
+                  {groupedCourses.beginner?.length || 0}
+                </div>
+                <div className="text-gray-600">初级雪道</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {groupedCourses.intermediate?.length || 0}
+                </div>
+                <div className="text-gray-600">中级雪道</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-red-600">
+                  {groupedCourses.advanced?.length || 0}
+                </div>
+                <div className="text-gray-600">高级雪道</div>
+              </div>
+            </div>
+          </div>
         </Card.Body>
       </Card>
 
-      {Object.entries(groupedCourses).map(([level, courses]) => (
-        <div key={level}>
-          <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-            <Badge variant={level as any}>{level === 'beginner' ? '初级' : level === 'intermediate' ? '中级' : '高级'}</Badge>
-            <span>{courses.length} 条雪道</span>
-          </h3>
-          <div className="grid gap-2">
-            {courses.map((course) => {
-              const isCompleted = progress.completed_courses.includes(course);
-              return (
-                <Card key={course} hover onClick={() => handleToggleCourse(course, isCompleted)}>
-                  <Card.Body className="flex items-center justify-between py-3">
-                    <span className={isCompleted ? 'line-through text-gray-500' : ''}>{course}</span>
-                    {isCompleted && <span className="text-green-600">✓</span>}
-                  </Card.Body>
-                </Card>
-              );
-            })}
+      {/* 按难度分组显示课程 */}
+      {levelOrder.map((level) => {
+        const courses = groupedCourses[level];
+        if (!courses || courses.length === 0) return null;
+
+        return (
+          <div key={level}>
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <Badge variant={levelColors[level]}>
+                {getDifficultyEmoji(level)} {getDifficultyLabel(level)}
+              </Badge>
+              <span>{courses.length} 条雪道</span>
+            </h3>
+            <div className="grid gap-2">
+              {courses.map((course) => {
+                const isCompleted = progress.completed_courses.includes(course.name);
+                return (
+                  <Card
+                    key={course.name}
+                    hover
+                    onClick={() => handleToggleCourse(course.name, isCompleted)}
+                    className={isCompleted ? 'opacity-60' : ''}
+                  >
+                    <Card.Body className="flex items-center justify-between py-3">
+                      <div className="flex-1">
+                        <div className={`font-medium ${isCompleted ? 'line-through text-gray-500' : ''}`}>
+                          {course.name}
+                        </div>
+                        <div className="flex gap-2 mt-1">
+                          <span className="text-xs text-gray-500">
+                            平均坡度: {course.avg_slope}°
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            最大坡度: {course.max_slope}°
+                          </span>
+                          {course.tags.length > 0 && (
+                            <span className="text-xs text-primary-600">
+                              {course.tags[0]}
+                            </span>
+                          )}
+                        </div>
+                        {course.notes && (
+                          <div className="text-xs text-orange-600 mt-1">
+                            ⚠️ {course.notes}
+                          </div>
+                        )}
+                      </div>
+                      {isCompleted && <span className="text-green-600 text-2xl">✓</span>}
+                    </Card.Body>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
