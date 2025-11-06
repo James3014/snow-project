@@ -6,14 +6,15 @@ import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { courseTrackingApi } from '../api/courseTrackingApi';
 import { setProgress, setVisits, addVisit, addToast } from '@/store/slices/courseTrackingSlice';
-import { getResortById } from '@/shared/data/resorts';
+import { resortApiService } from '@/shared/api/resortApi';
+import type { Resort } from '@/shared/types/common';
 import { getDifficultyLabel, getDifficultyEmoji } from '@/shared/utils/helpers';
 import Card from '@/shared/components/Card';
 import Button from '@/shared/components/Button';
 import Badge from '@/shared/components/Badge';
 import ProgressBar from '@/shared/components/ProgressBar';
 import { ListSkeleton } from '@/shared/components/Skeleton';
-import EmptyState from '@/shared/components/EmptyState';
+import EmptyState, { ErrorEmptyState } from '@/shared/components/EmptyState';
 
 export default function ResortDetail() {
   const { resortId } = useParams<{ resortId: string }>();
@@ -22,7 +23,30 @@ export default function ResortDetail() {
   const userId = useAppSelector((state) => state.auth.user?.user_id);
   const progress = useAppSelector((state) => state.courseTracking.progress[resortId || '']);
   const [loading, setLoading] = useState(false);
-  const resort = getResortById(resortId || '');
+  const [resort, setResort] = useState<Resort | null>(null);
+  const [resortLoading, setResortLoading] = useState(true);
+  const [resortError, setResortError] = useState<string | null>(null);
+
+  // 載入雪場資料
+  useEffect(() => {
+    const loadResort = async () => {
+      if (!resortId) return;
+
+      try {
+        setResortLoading(true);
+        setResortError(null);
+        const response = await resortApiService.getResort(resortId);
+        setResort(response.data);
+      } catch (err) {
+        console.error('載入雪場失敗:', err);
+        setResortError('載入雪場資料失敗');
+      } finally {
+        setResortLoading(false);
+      }
+    };
+
+    loadResort();
+  }, [resortId]);
 
   useEffect(() => {
     if (userId && resortId && resort) {
@@ -66,8 +90,8 @@ export default function ResortDetail() {
     }
   };
 
-  // Loading State
-  if (loading) {
+  // 雪場載入中
+  if (resortLoading) {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -82,15 +106,29 @@ export default function ResortDetail() {
     );
   }
 
-  // Error States
-  if (!resort) {
+  // 雪場載入失敗
+  if (resortError || !resort) {
     return (
-      <EmptyState
-        icon="❌"
-        title="未找到雪場資訊"
-        description="該雪場不存在或已被刪除"
-        action={{ label: '返回列表', onClick: () => navigate('/resorts') }}
+      <ErrorEmptyState
+        message={resortError || "未找到雪場資訊"}
+        onRetry={() => window.location.reload()}
       />
+    );
+  }
+
+  // Loading State (for tracking data)
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
+            <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+          </div>
+          <Button onClick={() => navigate('/resorts')}>返回</Button>
+        </div>
+        <ListSkeleton count={8} />
+      </div>
     );
   }
 
@@ -115,7 +153,8 @@ export default function ResortDetail() {
   }
 
   // 按難度分組課程
-  const groupedCourses = resort.courses.reduce(
+  const courses = resort.courses || [];
+  const groupedCourses = courses.reduce(
     (acc, course) => {
       if (!acc[course.level]) {
         acc[course.level] = [];
@@ -123,7 +162,7 @@ export default function ResortDetail() {
       acc[course.level].push(course);
       return acc;
     },
-    {} as Record<string, typeof resort.courses>
+    {} as Record<string, typeof courses>
   );
 
   const levelOrder: Array<'beginner' | 'intermediate' | 'advanced'> = ['beginner', 'intermediate', 'advanced'];
