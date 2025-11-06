@@ -17,6 +17,8 @@ export default function ResortList() {
   const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [stats, setStats] = useState({
     totalResorts: 0,
     visitedResorts: 0,
@@ -73,6 +75,24 @@ export default function ResortList() {
     return resortProgress.completed_courses.length;
   };
 
+  // 過濾雪場
+  const filteredResorts = resorts.filter((resort) => {
+    // 搜尋過濾
+    const matchesSearch =
+      searchQuery === '' ||
+      resort.names.zh.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resort.names.en.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resort.region.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // 地區過濾
+    const matchesRegion = selectedRegion === 'all' || resort.region === selectedRegion;
+
+    return matchesSearch && matchesRegion;
+  });
+
+  // 取得所有地區（用於過濾器）
+  const regions = Array.from(new Set(resorts.map((r) => r.region))).sort();
+
   // 載入中
   if (loading) {
     return (
@@ -103,6 +123,42 @@ export default function ResortList() {
         <p className="mt-2 text-gray-600">選擇一個雪場開始記錄你的滑雪旅程</p>
       </div>
 
+      {/* 搜尋和過濾 */}
+      <Card>
+        <Card.Body>
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* 搜尋框 */}
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="搜尋雪場名稱或地區..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+            {/* 地區過濾 */}
+            <div className="w-full md:w-48">
+              <select
+                value={selectedRegion}
+                onChange={(e) => setSelectedRegion(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="all">全部地區</option>
+                {regions.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="mt-3 text-sm text-gray-600">
+            找到 {filteredResorts.length} 個雪場
+          </div>
+        </Card.Body>
+      </Card>
+
       {/* 統計資料 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="p-4">
@@ -132,13 +188,22 @@ export default function ResortList() {
       </div>
 
       {/* 雪場列表 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {resorts.map((resort) => {
-          const progressPercent = getResortProgress(resort.resort_id);
-          const completed = getCompletedCount(resort.resort_id);
-          const totalCourses = resort.snow_stats?.courses_total || 0;
+      {filteredResorts.length === 0 ? (
+        <Card>
+          <Card.Body className="text-center py-12">
+            <div className="text-gray-400 text-5xl mb-4">🔍</div>
+            <p className="text-gray-600">找不到符合條件的雪場</p>
+            <p className="text-sm text-gray-500 mt-2">試試調整搜尋條件</p>
+          </Card.Body>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredResorts.map((resort) => {
+            const progressPercent = getResortProgress(resort.resort_id);
+            const completed = getCompletedCount(resort.resort_id);
+            const totalCourses = resort.snow_stats?.courses_total || 0;
 
-          return (
+            return (
             <Card
               key={resort.resort_id}
               hover
@@ -195,9 +260,10 @@ export default function ResortList() {
                 </div>
               </Card.Body>
             </Card>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
