@@ -42,22 +42,11 @@ export default function ResortDetail() {
   // 將地區名稱轉換為中文
   const getRegionName = (region: string) => regionNameMap[region] || region;
 
-  // 雪場 Logo URL 生成器（為每個雪場生成獨特的高清圖標）
+  // 雪場 Logo URL 生成器（使用本地官方 Logo）
   const getResortLogoUrl = (resortId: string) => {
-    // 使用 DiceBear API 生成獨特的幾何圖標
-    // 每個雪場基於其 ID 有唯一的圖案和顏色
-    const colors = [
-      '3B82F6', '06B6D4', 'EF4444', '10B981', 'F59E0B',
-      '8B5CF6', 'EC4899', '6366F1', 'F97316', '14B8A6',
-      '0EA5E9', '84CC16', 'F43F5E', '8B5CF6', '06B6D4'
-    ];
-
-    // 根據 resortId 選擇顏色（確保同一雪場總是同顏色）
-    const colorIndex = resortId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length;
-    const backgroundColor = colors[colorIndex];
-
-    // 使用 DiceBear Shapes API 生成 256x256 的清晰 SVG 圖標
-    return `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(resortId)}&backgroundColor=${backgroundColor}&size=256`;
+    // 嘗試載入本地 Logo（支援多種格式）
+    // 優先順序: PNG > JPG > SVG
+    return `/logos/${resortId}.png`;
   };
 
   // 載入雪場資料
