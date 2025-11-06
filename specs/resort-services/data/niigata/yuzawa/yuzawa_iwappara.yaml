@@ -1,95 +1,225 @@
-resort_id: "yuzawa_iwappara"
+resort_id: yuzawa_iwappara
 names:
-  zh: "岩原滑雪場"
-  en: "Iwappara Ski Resort"
-  ja: "岩原スキー場"
-country_code: "JP"
-region: "Niigata Prefecture"
-timezone: "Asia/Tokyo"
+  zh: 岩原滑雪場
+  en: Iwappara Ski Resort
+  ja: 岩原スキー場
+country_code: JP
+region: Niigata Prefecture
+timezone: Asia/Tokyo
 coordinates:
   lat: 36.93889
   lng: 138.84444
 season:
-  estimated_open: "2024-12-21"
-  estimated_close: "2025-03-30"
-official_site: "https://www.iwa-ppara.com/"
+  estimated_open: '2024-12-21'
+  estimated_close: '2025-03-30'
+official_site: https://www.iwa-ppara.com/
 description:
   highlights:
-    - "初學者天堂"
-    - "超寬闊雪道"
-    - "家庭友善"
-    - "夜滑"
-  tagline: "擁有高速公路般寬闊的主雪道，是日本最佳的滑雪學習場地之一。"
+  - 初學者天堂
+  - 超寬闊雪道
+  - 家庭友善
+  - 夜滑
+  tagline: 擁有高速公路般寬闊的主雪道，是日本最佳的滑雪學習場地之一。
 amenities:
-  - "Onsen (nearby)"
-  - "Kids Park"
-  - "Night Skiing"
+- Onsen (nearby)
+- Kids Park
+- Night Skiing
 snow_stats:
   lifts: 9
   courses_total: 20
-  beginner_ratio: 0.40
-  intermediate_ratio: 0.40
-  advanced_ratio: 0.20
+  beginner_ratio: 0.4
+  intermediate_ratio: 0.4
+  advanced_ratio: 0.2
   longest_run: 4.0
   vertical_drop: 400
   night_ski: true
-  notes: "以其極其寬闊平緩的主雪道聞名，對初學者非常友善。"
+  notes: 以其極其寬闊平緩的主雪道聞名，對初學者非常友善。
 courses:
-  - name: "Main Slope"
-    level: "beginner"
-    tags: ["beginner-friendly", "wide", "gentle-slope"]
-    description: "傳奇性的『高速公路般寬闊』主雪道，是練習的理想場所。"
-    notes: ""
-  - name: "Sledging Course"
-    level: "beginner"
-    tags: ["family-friendly", "sledging"]
-    description: "日本最大的專用雪橇滑道之一，需搭乘纜車到達頂部。"
-    notes: ""
+- name: メインバーン
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: パノラマコース
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: スラロームバーン
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 15.0
+  description: null
+  notes: null
+- name: ロマンスコース
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: 初心者專用コース
+  level: beginner
+  tags: []
+  length: 6.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: ファミリーコース
+  level: beginner
+  tags: []
+  length: 8.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: ジャイアントコース
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 15.0
+  description: null
+  notes: null
+- name: パラレルコース
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: チャレンジバーン
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: ダイナミックコース
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: エキスパートコース
+  level: intermediate
+  tags: []
+  length: 9.0
+  avg_slope: 22.0
+  description: null
+  notes: null
+- name: スピードウェイ
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 15.0
+  description: null
+  notes: null
+- name: アドバンスコース
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: テクニカルバーン
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 25.0
+  description: null
+  notes: null
+- name: モーグルコース
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: 急斜面チャレンジ
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: エキスパートウォール
+  level: advanced
+  tags: []
+  length: 5.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: ブラックダイヤモンド
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: マスターズコース
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 26.0
+  description: null
+  notes: null
+- name: チャンピオンシップ
+  level: advanced
+  tags: []
+  length: 10.0
+  avg_slope: 24.0
+  description: null
+  notes: null
 pricing:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   ticket_types:
-    - type: "1-day"
-      adult: 5500
-      child: 3500
-      senior: 4300
-      notes: ""
-    - type: "1-day + Night"
-      adult: 5800
-      child: 3800
-      senior: 4600
-      notes: ""
-    - type: "Night Ski"
-      adult: 1500
-      child: 1000
-      senior: 1000
-      notes: ""
+  - type: 1-day
+    adult: 5500
+    child: 3500
+    senior: 4300
+    notes: ''
+  - type: 1-day + Night
+    adult: 5800
+    child: 3800
+    senior: 4600
+    notes: ''
+  - type: Night Ski
+    adult: 1500
+    child: 1000
+    senior: 1000
+    notes: ''
 rental:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   items:
-    - item: "Standard Ski/Snowboard Set"
-      adult_price: 4500
-      child_price: 3500
-      notes: "價格參考自Salomon Station。"
-  notes: "周邊有多家獨立租賃店提供更具競爭力的價格。"
+  - item: Standard Ski/Snowboard Set
+    adult_price: 4500
+    child_price: 3500
+    notes: 價格參考自Salomon Station。
+  notes: 周邊有多家獨立租賃店提供更具競爭力的價格。
 transportation:
   domestic:
     shinkansen:
-      - from: "Tokyo"
-        to: "Echigo-Yuzawa Station"
-        duration_minutes: 80
-        notes: "搭乘上越新幹線。"
+    - from: Tokyo
+      to: Echigo-Yuzawa Station
+      duration_minutes: 80
+      notes: 搭乘上越新幹線。
     bus:
-      - route: "Echigo-Yuzawa Station → Iwappara"
-        duration_minutes: 10
-        notes: "有免費接駁巴士。"
+    - route: Echigo-Yuzawa Station → Iwappara
+      duration_minutes: 10
+      notes: 有免費接駁巴士。
     self_drive:
-      - route: "Kan-Etsu Expressway → Yuzawa IC"
-        duration_minutes: 5
-        notes: "交流道出口後約5-10分鐘車程，停車免費。"
+    - route: Kan-Etsu Expressway → Yuzawa IC
+      duration_minutes: 5
+      notes: 交流道出口後約5-10分鐘車程，停車免費。
   international:
     airports: []
-  remarks: ""
+  remarks: ''
 content_sources:
-  - "project/specs/resort-services/skiarea.md"
-  - "https://www.iwa-ppara.com/"
-notes: "南向坡面，晴天率高，但雪質可能受影響。平日人潮稀少。"
+- project/specs/resort-services/skiarea.md
+- https://www.iwa-ppara.com/
+notes: 南向坡面，晴天率高，但雪質可能受影響。平日人潮稀少。

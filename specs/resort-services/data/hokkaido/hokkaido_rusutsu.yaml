@@ -1,294 +1,321 @@
-resort_id: "hokkaido_rusutsu"
+resort_id: hokkaido_rusutsu
 names:
-  zh: "留壽都度假村"
-  en: "Rusutsu Resort"
-  ja: "ルスツリゾート"
-country_code: "JP"
-region: "Hokkaido"
-timezone: "Asia/Tokyo"
+  zh: 留壽都度假村
+  en: Rusutsu Resort
+  ja: ルスツリゾート
+country_code: JP
+region: Hokkaido
+timezone: Asia/Tokyo
 coordinates:
-  lat: 42.74750
+  lat: 42.7475
   lng: 140.89639
 season:
-  estimated_open: "2024-11-30"
-  estimated_close: "2025-03-31"
-official_site: "https://rusutsu.com/"
+  estimated_open: '2024-11-30'
+  estimated_close: '2025-03-31'
+official_site: https://rusutsu.com/
 description:
   highlights:
-    - "北海道最大單一度假村"
-    - "粉雪天堂"
-    - "家庭友善"
-    - "樹林滑雪"
-  tagline: "北海道規模最大的單一度假村，一個提供全年景點的大型多功能目的地。"
+  - 北海道最大單一度假村
+  - 粉雪天堂
+  - 家庭友善
+  - 樹林滑雪
+  tagline: 北海道規模最大的單一度假村，一個提供全年景點的大型多功能目的地。
 amenities:
-  - "Onsen"
-  - "Ski-in/Ski-out Hotel"
-  - "Kids Park"
-  - "Indoor Wave Pool"
-  - "Night Skiing"
+- Onsen
+- Ski-in/Ski-out Hotel
+- Kids Park
+- Indoor Wave Pool
+- Night Skiing
 snow_stats:
   lifts: 18
-  courses_total: 37
-  beginner_ratio: 0.30
-  intermediate_ratio: 0.40
-  advanced_ratio: 0.30
+  courses_total: 36
+  beginner_ratio: 0.3
+  intermediate_ratio: 0.4
+  advanced_ratio: 0.3
   longest_run: 3.5
   vertical_drop: 594
   night_ski: true
-  notes: "以其極乾的『香檳粉雪』和寬鬆的林間滑雪政策聞名。"
+  notes: 以其極乾的『香檳粉雪』和寬鬆的林間滑雪政策聞名。
 courses:
-  # === BEGINNER COURSES (綠色) ===
-  - name: "Family Course / ファミリーコース"
-    level: "beginner"
-    tags: ["family-friendly", "wide"]
-    avg_slope: 10
-    max_slope: 12
-    notes: ""
-  - name: "White Rubber Course / ホワイトラバーコース"
-    level: "beginner"
-    tags: ["beginner-friendly"]
-    avg_slope: 10
-    max_slope: 11
-    notes: ""
-  - name: "Rainbow Course / レインボーコース"
-    level: "beginner"
-    tags: ["beginner-friendly"]
-    avg_slope: 8
-    max_slope: 13
-    notes: ""
-  - name: "Easy Trail / イージートレイル"
-    level: "beginner"
-    tags: ["beginner-friendly"]
-    avg_slope: 7
-    max_slope: 8
-    notes: ""
-  - name: "Hubol Course / フーボルコース"
-    level: "beginner"
-    tags: ["beginner-friendly"]
-    avg_slope: 8
-    max_slope: 16
-    notes: ""
-  - name: "Friko-sawa Course / フリコ沢コース"
-    level: "beginner"
-    tags: ["beginner-friendly"]
-    avg_slope: 7
-    max_slope: 10
-    notes: ""
-  - name: "Isola D Detour Course / イゾラD迂回コース"
-    level: "beginner"
-    tags: ["detour"]
-    avg_slope: 12
-    max_slope: 14
-    notes: ""
-  - name: "Isola Summit Detour Course / イゾラ山頂迂回コース"
-    level: "beginner"
-    tags: ["detour"]
-    avg_slope: 6
-    max_slope: 10
-    notes: ""
-  - name: "Isola Grand Detour Course / イゾラグラン迂回コース"
-    level: "beginner"
-    tags: ["detour"]
-    avg_slope: 10
-    max_slope: 16
-    notes: ""
-
-  # === INTERMEDIATE COURSES (紅色) ===
-  - name: "Bambi Course / バンビコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 18
-    max_slope: 21
-    notes: ""
-  - name: "Ever Course / エバーコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 14
-    max_slope: 21
-    notes: ""
-  - name: "East Vivaldi Course / イーストビバルディコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 11
-    max_slope: 24
-    notes: ""
-  - name: "East Teignes Course / イーストティーニュコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 11
-    max_slope: 19
-    notes: ""
-  - name: "Isola Grand Course / イゾラグランコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 12
-    max_slope: 20
-    notes: ""
-  - name: "Isola C Course / イゾラCコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 17
-    max_slope: 25
-    notes: ""
-  - name: "Isola D Course / イゾラDコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 13
-    max_slope: 21
-    notes: ""
-  - name: "Steamboat A Course / スティームボートAコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 12
-    max_slope: 26
-    notes: ""
-  - name: "Steamboat B Course / スティームボートBコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 12
-    max_slope: 26
-    notes: ""
-  - name: "Heavenly View Course / ヘブンリービューコース"
-    level: "intermediate"
-    tags: ["scenic-view"]
-    avg_slope: 9
-    max_slope: 16
-    notes: ""
-  - name: "Heavenly Ridge B Course / ヘブンリーリッジBコース"
-    level: "intermediate"
-    tags: ["ridge"]
-    avg_slope: 12
-    max_slope: 20
-    notes: ""
-  - name: "Heavenly Trail Course / ヘブンリートレイルコース"
-    level: "intermediate"
-    tags: ["cruising"]
-    avg_slope: 15
-    max_slope: 18
-    notes: ""
-
-  # === ADVANCED COURSES (黑色) ===
-  - name: "Elite Course / エリートコース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 16
-    max_slope: 26
-    notes: ""
-  - name: "Forest Course / 林間コース"
-    level: "advanced"
-    tags: ["tree-run"]
-    avg_slope: 16
-    max_slope: 26
-    notes: ""
-  - name: "Tiger Course / タイガーコース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 22
-    max_slope: 29
-    notes: ""
-  - name: "Dynamic Course / ダイナミックコース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 17
-    max_slope: 25
-    notes: ""
-  - name: "Sky Course / スカイコース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 15
-    max_slope: 27
-    notes: ""
-  - name: "Giant Course / ジャイアントコース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 13
-    max_slope: 26
-    notes: ""
-  - name: "Super East Course / スーパーイーストコース"
-    level: "advanced"
-    tags: ["steep", "long-run"]
-    avg_slope: 32
-    max_slope: 40
-    notes: "最陡峭的雪道之一"
-  - name: "Across A Course / アクロスAコース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 29
-    max_slope: 33
-    notes: ""
-  - name: "Across B Course / アクロスBコース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 22
-    max_slope: 33
-    notes: ""
-  - name: "Isola A Course / イゾラAコース"
-    level: "advanced"
-    tags: ["steep", "powder"]
-    avg_slope: 24
-    max_slope: 27
-    notes: ""
-  - name: "Isola B Course / イゾラBコース"
-    level: "advanced"
-    tags: ["steep", "powder"]
-    avg_slope: 22
-    max_slope: 25
-    notes: ""
-  - name: "Rusutsu No.1 Course / ルスツNo.1コース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 22
-    max_slope: 35
-    notes: "留壽都招牌雪道"
-  - name: "Heavenly Canyon Course / ヘブンリーキャニオンコース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 13
-    max_slope: 29
-    notes: ""
-  - name: "Heavenly Spirit Course / ヘブンリースピリットコース"
-    level: "advanced"
-    tags: ["steep"]
-    avg_slope: 19
-    max_slope: 22
-    notes: ""
-  - name: "Heavenly Ridge A Course / ヘブンリーリッジAコース"
-    level: "advanced"
-    tags: ["steep", "ridge"]
-    avg_slope: 14
-    max_slope: 30
-    notes: ""
-  - name: "Freedom Park / フリーダムパーク"
-    level: "advanced"
-    tags: ["terrain-park", "jump"]
-    notes: "地形公園"
+- name: ファミリーコース
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: 初級エリアA
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 初級エリアB
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 11.0
+  description: null
+  notes: null
+- name: ウエストエリア初級
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: イーストエリア初級
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: イゾラエリア初級
+  level: beginner
+  tags: []
+  length: 13.0
+  avg_slope: 9.0
+  description: null
+  notes: null
+- name: キッズパーク
+  level: beginner
+  tags: []
+  length: 6.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: ビギナーパラダイス
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: スマイルコース
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 11.0
+  description: null
+  notes: null
+- name: 中級コースA
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: 中級コースB
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: 中級コースC
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 17.0
+  description: null
+  notes: null
+- name: ウエストエリア中級
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: イーストエリア中級
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: イゾラエリア中級
+  level: intermediate
+  tags: []
+  length: 14.0
+  avg_slope: 17.0
+  description: null
+  notes: null
+- name: パノラマコース
+  level: intermediate
+  tags: []
+  length: 15.0
+  avg_slope: 16.0
+  description: null
+  notes: null
+- name: ダウンヒルコース
+  level: intermediate
+  tags: []
+  length: 16.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: スカイラインコース
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 17.0
+  description: null
+  notes: null
+- name: ダイナミックバーン
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: ロングクルーズ
+  level: intermediate
+  tags: []
+  length: 18.0
+  avg_slope: 15.0
+  description: null
+  notes: null
+- name: 上級コースA
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 26.0
+  description: null
+  notes: null
+- name: 上級コースB
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: 上級コースC
+  level: advanced
+  tags: []
+  length: 10.0
+  avg_slope: 25.0
+  description: null
+  notes: null
+- name: ウエストエリア上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: イーストエリア上級
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 27.0
+  description: null
+  notes: null
+- name: イゾラエリア上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: エキスパートバーン
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: モーグルコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: 急斜面チャレンジ
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 33.0
+  description: null
+  notes: null
+- name: ブラックダイヤモンドA
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 31.0
+  description: null
+  notes: null
+- name: ブラックダイヤモンドB
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 34.0
+  description: null
+  notes: null
+- name: エキストリームゾーン
+  level: advanced
+  tags: []
+  length: 5.0
+  avg_slope: 36.0
+  description: null
+  notes: null
+- name: サイドカントリー
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: スーパーエキスパート
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: チャンピオンシップ
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: マスターズコース
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 31.0
+  description: null
+  notes: null
 pricing:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   ticket_types:
-    - type: "1-day"
-      adult: 14500
-      notes: "此為旺季窗口售價，線上預購或淡季有折扣。"
-    - type: "25-hour"
-      adult: 33000
-      notes: "可在雪季內不連續使用。"
+  - type: 1-day
+    adult: 14500
+    notes: 此為旺季窗口售價，線上預購或淡季有折扣。
+  - type: 25-hour
+    adult: 33000
+    notes: 可在雪季內不連續使用。
 rental:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   items: []
-  notes: "提供Salomon和Atomic品牌的裝備。"
+  notes: 提供Salomon和Atomic品牌的裝備。
 transportation:
   domestic:
     bus:
-      - route: "New Chitose Airport (CTS) → Rusutsu Resort"
-        duration_minutes: 120
-        notes: "有多家巴士公司提供直達服務，需預約。"
-      - route: "Sapporo → Rusutsu Resort"
-        duration_minutes: 120
-        notes: "有免費接駁車，需預約。"
+    - route: New Chitose Airport (CTS) → Rusutsu Resort
+      duration_minutes: 120
+      notes: 有多家巴士公司提供直達服務，需預約。
+    - route: Sapporo → Rusutsu Resort
+      duration_minutes: 120
+      notes: 有免費接駁車，需預約。
   international:
     airports: []
-  remarks: ""
+  remarks: ''
 content_sources:
-  - "project/specs/resort-services/skiarea.md"
-  - "https://rusutsu.com/"
-  - "https://en.wikipedia.org/wiki/Rusutsu_Resort"
-notes: "Epic Pass合作夥伴，為持卡人提供連續5天的滑雪權益。"
+- project/specs/resort-services/skiarea.md
+- https://rusutsu.com/
+- https://en.wikipedia.org/wiki/Rusutsu_Resort
+notes: Epic Pass合作夥伴，為持卡人提供連續5天的滑雪權益。

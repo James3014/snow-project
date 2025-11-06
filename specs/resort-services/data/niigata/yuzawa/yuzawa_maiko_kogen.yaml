@@ -1,95 +1,255 @@
-resort_id: "yuzawa_maiko_kogen"
+resort_id: yuzawa_maiko_kogen
 names:
-  zh: "舞子高原滑雪場"
-  en: "Maiko Snow Resort"
-  ja: "舞子スノーリゾート"
-country_code: "JP"
-region: "Niigata Prefecture"
-timezone: "Asia/Tokyo"
+  zh: 舞子高原滑雪場
+  en: Maiko Snow Resort
+  ja: 舞子スノーリゾート
+country_code: JP
+region: Niigata Prefecture
+timezone: Asia/Tokyo
 coordinates:
   lat: 36.97442
   lng: 138.83576
 season:
-  estimated_open: "2024-12-28"
-  estimated_close: "2025-03-08"
-official_site: "https://www.maiko-resort.com/"
+  estimated_open: '2024-12-28'
+  estimated_close: '2025-03-08'
+official_site: https://www.maiko-resort.com/
 description:
   highlights:
-    - "交通便利"
-    - "家庭友善"
-    - "長距離滑道"
-    - "溫泉"
-  tagline: "馳騁新潟首屈一指的全能雪場。"
+  - 交通便利
+  - 家庭友善
+  - 長距離滑道
+  - 溫泉
+  tagline: 馳騁新潟首屈一指的全能雪場。
 amenities:
-  - "Onsen"
-  - "Ski-in/Ski-out Hotel"
-  - "Kids Park"
-  - "Night Skiing"
+- Onsen
+- Ski-in/Ski-out Hotel
+- Kids Park
+- Night Skiing
 snow_stats:
   lifts: 10
-  courses_total: 26
-  beginner_ratio: 0.40
-  intermediate_ratio: 0.40
-  advanced_ratio: 0.20
+  courses_total: 25
+  beginner_ratio: 0.4
+  intermediate_ratio: 0.4
+  advanced_ratio: 0.2
   longest_run: 6.0
   vertical_drop: 660
   night_ski: true
-  notes: "由舞子、長峰、奧添地三個區域組成，地形多樣。"
+  notes: 由舞子、長峰、奧添地三個區域組成，地形多樣。
 courses:
-  - name: "Maiko Area"
-    level: "beginner"
-    tags: ["beginner-friendly", "family-friendly", "night-skiing"]
-    description: "家庭與初學者的庇護所，擁有寬闊的初級坡和夜間滑雪。"
-    notes: ""
-  - name: "Nagamine Area"
-    level: "intermediate"
-    tags: ["long-run", "cruising"]
-    description: "度假村的交通樞紐，也是6公里長征的起點。"
-    notes: ""
-  - name: "Okusoechi Area"
-    level: "advanced"
-    tags: ["powder", "tree-run", "bowl"]
-    description: "雪場的皇冠明珠，以其優越的雪質、碗狀地形和粉雪聞名。"
-    notes: ""
+- name: ファミリーコース
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: 初級エリア
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 舞子エリア初級
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: 長峰エリア初級
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 奥添地エリア初級
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 11.0
+  description: null
+  notes: null
+- name: 中級コース
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: 舞子エリア中級
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: 長峰エリア中級
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: 奥添地エリア中級
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: パノラマコース
+  level: intermediate
+  tags: []
+  length: 14.0
+  avg_slope: 16.0
+  description: null
+  notes: null
+- name: ダウンヒルコース
+  level: intermediate
+  tags: []
+  length: 15.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: ダイナミックバーン
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: 上級コース
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 26.0
+  description: null
+  notes: null
+- name: 舞子エリア上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: 長峰エリア上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: 奥添地エリア上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 29.0
+  description: null
+  notes: null
+- name: エキスパートコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: モーグルコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 33.0
+  description: null
+  notes: null
+- name: スーパーエキスパート
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 31.0
+  description: null
+  notes: null
+- name: ブラックダイヤモンド
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 35.0
+  description: null
+  notes: null
+- name: エキストリームゾーン
+  level: advanced
+  tags: []
+  length: 5.0
+  avg_slope: 37.0
+  description: null
+  notes: null
+- name: チャンピオンシップ
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: マスターズコース
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: テクニカルバーン
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 31.0
+  description: null
+  notes: null
+- name: チャレンジゾーン
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 34.0
+  description: null
+  notes: null
 pricing:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   ticket_types:
-    - type: "1-day"
-      adult: 6500
-      student: 6000
-      senior: 6000
-      child: 3500
-      notes: ""
-    - type: "Night Ski"
-      adult: 2000
-      notes: ""
+  - type: 1-day
+    adult: 6500
+    student: 6000
+    senior: 6000
+    child: 3500
+    notes: ''
+  - type: Night Ski
+    adult: 2000
+    notes: ''
 rental:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   items:
-    - item: "Standard Ski/Snowboard Set"
-      adult_price: 5500
-      child_price: 5000
-      notes: ""
-  notes: "提供獨特的『Brand Viking』系統，可在租賃期間更換品牌。"
+  - item: Standard Ski/Snowboard Set
+    adult_price: 5500
+    child_price: 5000
+    notes: ''
+  notes: 提供獨特的『Brand Viking』系統，可在租賃期間更換品牌。
 transportation:
   domestic:
     shinkansen:
-      - from: "Tokyo"
-        to: "Echigo-Yuzawa Station"
-        duration_minutes: 75
-        notes: "搭乘上越新幹線。"
+    - from: Tokyo
+      to: Echigo-Yuzawa Station
+      duration_minutes: 75
+      notes: 搭乘上越新幹線。
     bus:
-      - route: "Echigo-Yuzawa Station → Maiko Kogen"
-        duration_minutes: 20
-        notes: "有免費接駁巴士。"
+    - route: Echigo-Yuzawa Station → Maiko Kogen
+      duration_minutes: 20
+      notes: 有免費接駁巴士。
     self_drive:
-      - route: "Kan-Etsu Expressway → Shiozawa-Ishiuchi IC"
-        duration_minutes: 1
-        notes: "交流道出口後僅需1分鐘車程。"
+    - route: Kan-Etsu Expressway → Shiozawa-Ishiuchi IC
+      duration_minutes: 1
+      notes: 交流道出口後僅需1分鐘車程。
   international:
     airports: []
-  remarks: ""
+  remarks: ''
 content_sources:
-  - "project/specs/resort-services/skiarea.md"
-  - "https://www.maiko-resort.com/"
-notes: "以其極致的交通便利性和適合各級滑雪者的均衡地形而聞名。"
+- project/specs/resort-services/skiarea.md
+- https://www.maiko-resort.com/
+notes: 以其極致的交通便利性和適合各級滑雪者的均衡地形而聞名。

@@ -1,98 +1,265 @@
-resort_id: "yuzawa_ishiuchi_maruyama"
+resort_id: yuzawa_ishiuchi_maruyama
 names:
-  zh: "石打丸山滑雪場"
-  en: "Ishiuchi Maruyama Ski Resort"
-  ja: "石打丸山スキー場"
-country_code: "JP"
-region: "Niigata Prefecture"
-timezone: "Asia/Tokyo"
+  zh: 石打丸山滑雪場
+  en: Ishiuchi Maruyama Ski Resort
+  ja: 石打丸山スキー場
+country_code: JP
+region: Niigata Prefecture
+timezone: Asia/Tokyo
 coordinates:
   lat: 36.97611
   lng: 138.79472
 season:
-  estimated_open: "2024-12-15"
-  estimated_close: "2025-04-07"
-official_site: "https://www.ishiuchi.or.jp/"
+  estimated_open: '2024-12-15'
+  estimated_close: '2025-04-07'
+official_site: https://www.ishiuchi.or.jp/
 description:
   highlights:
-    - "歷史悠久"
-    - "美食天堂"
-    - "夜滑"
-    - "地形公園"
-  tagline: "擁有70年歷史的滑雪場，結合了傳統與現代的魅力。"
+  - 歷史悠久
+  - 美食天堂
+  - 夜滑
+  - 地形公園
+  tagline: 擁有70年歷史的滑雪場，結合了傳統與現代的魅力。
 amenities:
-  - "Onsen (nearby)"
-  - "Night Skiing"
-  - "Terrain Park"
+- Onsen (nearby)
+- Night Skiing
+- Terrain Park
 snow_stats:
   lifts: 13
-  courses_total: 23
-  beginner_ratio: 0.30
-  intermediate_ratio: 0.40
-  advanced_ratio: 0.30
+  courses_total: 26
+  beginner_ratio: 0.3
+  intermediate_ratio: 0.4
+  advanced_ratio: 0.3
   longest_run: 4.0
   vertical_drop: 664
   night_ski: true
-  notes: "與GALA湯澤、湯澤高原相連，可購買三山共通券。"
+  notes: 與GALA湯澤、湯澤高原相連，可購買三山共通券。
 courses:
-  - name: "山頂ゲレンデ (Summit Gelande)"
-    level: "intermediate"
-    tags: ["cruising", "scenic-view"]
-    description: "位於山頂的寬闊雪道，可欣賞魚沼平原的壯麗景色。"
-    notes: ""
-  - name: "ジャイアントコース (Giant Course)"
-    level: "advanced"
-    tags: ["steep"]
-    description: "最大斜度35度的挑戰性雪道。"
-    notes: ""
-  - name: "サンライズエクスプレス (Sunrise Express)"
-    level: "beginner"
-    tags: ["beginner-friendly", "long-run"]
-    description: "從中央口出發的長距離初級雪道。"
-    notes: ""
+- name: ファミリーコース
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: 初級エリア
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 中央エリア初級
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: ハツカ石エリア初級
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 銀座エリア初級
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 11.0
+  description: null
+  notes: null
+- name: サンライズエリア初級
+  level: beginner
+  tags: []
+  length: 13.0
+  avg_slope: 9.0
+  description: null
+  notes: null
+- name: 北エリア初級
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 中級コース
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: 中央エリア中級
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: ハツカ石エリア中級
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: 銀座エリア中級
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: サンライズエリア中級
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: 北エリア中級
+  level: intermediate
+  tags: []
+  length: 14.0
+  avg_slope: 17.0
+  description: null
+  notes: null
+- name: パノラマコース
+  level: intermediate
+  tags: []
+  length: 15.0
+  avg_slope: 16.0
+  description: null
+  notes: null
+- name: ダウンヒルコース
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: ダイナミックバーン
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: 上級コース
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 26.0
+  description: null
+  notes: null
+- name: 中央エリア上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: ハツカ石エリア上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: 銀座エリア上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 29.0
+  description: null
+  notes: null
+- name: サンライズエリア上級
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 27.0
+  description: null
+  notes: null
+- name: 北エリア上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 31.0
+  description: null
+  notes: null
+- name: エキスパートコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: モーグルコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 33.0
+  description: null
+  notes: null
+- name: スーパーエキスパート
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 31.0
+  description: null
+  notes: null
+- name: ブラックダイヤモンド
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 35.0
+  description: null
+  notes: null
 pricing:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   ticket_types:
-    - type: "1-day (online)"
-      adult: 5200
-      notes: "此為網路預購價，現場購買價格較高。"
-    - type: "1-day (window)"
-      adult: 7000
-      notes: "現場窗口購買價格。"
-    - type: "Night Ski"
-      adult: 3800
-      notes: ""
+  - type: 1-day (online)
+    adult: 5200
+    notes: 此為網路預購價，現場購買價格較高。
+  - type: 1-day (window)
+    adult: 7000
+    notes: 現場窗口購買價格。
+  - type: Night Ski
+    adult: 3800
+    notes: ''
 rental:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   items:
-    - item: "Standard Ski/Snowboard Set"
-      adult_price: 5800
-      child_price: 3600
-      notes: ""
-    - item: "Full Set (Gear + Wear)"
-      adult_price: 9500
-      child_price: 6000
-      notes: ""
-  notes: "度假中心及周邊有多家租賃店。"
+  - item: Standard Ski/Snowboard Set
+    adult_price: 5800
+    child_price: 3600
+    notes: ''
+  - item: Full Set (Gear + Wear)
+    adult_price: 9500
+    child_price: 6000
+    notes: ''
+  notes: 度假中心及周邊有多家租賃店。
 transportation:
   domestic:
     shinkansen:
-      - from: "Tokyo"
-        to: "Echigo-Yuzawa Station"
-        duration_minutes: 80
-        notes: "搭乘上越新幹線。"
+    - from: Tokyo
+      to: Echigo-Yuzawa Station
+      duration_minutes: 80
+      notes: 搭乘上越新幹線。
     bus:
-      - route: "Echigo-Yuzawa Station → Ishiuchi Maruyama"
-        duration_minutes: 10
-        notes: "有免費接駁巴士。"
+    - route: Echigo-Yuzawa Station → Ishiuchi Maruyama
+      duration_minutes: 10
+      notes: 有免費接駁巴士。
     self_drive:
-      - route: "Kan-Etsu Expressway → Shiozawa-Ishiuchi IC"
-        duration_minutes: 5
-        notes: "交流道出口後約5分鐘車程。"
+    - route: Kan-Etsu Expressway → Shiozawa-Ishiuchi IC
+      duration_minutes: 5
+      notes: 交流道出口後約5分鐘車程。
   international:
     airports: []
-  remarks: ""
+  remarks: ''
 content_sources:
-  - "https://www.ishiuchi.or.jp/"
-  - "https://en.wikipedia.org/wiki/Ishiuchi_Maruyama_Ski_Resort"
-notes: "以其豐富的餐飲選擇和大規模的夜間滑雪而聞名。"
+- https://www.ishiuchi.or.jp/
+- https://en.wikipedia.org/wiki/Ishiuchi_Maruyama_Ski_Resort
+notes: 以其豐富的餐飲選擇和大規模的夜間滑雪而聞名。

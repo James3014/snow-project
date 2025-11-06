@@ -1,91 +1,349 @@
-resort_id: "nagano_nozawa_onsen"
+resort_id: nagano_nozawa_onsen
 names:
-  zh: "野澤溫泉滑雪場"
-  en: "Nozawa Onsen Snow Resort"
-  ja: "野沢温泉スキー場"
-country_code: "JP"
-region: "Nagano Prefecture"
-timezone: "Asia/Tokyo"
+  zh: 野澤溫泉滑雪場
+  en: Nozawa Onsen Snow Resort
+  ja: 野沢温泉スキー場
+country_code: JP
+region: Nagano Prefecture
+timezone: Asia/Tokyo
 coordinates:
   lat: 36.920031
   lng: 138.451976
 season:
-  estimated_open: "2024-12-01"
-  estimated_close: "2025-05-06"
-official_site: "http://www.nozawaski.com/"
+  estimated_open: '2024-12-01'
+  estimated_close: '2025-05-06'
+official_site: http://www.nozawaski.com/
 description:
   highlights:
-    - "雪國之魂"
-    - "溫泉文化"
-    - "道祖神火祭"
-    - "粉雪"
-  tagline: "在擁有千年歷史的溫泉村落，體驗最地道的日本滑雪文化。"
+  - 雪國之魂
+  - 溫泉文化
+  - 道祖神火祭
+  - 粉雪
+  tagline: 在擁有千年歷史的溫泉村落，體驗最地道的日本滑雪文化。
 amenities:
-  - "Onsen"
-  - "Kids Park"
-  - "Night Skiing"
+- Onsen
+- Kids Park
+- Night Skiing
 snow_stats:
   lifts: 20
-  courses_total: 36
-  beginner_ratio: 0.40
-  intermediate_ratio: 0.30
-  advanced_ratio: 0.30
+  courses_total: 39
+  beginner_ratio: 0.4
+  intermediate_ratio: 0.3
+  advanced_ratio: 0.3
   longest_run: 10.0
   vertical_drop: 1085
   night_ski: true
-  notes: "以其廣闊多樣的地形和豐富的天然降雪聞名。"
+  notes: 以其廣闊多樣的地形和豐富的天然降雪聞名。
 courses:
-  - name: "Skyline Course"
-    level: "intermediate"
-    tags: ["long-run", "scenic-view", "ridge"]
-    description: "長達4,500米的傳奇山脊雪道，沿途風景令人嘆為觀止。"
-    notes: ""
-  - name: "Challenge 39° Wall"
-    level: "advanced"
-    tags: ["steep", "moguls", "un-groomed"]
-    description: "雪場最著名的挑戰，最大坡度達39度的陡峭雪牆。"
-    notes: ""
-  - name: "Uenotaira"
-    level: "beginner"
-    tags: ["beginner-friendly", "wide", "plateau"]
-    description: "位於半山的寬闊平緩高原區，是初學者練習的理想場所。"
-    notes: ""
+- name: ファミリーコース
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: 初級エリア
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 日影ゲレンデ初級
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: 柄沢ゲレンデ初級
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 上ノ平ゲレンデ初級
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 11.0
+  description: null
+  notes: null
+- name: やまびこゲレンデ初級
+  level: beginner
+  tags: []
+  length: 13.0
+  avg_slope: 9.0
+  description: null
+  notes: null
+- name: 長坂ゲレンデ初級
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: パラダイスゲレンデ初級
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: ブナ平ゲレンデ初級
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: スカイラインコース初級
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 11.0
+  description: null
+  notes: null
+- name: 中級コース
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: 日影ゲレンデ中級
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: 柄沢ゲレンデ中級
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: 上ノ平ゲレンデ中級
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: やまびこゲレンデ中級
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: 長坂ゲレンデ中級
+  level: intermediate
+  tags: []
+  length: 14.0
+  avg_slope: 17.0
+  description: null
+  notes: null
+- name: パラダイスゲレンデ中級
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: ブナ平ゲレンデ中級
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: スカイラインコース中級
+  level: intermediate
+  tags: []
+  length: 15.0
+  avg_slope: 16.0
+  description: null
+  notes: null
+- name: パノラマコース
+  level: intermediate
+  tags: []
+  length: 16.0
+  avg_slope: 15.0
+  description: null
+  notes: null
+- name: ダウンヒルコース
+  level: intermediate
+  tags: []
+  length: 14.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: ユートピアコース
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 17.0
+  description: null
+  notes: null
+- name: シュナイダーコース
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: チャレンジコース
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: 上級コース
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 26.0
+  description: null
+  notes: null
+- name: 日影ゲレンデ上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: 柄沢ゲレンデ上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: 上ノ平ゲレンデ上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 29.0
+  description: null
+  notes: null
+- name: やまびこゲレンデ上級
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 27.0
+  description: null
+  notes: null
+- name: 長坂ゲレンデ上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 31.0
+  description: null
+  notes: null
+- name: パラダイスゲレンデ上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: ブナ平ゲレンデ上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: スカイラインコース上級
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: エキスパートコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: チャレンジ39
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 39.0
+  description: null
+  notes: null
+- name: モーグルコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 33.0
+  description: null
+  notes: null
+- name: スーパーエキスパート
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 31.0
+  description: null
+  notes: null
+- name: ブラックダイヤモンド
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 35.0
+  description: null
+  notes: null
+- name: エキストリームゾーン
+  level: advanced
+  tags: []
+  length: 5.0
+  avg_slope: 38.0
+  description: null
+  notes: null
 pricing:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   ticket_types:
-    - type: "1-day"
-      adult: 7300
-      child: 4400
-      senior: 5900
-      notes: ""
-    - type: "2-day"
-      adult: 13500
-      child: 8100
-      senior: 10900
-      notes: ""
+  - type: 1-day
+    adult: 7300
+    child: 4400
+    senior: 5900
+    notes: ''
+  - type: 2-day
+    adult: 13500
+    child: 8100
+    senior: 10900
+    notes: ''
 rental:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   items:
-    - item: "Standard Ski/Snowboard Set"
-      adult_price: 5500
-      child_price: 4100
-      notes: "價格參考自Salomon Station。"
-  notes: "村莊內有多家獨立租賃店可供選擇。"
+  - item: Standard Ski/Snowboard Set
+    adult_price: 5500
+    child_price: 4100
+    notes: 價格參考自Salomon Station。
+  notes: 村莊內有多家獨立租賃店可供選擇。
 transportation:
   domestic:
     shinkansen:
-      - from: "Tokyo"
-        to: "Iiyama Station"
-        duration_minutes: 100
-        notes: "搭乘北陸新幹線。"
+    - from: Tokyo
+      to: Iiyama Station
+      duration_minutes: 100
+      notes: 搭乘北陸新幹線。
     bus:
-      - route: "Iiyama Station → Nozawa Onsen"
-        duration_minutes: 25
-        notes: "搭乘野澤溫泉Liner巴士。"
+    - route: Iiyama Station → Nozawa Onsen
+      duration_minutes: 25
+      notes: 搭乘野澤溫泉Liner巴士。
   international:
     airports: []
-  remarks: "村內有免費接駁巴士。"
+  remarks: 村內有免費接駁巴士。
 content_sources:
-  - "project/specs/resort-services/skiarea.md"
-  - "http://www.nozawaski.com/"
-notes: "以其13座免費的公共溫泉『外湯』和每年1月15日的道祖神火祭聞名。"
+- project/specs/resort-services/skiarea.md
+- http://www.nozawaski.com/
+notes: 以其13座免費的公共溫泉『外湯』和每年1月15日的道祖神火祭聞名。
