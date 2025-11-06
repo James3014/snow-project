@@ -105,21 +105,22 @@ export default function ResortList() {
   // 將地區名稱轉換為中文
   const getRegionName = (region: string) => regionNameMap[region] || region;
 
-  // 雪場 Logo URL 映射（使用官網 favicon 或預設圖片）
+  // 雪場 Logo URL 生成器（為每個雪場生成獨特的高清圖標）
   const getResortLogoUrl = (resortId: string) => {
-    const logoMap: Record<string, string> = {
-      // 北海道
-      'hokkaido_rusutsu': 'https://rusutsu.com/favicon.ico',
-      'hokkaido_niseko_moiwa': 'https://www.niseko-moiwa.jp/favicon.ico',
-      'hokkaido_sapporo_teine': 'https://sapporo-teine.com/favicon.ico',
-      'hokkaido_furano': 'https://www.snowtomamu.jp/favicon.ico',
-      'hokkaido_tomamu': 'https://www.snowtomamu.jp/favicon.ico',
+    // 使用 DiceBear API 生成獨特的幾何圖標
+    // 每個雪場基於其 ID 有唯一的圖案和顏色
+    const colors = [
+      '3B82F6', '06B6D4', 'EF4444', '10B981', 'F59E0B',
+      '8B5CF6', 'EC4899', '6366F1', 'F97316', '14B8A6',
+      '0EA5E9', '84CC16', 'F43F5E', '8B5CF6', '06B6D4'
+    ];
 
-      // 使用通用滑雪圖標作為預設
-      'default': 'https://img.icons8.com/fluency/96/skiing.png',
-    };
+    // 根據 resortId 選擇顏色（確保同一雪場總是同顏色）
+    const colorIndex = resortId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length;
+    const backgroundColor = colors[colorIndex];
 
-    return logoMap[resortId] || logoMap['default'];
+    // 使用 DiceBear Shapes API 生成 256x256 的清晰 SVG 圖標
+    return `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(resortId)}&backgroundColor=${backgroundColor}&size=256`;
   };
 
   // 取得所有地區（用於過濾器）
@@ -247,7 +248,7 @@ export default function ResortList() {
                   <img
                     src={getResortLogoUrl(resort.resort_id)}
                     alt={`${resort.names.zh} Logo`}
-                    className="max-h-20 max-w-full object-contain"
+                    className="max-h-20 max-w-full object-contain rounded-lg"
                     onError={(e) => {
                       // 如果圖片載入失敗，顯示預設 emoji
                       e.currentTarget.style.display = 'none';
