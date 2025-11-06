@@ -97,7 +97,7 @@ export default function ResortDetail() {
     if (userId && resortId && resort) {
       loadData();
     }
-  }, [userId, resortId]);
+  }, [userId, resortId, resort]); // ✅ 添加 resort 依賴
 
   const loadData = async () => {
     if (!userId || !resortId || !resort) return;
