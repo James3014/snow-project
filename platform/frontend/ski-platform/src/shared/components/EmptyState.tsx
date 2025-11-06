@@ -1,6 +1,6 @@
 /**
  * Empty State Component
- * 空状态组件
+ * 空狀態組件
  */
 import type { ReactNode } from 'react';
 import Button from './Button';
@@ -56,7 +56,7 @@ export default function EmptyState({
  * Predefined Empty States
  */
 
-export function NoDataEmptyState({ message = '暂无数据' }: { message?: string }) {
+export function NoDataEmptyState({ message = '暫無資料' }: { message?: string }) {
   return <EmptyState icon="📊" title={message} />;
 }
 
@@ -64,8 +64,8 @@ export function NoResortsEmptyState() {
   return (
     <EmptyState
       icon="🏔️"
-      title="暂无雪场数据"
-      description="目前还没有可用的雪场信息"
+      title="暫無雪場資料"
+      description="目前還沒有可用的雪場資訊"
     />
   );
 }
@@ -74,8 +74,8 @@ export function NoCoursesEmptyState() {
   return (
     <EmptyState
       icon="⛷️"
-      title="还没有完成任何雪道"
-      description="开始你的滑雪之旅，记录第一条雪道吧！"
+      title="還沒有完成任何雪道"
+      description="開始你的滑雪之旅，記錄第一條雪道吧！"
     />
   );
 }
@@ -84,8 +84,8 @@ export function NoAchievementsEmptyState() {
   return (
     <EmptyState
       icon="🏆"
-      title="还没有获得任何成就"
-      description="完成更多雪道，解锁精彩成就！"
+      title="還沒有獲得任何成就"
+      description="完成更多雪道，解鎖精彩成就！"
     />
   );
 }
@@ -94,15 +94,15 @@ export function NoRecommendationsEmptyState({ onAction }: { onAction?: () => voi
   return (
     <EmptyState
       icon="⭐"
-      title="还没有推荐任何雪道"
-      description="发现了喜欢的雪道？快来推荐给大家吧！"
-      action={onAction ? { label: '添加推荐', onClick: onAction } : undefined}
+      title="還沒有推薦任何雪道"
+      description="發現了喜歡的雪道？快來推薦給大家吧！"
+      action={onAction ? { label: '新增推薦', onClick: onAction } : undefined}
     />
   );
 }
 
 export function ErrorEmptyState({
-  message = '加载失败',
+  message = '載入失敗',
   onRetry,
 }: {
   message?: string;
@@ -112,8 +112,8 @@ export function ErrorEmptyState({
     <EmptyState
       icon="⚠️"
       title={message}
-      description="请检查网络连接或稍后重试"
-      action={onRetry ? { label: '重试', onClick: onRetry } : undefined}
+      description="請檢查網路連線或稍後重試"
+      action={onRetry ? { label: '重試', onClick: onRetry } : undefined}
     />
   );
 }

@@ -1,5 +1,5 @@
 /**
- * Resort Detail Page - 雪场详情页（核心页面）
+ * Resort Detail Page - 雪場詳情頁（核心頁面）
  */
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -41,7 +41,7 @@ export default function ResortDetail() {
       dispatch(setProgress({ resortId, progress: progressData }));
       dispatch(setVisits(visitsData));
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '加载失败' }));
+      dispatch(addToast({ type: 'error', message: '載入失敗' }));
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ export default function ResortDetail() {
     if (!userId || !resortId) return;
     try {
       if (isCompleted) {
-        // TODO: 删除记录
+        // TODO: 刪除記錄
       } else {
         const visit = await courseTrackingApi.visits.create(userId, {
           resort_id: resortId,
@@ -59,10 +59,10 @@ export default function ResortDetail() {
         });
         dispatch(addVisit(visit));
         dispatch(addToast({ type: 'success', message: `✓ 已完成 ${courseName}` }));
-        loadData(); // 刷新进度
+        loadData(); // 重新整理進度
       }
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '操作失败' }));
+      dispatch(addToast({ type: 'error', message: '操作失敗' }));
     }
   };
 
@@ -87,8 +87,8 @@ export default function ResortDetail() {
     return (
       <EmptyState
         icon="❌"
-        title="未找到雪场信息"
-        description="该雪场不存在或已被删除"
+        title="未找到雪場資訊"
+        description="該雪場不存在或已被刪除"
         action={{ label: '返回列表', onClick: () => navigate('/resorts') }}
       />
     );
@@ -106,15 +106,15 @@ export default function ResortDetail() {
         </div>
         <EmptyState
           icon="⚠️"
-          title="加载失败"
-          description="无法加载雪场进度数据"
-          action={{ label: '重试', onClick: loadData }}
+          title="載入失敗"
+          description="無法載入雪場進度資料"
+          action={{ label: '重試', onClick: loadData }}
         />
       </div>
     );
   }
 
-  // 按难度分组课程
+  // 按難度分組課程
   const groupedCourses = resort.courses.reduce(
     (acc, course) => {
       if (!acc[course.level]) {

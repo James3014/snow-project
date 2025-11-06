@@ -7,7 +7,7 @@
   "framework": "vite",
   "env": {
     "VITE_USER_CORE_API": {
-      "default": "https://user-core-api.zeabur.app"
+      "default": "https://user-core.zeabur.app"
     },
     "VITE_RESORT_API": {
       "default": "https://resort-api.zeabur.app"

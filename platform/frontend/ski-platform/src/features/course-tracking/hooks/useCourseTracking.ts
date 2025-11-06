@@ -1,6 +1,6 @@
 /**
  * Custom Hooks for Course Tracking
- * 课程追踪自定义Hooks
+ * 課程追蹤自訂 Hooks
  */
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -22,7 +22,7 @@ import {
 } from '@/store/slices/courseTrackingSlice';
 
 /**
- * 获取用户雪道访问记录
+ * 取得使用者雪道訪問記錄
  */
 export function useCourseVisits(resortId?: string) {
   const dispatch = useAppDispatch();
@@ -43,7 +43,7 @@ export function useCourseVisits(resortId?: string) {
       const data = await courseTrackingApi.visits.list(userId, resortId);
       dispatch(setVisits(data));
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '加载访问记录失败' }));
+      dispatch(addToast({ type: 'error', message: '載入訪問記錄失敗' }));
     } finally {
       dispatch(setLoadingVisits(false));
     }
@@ -53,7 +53,7 @@ export function useCourseVisits(resortId?: string) {
 }
 
 /**
- * 获取用户推荐
+ * 取得使用者推薦
  */
 export function useRecommendations(resortId?: string) {
   const dispatch = useAppDispatch();
@@ -74,7 +74,7 @@ export function useRecommendations(resortId?: string) {
       const data = await courseTrackingApi.recommendations.list(userId, resortId);
       dispatch(setRecommendations(data));
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '加载推荐失败' }));
+      dispatch(addToast({ type: 'error', message: '載入推薦失敗' }));
     } finally {
       dispatch(setLoadingRecommendations(false));
     }
@@ -84,7 +84,7 @@ export function useRecommendations(resortId?: string) {
 }
 
 /**
- * 获取雪场进度
+ * 取得雪場進度
  */
 export function useResortProgress(resortId: string, totalCourses: number) {
   const dispatch = useAppDispatch();
@@ -105,7 +105,7 @@ export function useResortProgress(resortId: string, totalCourses: number) {
       const data = await courseTrackingApi.progress.getResortProgress(userId, resortId, totalCourses);
       dispatch(setProgress({ resortId, progress: data }));
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '加载进度失败' }));
+      dispatch(addToast({ type: 'error', message: '載入進度失敗' }));
     } finally {
       dispatch(setLoadingProgress(false));
     }
@@ -115,7 +115,7 @@ export function useResortProgress(resortId: string, totalCourses: number) {
 }
 
 /**
- * 获取雪道排名
+ * 取得雪道排名
  */
 export function useCourseRankings(resortId: string) {
   const dispatch = useAppDispatch();
@@ -135,7 +135,7 @@ export function useCourseRankings(resortId: string) {
       const data = await courseTrackingApi.rankings.getCourseRankings(resortId);
       dispatch(setRankings({ resortId, rankings: data }));
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '加载排名失败' }));
+      dispatch(addToast({ type: 'error', message: '載入排名失敗' }));
     } finally {
       dispatch(setLoadingRankings(false));
     }
@@ -145,7 +145,7 @@ export function useCourseRankings(resortId: string) {
 }
 
 /**
- * 获取用户成就
+ * 取得使用者成就
  */
 export function useAchievements() {
   const dispatch = useAppDispatch();
@@ -166,7 +166,7 @@ export function useAchievements() {
       const data = await courseTrackingApi.achievements.getUserAchievements(userId);
       dispatch(setAchievements(data));
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '加载成就失败' }));
+      dispatch(addToast({ type: 'error', message: '載入成就失敗' }));
     } finally {
       dispatch(setLoadingAchievements(false));
     }
@@ -176,7 +176,7 @@ export function useAchievements() {
 }
 
 /**
- * 获取排行榜
+ * 取得排行榜
  */
 export function useLeaderboard() {
   const dispatch = useAppDispatch();
@@ -193,7 +193,7 @@ export function useLeaderboard() {
       const data = await courseTrackingApi.leaderboard.getLeaderboard();
       dispatch(setLeaderboard(data));
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '加载排行榜失败' }));
+      dispatch(addToast({ type: 'error', message: '載入排行榜失敗' }));
     } finally {
       dispatch(setLoadingLeaderboard(false));
     }

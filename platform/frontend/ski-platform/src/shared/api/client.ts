@@ -1,11 +1,11 @@
 /**
  * API Client Configuration
- * API 客户端配置
+ * API 客戶端配置
  */
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 
-// API 基础配置
+// API 基礎配置
 const API_CONFIG = {
   USER_CORE: import.meta.env.VITE_USER_CORE_API || 'http://localhost:8000',
   RESORT_API: import.meta.env.VITE_RESORT_API || 'http://localhost:8001',
@@ -13,7 +13,7 @@ const API_CONFIG = {
 };
 
 /**
- * 创建 Axios 实例
+ * 建立 Axios 實例
  */
 function createApiClient(baseURL: string): AxiosInstance {
   const client = axios.create({
@@ -24,10 +24,10 @@ function createApiClient(baseURL: string): AxiosInstance {
     },
   });
 
-  // 请求拦截器
+  // 請求攔截器
   client.interceptors.request.use(
     (config) => {
-      // 可以在这里添加认证 token
+      // 可以在這裡新增認證 token
       // const token = getAuthToken();
       // if (token) {
       //   config.headers.Authorization = `Bearer ${token}`;
@@ -40,50 +40,50 @@ function createApiClient(baseURL: string): AxiosInstance {
     }
   );
 
-  // 响应拦截器
+  // 回應攔截器
   client.interceptors.response.use(
     (response) => {
       return response;
     },
     (error) => {
-      // 统一错误处理
+      // 統一錯誤處理
       if (error.response) {
-        // 服务器返回错误
+        // 伺服器返回錯誤
         const { status, data } = error.response;
 
         switch (status) {
           case 401:
-            // 未授权，跳转到登录
-            console.error('未授权，请登录');
-            // TODO: 跳转到登录页
+            // 未授權，跳轉到登入
+            console.error('未授權，請登入');
+            // TODO: 跳轉到登入頁
             break;
           case 403:
-            console.error('无权限访问');
+            console.error('無權限存取');
             break;
           case 404:
-            console.error('资源不存在');
+            console.error('資源不存在');
             break;
           case 500:
-            console.error('服务器错误');
+            console.error('伺服器錯誤');
             break;
           default:
-            console.error(`请求失败: ${status}`, data);
+            console.error(`請求失敗: ${status}`, data);
         }
 
         return Promise.reject({
           status,
-          message: data.detail || '请求失败',
+          message: data.detail || '請求失敗',
         });
       } else if (error.request) {
-        // 请求发出但没有收到响应
-        console.error('网络错误，请检查连接');
+        // 請求發出但沒有收到回應
+        console.error('網路錯誤，請檢查連線');
         return Promise.reject({
           status: 0,
-          message: '网络错误，请检查连接',
+          message: '網路錯誤，請檢查連線',
         });
       } else {
-        // 请求配置错误
-        console.error('请求配置错误', error.message);
+        // 請求配置錯誤
+        console.error('請求配置錯誤', error.message);
         return Promise.reject({
           status: -1,
           message: error.message,
@@ -95,7 +95,7 @@ function createApiClient(baseURL: string): AxiosInstance {
   return client;
 }
 
-// 创建不同服务的 API 客户端
+// 建立不同服務的 API 客戶端
 export const userCoreClient = createApiClient(API_CONFIG.USER_CORE);
 export const resortApiClient = createApiClient(API_CONFIG.RESORT_API);
 
