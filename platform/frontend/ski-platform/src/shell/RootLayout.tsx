@@ -13,12 +13,12 @@ export default function RootLayout() {
       {/* 导航栏 */}
       <Navbar />
 
-      {/* 主内容区域 */}
+      {/* 主內容區域 */}
       <main className="container mx-auto px-4 py-6 max-w-7xl">
         <Suspense
           fallback={
             <div className="flex items-center justify-center h-64">
-              <div className="text-gray-500">加载中...</div>
+              <div className="text-gray-500">載入中...</div>
             </div>
           }
         >

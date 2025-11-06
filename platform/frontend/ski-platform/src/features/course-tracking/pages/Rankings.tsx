@@ -7,7 +7,7 @@ export default function Rankings() {
   const { resortId } = useParams();
   const { rankings, loading } = useCourseRankings(resortId || 'rusutsu');
 
-  if (loading) return <div className="text-center py-12">加载中...</div>;
+  if (loading) return <div className="text-center py-12">載入中...</div>;
 
   return (
     <div className="space-y-6">
@@ -21,9 +21,9 @@ export default function Rankings() {
                 <span className="font-medium">{ranking.course_name}</span>
               </div>
               <div className="text-right text-sm">
-                <div><Badge>🏔️ {ranking.visit_count} 次访问</Badge></div>
-                <div className="mt-1"><Badge variant="success">💡 {ranking.recommendation_count} 推荐</Badge></div>
-                <div className="text-xs text-gray-500 mt-1">人气: {ranking.popularity_score}</div>
+                <div><Badge>🏔️ {ranking.visit_count} 次訪問</Badge></div>
+                <div className="mt-1"><Badge variant="success">💡 {ranking.recommendation_count} 推薦</Badge></div>
+                <div className="text-xs text-gray-500 mt-1">人氣: {ranking.popularity_score}</div>
               </div>
             </Card.Body>
           </Card>

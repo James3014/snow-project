@@ -1,21 +1,31 @@
 /**
  * Resort API
- * 雪场API接口
+ * 雪場API接口
  */
 import { resortApi } from './client';
-import type { Resort } from '../types/common';
+import type { Resort } from '../data/resorts';
 
 /**
- * 雪场API
+ * API 回應格式
+ */
+export interface ResortListResponse {
+  items: Resort[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+/**
+ * 雪場API
  */
 export const resortApiService = {
-  // 获取所有雪场列表
-  getAllResorts: () => resortApi.get<Resort[]>('/resorts'),
+  // 獲取所有雪場列表
+  getAllResorts: () => resortApi.get<ResortListResponse>('/resorts'),
 
-  // 获取单个雪场详情
+  // 獲取單個雪場詳情
   getResort: (resortId: string) => resortApi.get<Resort>(`/resorts/${resortId}`),
 
-  // 搜索雪场
+  // 搜索雪場
   searchResorts: (query: string) =>
-    resortApi.get<Resort[]>(`/resorts/search?q=${encodeURIComponent(query)}`),
+    resortApi.get<ResortListResponse>(`/resorts/search?q=${encodeURIComponent(query)}`),
 };
