@@ -31,8 +31,8 @@ app.add_middleware(
         "http://localhost:5173",  # Local development
         "http://localhost:3000",  # Local production build
         "https://ski-platform.zeabur.app",  # Production frontend
-        "https://*.zeabur.app",  # All Zeabur subdomains
     ],
+    allow_origin_regex=r"https://.*\.zeabur\.app",  # All Zeabur subdomains
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
