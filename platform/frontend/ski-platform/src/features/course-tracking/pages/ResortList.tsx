@@ -90,6 +90,21 @@ export default function ResortList() {
     return matchesSearch && matchesRegion;
   });
 
+  // 地區中英文映射表
+  const regionNameMap: Record<string, string> = {
+    'Hokkaido': '北海道',
+    'Gunma Prefecture': '群馬縣',
+    'Nagano Prefecture': '長野縣',
+    'Niigata Prefecture': '新潟縣',
+    'Yamagata Prefecture': '山形縣',
+    'Fukushima Prefecture': '福島縣',
+    'Gifu Prefecture': '岐阜縣',
+    'Hyogo Prefecture': '兵庫縣',
+  };
+
+  // 將地區名稱轉換為中文
+  const getRegionName = (region: string) => regionNameMap[region] || region;
+
   // 取得所有地區（用於過濾器）
   const regions = Array.from(new Set(resorts.map((r) => r.region))).sort();
 
@@ -147,7 +162,7 @@ export default function ResortList() {
                 <option value="all">全部地區</option>
                 {regions.map((region) => (
                   <option key={region} value={region}>
-                    {region}
+                    {getRegionName(region)}
                   </option>
                 ))}
               </select>
@@ -217,7 +232,7 @@ export default function ResortList() {
                 <div className="text-center">
                   <h3 className="text-lg font-bold text-gray-900">{resort.names.zh}</h3>
                   <p className="text-sm text-gray-600">{resort.names.en}</p>
-                  <p className="text-xs text-gray-500 mt-1">📍 {resort.region}</p>
+                  <p className="text-xs text-gray-500 mt-1">📍 {getRegionName(resort.region)}</p>
                 </div>
 
                 {/* 雪場亮點 */}

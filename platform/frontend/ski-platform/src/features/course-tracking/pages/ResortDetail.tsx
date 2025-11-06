@@ -27,6 +27,21 @@ export default function ResortDetail() {
   const [resortLoading, setResortLoading] = useState(true);
   const [resortError, setResortError] = useState<string | null>(null);
 
+  // 地區中英文映射表
+  const regionNameMap: Record<string, string> = {
+    'Hokkaido': '北海道',
+    'Gunma Prefecture': '群馬縣',
+    'Nagano Prefecture': '長野縣',
+    'Niigata Prefecture': '新潟縣',
+    'Yamagata Prefecture': '山形縣',
+    'Fukushima Prefecture': '福島縣',
+    'Gifu Prefecture': '岐阜縣',
+    'Hyogo Prefecture': '兵庫縣',
+  };
+
+  // 將地區名稱轉換為中文
+  const getRegionName = (region: string) => regionNameMap[region] || region;
+
   // 載入雪場資料
   useEffect(() => {
     const loadResort = async () => {
@@ -179,7 +194,7 @@ export default function ResortDetail() {
         <div>
           <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
           <p className="text-gray-600">{resort.names.en}</p>
-          <p className="text-sm text-gray-500 mt-1">📍 {resort.region}</p>
+          <p className="text-sm text-gray-500 mt-1">📍 {getRegionName(resort.region)}</p>
         </div>
         <Button onClick={() => navigate('/resorts')}>返回</Button>
       </div>
