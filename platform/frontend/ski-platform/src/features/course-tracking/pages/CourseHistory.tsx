@@ -25,6 +25,13 @@ export default function CourseHistory() {
   const [editingVisit, setEditingVisit] = useState<CourseVisit | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterRating, setFilterRating] = useState<number | null>(null);
+  const [filterSnowCondition, setFilterSnowCondition] = useState<string>('');
+  const [filterWeather, setFilterWeather] = useState<string>('');
+  const [showFilters, setShowFilters] = useState(false);
+
   useEffect(() => {
     if (userId) {
       loadVisits();
@@ -86,8 +93,30 @@ export default function CourseHistory() {
     }
   };
 
+  // 搜尋和篩選
+  const filteredVisits = visits.filter(visit => {
+    // Search by course name or resort
+    if (searchQuery && !visit.course_name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !visit.resort_id.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    // Filter by rating
+    if (filterRating !== null && visit.rating !== filterRating) {
+      return false;
+    }
+    // Filter by snow condition
+    if (filterSnowCondition && visit.snow_condition !== filterSnowCondition) {
+      return false;
+    }
+    // Filter by weather
+    if (filterWeather && visit.weather !== filterWeather) {
+      return false;
+    }
+    return true;
+  });
+
   // 按日期分組
-  const groupedVisits = visits.reduce((acc, visit) => {
+  const groupedVisits = filteredVisits.reduce((acc, visit) => {
     const date = new Date(visit.visited_date).toLocaleDateString('zh-TW');
     if (!acc[date]) {
       acc[date] = [];
@@ -100,12 +129,47 @@ export default function CourseHistory() {
     new Date(b).getTime() - new Date(a).getTime()
   );
 
-  // 統計數據
-  const totalVisits = visits.length;
-  const totalRatings = visits.filter(v => v.rating).length;
+  // 統計數據（基於篩選後的結果）
+  const totalVisits = filteredVisits.length;
+  const totalRatings = filteredVisits.filter(v => v.rating).length;
   const avgRating = totalRatings > 0
-    ? (visits.reduce((sum, v) => sum + (v.rating || 0), 0) / totalRatings).toFixed(1)
+    ? (filteredVisits.reduce((sum, v) => sum + (v.rating || 0), 0) / totalRatings).toFixed(1)
     : '未評分';
+
+  // 雪道評分統計 - 按雪道名稱分組計算平均評分
+  const courseStats = filteredVisits.reduce((acc, visit) => {
+    const key = `${visit.resort_id}|${visit.course_name}`;
+    if (!acc[key]) {
+      acc[key] = {
+        resort_id: visit.resort_id,
+        course_name: visit.course_name,
+        count: 0,
+        totalRating: 0,
+        ratings: [],
+      };
+    }
+    acc[key].count += 1;
+    if (visit.rating) {
+      acc[key].totalRating += visit.rating;
+      acc[key].ratings.push(visit.rating);
+    }
+    return acc;
+  }, {} as Record<string, {
+    resort_id: string;
+    course_name: string;
+    count: number;
+    totalRating: number;
+    ratings: number[];
+  }>);
+
+  // 轉換為陣列並計算平均分，只顯示有評分的雪道
+  const courseRankings = Object.values(courseStats)
+    .filter(stat => stat.ratings.length > 0)
+    .map(stat => ({
+      ...stat,
+      avgRating: stat.totalRating / stat.ratings.length,
+    }))
+    .sort((a, b) => b.avgRating - a.avgRating); // 按平均評分降序排列
 
   if (loading) {
     return (
@@ -144,6 +208,136 @@ export default function CourseHistory() {
         <Button onClick={() => navigate('/resorts')}>繼續記錄</Button>
       </div>
 
+      {/* Search and Filter */}
+      <Card>
+        <Card.Body>
+          <div className="space-y-4">
+            {/* Search Bar */}
+            <div className="flex gap-3">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  placeholder="🔍 搜尋雪道或雪場..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+              <Button
+                variant={showFilters ? 'primary' : 'secondary'}
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                {showFilters ? '隱藏篩選' : '顯示篩選'}
+              </Button>
+            </div>
+
+            {/* Filter Options */}
+            {showFilters && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+                {/* Rating Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">評分</label>
+                  <select
+                    value={filterRating ?? ''}
+                    onChange={(e) => setFilterRating(e.target.value ? Number(e.target.value) : null)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="">全部</option>
+                    <option value="5">⭐⭐⭐⭐⭐ (5星)</option>
+                    <option value="4">⭐⭐⭐⭐ (4星)</option>
+                    <option value="3">⭐⭐⭐ (3星)</option>
+                    <option value="2">⭐⭐ (2星)</option>
+                    <option value="1">⭐ (1星)</option>
+                  </select>
+                </div>
+
+                {/* Snow Condition Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">雪況</label>
+                  <select
+                    value={filterSnowCondition}
+                    onChange={(e) => setFilterSnowCondition(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="">全部</option>
+                    <option value="粉雪">❄️ 粉雪</option>
+                    <option value="壓雪">⛷️ 壓雪</option>
+                    <option value="冰面">🧊 冰面</option>
+                    <option value="融雪">💧 融雪</option>
+                  </select>
+                </div>
+
+                {/* Weather Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">天氣</label>
+                  <select
+                    value={filterWeather}
+                    onChange={(e) => setFilterWeather(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="">全部</option>
+                    <option value="晴天">☀️ 晴天</option>
+                    <option value="陰天">☁️ 陰天</option>
+                    <option value="下雪">🌨️ 下雪</option>
+                    <option value="暴風雪">❄️ 暴風雪</option>
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {/* Active Filters Display */}
+            {(searchQuery || filterRating !== null || filterSnowCondition || filterWeather) && (
+              <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200">
+                <span className="text-sm text-gray-600">已啟用篩選:</span>
+                {searchQuery && (
+                  <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm flex items-center gap-1">
+                    搜尋: {searchQuery}
+                    <button onClick={() => setSearchQuery('')} className="hover:text-primary-900">✕</button>
+                  </span>
+                )}
+                {filterRating !== null && (
+                  <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm flex items-center gap-1">
+                    {filterRating} 星
+                    <button onClick={() => setFilterRating(null)} className="hover:text-primary-900">✕</button>
+                  </span>
+                )}
+                {filterSnowCondition && (
+                  <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm flex items-center gap-1">
+                    {filterSnowCondition}
+                    <button onClick={() => setFilterSnowCondition('')} className="hover:text-primary-900">✕</button>
+                  </span>
+                )}
+                {filterWeather && (
+                  <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm flex items-center gap-1">
+                    {filterWeather}
+                    <button onClick={() => setFilterWeather('')} className="hover:text-primary-900">✕</button>
+                  </span>
+                )}
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setFilterRating(null);
+                    setFilterSnowCondition('');
+                    setFilterWeather('');
+                  }}
+                  className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 underline"
+                >
+                  清除全部
+                </button>
+              </div>
+            )}
+          </div>
+        </Card.Body>
+      </Card>
+
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
@@ -168,9 +362,89 @@ export default function CourseHistory() {
         </Card>
       </div>
 
+      {/* Course Rating Rankings */}
+      {courseRankings.length > 0 && (
+        <div>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">📊 雪道評分排名</h2>
+          <Card>
+            <Card.Body className="p-0">
+              <div className="divide-y divide-gray-200">
+                {courseRankings.slice(0, 10).map((stat, index) => (
+                  <div
+                    key={`${stat.resort_id}|${stat.course_name}`}
+                    className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/resorts/${stat.resort_id}`)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 flex-1">
+                        {/* Rank */}
+                        <div className={`text-2xl font-bold ${
+                          index === 0 ? 'text-yellow-500' :
+                          index === 1 ? 'text-gray-400' :
+                          index === 2 ? 'text-orange-600' :
+                          'text-gray-500'
+                        }`}>
+                          {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                        </div>
+
+                        {/* Course Info */}
+                        <div className="flex-1">
+                          <h3 className="font-bold text-gray-900">{stat.course_name}</h3>
+                          <p className="text-sm text-gray-600">🏔️ {stat.resort_id}</p>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="flex items-center gap-6">
+                          {/* Average Rating */}
+                          <div className="text-center">
+                            <div className="flex items-center gap-1">
+                              <span className="text-2xl font-bold text-yellow-500">
+                                {stat.avgRating.toFixed(1)}
+                              </span>
+                              <span className="text-yellow-500">★</span>
+                            </div>
+                            <div className="text-xs text-gray-500">平均評分</div>
+                          </div>
+
+                          {/* Visit Count */}
+                          <div className="text-center">
+                            <div className="text-lg font-bold text-primary-600">
+                              {stat.count}
+                            </div>
+                            <div className="text-xs text-gray-500">完成次數</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card.Body>
+          </Card>
+          {courseRankings.length > 10 && (
+            <p className="text-sm text-gray-500 text-center mt-2">
+              顯示前 10 名，共 {courseRankings.length} 個已評分雪道
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Records by Date */}
-      <div className="space-y-6">
-        {sortedDates.map(date => (
+      {sortedDates.length === 0 ? (
+        <EmptyState
+          icon="🔍"
+          title="沒有符合的記錄"
+          description="試試調整搜尋或篩選條件"
+          action={{ label: '清除篩選', onClick: () => {
+            setSearchQuery('');
+            setFilterRating(null);
+            setFilterSnowCondition('');
+            setFilterWeather('');
+          }}}
+        />
+      ) : (
+        <div className="space-y-6">
+          {sortedDates.map(date => (
           <div key={date}>
             <h2 className="text-lg font-semibold text-gray-700 mb-3">📅 {date}</h2>
             <div className="space-y-3">
@@ -263,7 +537,8 @@ export default function CourseHistory() {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Edit Modal */}
       {editingVisit && (
