@@ -1,0 +1,299 @@
+# Achievement definitions for SkiDIY platform
+# This file defines all available achievements users can earn
+
+# ===== BASIC ACHIEVEMENTS (基礎成就) =====
+
+- achievement_type: "first_course"
+  name_zh: "新手上路"
+  name_en: "First Steps"
+  description_zh: "完成您的第一條雪道"
+  description_en: "Complete your first ski course"
+  icon: "🎿"
+  category: "basic"
+  points: 10
+  requirements:
+    type: "course_count"
+    min: 1
+  is_hidden: false
+  display_order: 1
+
+- achievement_type: "first_resort"
+  name_zh: "初次嘗試"
+  name_en: "First Visit"
+  description_zh: "造訪您的第一個雪場"
+  description_en: "Visit your first ski resort"
+  icon: "🏔️"
+  category: "basic"
+  points: 20
+  requirements:
+    type: "resort_count"
+    min: 1
+  is_hidden: false
+  display_order: 2
+
+- achievement_type: "first_recommendation"
+  name_zh: "社群參與"
+  name_en: "Community Contributor"
+  description_zh: "推薦您的第一條雪道"
+  description_en: "Make your first course recommendation"
+  icon: "⭐"
+  category: "basic"
+  points: 15
+  requirements:
+    type: "recommendation_count"
+    min: 1
+  is_hidden: false
+  display_order: 3
+
+# ===== ADVANCED ACHIEVEMENTS (進階成就) =====
+
+- achievement_type: "explorer_level_1"
+  name_zh: "雪場探索者 Level 1"
+  name_en: "Resort Explorer Level 1"
+  description_zh: "造訪 3 個不同的雪場"
+  description_en: "Visit 3 different resorts"
+  icon: "🗺️"
+  category: "advanced"
+  points: 50
+  requirements:
+    type: "resort_count"
+    min: 3
+  is_hidden: false
+  display_order: 10
+
+- achievement_type: "explorer_level_2"
+  name_zh: "雪場探索者 Level 2"
+  name_en: "Resort Explorer Level 2"
+  description_zh: "造訪 5 個不同的雪場"
+  description_en: "Visit 5 different resorts"
+  icon: "🗺️"
+  category: "advanced"
+  points: 100
+  requirements:
+    type: "resort_count"
+    min: 5
+  is_hidden: false
+  display_order: 11
+
+- achievement_type: "explorer_level_3"
+  name_zh: "雪場探索者 Level 3"
+  name_en: "Resort Explorer Level 3"
+  description_zh: "造訪 10 個不同的雪場"
+  description_en: "Visit 10 different resorts"
+  icon: "🗺️"
+  category: "advanced"
+  points: 200
+  requirements:
+    type: "resort_count"
+    min: 10
+  is_hidden: false
+  display_order: 12
+
+- achievement_type: "course_collector_level_1"
+  name_zh: "雪道收集家 Level 1"
+  name_en: "Course Collector Level 1"
+  description_zh: "完成任一雪場 25% 的雪道"
+  description_en: "Complete 25% of courses at any resort"
+  icon: "🎯"
+  category: "advanced"
+  points: 30
+  requirements:
+    type: "resort_completion"
+    percentage: 25
+  is_hidden: false
+  display_order: 20
+
+- achievement_type: "course_collector_level_2"
+  name_zh: "雪道收集家 Level 2"
+  name_en: "Course Collector Level 2"
+  description_zh: "完成任一雪場 50% 的雪道"
+  description_en: "Complete 50% of courses at any resort"
+  icon: "🎯"
+  category: "advanced"
+  points: 60
+  requirements:
+    type: "resort_completion"
+    percentage: 50
+  is_hidden: false
+  display_order: 21
+
+- achievement_type: "course_collector_level_3"
+  name_zh: "雪道收集家 Level 3"
+  name_en: "Course Collector Level 3"
+  description_zh: "完成任一雪場 75% 的雪道"
+  description_en: "Complete 75% of courses at any resort"
+  icon: "🎯"
+  category: "advanced"
+  points: 90
+  requirements:
+    type: "resort_completion"
+    percentage: 75
+  is_hidden: false
+  display_order: 22
+
+- achievement_type: "challenger_level_1"
+  name_zh: "挑戰者 Level 1"
+  name_en: "Challenger Level 1"
+  description_zh: "完成 10 條進階雪道"
+  description_en: "Complete 10 advanced courses"
+  icon: "💪"
+  category: "advanced"
+  points: 50
+  requirements:
+    type: "course_level"
+    level: "advanced"
+    min: 10
+  is_hidden: false
+  display_order: 30
+
+- achievement_type: "challenger_level_2"
+  name_zh: "挑戰者 Level 2"
+  name_en: "Challenger Level 2"
+  description_zh: "完成 20 條進階雪道"
+  description_en: "Complete 20 advanced courses"
+  icon: "💪"
+  category: "advanced"
+  points: 100
+  requirements:
+    type: "course_level"
+    level: "advanced"
+    min: 20
+  is_hidden: false
+  display_order: 31
+
+- achievement_type: "challenger_level_3"
+  name_zh: "挑戰者 Level 3"
+  name_en: "Challenger Level 3"
+  description_zh: "完成 50 條進階雪道"
+  description_en: "Complete 50 advanced courses"
+  icon: "💪"
+  category: "advanced"
+  points: 200
+  requirements:
+    type: "course_level"
+    level: "advanced"
+    min: 50
+  is_hidden: false
+  display_order: 32
+
+# ===== EXPERT ACHIEVEMENTS (專家成就) =====
+
+- achievement_type: "powder_hunter"
+  name_zh: "粉雪獵人"
+  name_en: "Powder Hunter"
+  description_zh: "完成 10 條標註 'powder' 的雪道"
+  description_en: "Complete 10 courses tagged with 'powder'"
+  icon: "🌨️"
+  category: "expert"
+  points: 150
+  requirements:
+    type: "course_tag"
+    tag: "powder"
+    min: 10
+  is_hidden: false
+  display_order: 40
+
+- achievement_type: "long_runner"
+  name_zh: "長跑冠軍"
+  name_en: "Long Runner"
+  description_zh: "完成 5 條「最長滑道」"
+  description_en: "Complete 5 longest run courses"
+  icon: "🏃"
+  category: "expert"
+  points: 120
+  requirements:
+    type: "longest_run"
+    min: 5
+  is_hidden: false
+  display_order: 41
+
+- achievement_type: "hokkaido_master"
+  name_zh: "北海道達人"
+  name_en: "Hokkaido Master"
+  description_zh: "造訪北海道所有雪場"
+  description_en: "Visit all Hokkaido resorts"
+  icon: "❄️"
+  category: "expert"
+  points: 300
+  requirements:
+    type: "region_complete"
+    region: "Hokkaido"
+  is_hidden: false
+  display_order: 42
+
+# ===== SPECIAL ACHIEVEMENTS (特殊成就) =====
+
+- achievement_type: "early_bird"
+  name_zh: "早起的鳥兒"
+  name_en: "Early Bird"
+  description_zh: "在雪季開始第一週就去滑雪"
+  description_en: "Ski during the first week of season opening"
+  icon: "🐦"
+  category: "special"
+  points: 80
+  requirements:
+    type: "season_timing"
+    timing: "first_week"
+  is_hidden: false
+  display_order: 50
+
+- achievement_type: "night_owl"
+  name_zh: "夜貓子"
+  name_en: "Night Owl"
+  description_zh: "體驗 5 次夜滑"
+  description_en: "Experience 5 night skiing sessions"
+  icon: "🦉"
+  category: "special"
+  points: 100
+  requirements:
+    type: "amenity"
+    amenity: "night_ski"
+    min: 5
+  is_hidden: false
+  display_order: 51
+
+- achievement_type: "onsen_lover"
+  name_zh: "溫泉愛好者"
+  name_en: "Onsen Lover"
+  description_zh: "造訪 5 個有溫泉的雪場"
+  description_en: "Visit 5 resorts with onsen facilities"
+  icon: "♨️"
+  category: "special"
+  points: 80
+  requirements:
+    type: "amenity"
+    amenity: "onsen"
+    min: 5
+  is_hidden: false
+  display_order: 52
+
+- achievement_type: "family_guardian"
+  name_zh: "家庭守護者"
+  name_en: "Family Guardian"
+  description_zh: "完成 10 條「家庭友善」標籤的雪道"
+  description_en: "Complete 10 courses tagged 'family-friendly'"
+  icon: "👨‍👩‍👧‍👦"
+  category: "special"
+  points: 90
+  requirements:
+    type: "course_tag"
+    tag: "family-friendly"
+    min: 10
+  is_hidden: false
+  display_order: 53
+
+# ===== HIDDEN/SURPRISE ACHIEVEMENTS (隱藏成就) =====
+
+- achievement_type: "lucky_seven"
+  name_zh: "幸運七"
+  name_en: "Lucky Seven"
+  description_zh: "在 7 號當天滑雪"
+  description_en: "Ski on the 7th day of any month"
+  icon: "🍀"
+  category: "special"
+  points: 77
+  requirements:
+    type: "date_specific"
+    day: 7
+  is_hidden: true
+  display_order: 999
