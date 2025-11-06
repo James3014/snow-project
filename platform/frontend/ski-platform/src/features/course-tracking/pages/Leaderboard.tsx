@@ -6,7 +6,7 @@ export default function Leaderboard() {
   const { leaderboard, loading } = useLeaderboard();
   const currentUserId = useAppSelector(state => state.auth.user?.user_id);
 
-  if (loading) return <div className="text-center py-12">加载中...</div>;
+  if (loading) return <div className="text-center py-12">載入中...</div>;
 
   return (
     <div className="space-y-6">
@@ -22,12 +22,12 @@ export default function Leaderboard() {
                   </span>
                   <div>
                     <div className="font-semibold">{entry.user_display_name}</div>
-                    <div className="text-xs text-gray-500">{entry.resorts_count} 雪场 · {entry.courses_count} 雪道</div>
+                    <div className="text-xs text-gray-500">{entry.resorts_count} 雪場 · {entry.courses_count} 雪道</div>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-primary-600">{entry.total_points}</div>
-                  <div className="text-xs text-gray-500">积分</div>
+                  <div className="text-xs text-gray-500">積分</div>
                 </div>
               </div>
             </Card.Body>

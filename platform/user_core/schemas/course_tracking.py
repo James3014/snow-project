@@ -29,7 +29,14 @@ class CourseVisitBase(BaseModel):
     resort_id: str = Field(..., max_length=100)
     course_name: str = Field(..., max_length=200)
     visited_date: date
-    notes: Optional[str] = None
+    notes: Optional[str] = Field(None, max_length=200, description="心得筆記（最多200字）")
+
+    # 新增：增強記錄體驗欄位
+    snow_condition: Optional[str] = Field(None, max_length=50, description="雪況（粉雪/壓雪/冰面/融雪）")
+    weather: Optional[str] = Field(None, max_length=50, description="天氣（晴天/陰天/下雪/暴風雪）")
+    difficulty_feeling: Optional[str] = Field(None, max_length=50, description="難度感受（比預期簡單/適中/困難）")
+    rating: Optional[int] = Field(None, ge=1, le=5, description="評分（1-5星）")
+    mood_tags: Optional[List[str]] = Field(None, description="心情標籤（如：爽快、累爆、初體驗）")
 
 
 class CourseVisitCreate(BaseModel):
@@ -37,7 +44,14 @@ class CourseVisitCreate(BaseModel):
     resort_id: str = Field(..., max_length=100)
     course_name: str = Field(..., max_length=200)
     visited_date: Optional[date] = None
-    notes: Optional[str] = None
+    notes: Optional[str] = Field(None, max_length=200, description="心得筆記（最多200字）")
+
+    # 新增：增強記錄體驗欄位（創建時都是選填）
+    snow_condition: Optional[str] = Field(None, max_length=50)
+    weather: Optional[str] = Field(None, max_length=50)
+    difficulty_feeling: Optional[str] = Field(None, max_length=50)
+    rating: Optional[int] = Field(None, ge=1, le=5)
+    mood_tags: Optional[List[str]] = None
 
 
 class CourseVisit(CourseVisitBase):

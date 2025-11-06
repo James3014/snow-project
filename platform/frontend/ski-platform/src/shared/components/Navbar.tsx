@@ -1,6 +1,6 @@
 /**
  * Navbar Component
- * 导航栏组件
+ * 導航欄組件
  */
 import { Link, useLocation } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ export default function Navbar() {
   const location = useLocation();
 
   const navItems = [
-    { path: '/resorts', label: '雪场' },
+    { path: '/resorts', label: '雪場' },
     { path: '/achievements', label: '成就' },
     { path: '/leaderboard', label: '排行榜' },
   ];
@@ -44,12 +44,12 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* User Menu - 简化版 */}
+          {/* User Menu - 簡化版 */}
           <div className="flex items-center">
             <div className="text-sm text-gray-600">
               <span className="inline-flex items-center">
                 <span className="mr-2">👤</span>
-                <span>测试用户</span>
+                <span>測試用戶</span>
               </span>
             </div>
           </div>
