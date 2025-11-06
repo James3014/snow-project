@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from services import db, course_tracking_service
 from models import user_profile, behavior_event, notification_preference, course_tracking
@@ -14,6 +15,20 @@ app = FastAPI(
     title="SkiDIY User Core Service",
     version="1.0.0",
     description="Manages user profiles, preferences, and behavior events for the SkiDIY platform."
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",  # Local development
+        "http://localhost:3000",  # Local production build
+        "https://ski-platform.zeabur.app",  # Production frontend
+        "https://*.zeabur.app",  # All Zeabur subdomains
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(user_profiles.router, prefix="/users", tags=["User Profiles"])

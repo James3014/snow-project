@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Query, status, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from typing import List, Optional, Dict
 from datetime import date, datetime, time, UTC
@@ -21,6 +22,20 @@ app = FastAPI(
     title="SkiDIY Resort Services API",
     version="0.1.0",
     description="Provides comprehensive information about ski resorts."
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",  # Local development
+        "http://localhost:3000",  # Local production build
+        "https://ski-platform.zeabur.app",  # Production frontend
+        "https://*.zeabur.app",  # All Zeabur subdomains
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # In-memory cache for resort list results, holds 128 items for 5 minutes
