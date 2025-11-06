@@ -112,20 +112,31 @@ export default function EnhancedCourseRecordModal({
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-3">
               ⭐ 整體評分（選填）
+              {rating > 0 && <span className="ml-2 text-primary-600 font-bold">已選 {rating} 星</span>}
             </label>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   type="button"
-                  onClick={() => setRating(star)}
-                  className={`text-4xl transition-transform hover:scale-110 ${
-                    star <= rating ? 'text-yellow-400' : 'text-gray-300'
+                  onClick={() => setRating(star === rating ? 0 : star)}
+                  className={`text-5xl transition-all hover:scale-125 active:scale-110 ${
+                    star <= rating ? 'text-yellow-400 drop-shadow-lg' : 'text-gray-300'
                   }`}
+                  title={`${star} 星`}
                 >
-                  ⭐
+                  {star <= rating ? '★' : '☆'}
                 </button>
               ))}
+              {rating > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setRating(0)}
+                  className="ml-3 text-sm text-gray-500 hover:text-red-500 underline"
+                >
+                  清除
+                </button>
+              )}
             </div>
           </div>
 

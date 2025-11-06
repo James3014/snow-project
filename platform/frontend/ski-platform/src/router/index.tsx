@@ -10,6 +10,7 @@ import { lazy } from 'react';
 
 const ResortList = lazy(() => import('@/features/course-tracking/pages/ResortList'));
 const ResortDetail = lazy(() => import('@/features/course-tracking/pages/ResortDetail'));
+const CourseHistory = lazy(() => import('@/features/course-tracking/pages/CourseHistory'));
 const Recommendations = lazy(() => import('@/features/course-tracking/pages/Recommendations'));
 const Rankings = lazy(() => import('@/features/course-tracking/pages/Rankings'));
 const Achievements = lazy(() => import('@/features/course-tracking/pages/Achievements'));
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
       {
         path: 'resorts/:resortId',
         element: <ResortDetail />,
+      },
+      {
+        path: 'history',
+        element: <CourseHistory />,
       },
       {
         path: 'resorts/:resortId/recommendations',

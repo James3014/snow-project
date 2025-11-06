@@ -32,6 +32,12 @@ export interface CourseVisit {
   course_name: string;
   visited_date: string; // ISO date string
   notes?: string;
+  // Enhanced fields
+  snow_condition?: string;
+  weather?: string;
+  difficulty_feeling?: string;
+  rating?: number;
+  mood_tags?: string[];
   created_at: string;
 }
 
@@ -40,6 +46,12 @@ export interface CourseVisitCreate {
   course_name: string;
   visited_date?: string;
   notes?: string;
+  // Enhanced fields
+  snow_condition?: string;
+  weather?: string;
+  difficulty_feeling?: string;
+  rating?: number;
+  mood_tags?: string[];
 }
 
 // ==================== 推荐相关 ====================
