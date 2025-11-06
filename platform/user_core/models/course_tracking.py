@@ -23,6 +23,14 @@ class CourseVisit(Base):
     course_name = Column(String(200), nullable=False)
     visited_date = Column(Date, nullable=False)
     notes = Column(Text, nullable=True)
+
+    # 新增：增強記錄體驗欄位
+    snow_condition = Column(String(50), nullable=True)  # 粉雪/壓雪/冰面/融雪
+    weather = Column(String(50), nullable=True)  # 晴天/陰天/下雪/暴風雪
+    difficulty_feeling = Column(String(50), nullable=True)  # 比預期簡單/適中/困難
+    rating = Column(Integer, nullable=True)  # 1-5 星評分
+    mood_tags = Column(JSON, nullable=True)  # ["爽快", "累爆", "初體驗"]
+
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
 
     # Relationships

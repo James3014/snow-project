@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from services import db, course_tracking_service
 from models import user_profile, behavior_event, notification_preference, course_tracking
-from api import user_profiles, behavior_events, notification_preferences, auth, course_tracking as course_tracking_api
+from api import user_profiles, behavior_events, notification_preferences, auth, course_tracking as course_tracking_api, share_cards
 
 # Create all tables (for development only)
 user_profile.Base.metadata.create_all(bind=db.engine)
@@ -37,6 +37,7 @@ app.include_router(auth.router, tags=["Authentication"])
 # A bit of a workaround to nest preferences under a user
 app.include_router(notification_preferences.router, prefix="/users/{user_id}/preferences", tags=["Notification Preferences"])
 app.include_router(course_tracking_api.router, prefix="/users", tags=["Course Tracking"])
+app.include_router(share_cards.router, prefix="/api", tags=["Share Cards"])
 
 @app.on_event("startup")
 def startup_event():
