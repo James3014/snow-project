@@ -14,6 +14,7 @@ import Badge from '@/shared/components/Badge';
 import { ListSkeleton } from '@/shared/components/Skeleton';
 import EmptyState from '@/shared/components/EmptyState';
 import { formatDate } from '@/shared/utils/helpers';
+import EnhancedCourseRecordModal, { type CourseRecordData } from '../components/EnhancedCourseRecordModal';
 
 export default function CourseHistory() {
   const navigate = useNavigate();
@@ -21,7 +22,8 @@ export default function CourseHistory() {
   const userId = useAppSelector((state) => state.auth.user?.user_id);
   const visits = useAppSelector((state) => state.courseTracking.visits);
   const [loading, setLoading] = useState(false);
-  const [selectedVisit, setSelectedVisit] = useState<CourseVisit | null>(null);
+  const [editingVisit, setEditingVisit] = useState<CourseVisit | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -39,6 +41,35 @@ export default function CourseHistory() {
       dispatch(addToast({ type: 'error', message: '載入記錄失敗' }));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEdit = (visit: CourseVisit) => {
+    setEditingVisit(visit);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSubmit = async (data: CourseRecordData) => {
+    if (!userId || !editingVisit) return;
+
+    try {
+      // 先刪除舊記錄
+      await courseTrackingApi.visits.delete(userId, editingVisit.id);
+
+      // 創建新記錄（包含更新的數據）
+      await courseTrackingApi.visits.create(userId, {
+        resort_id: editingVisit.resort_id,
+        course_name: editingVisit.course_name,
+        visited_date: editingVisit.visited_date,
+        ...data,
+      });
+
+      dispatch(addToast({ type: 'success', message: '記錄已更新' }));
+      setIsEditModalOpen(false);
+      setEditingVisit(null);
+      loadVisits();
+    } catch (error) {
+      dispatch(addToast({ type: 'error', message: '更新失敗' }));
     }
   };
 
@@ -213,6 +244,12 @@ export default function CourseHistory() {
                           查看雪場
                         </button>
                         <button
+                          onClick={() => handleEdit(visit)}
+                          className="text-sm text-blue-600 hover:text-blue-700 underline"
+                        >
+                          編輯
+                        </button>
+                        <button
                           onClick={() => handleDelete(visit.id)}
                           className="text-sm text-red-600 hover:text-red-700 underline"
                         >
@@ -227,6 +264,28 @@ export default function CourseHistory() {
           </div>
         ))}
       </div>
+
+      {/* Edit Modal */}
+      {editingVisit && (
+        <EnhancedCourseRecordModal
+          isOpen={isEditModalOpen}
+          courseName={editingVisit.course_name}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setEditingVisit(null);
+          }}
+          onSubmit={handleEditSubmit}
+          initialData={{
+            rating: editingVisit.rating,
+            snow_condition: editingVisit.snow_condition,
+            weather: editingVisit.weather,
+            difficulty_feeling: editingVisit.difficulty_feeling,
+            mood_tags: editingVisit.mood_tags,
+            notes: editingVisit.notes,
+          }}
+          mode="edit"
+        />
+      )}
     </div>
   );
 }

@@ -1,8 +1,9 @@
 /**
  * Enhanced Course Record Modal
  * 增強的雪道記錄模態框 - 支援評分、雪況、天氣、心情標籤等
+ * 支持創建和編輯模式
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@/shared/components/Button';
 
 interface EnhancedCourseRecordModalProps {
@@ -10,6 +11,8 @@ interface EnhancedCourseRecordModalProps {
   courseName: string;
   onClose: () => void;
   onSubmit: (data: CourseRecordData) => void;
+  initialData?: CourseRecordData; // 編輯模式：提供初始數據
+  mode?: 'create' | 'edit'; // 模式
 }
 
 export interface CourseRecordData {
@@ -55,6 +58,8 @@ export default function EnhancedCourseRecordModal({
   courseName,
   onClose,
   onSubmit,
+  initialData,
+  mode = 'create',
 }: EnhancedCourseRecordModalProps) {
   const [rating, setRating] = useState<number>(0);
   const [snowCondition, setSnowCondition] = useState<string>('');
@@ -62,6 +67,18 @@ export default function EnhancedCourseRecordModal({
   const [difficultyFeeling, setDifficultyFeeling] = useState<string>('');
   const [moodTags, setMoodTags] = useState<string[]>([]);
   const [notes, setNotes] = useState<string>('');
+
+  // 加載初始數據（編輯模式）
+  useEffect(() => {
+    if (initialData) {
+      setRating(initialData.rating || 0);
+      setSnowCondition(initialData.snow_condition || '');
+      setWeather(initialData.weather || '');
+      setDifficultyFeeling(initialData.difficulty_feeling || '');
+      setMoodTags(initialData.mood_tags || []);
+      setNotes(initialData.notes || '');
+    }
+  }, [initialData, isOpen]);
 
   if (!isOpen) return null;
 
@@ -103,7 +120,9 @@ export default function EnhancedCourseRecordModal({
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-t-2xl">
-          <h2 className="text-2xl font-bold">記錄雪道體驗</h2>
+          <h2 className="text-2xl font-bold">
+            {mode === 'edit' ? '✏️ 編輯記錄' : '記錄雪道體驗'}
+          </h2>
           <p className="text-primary-100 mt-1">{courseName}</p>
         </div>
 
@@ -270,7 +289,7 @@ export default function EnhancedCourseRecordModal({
             onClick={handleSubmit}
             className="flex-1 bg-gradient-to-r from-primary-500 to-primary-600"
           >
-            ✓ 完成記錄
+            {mode === 'edit' ? '💾 儲存修改' : '✓ 完成記錄'}
           </Button>
         </div>
       </div>
