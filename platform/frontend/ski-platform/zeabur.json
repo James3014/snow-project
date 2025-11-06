@@ -1,0 +1,20 @@
+{
+  "$schema": "https://zeabur.com/schema/service.json",
+  "name": "ski-platform-frontend",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm ci",
+  "rootDirectory": "platform/frontend/ski-platform",
+  "framework": "vite",
+  "env": {
+    "VITE_USER_CORE_API": {
+      "default": "https://resort-api.zeabur.app"
+    },
+    "VITE_RESORT_API": {
+      "default": "https://resort-api.zeabur.app"
+    },
+    "VITE_ENV": {
+      "default": "production"
+    }
+  }
+}
