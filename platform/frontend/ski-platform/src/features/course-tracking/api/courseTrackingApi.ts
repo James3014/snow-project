@@ -128,7 +128,7 @@ export const leaderboardApi = {
 export const shareCardApi = {
   // 生成完成雪道分享卡
   generateCourseCompletionCard: async (visitId: string, includeStats: boolean = true): Promise<Blob> => {
-    const response = await userCoreApi.post(
+    const response = await userCoreApi.post<Blob>(
       `/api/share-cards/course-completion`,
       { visit_id: visitId, include_stats: includeStats },
       { responseType: 'blob' }
@@ -138,7 +138,7 @@ export const shareCardApi = {
 
   // 生成解鎖成就分享卡
   generateAchievementCard: async (achievementId: string): Promise<Blob> => {
-    const response = await userCoreApi.post(
+    const response = await userCoreApi.post<Blob>(
       `/api/share-cards/achievement`,
       { achievement_id: achievementId },
       { responseType: 'blob' }
@@ -148,7 +148,7 @@ export const shareCardApi = {
 
   // 生成進度里程碑分享卡
   generateProgressMilestoneCard: async (userId: string, resortId: string): Promise<Blob> => {
-    const response = await userCoreApi.post(
+    const response = await userCoreApi.post<Blob>(
       `/api/share-cards/progress-milestone`,
       { user_id: userId, resort_id: resortId },
       { responseType: 'blob' }

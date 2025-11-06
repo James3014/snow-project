@@ -15,7 +15,7 @@ import Badge from '@/shared/components/Badge';
 import ProgressBar from '@/shared/components/ProgressBar';
 import { ListSkeleton } from '@/shared/components/Skeleton';
 import EmptyState, { ErrorEmptyState } from '@/shared/components/EmptyState';
-import EnhancedCourseRecordModal, { CourseRecordData } from '../components/EnhancedCourseRecordModal';
+import EnhancedCourseRecordModal, { type CourseRecordData } from '../components/EnhancedCourseRecordModal';
 import ShareCardPreviewModal from '../components/ShareCardPreviewModal';
 
 export default function ResortDetail() {
