@@ -37,21 +37,231 @@ snow_stats:
   night_ski: true
   notes: "以其極乾的『香檳粉雪』和寬鬆的林間滑雪政策聞名。"
 courses:
-  - name: "West Mountain"
+  # === BEGINNER COURSES (綠色) ===
+  - name: "Family Course / ファミリーコース"
     level: "beginner"
-    tags: ["beginner-friendly", "family-friendly"]
-    description: "家庭和初學者的活動中心，擁有寬闊平緩的雪道。"
+    tags: ["family-friendly", "wide"]
+    avg_slope: 10
+    max_slope: 12
     notes: ""
-  - name: "East Mountain"
+  - name: "White Rubber Course / ホワイトラバーコース"
+    level: "beginner"
+    tags: ["beginner-friendly"]
+    avg_slope: 10
+    max_slope: 11
+    notes: ""
+  - name: "Rainbow Course / レインボーコース"
+    level: "beginner"
+    tags: ["beginner-friendly"]
+    avg_slope: 8
+    max_slope: 13
+    notes: ""
+  - name: "Easy Trail / イージートレイル"
+    level: "beginner"
+    tags: ["beginner-friendly"]
+    avg_slope: 7
+    max_slope: 8
+    notes: ""
+  - name: "Hubol Course / フーボルコース"
+    level: "beginner"
+    tags: ["beginner-friendly"]
+    avg_slope: 8
+    max_slope: 16
+    notes: ""
+  - name: "Friko-sawa Course / フリコ沢コース"
+    level: "beginner"
+    tags: ["beginner-friendly"]
+    avg_slope: 7
+    max_slope: 10
+    notes: ""
+  - name: "Isola D Detour Course / イゾラD迂回コース"
+    level: "beginner"
+    tags: ["detour"]
+    avg_slope: 12
+    max_slope: 14
+    notes: ""
+  - name: "Isola Summit Detour Course / イゾラ山頂迂回コース"
+    level: "beginner"
+    tags: ["detour"]
+    avg_slope: 6
+    max_slope: 10
+    notes: ""
+  - name: "Isola Grand Detour Course / イゾラグラン迂回コース"
+    level: "beginner"
+    tags: ["detour"]
+    avg_slope: 10
+    max_slope: 16
+    notes: ""
+
+  # === INTERMEDIATE COURSES (紅色) ===
+  - name: "Bambi Course / バンビコース"
     level: "intermediate"
     tags: ["cruising"]
-    description: "作為通往伊索拉山的橋樑，為中級滑雪者提供了絕佳的地形。"
+    avg_slope: 18
+    max_slope: 21
     notes: ""
-  - name: "Mt. Isola"
+  - name: "Ever Course / エバーコース"
+    level: "intermediate"
+    tags: ["cruising"]
+    avg_slope: 14
+    max_slope: 21
+    notes: ""
+  - name: "East Vivaldi Course / イーストビバルディコース"
+    level: "intermediate"
+    tags: ["cruising"]
+    avg_slope: 11
+    max_slope: 24
+    notes: ""
+  - name: "East Teignes Course / イーストティーニュコース"
+    level: "intermediate"
+    tags: ["cruising"]
+    avg_slope: 11
+    max_slope: 19
+    notes: ""
+  - name: "Isola Grand Course / イゾラグランコース"
+    level: "intermediate"
+    tags: ["cruising"]
+    avg_slope: 12
+    max_slope: 20
+    notes: ""
+  - name: "Isola C Course / イゾラCコース"
+    level: "intermediate"
+    tags: ["cruising"]
+    avg_slope: 17
+    max_slope: 25
+    notes: ""
+  - name: "Isola D Course / イゾラDコース"
+    level: "intermediate"
+    tags: ["cruising"]
+    avg_slope: 13
+    max_slope: 21
+    notes: ""
+  - name: "Steamboat A Course / スティームボートAコース"
+    level: "intermediate"
+    tags: ["cruising"]
+    avg_slope: 12
+    max_slope: 26
+    notes: ""
+  - name: "Steamboat B Course / スティームボートBコース"
+    level: "intermediate"
+    tags: ["cruising"]
+    avg_slope: 12
+    max_slope: 26
+    notes: ""
+  - name: "Heavenly View Course / ヘブンリービューコース"
+    level: "intermediate"
+    tags: ["scenic-view"]
+    avg_slope: 9
+    max_slope: 16
+    notes: ""
+  - name: "Heavenly Ridge B Course / ヘブンリーリッジBコース"
+    level: "intermediate"
+    tags: ["ridge"]
+    avg_slope: 12
+    max_slope: 20
+    notes: ""
+  - name: "Heavenly Trail Course / ヘブンリートレイルコース"
+    level: "intermediate"
+    tags: ["cruising"]
+    avg_slope: 15
+    max_slope: 18
+    notes: ""
+
+  # === ADVANCED COURSES (黑色) ===
+  - name: "Elite Course / エリートコース"
     level: "advanced"
-    tags: ["powder", "tree-run", "bowl"]
-    description: "粉雪愛好者的聖地，擁有廣闊且易於進入的林間滑雪區和粉雪碗狀坡。"
+    tags: ["steep"]
+    avg_slope: 16
+    max_slope: 26
     notes: ""
+  - name: "Forest Course / 林間コース"
+    level: "advanced"
+    tags: ["tree-run"]
+    avg_slope: 16
+    max_slope: 26
+    notes: ""
+  - name: "Tiger Course / タイガーコース"
+    level: "advanced"
+    tags: ["steep"]
+    avg_slope: 22
+    max_slope: 29
+    notes: ""
+  - name: "Dynamic Course / ダイナミックコース"
+    level: "advanced"
+    tags: ["steep"]
+    avg_slope: 17
+    max_slope: 25
+    notes: ""
+  - name: "Sky Course / スカイコース"
+    level: "advanced"
+    tags: ["steep"]
+    avg_slope: 15
+    max_slope: 27
+    notes: ""
+  - name: "Giant Course / ジャイアントコース"
+    level: "advanced"
+    tags: ["steep"]
+    avg_slope: 13
+    max_slope: 26
+    notes: ""
+  - name: "Super East Course / スーパーイーストコース"
+    level: "advanced"
+    tags: ["steep", "long-run"]
+    avg_slope: 32
+    max_slope: 40
+    notes: "最陡峭的雪道之一"
+  - name: "Across A Course / アクロスAコース"
+    level: "advanced"
+    tags: ["steep"]
+    avg_slope: 29
+    max_slope: 33
+    notes: ""
+  - name: "Across B Course / アクロスBコース"
+    level: "advanced"
+    tags: ["steep"]
+    avg_slope: 22
+    max_slope: 33
+    notes: ""
+  - name: "Isola A Course / イゾラAコース"
+    level: "advanced"
+    tags: ["steep", "powder"]
+    avg_slope: 24
+    max_slope: 27
+    notes: ""
+  - name: "Isola B Course / イゾラBコース"
+    level: "advanced"
+    tags: ["steep", "powder"]
+    avg_slope: 22
+    max_slope: 25
+    notes: ""
+  - name: "Rusutsu No.1 Course / ルスツNo.1コース"
+    level: "advanced"
+    tags: ["steep"]
+    avg_slope: 22
+    max_slope: 35
+    notes: "留壽都招牌雪道"
+  - name: "Heavenly Canyon Course / ヘブンリーキャニオンコース"
+    level: "advanced"
+    tags: ["steep"]
+    avg_slope: 13
+    max_slope: 29
+    notes: ""
+  - name: "Heavenly Spirit Course / ヘブンリースピリットコース"
+    level: "advanced"
+    tags: ["steep"]
+    avg_slope: 19
+    max_slope: 22
+    notes: ""
+  - name: "Heavenly Ridge A Course / ヘブンリーリッジAコース"
+    level: "advanced"
+    tags: ["steep", "ridge"]
+    avg_slope: 14
+    max_slope: 30
+    notes: ""
+  - name: "Freedom Park / フリーダムパーク"
+    level: "advanced"
+    tags: ["terrain-park", "jump"]
+    notes: "地形公園"
 pricing:
   last_verified: "2025-10-14"
   ticket_types:
