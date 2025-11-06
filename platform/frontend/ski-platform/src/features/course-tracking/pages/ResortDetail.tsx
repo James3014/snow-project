@@ -15,6 +15,7 @@ import Badge from '@/shared/components/Badge';
 import ProgressBar from '@/shared/components/ProgressBar';
 import { ListSkeleton } from '@/shared/components/Skeleton';
 import EmptyState, { ErrorEmptyState } from '@/shared/components/EmptyState';
+import EnhancedCourseRecordModal, { CourseRecordData } from '../components/EnhancedCourseRecordModal';
 
 export default function ResortDetail() {
   const { resortId } = useParams<{ resortId: string }>();
@@ -26,6 +27,10 @@ export default function ResortDetail() {
   const [resort, setResort] = useState<Resort | null>(null);
   const [resortLoading, setResortLoading] = useState(true);
   const [resortError, setResortError] = useState<string | null>(null);
+
+  // Enhanced recording modal state
+  const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
+  const [selectedCourseName, setSelectedCourseName] = useState<string>('');
 
   // 地區中英文映射表
   const regionNameMap: Record<string, string> = {
@@ -139,20 +144,34 @@ export default function ResortDetail() {
 
   const handleToggleCourse = async (courseName: string, isCompleted: boolean) => {
     if (!userId || !resortId) return;
+
+    if (isCompleted) {
+      // TODO: 刪除記錄
+      return;
+    }
+
+    // Open enhanced recording modal
+    setSelectedCourseName(courseName);
+    setIsRecordModalOpen(true);
+  };
+
+  const handleEnhancedRecordSubmit = async (data: CourseRecordData) => {
+    if (!userId || !resortId || !selectedCourseName) return;
+
     try {
-      if (isCompleted) {
-        // TODO: 刪除記錄
-      } else {
-        const visit = await courseTrackingApi.visits.create(userId, {
-          resort_id: resortId,
-          course_name: courseName,
-        });
-        dispatch(addVisit(visit));
-        dispatch(addToast({ type: 'success', message: `✓ 已完成 ${courseName}` }));
-        loadData(); // 重新整理進度
-      }
+      const visit = await courseTrackingApi.visits.create(userId, {
+        resort_id: resortId,
+        course_name: selectedCourseName,
+        ...data, // Include all enhanced fields
+      });
+      dispatch(addVisit(visit));
+      dispatch(addToast({
+        type: 'success',
+        message: `✓ 已完成 ${selectedCourseName}！${data.rating ? ` 評分：${'⭐'.repeat(data.rating)}` : ''}`
+      }));
+      loadData(); // 重新整理進度
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '操作失敗' }));
+      dispatch(addToast({ type: 'error', message: '記錄失敗，請稍後再試' }));
     }
   };
 
@@ -376,6 +395,14 @@ export default function ResortDetail() {
           </div>
         );
       })}
+
+      {/* Enhanced Course Record Modal */}
+      <EnhancedCourseRecordModal
+        isOpen={isRecordModalOpen}
+        courseName={selectedCourseName}
+        onClose={() => setIsRecordModalOpen(false)}
+        onSubmit={handleEnhancedRecordSubmit}
+      />
     </div>
   );
 }
