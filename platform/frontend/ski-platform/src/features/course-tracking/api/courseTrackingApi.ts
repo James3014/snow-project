@@ -123,6 +123,41 @@ export const leaderboardApi = {
 };
 
 /**
+ * 分享卡片 API（使用 Google Imagen 3 生成）
+ */
+export const shareCardApi = {
+  // 生成完成雪道分享卡
+  generateCourseCompletionCard: async (visitId: string, includeStats: boolean = true): Promise<Blob> => {
+    const response = await userCoreApi.post<Blob>(
+      `/api/share-cards/course-completion`,
+      { visit_id: visitId, include_stats: includeStats },
+      { responseType: 'blob' }
+    );
+    return response;
+  },
+
+  // 生成解鎖成就分享卡
+  generateAchievementCard: async (achievementId: string): Promise<Blob> => {
+    const response = await userCoreApi.post<Blob>(
+      `/api/share-cards/achievement`,
+      { achievement_id: achievementId },
+      { responseType: 'blob' }
+    );
+    return response;
+  },
+
+  // 生成進度里程碑分享卡
+  generateProgressMilestoneCard: async (userId: string, resortId: string): Promise<Blob> => {
+    const response = await userCoreApi.post<Blob>(
+      `/api/share-cards/progress-milestone`,
+      { user_id: userId, resort_id: resortId },
+      { responseType: 'blob' }
+    );
+    return response;
+  },
+};
+
+/**
  * 综合导出
  */
 export const courseTrackingApi = {
@@ -132,4 +167,5 @@ export const courseTrackingApi = {
   rankings: rankingApi,
   achievements: achievementApi,
   leaderboard: leaderboardApi,
+  shareCards: shareCardApi,
 };

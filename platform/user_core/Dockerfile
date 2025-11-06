@@ -12,10 +12,14 @@ COPY platform/user_core/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code into the container
-COPY platform/user_core/ ./ 
+COPY platform/user_core/ ./
+
+# Make the start script executable
+RUN chmod +x start.sh
 
 # Expose the port the app runs on
 EXPOSE 8001
 
 # Define the command to run the application
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8001"]
+# This will run migrations before starting the server
+CMD ["./start.sh"]
