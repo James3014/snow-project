@@ -4,7 +4,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
-  "rootDirectory": "platform/frontend/ski-platform",
   "framework": "vite",
   "env": {
     "VITE_USER_CORE_API": {
