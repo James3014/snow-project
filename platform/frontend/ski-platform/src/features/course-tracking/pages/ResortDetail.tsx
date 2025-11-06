@@ -7,7 +7,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { courseTrackingApi } from '../api/courseTrackingApi';
 import { setProgress, setVisits, addVisit, addToast } from '@/store/slices/courseTrackingSlice';
 import { resortApiService } from '@/shared/api/resortApi';
-import type { Resort } from '@/shared/types/common';
+import type { Resort } from '@/shared/data/resorts';
 import { getDifficultyLabel, getDifficultyEmoji } from '@/shared/utils/helpers';
 import Card from '@/shared/components/Card';
 import Button from '@/shared/components/Button';
@@ -35,8 +35,8 @@ export default function ResortDetail() {
       try {
         setResortLoading(true);
         setResortError(null);
-        const response = await resortApiService.getResort(resortId);
-        setResort(response.data);
+        const resort = await resortApiService.getResort(resortId);
+        setResort(resort);
       } catch (err) {
         console.error('載入雪場失敗:', err);
         setResortError('載入雪場資料失敗');

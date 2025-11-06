@@ -8,7 +8,7 @@ import { useAppSelector } from '@/store/hooks';
 import Card from '@/shared/components/Card';
 import ProgressBar from '@/shared/components/ProgressBar';
 import { resortApiService } from '@/shared/api/resortApi';
-import type { Resort } from '@/shared/types/common';
+import type { Resort } from '@/shared/data/resorts';
 import { ErrorEmptyState, NoDataEmptyState } from '@/shared/components/EmptyState';
 
 export default function ResortList() {
@@ -31,8 +31,8 @@ export default function ResortList() {
         setLoading(true);
         setError(null);
         const response = await resortApiService.getAllResorts();
-        const resortsData = response.data.items || response.data;
-        setResorts(Array.isArray(resortsData) ? resortsData : []);
+        // API 回應格式: { items: [...], total: ..., limit: ..., offset: ... }
+        setResorts(response.items || []);
       } catch (err) {
         console.error('載入雪場失敗:', err);
         setError('載入雪場資料失敗，請稍後重試');
