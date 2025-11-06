@@ -80,7 +80,21 @@ export default function ResortDetail() {
       dispatch(setProgress({ resortId, progress: progressData }));
       dispatch(setVisits(visitsData));
     } catch (error: any) {
-      dispatch(addToast({ type: 'error', message: '載入失敗' }));
+      console.error('載入進度資料錯誤:', error);
+      // 如果是 404，說明用戶首次訪問這個雪場，創建初始進度
+      if (error.response?.status === 404) {
+        const initialProgress = {
+          resort_id: resortId,
+          completed_courses: [],
+          total_courses: resort.snow_stats.courses_total,
+          completion_percentage: 0,
+          recommendations: [],
+        };
+        dispatch(setProgress({ resortId, progress: initialProgress }));
+        dispatch(setVisits([]));
+      } else {
+        dispatch(addToast({ type: 'error', message: '載入進度資料失敗，請稍後重試' }));
+      }
     } finally {
       setLoading(false);
     }
