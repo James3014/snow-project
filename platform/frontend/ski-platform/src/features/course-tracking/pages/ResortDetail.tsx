@@ -81,20 +81,20 @@ export default function ResortDetail() {
       dispatch(setVisits(visitsData));
     } catch (error: any) {
       console.error('載入進度資料錯誤:', error);
-      // 如果是 404，說明用戶首次訪問這個雪場，創建初始進度
-      if (error.response?.status === 404) {
-        const initialProgress = {
-          resort_id: resortId,
-          completed_courses: [],
-          total_courses: resort.snow_stats.courses_total,
-          completion_percentage: 0,
-          recommendations: [],
-        };
-        dispatch(setProgress({ resortId, progress: initialProgress }));
-        dispatch(setVisits([]));
-      } else {
-        dispatch(addToast({ type: 'error', message: '載入進度資料失敗，請稍後重試' }));
-      }
+      // 無論任何錯誤（404, 403, 網絡錯誤等），都創建初始進度讓用戶可以繼續使用
+      // 這樣即使後端 API 暫時無法訪問，前端仍能正常顯示雪場資訊
+      const initialProgress = {
+        resort_id: resortId,
+        completed_courses: [],
+        total_courses: resort.snow_stats.courses_total,
+        completion_percentage: 0,
+        recommendations: [],
+      };
+      dispatch(setProgress({ resortId, progress: initialProgress }));
+      dispatch(setVisits([]));
+
+      // 僅在控制台記錄警告，不中斷用戶體驗
+      console.warn('使用初始進度資料，進度追蹤功能可能暫時無法使用');
     } finally {
       setLoading(false);
     }
