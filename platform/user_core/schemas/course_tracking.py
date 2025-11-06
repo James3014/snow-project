@@ -32,9 +32,12 @@ class CourseVisitBase(BaseModel):
     notes: Optional[str] = None
 
 
-class CourseVisitCreate(CourseVisitBase):
+class CourseVisitCreate(BaseModel):
     """Schema for creating a course visit."""
-    pass
+    resort_id: str = Field(..., max_length=100)
+    course_name: str = Field(..., max_length=200)
+    visited_date: Optional[date] = None
+    notes: Optional[str] = None
 
 
 class CourseVisit(CourseVisitBase):
@@ -70,6 +73,7 @@ class CourseRecommendationCreate(CourseRecommendationBase):
 
 class CourseRecommendationUpdate(BaseModel):
     """Schema for updating a course recommendation."""
+    course_name: Optional[str] = Field(None, max_length=200)
     rank: Optional[int] = Field(None, ge=1, le=3)
     reason: Optional[str] = Field(None, max_length=500)
 
@@ -209,7 +213,6 @@ class LeaderboardEntry(BaseModel):
     total_points: int
     resorts_count: int
     courses_count: int
-    rare_achievements: int
 
 
 class Leaderboard(BaseModel):
@@ -225,3 +228,37 @@ class RecommendationReview(BaseModel):
     """Schema for reviewing a recommendation."""
     status: RecommendationStatus
     reviewer_notes: Optional[str] = None
+
+
+# ===== Additional Schemas for API =====
+
+class CourseRanking(BaseModel):
+    """Course popularity ranking."""
+    rank: Optional[int] = None
+    course_name: str
+    visit_count: int
+    recommendation_count: int
+    popularity_score: int
+
+
+class UserAchievementWithDetails(UserAchievement):
+    """User achievement with full definition details (simplified version)."""
+    name_zh: str
+    name_en: str
+    icon: str
+    category: str
+
+
+class AchievementSummary(BaseModel):
+    """Summary of user's achievement progress."""
+    total_points: int
+    achievement_count: int
+    total_available: int
+    completion_percentage: float
+    category_breakdown: Dict[str, int]
+
+
+class UserRank(BaseModel):
+    """User's rank on leaderboard."""
+    user_id: UUID4
+    rank: Optional[int] = None
