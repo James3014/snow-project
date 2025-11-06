@@ -16,6 +16,7 @@ import ProgressBar from '@/shared/components/ProgressBar';
 import { ListSkeleton } from '@/shared/components/Skeleton';
 import EmptyState, { ErrorEmptyState } from '@/shared/components/EmptyState';
 import EnhancedCourseRecordModal, { CourseRecordData } from '../components/EnhancedCourseRecordModal';
+import ShareCardPreviewModal from '../components/ShareCardPreviewModal';
 
 export default function ResortDetail() {
   const { resortId } = useParams<{ resortId: string }>();
@@ -31,6 +32,13 @@ export default function ResortDetail() {
   // Enhanced recording modal state
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [selectedCourseName, setSelectedCourseName] = useState<string>('');
+
+  // Share card modal state
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [lastCompletedVisit, setLastCompletedVisit] = useState<{
+    visitId: string;
+    courseName: string;
+  } | null>(null);
 
   // 地區中英文映射表
   const regionNameMap: Record<string, string> = {
@@ -165,11 +173,27 @@ export default function ResortDetail() {
         ...data, // Include all enhanced fields
       });
       dispatch(addVisit(visit));
+
+      // 保存最後完成的記錄，用於分享
+      setLastCompletedVisit({
+        visitId: visit.id,
+        courseName: selectedCourseName,
+      });
+
+      // 顯示成功訊息（帶分享提示）
       dispatch(addToast({
         type: 'success',
         message: `✓ 已完成 ${selectedCourseName}！${data.rating ? ` 評分：${'⭐'.repeat(data.rating)}` : ''}`
       }));
+
       loadData(); // 重新整理進度
+
+      // 詢問是否要分享（延遲顯示，讓用戶先看到成功訊息）
+      setTimeout(() => {
+        if (window.confirm('🎉 恭喜完成！要生成分享卡片嗎？\n\n可以分享到社交媒體炫耀你的成就！')) {
+          setIsShareModalOpen(true);
+        }
+      }, 500);
     } catch (error: any) {
       dispatch(addToast({ type: 'error', message: '記錄失敗，請稍後再試' }));
     }
@@ -403,6 +427,20 @@ export default function ResortDetail() {
         onClose={() => setIsRecordModalOpen(false)}
         onSubmit={handleEnhancedRecordSubmit}
       />
+
+      {/* Share Card Preview Modal */}
+      {lastCompletedVisit && (
+        <ShareCardPreviewModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          type="course"
+          data={{
+            visitId: lastCompletedVisit.visitId,
+            courseName: lastCompletedVisit.courseName,
+            resortName: resort?.names.zh,
+          }}
+        />
+      )}
     </div>
   );
 }
