@@ -4,7 +4,7 @@ import Card from '@/shared/components/Card';
 export default function Achievements() {
   const { achievements, loading } = useAchievements();
 
-  if (loading) return <div className="text-center py-12">加载中...</div>;
+  if (loading) return <div className="text-center py-12">載入中...</div>;
 
   return (
     <div className="space-y-6">
@@ -22,7 +22,7 @@ export default function Achievements() {
                     <h3 className="font-bold text-lg">{ach.name_zh}</h3>
                     <p className="text-sm text-gray-600">{ach.name_en}</p>
                     <div className="mt-2 flex items-center justify-between">
-                      <span className="text-primary-600 font-semibold">+{ach.points} 积分</span>
+                      <span className="text-primary-600 font-semibold">+{ach.points} 積分</span>
                       <span className="text-xs text-gray-400">{new Date(ach.earned_at).toLocaleDateString('zh-CN')}</span>
                     </div>
                   </div>

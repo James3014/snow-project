@@ -63,9 +63,9 @@ export function truncate(text: string, maxLength: number): string {
  */
 export function getDifficultyLabel(level: 'beginner' | 'intermediate' | 'advanced'): string {
   const labels = {
-    beginner: '初级',
-    intermediate: '中级',
-    advanced: '高级',
+    beginner: '初級',
+    intermediate: '中級',
+    advanced: '高級',
   };
   return labels[level];
 }

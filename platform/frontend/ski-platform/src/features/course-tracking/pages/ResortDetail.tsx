@@ -213,19 +213,19 @@ export default function ResortDetail() {
                 <div className="text-2xl font-bold text-green-600">
                   {groupedCourses.beginner?.length || 0}
                 </div>
-                <div className="text-gray-600">初级雪道</div>
+                <div className="text-gray-600">初級雪道</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-blue-600">
                   {groupedCourses.intermediate?.length || 0}
                 </div>
-                <div className="text-gray-600">中级雪道</div>
+                <div className="text-gray-600">中級雪道</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-red-600">
                   {groupedCourses.advanced?.length || 0}
                 </div>
-                <div className="text-gray-600">高级雪道</div>
+                <div className="text-gray-600">高級雪道</div>
               </div>
             </div>
           </div>

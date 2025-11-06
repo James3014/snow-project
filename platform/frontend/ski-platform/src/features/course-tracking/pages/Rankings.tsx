@@ -7,7 +7,7 @@ export default function Rankings() {
   const { resortId } = useParams();
   const { rankings, loading } = useCourseRankings(resortId || 'rusutsu');
 
-  if (loading) return <div className="text-center py-12">加载中...</div>;
+  if (loading) return <div className="text-center py-12">載入中...</div>;
 
   return (
     <div className="space-y-6">
