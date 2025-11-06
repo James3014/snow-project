@@ -12,6 +12,8 @@ import Card from '@/shared/components/Card';
 import Button from '@/shared/components/Button';
 import Badge from '@/shared/components/Badge';
 import ProgressBar from '@/shared/components/ProgressBar';
+import { ListSkeleton } from '@/shared/components/Skeleton';
+import EmptyState from '@/shared/components/EmptyState';
 
 export default function ResortDetail() {
   const { resortId } = useParams<{ resortId: string }>();
@@ -64,9 +66,53 @@ export default function ResortDetail() {
     }
   };
 
-  if (loading) return <div className="text-center py-12">加载中...</div>;
-  if (!resort) return <div className="text-center py-12">未找到雪场信息</div>;
-  if (!progress) return <div className="text-center py-12">暂无数据</div>;
+  // Loading State
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
+            <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+          </div>
+          <Button onClick={() => navigate('/resorts')}>返回</Button>
+        </div>
+        <ListSkeleton count={8} />
+      </div>
+    );
+  }
+
+  // Error States
+  if (!resort) {
+    return (
+      <EmptyState
+        icon="❌"
+        title="未找到雪场信息"
+        description="该雪场不存在或已被删除"
+        action={{ label: '返回列表', onClick: () => navigate('/resorts') }}
+      />
+    );
+  }
+
+  if (!progress) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
+            <p className="text-gray-600">{resort.names.en}</p>
+          </div>
+          <Button onClick={() => navigate('/resorts')}>返回</Button>
+        </div>
+        <EmptyState
+          icon="⚠️"
+          title="加载失败"
+          description="无法加载雪场进度数据"
+          action={{ label: '重试', onClick: loadData }}
+        />
+      </div>
+    );
+  }
 
   // 按难度分组课程
   const groupedCourses = resort.courses.reduce(
