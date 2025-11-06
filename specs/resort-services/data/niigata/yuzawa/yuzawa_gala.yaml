@@ -1,80 +1,177 @@
-resort_id: "yuzawa_gala"
+resort_id: yuzawa_gala
 names:
-  zh: "GALA湯澤滑雪場"
-  en: "GALA Yuzawa Snow Resort"
-  ja: "GALA湯沢スキー場"
-country_code: "JP"
-region: "Niigata Prefecture"
-timezone: "Asia/Tokyo"
+  zh: GALA湯澤滑雪場
+  en: GALA Yuzawa Snow Resort
+  ja: GALA湯沢スキー場
+country_code: JP
+region: Niigata Prefecture
+timezone: Asia/Tokyo
 coordinates:
   lat: 36.95072
   lng: 138.799437
 season:
-  estimated_open: "2024-12-13"
-  estimated_close: "2025-05-06"
-official_site: "https://gala.co.jp/winter/"
+  estimated_open: '2024-12-13'
+  estimated_close: '2025-05-06'
+official_site: https://gala.co.jp/winter/
 description:
   highlights:
-    - "新幹線直達"
-    - "一日滑雪"
-    - "交通便利"
-    - "溫泉"
-  tagline: "與新幹線車站直接相連的終極一日滑雪目的地。"
+  - 新幹線直達
+  - 一日滑雪
+  - 交通便利
+  - 溫泉
+  tagline: 與新幹線車站直接相連的終極一日滑雪目的地。
 amenities:
-  - "Onsen"
-  - "Kids Park"
+- Onsen
+- Kids Park
 snow_stats:
   lifts: 11
   courses_total: 16
   beginner_ratio: 0.35
-  intermediate_ratio: 0.50
+  intermediate_ratio: 0.5
   advanced_ratio: 0.15
   longest_run: 2.5
   vertical_drop: 358
   night_ski: false
-  notes: "以其無與倫比的交通便利性聞名，新幹線車站直結滑雪中心。"
+  notes: 以其無與倫比的交通便利性聞名，新幹線車站直結滑雪中心。
 courses:
-  - name: "Entertainment Course"
-    level: "intermediate"
-    tags: ["cruising"]
-    description: "位於中央區，寬闊的中級雪道。"
-    notes: ""
-  - name: "2.6 Million Dollar Course"
-    level: "advanced"
-    tags: ["powder", "un-groomed"]
-    description: "位於北區，以其未經壓雪的粉雪路線而聞名。"
-    notes: ""
-  - name: "Melody Course"
-    level: "beginner"
-    tags: ["beginner-friendly", "long-run", "scenic-view"]
-    description: "位於南區，長而平緩的初級雪道，風景優美。"
-    notes: ""
+- name: ファミリーコース
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: 初級コース
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 北エリア初級
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: 中央エリア初級
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 南エリア初級
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 11.0
+  description: null
+  notes: null
+- name: 中級コース
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: 北エリア中級
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: 中央エリア中級
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: 南エリア中級
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: ダウンヒルコース
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 17.0
+  description: null
+  notes: null
+- name: パノラマコース
+  level: intermediate
+  tags: []
+  length: 14.0
+  avg_slope: 16.0
+  description: null
+  notes: null
+- name: 上級コース
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 25.0
+  description: null
+  notes: null
+- name: 北エリア上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: 中央エリア上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: 南エリア上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: エキスパートコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 32.0
+  description: null
+  notes: null
 pricing:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   ticket_types:
-    - type: "1-day (online)"
-      adult: 5900
-      child: 2800
-      notes: "此為網路預購價。"
-    - type: "1-day (window)"
-      adult: 6800
-      child: 3000
-      notes: "現場窗口購買價格。"
+  - type: 1-day (online)
+    adult: 5900
+    child: 2800
+    notes: 此為網路預購價。
+  - type: 1-day (window)
+    adult: 6800
+    child: 3000
+    notes: 現場窗口購買價格。
 rental:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   items: []
-  notes: "與Salomon合作，提供高品質的雪具租賃。建議線上預約。"
+  notes: 與Salomon合作，提供高品質的雪具租賃。建議線上預約。
 transportation:
   domestic:
     shinkansen:
-      - from: "Tokyo"
-        to: "GALA Yuzawa Station"
-        duration_minutes: 77
-        notes: "上越新幹線直達滑雪中心。"
+    - from: Tokyo
+      to: GALA Yuzawa Station
+      duration_minutes: 77
+      notes: 上越新幹線直達滑雪中心。
   international:
     airports: []
-  remarks: "與湯澤高原、石打丸山滑雪場相連，可購買三山共通券。"
+  remarks: 與湯澤高原、石打丸山滑雪場相連，可購買三山共通券。
 content_sources:
-  - "project/specs/resort-services/skiarea.md"
-  - "https://gala.co.jp/winter/"
-notes: "週末及假日人潮極為擁擠，建議平日前往。"
+- project/specs/resort-services/skiarea.md
+- https://gala.co.jp/winter/
+notes: 週末及假日人潮極為擁擠，建議平日前往。

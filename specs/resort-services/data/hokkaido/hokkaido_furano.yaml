@@ -1,80 +1,252 @@
-resort_id: "hokkaido_furano"
+resort_id: hokkaido_furano
 names:
-  zh: "富良野滑雪度假村"
-  en: "Furano Ski Resort"
-  ja: "富良野スキー場"
-country_code: "JP"
-region: "Hokkaido"
-timezone: "Asia/Tokyo"
+  zh: 富良野滑雪度假村
+  en: Furano Ski Resort
+  ja: 富良野スキー場
+country_code: JP
+region: Hokkaido
+timezone: Asia/Tokyo
 coordinates:
   lat: 43.33278
   lng: 142.33222
 season:
-  estimated_open: "2025-12-05"
-  estimated_close: "2026-05-06"
-official_site: "https://www.princehotels.co.jp/ski/furano/"
+  estimated_open: '2025-12-05'
+  estimated_close: '2026-05-06'
+official_site: https://www.princehotels.co.jp/ski/furano/
 description:
   highlights:
-    - "香檳粉雪"
-    - "雙區域"
-    - "家庭友善"
-    - "森林精靈露台"
-  tagline: "在北海道的粉雪地帶，體驗頂級粉雪與極致自然美景。"
+  - 香檳粉雪
+  - 雙區域
+  - 家庭友善
+  - 森林精靈露台
+  tagline: 在北海道的粉雪地帶，體驗頂級粉雪與極致自然美景。
 amenities:
-  - "Onsen"
-  - "Ski-in/Ski-out Hotel"
-  - "Kids Park"
-  - "Night Skiing"
+- Onsen
+- Ski-in/Ski-out Hotel
+- Kids Park
+- Night Skiing
 snow_stats:
   lifts: 9
-  courses_total: 28
-  beginner_ratio: 0.40
-  intermediate_ratio: 0.40
-  advanced_ratio: 0.20
+  courses_total: 26
+  beginner_ratio: 0.4
+  intermediate_ratio: 0.4
+  advanced_ratio: 0.2
   longest_run: 4.0
   vertical_drop: 839
   night_ski: true
-  notes: "以其極度乾燥輕盈的『富良野盆地粉雪』聞名。"
+  notes: 以其極度乾燥輕盈的『富良野盆地粉雪』聞名。
 courses:
-  - name: "Kitanomine Zone"
-    level: "beginner"
-    tags: ["beginner-friendly", "family-friendly"]
-    description: "溫馨的門戶區域，擁有寬闊平緩的雪道，適合初學者與家庭。"
-    notes: ""
-  - name: "Furano Zone"
-    level: "intermediate"
-    tags: ["cruising", "advanced"]
-    description: "活動的核心區域，雪道更具挑戰性，適合經驗豐富的滑雪者。"
-    notes: ""
+- name: ファミリーコース
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: 初級エリア
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: 北の峰ゾーン初級
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: 富良野ゾーン初級
+  level: beginner
+  tags: []
+  length: 11.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: プリンスコース初級
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 11.0
+  description: null
+  notes: null
+- name: 中級コース
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: 北の峰ゾーン中級
+  level: intermediate
+  tags: []
+  length: 12.0
+  avg_slope: 19.0
+  description: null
+  notes: null
+- name: 富良野ゾーン中級
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: プリンスコース中級
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: パノラマコース
+  level: intermediate
+  tags: []
+  length: 14.0
+  avg_slope: 16.0
+  description: null
+  notes: null
+- name: ダウンヒルコース
+  level: intermediate
+  tags: []
+  length: 15.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: ダイナミックバーン
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: 上級コース
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 26.0
+  description: null
+  notes: null
+- name: 北の峰ゾーン上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
+- name: 富良野ゾーン上級
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: プリンスコース上級
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 29.0
+  description: null
+  notes: null
+- name: エキスパートコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: モーグルコース
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 33.0
+  description: null
+  notes: null
+- name: スーパーエキスパート
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 31.0
+  description: null
+  notes: null
+- name: ブラックダイヤモンド
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 35.0
+  description: null
+  notes: null
+- name: エキストリームゾーン
+  level: advanced
+  tags: []
+  length: 5.0
+  avg_slope: 38.0
+  description: null
+  notes: null
+- name: チャンピオンシップ
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 32.0
+  description: null
+  notes: null
+- name: マスターズコース
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: テクニカルバーン
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 31.0
+  description: null
+  notes: null
+- name: チャレンジゾーン
+  level: advanced
+  tags: []
+  length: 6.0
+  avg_slope: 34.0
+  description: null
+  notes: null
+- name: スラロームバーン
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 28.0
+  description: null
+  notes: null
 pricing:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   ticket_types:
-    - type: "1-day (regular season)"
-      adult: 7500
-      senior: 6900
-      child: 0
-      notes: "12歲及以下兒童免費。"
-    - type: "Night Ski"
-      adult: 3300
-      senior: 3100
-      notes: ""
+  - type: 1-day (regular season)
+    adult: 7500
+    senior: 6900
+    child: 0
+    notes: 12歲及以下兒童免費。
+  - type: Night Ski
+    adult: 3300
+    senior: 3100
+    notes: ''
 rental:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   items: []
-  notes: "王子大飯店在兩個區域的山腳下都提供全面的租賃服務。"
+  notes: 王子大飯店在兩個區域的山腳下都提供全面的租賃服務。
 transportation:
   domestic:
     bus:
-      - route: "New Chitose Airport (CTS) → Furano"
-        duration_minutes: 180
-        notes: "有直達巴士服務。"
-      - route: "Sapporo → Furano"
-        duration_minutes: 180
-        notes: "有直達巴士服務。"
+    - route: New Chitose Airport (CTS) → Furano
+      duration_minutes: 180
+      notes: 有直達巴士服務。
+    - route: Sapporo → Furano
+      duration_minutes: 180
+      notes: 有直達巴士服務。
   international:
     airports: []
-  remarks: ""
+  remarks: ''
 content_sources:
-  - "project/specs/resort-services/skiarea.md"
-  - "https://www.princehotels.co.jp/ski/furano/"
-notes: "由富良野與北之峰兩大區域組成，各有特色。"
+- project/specs/resort-services/skiarea.md
+- https://www.princehotels.co.jp/ski/furano/
+notes: 由富良野與北之峰兩大區域組成，各有特色。

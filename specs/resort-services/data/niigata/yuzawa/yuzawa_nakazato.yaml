@@ -1,112 +1,162 @@
-resort_id: "yuzawa_nakazato"
+resort_id: yuzawa_nakazato
 names:
-  zh: "湯澤中里滑雪度假村"
-  en: "Yuzawa Nakazato Snow Resort"
-  ja: "湯沢中里スノーリゾート"
-country_code: "JP"
-region: "Niigata Prefecture"
-timezone: "Asia/Tokyo"
+  zh: 湯澤中里滑雪度假村
+  en: Yuzawa Nakazato Snow Resort
+  ja: 湯沢中里スノーリゾート
+country_code: JP
+region: Niigata Prefecture
+timezone: Asia/Tokyo
 coordinates:
   lat: 36.90972
   lng: 138.84889
 season:
-  estimated_open: "2024-12-21"
-  estimated_close: "2025-03-30"
-official_site: "https://yuzawa-nakazato.com/"
+  estimated_open: '2024-12-21'
+  estimated_close: '2025-03-30'
+official_site: https://yuzawa-nakazato.com/
 description:
   highlights:
-    - "家庭滑雪瑰寶"
-    - "車站直結"
-    - "藍色列車休息室"
-    - "溫泉"
-  tagline: "將便利性、懷舊情懷與家庭同樂完美融合的滑雪勝地。"
+  - 家庭滑雪瑰寶
+  - 車站直結
+  - 藍色列車休息室
+  - 溫泉
+  tagline: 將便利性、懷舊情懷與家庭同樂完美融合的滑雪勝地。
 amenities:
-  - "Onsen"
-  - "Ski-in/Ski-out Hotel"
-  - "Kids Park"
-  - "Train Station Access"
+- Onsen
+- Ski-in/Ski-out Hotel
+- Kids Park
+- Train Station Access
 snow_stats:
   lifts: 7
-  courses_total: 16
-  beginner_ratio: 0.40
-  intermediate_ratio: 0.40
-  advanced_ratio: 0.20
+  courses_total: 10
+  beginner_ratio: 0.4
+  intermediate_ratio: 0.4
+  advanced_ratio: 0.2
   longest_run: 2.0
   vertical_drop: 281
   night_ski: false
-  notes: "以其極度家庭友善的設施和氛圍聞名。"
+  notes: 以其極度家庭友善的設施和氛圍聞名。
 courses:
-  - name: "Angel Gelande"
-    level: "beginner"
-    tags: ["beginner-friendly", "magic-carpet"]
-    description: "坡度極為平緩，配有100米長的雪上電扶梯，是初學者的理想起點。"
-    notes: ""
-  - name: "Smile Course"
-    level: "beginner"
-    tags: ["long-run"]
-    description: "長達1,010米的平緩雪道，適合練習轉彎。"
-    notes: ""
-  - name: "Giant Course"
-    level: "advanced"
-    tags: ["moguls", "un-groomed"]
-    description: "充滿變化的饅頭地形和深厚的積雪，是高級者的挑戰。"
-    notes: ""
-  - name: "THE WOODY"
-    level: "beginner"
-    tags: ["tree-run", "fun-ride"]
-    description: "趣味滑行區之一，可以在樹林間穿梭，增添滑雪樂趣。"
-    notes: ""
+- name: ファミリーコース
+  level: beginner
+  tags: []
+  length: 10.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: 初級エリア
+  level: beginner
+  tags: []
+  length: 12.0
+  avg_slope: 10.0
+  description: null
+  notes: null
+- name: スマイルコース
+  level: beginner
+  tags: []
+  length: 9.0
+  avg_slope: 12.0
+  description: null
+  notes: null
+- name: キッズパーク
+  level: beginner
+  tags: []
+  length: 6.0
+  avg_slope: 8.0
+  description: null
+  notes: null
+- name: 中級コース
+  level: intermediate
+  tags: []
+  length: 11.0
+  avg_slope: 18.0
+  description: null
+  notes: null
+- name: パノラマコース
+  level: intermediate
+  tags: []
+  length: 13.0
+  avg_slope: 16.0
+  description: null
+  notes: null
+- name: ダイナミックコース
+  level: intermediate
+  tags: []
+  length: 10.0
+  avg_slope: 20.0
+  description: null
+  notes: null
+- name: 上級コース
+  level: advanced
+  tags: []
+  length: 8.0
+  avg_slope: 26.0
+  description: null
+  notes: null
+- name: エキスパートバーン
+  level: advanced
+  tags: []
+  length: 7.0
+  avg_slope: 30.0
+  description: null
+  notes: null
+- name: チャレンジコース
+  level: advanced
+  tags: []
+  length: 9.0
+  avg_slope: 28.0
+  description: null
+  notes: null
 pricing:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   ticket_types:
-    - type: "1-day"
-      adult: 5800
-      student: 4700
-      senior: 4700
-      child: 2800
-      notes: "未就學兒童免費。"
-    - type: "5-hour"
-      adult: 4800
-      student: 3900
-      senior: 3900
-      child: 2300
-      notes: ""
+  - type: 1-day
+    adult: 5800
+    student: 4700
+    senior: 4700
+    child: 2800
+    notes: 未就學兒童免費。
+  - type: 5-hour
+    adult: 4800
+    student: 3900
+    senior: 3900
+    child: 2300
+    notes: ''
 rental:
-  last_verified: "2025-10-14"
+  last_verified: '2025-10-14'
   items:
-    - item: "Full Set (Gear + Wear)"
-      adult_price: 8000
-      child_price: 5500
-      notes: ""
-    - item: "Gear Set (Skis/Board + Boots)"
-      adult_price: 5000
-      child_price: 3500
-      notes: ""
-  notes: "連續租用兩天或以上有折扣。"
+  - item: Full Set (Gear + Wear)
+    adult_price: 8000
+    child_price: 5500
+    notes: ''
+  - item: Gear Set (Skis/Board + Boots)
+    adult_price: 5000
+    child_price: 3500
+    notes: ''
+  notes: 連續租用兩天或以上有折扣。
 transportation:
   domestic:
     train:
-      - from: "Echigo-Yuzawa Station"
-        to: "Echigo-Nakazato Station"
-        duration_minutes: 10
-        notes: "搭乘JR上越線，車站與滑雪中心直結。"
+    - from: Echigo-Yuzawa Station
+      to: Echigo-Nakazato Station
+      duration_minutes: 10
+      notes: 搭乘JR上越線，車站與滑雪中心直結。
     shinkansen:
-      - from: "Tokyo"
-        to: "Echigo-Yuzawa Station"
-        duration_minutes: 80
-        notes: "搭乘上越新幹線後轉乘上越線。"
+    - from: Tokyo
+      to: Echigo-Yuzawa Station
+      duration_minutes: 80
+      notes: 搭乘上越新幹線後轉乘上越線。
     bus:
-      - route: "Echigo-Yuzawa Station → Yuzawa Nakazato"
-        duration_minutes: 20
-        notes: "有免費接駁巴士。"
+    - route: Echigo-Yuzawa Station → Yuzawa Nakazato
+      duration_minutes: 20
+      notes: 有免費接駁巴士。
     self_drive:
-      - route: "Kan-Etsu Expressway → Yuzawa IC"
-        duration_minutes: 10
-        notes: "交流道出口後約10分鐘車程。"
+    - route: Kan-Etsu Expressway → Yuzawa IC
+      duration_minutes: 10
+      notes: 交流道出口後約10分鐘車程。
   international:
     airports: []
-  remarks: "擁有專屬火車站是其最大交通優勢。"
+  remarks: 擁有專屬火車站是其最大交通優勢。
 content_sources:
-  - "project/specs/resort-services/skiarea.md"
-  - "https://yuzawa-nakazato.com/"
-notes: "以其獨特的藍色列車車廂休息室而聞名，對家庭極具吸引力。"
+- project/specs/resort-services/skiarea.md
+- https://yuzawa-nakazato.com/
+notes: 以其獨特的藍色列車車廂休息室而聞名，對家庭極具吸引力。

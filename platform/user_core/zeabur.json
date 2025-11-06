@@ -1,0 +1,16 @@
+{
+  "$schema": "https://zeabur.com/schema/service.json",
+  "name": "user-core-api",
+  "dockerfile": "Dockerfile",
+  "buildCommand": "pip install -r requirements.txt",
+  "startCommand": "uvicorn api.main:app --host 0.0.0.0 --port 8001",
+  "ports": [8001],
+  "env": {
+    "DATABASE_URL": {
+      "default": "sqlite:///./user_core.db"
+    },
+    "PYTHONPATH": {
+      "default": "/app"
+    }
+  }
+}

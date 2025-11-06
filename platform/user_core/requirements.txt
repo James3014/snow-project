@@ -32,9 +32,9 @@ mdurl==0.1.2
 packaging==25.0
 pluggy==1.6.0
 psycopg2-binary==2.9.11
-pydantic==2.12.1
+pydantic==2.10.5
 pydantic-settings==2.11.0
-pydantic_core==2.41.3
+pydantic_core==2.27.2
 Pygments==2.19.2
 pyrate-limiter==3.9.0
 pytest==8.4.2
