@@ -42,6 +42,23 @@ export default function ResortDetail() {
   // 將地區名稱轉換為中文
   const getRegionName = (region: string) => regionNameMap[region] || region;
 
+  // 雪場 Logo URL 映射（使用官網 favicon 或預設圖片）
+  const getResortLogoUrl = (resortId: string) => {
+    const logoMap: Record<string, string> = {
+      // 北海道
+      'hokkaido_rusutsu': 'https://rusutsu.com/favicon.ico',
+      'hokkaido_niseko_moiwa': 'https://www.niseko-moiwa.jp/favicon.ico',
+      'hokkaido_sapporo_teine': 'https://sapporo-teine.com/favicon.ico',
+      'hokkaido_furano': 'https://www.snowtomamu.jp/favicon.ico',
+      'hokkaido_tomamu': 'https://www.snowtomamu.jp/favicon.ico',
+
+      // 使用通用滑雪圖標作為預設
+      'default': 'https://img.icons8.com/fluency/96/skiing.png',
+    };
+
+    return logoMap[resortId] || logoMap['default'];
+  };
+
   // 載入雪場資料
   useEffect(() => {
     const loadResort = async () => {
@@ -234,11 +251,33 @@ export default function ResortDetail() {
   return (
     <div className="space-y-6">
       {/* 頂部資訊 */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
-          <p className="text-gray-600">{resort.names.en}</p>
-          <p className="text-sm text-gray-500 mt-1">📍 {getRegionName(resort.region)}</p>
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-4">
+          {/* Logo 圖片 */}
+          <div className="flex-shrink-0">
+            <img
+              src={getResortLogoUrl(resort.resort_id)}
+              alt={`${resort.names.zh} Logo`}
+              className="w-16 h-16 object-contain"
+              onError={(e) => {
+                // 如果圖片載入失敗，顯示預設 emoji
+                e.currentTarget.style.display = 'none';
+                const parent = e.currentTarget.parentElement;
+                if (parent && !parent.querySelector('.fallback-emoji')) {
+                  const emoji = document.createElement('div');
+                  emoji.className = 'fallback-emoji text-5xl';
+                  emoji.textContent = '🏔️';
+                  parent.appendChild(emoji);
+                }
+              }}
+            />
+          </div>
+          {/* 雪場資訊 */}
+          <div>
+            <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
+            <p className="text-gray-600">{resort.names.en}</p>
+            <p className="text-sm text-gray-500 mt-1">📍 {getRegionName(resort.region)}</p>
+          </div>
         </div>
         <Button onClick={() => navigate('/resorts')}>返回</Button>
       </div>

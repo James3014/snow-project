@@ -105,6 +105,23 @@ export default function ResortList() {
   // 將地區名稱轉換為中文
   const getRegionName = (region: string) => regionNameMap[region] || region;
 
+  // 雪場 Logo URL 映射（使用官網 favicon 或預設圖片）
+  const getResortLogoUrl = (resortId: string) => {
+    const logoMap: Record<string, string> = {
+      // 北海道
+      'hokkaido_rusutsu': 'https://rusutsu.com/favicon.ico',
+      'hokkaido_niseko_moiwa': 'https://www.niseko-moiwa.jp/favicon.ico',
+      'hokkaido_sapporo_teine': 'https://sapporo-teine.com/favicon.ico',
+      'hokkaido_furano': 'https://www.snowtomamu.jp/favicon.ico',
+      'hokkaido_tomamu': 'https://www.snowtomamu.jp/favicon.ico',
+
+      // 使用通用滑雪圖標作為預設
+      'default': 'https://img.icons8.com/fluency/96/skiing.png',
+    };
+
+    return logoMap[resortId] || logoMap['default'];
+  };
+
   // 取得所有地區（用於過濾器）
   const regions = Array.from(new Set(resorts.map((r) => r.region))).sort();
 
@@ -225,8 +242,25 @@ export default function ResortList() {
               onClick={() => navigate(`/resorts/${resort.resort_id}`)}
             >
               <Card.Body className="space-y-4">
-                {/* 圖示 */}
-                <div className="text-6xl text-center">🏔️</div>
+                {/* Logo 圖片 */}
+                <div className="flex justify-center items-center h-24">
+                  <img
+                    src={getResortLogoUrl(resort.resort_id)}
+                    alt={`${resort.names.zh} Logo`}
+                    className="max-h-20 max-w-full object-contain"
+                    onError={(e) => {
+                      // 如果圖片載入失敗，顯示預設 emoji
+                      e.currentTarget.style.display = 'none';
+                      const parent = e.currentTarget.parentElement;
+                      if (parent && !parent.querySelector('.fallback-emoji')) {
+                        const emoji = document.createElement('div');
+                        emoji.className = 'fallback-emoji text-6xl';
+                        emoji.textContent = '🏔️';
+                        parent.appendChild(emoji);
+                      }
+                    }}
+                  />
+                </div>
 
                 {/* 雪場名稱 */}
                 <div className="text-center">
