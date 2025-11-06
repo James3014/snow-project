@@ -28,7 +28,7 @@ export function formatRelativeTime(date: string | Date): string {
   if (diffDays === 1) return '昨天';
   if (diffDays < 7) return `${diffDays}天前`;
   if (diffDays < 30) return `${Math.floor(diffDays / 7)}周前`;
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)}个月前`;
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)}個月前`;
   return `${Math.floor(diffDays / 365)}年前`;
 }
 

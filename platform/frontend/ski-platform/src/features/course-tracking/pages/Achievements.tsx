@@ -11,7 +11,7 @@ export default function Achievements() {
       <h1 className="text-2xl font-bold">我的成就</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {achievements.length === 0 ? (
-          <Card><Card.Body className="text-center py-12"><p>还没有获得成就，开始滑雪吧！</p></Card.Body></Card>
+          <Card><Card.Body className="text-center py-12"><p>還沒有獲得成就，開始滑雪吧！</p></Card.Body></Card>
         ) : (
           achievements.map(ach => (
             <Card key={ach.id} className="hover:shadow-lg transition">

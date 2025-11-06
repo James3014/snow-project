@@ -174,7 +174,7 @@ export default function ResortDetail() {
 
   return (
     <div className="space-y-6">
-      {/* 顶部信息 */}
+      {/* 頂部資訊 */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
@@ -184,7 +184,7 @@ export default function ResortDetail() {
         <Button onClick={() => navigate('/resorts')}>返回</Button>
       </div>
 
-      {/* 雪场信息卡片 */}
+      {/* 雪場資訊卡片 */}
       {resort.description && (
         <Card>
           <Card.Body>
@@ -200,7 +200,7 @@ export default function ResortDetail() {
         </Card>
       )}
 
-      {/* 进度卡片 */}
+      {/* 進度卡片 */}
       <Card>
         <Card.Body>
           <div className="space-y-3">

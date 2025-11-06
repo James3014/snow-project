@@ -13,7 +13,7 @@ export default function RootLayout() {
       {/* 导航栏 */}
       <Navbar />
 
-      {/* 主内容区域 */}
+      {/* 主內容區域 */}
       <main className="container mx-auto px-4 py-6 max-w-7xl">
         <Suspense
           fallback={

@@ -19,7 +19,7 @@ export default function Recommendations() {
         <Button onClick={() => navigate(`/resorts/${resortId}`)}>返回</Button>
       </div>
       {resortRecs.length === 0 ? (
-        <Card><Card.Body className="text-center py-12"><p>还没有推荐</p></Card.Body></Card>
+        <Card><Card.Body className="text-center py-12"><p>還沒有推薦</p></Card.Body></Card>
       ) : (
         <div className="space-y-4">
           {resortRecs.map(rec => (
