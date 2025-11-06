@@ -50,10 +50,20 @@ def record_course_visit(
     Raises:
         DuplicateCourseVisitError: If the same course visit already exists
     """
-    # Verify user exists
+    # Verify user exists, if not create a default user profile
     user = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
     if not user:
-        raise ValueError(f"User {user_id} not found")
+        # Auto-create user profile if it doesn't exist
+        user = UserProfile(
+            user_id=user_id,
+            display_name=f"User-{str(user_id)[:8]}",  # Default display name
+            status="active",
+            created_by="system",
+            updated_by="system"
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
     db_visit = CourseVisit(
         user_id=user_id,
