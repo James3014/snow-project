@@ -22,18 +22,20 @@ app = FastAPI(
     description="Manages user profiles, preferences, and behavior events for the SkiDIY platform."
 )
 
-# Configure CORS
+# Configure CORS - Allow frontend to access backend API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",  # Local development
+        "http://localhost:5173",  # Local Vite dev server
         "http://localhost:3000",  # Local production build
+        "http://127.0.0.1:5173",  # Local Vite dev server (alternative)
         "https://ski-platform.zeabur.app",  # Production frontend
     ],
-    allow_origin_regex=r"https://.*\.zeabur\.app",  # All Zeabur subdomains
+    allow_origin_regex=r"https://.*\.zeabur\.app",  # All Zeabur deployments
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 app.include_router(user_profiles.router, prefix="/users", tags=["User Profiles"])
