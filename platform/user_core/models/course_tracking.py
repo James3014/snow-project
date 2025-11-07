@@ -2,7 +2,7 @@
 Course tracking models for ski resort course visits, recommendations, and achievements.
 """
 from sqlalchemy import (
-    Column, String, DateTime, JSON, Integer, Text, Date,
+    Column, String, DateTime, JSON, Integer, Text, Date, Boolean,
     UniqueConstraint, CheckConstraint, ForeignKey, Index
 )
 from sqlalchemy.orm import relationship
@@ -124,7 +124,7 @@ class AchievementDefinition(Base):
     category = Column(String(30), nullable=False)  # basic, advanced, expert, special
     points = Column(Integer, default=0, nullable=False)
     requirements = Column(JSON, nullable=False)  # Conditions to earn this achievement
-    is_hidden = Column(Integer, default=0, nullable=False)  # Hidden achievements (surprises)
+    is_hidden = Column(Boolean, default=False, nullable=False)  # Hidden achievements (surprises)
     display_order = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
 
