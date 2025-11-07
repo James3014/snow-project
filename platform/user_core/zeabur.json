@@ -6,11 +6,13 @@
   "startCommand": "uvicorn api.main:app --host 0.0.0.0 --port 8001",
   "ports": [8001],
   "env": {
-    "DATABASE_URL": {
-      "default": "sqlite:///./user_core.db"
-    },
     "PYTHONPATH": {
       "default": "/app"
+    }
+  },
+  "services": {
+    "database": {
+      "type": "postgresql"
     }
   }
 }

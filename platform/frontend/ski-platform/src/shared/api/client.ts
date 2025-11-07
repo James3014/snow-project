@@ -49,25 +49,29 @@ function createApiClient(baseURL: string): AxiosInstance {
       // 統一錯誤處理
       if (error.response) {
         // 伺服器返回錯誤
-        const { status, data } = error.response;
+        const { status, data, config } = error.response;
 
-        switch (status) {
-          case 401:
-            // 未授權，跳轉到登入
-            console.error('未授權，請登入');
-            // TODO: 跳轉到登入頁
-            break;
-          case 403:
-            console.error('無權限存取');
-            break;
-          case 404:
-            console.error('資源不存在');
-            break;
-          case 500:
-            console.error('伺服器錯誤');
-            break;
-          default:
-            console.error(`請求失敗: ${status}`, data);
+        // 對於 auth 相關的 401 錯誤，不顯示錯誤訊息（由 authSlice 處理）
+        const isAuthEndpoint = config?.url?.includes('/auth/');
+        const shouldLogError = !(status === 401 && isAuthEndpoint);
+
+        if (shouldLogError) {
+          switch (status) {
+            case 401:
+              console.error('未授權，請登入');
+              break;
+            case 403:
+              console.error('無權限存取');
+              break;
+            case 404:
+              console.error('資源不存在');
+              break;
+            case 500:
+              console.error('伺服器錯誤');
+              break;
+            default:
+              console.error(`請求失敗: ${status}`, data);
+          }
         }
 
         return Promise.reject({
