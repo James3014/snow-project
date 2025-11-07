@@ -6,7 +6,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import Card from '@/shared/components/Card';
-import type { Season, SeasonStats, CalendarTrip, Trip } from '../types';
+import TripCreateModal from '../components/TripCreateModal';
+import type { Season, SeasonStats, CalendarTrip, Trip, TripCreate } from '../types';
 
 export default function SeasonDetail() {
   const { seasonId } = useParams<{ seasonId: string }>();
@@ -18,6 +19,7 @@ export default function SeasonDetail() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'calendar' | 'list' | 'stats'>('calendar');
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const userId = localStorage.getItem('user_id') || 'test-user-id';
 
@@ -73,6 +75,34 @@ export default function SeasonDetail() {
     setCurrentMonth(newMonth);
   };
 
+  const handleCreateTrips = async (trips: Omit<TripCreate, 'season_id'>[]) => {
+    if (!seasonId) return;
+
+    try {
+      // 為每個行程添加 season_id
+      const tripsWithSeason = trips.map(trip => ({
+        ...trip,
+        season_id: seasonId,
+      }));
+
+      // 批次創建行程
+      await Promise.all(
+        tripsWithSeason.map(trip => tripPlanningApi.createTrip(userId, trip))
+      );
+
+      // 重新載入數據
+      await loadSeasonData();
+      if (activeTab === 'calendar') {
+        await loadCalendarData();
+      }
+
+      setShowCreateModal(false);
+    } catch (err) {
+      console.error('創建行程失敗:', err);
+      alert('創建行程失敗，請重試');
+    }
+  };
+
   if (loading || !season) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -110,7 +140,7 @@ export default function SeasonDetail() {
           </div>
 
           <button
-            onClick={() => navigate(`/trips/create?season_id=${seasonId}`)}
+            onClick={() => setShowCreateModal(true)}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
             + 新增行程
@@ -195,6 +225,14 @@ export default function SeasonDetail() {
 
       {activeTab === 'stats' && stats && (
         <StatsView stats={stats} />
+      )}
+
+      {/* Trip Create Modal */}
+      {showCreateModal && (
+        <TripCreateModal
+          onClose={() => setShowCreateModal(false)}
+          onCreate={handleCreateTrips}
+        />
       )}
     </div>
   );
