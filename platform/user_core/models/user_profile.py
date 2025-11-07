@@ -23,6 +23,7 @@ class UserProfile(Base):
     # Display information for social features
     display_name = Column(String(100), nullable=True)  # User's display name
     avatar_url = Column(String(500), nullable=True)    # Profile picture URL
+    default_post_visibility = Column(String(20), nullable=True, default='public')  # Default visibility for posts
 
     preferred_language = Column(String(10))
     experience_level = Column(String(50))
