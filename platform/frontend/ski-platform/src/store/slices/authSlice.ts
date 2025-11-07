@@ -35,7 +35,7 @@ export const loginThunk = createAsyncThunk(
       // 提供更清晰的錯誤訊息
       const status = error.status || error.response?.status;
       if (status === 401) {
-        return rejectWithValue('帳號或密碼錯誤，請確認後重試');
+        return rejectWithValue('帳號或密碼錯誤。如果您尚未註冊，請點擊下方「立即註冊」');
       }
       return rejectWithValue(error.message || '登入失敗，請稍後再試');
     }
