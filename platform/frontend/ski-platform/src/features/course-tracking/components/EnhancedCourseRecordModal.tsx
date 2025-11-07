@@ -15,12 +15,12 @@ interface EnhancedCourseRecordModalProps {
 }
 
 export interface CourseRecordData {
-  snow_condition?: string;
-  weather?: string;
-  difficulty_feeling?: string;
-  rating?: number;
-  mood_tags?: string[];
-  notes?: string;
+  snow_condition?: string | null;
+  weather?: string | null;
+  difficulty_feeling?: string | null;
+  rating?: number | null;
+  mood_tags?: string[] | null;
+  notes?: string | null;
 }
 
 const SNOW_CONDITIONS = [
@@ -82,16 +82,30 @@ export default function EnhancedCourseRecordModal({
   if (!isOpen) return null;
 
   const handleSubmit = () => {
-    const data: CourseRecordData = {};
+    // In edit mode, send all fields (use null for empty to allow clearing)
+    // In create mode, only send non-empty fields
+    if (mode === 'edit') {
+      const data = {
+        rating: rating > 0 ? rating : null,
+        snow_condition: snowCondition || null,
+        weather: weather || null,
+        difficulty_feeling: difficultyFeeling || null,
+        mood_tags: moodTags.length > 0 ? moodTags : null,
+        notes: notes.trim() || null,
+      };
+      onSubmit(data as CourseRecordData);
+    } else {
+      // Create mode: only include non-empty fields
+      const data: CourseRecordData = {};
+      if (rating > 0) data.rating = rating;
+      if (snowCondition) data.snow_condition = snowCondition;
+      if (weather) data.weather = weather;
+      if (difficultyFeeling) data.difficulty_feeling = difficultyFeeling;
+      if (moodTags.length > 0) data.mood_tags = moodTags;
+      if (notes.trim()) data.notes = notes.trim();
+      onSubmit(data);
+    }
 
-    if (rating > 0) data.rating = rating;
-    if (snowCondition) data.snow_condition = snowCondition;
-    if (weather) data.weather = weather;
-    if (difficultyFeeling) data.difficulty_feeling = difficultyFeeling;
-    if (moodTags.length > 0) data.mood_tags = moodTags;
-    if (notes.trim()) data.notes = notes.trim();
-
-    onSubmit(data);
     handleClose();
   };
 

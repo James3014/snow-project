@@ -45,13 +45,13 @@ export interface CourseVisitCreate {
   resort_id: string;
   course_name: string;
   visited_date?: string;
-  notes?: string;
+  notes?: string | null;
   // Enhanced experience fields
-  snow_condition?: string;
-  weather?: string;
-  difficulty_feeling?: string;
-  rating?: number; // 1-5 stars
-  mood_tags?: string[];
+  snow_condition?: string | null;
+  weather?: string | null;
+  difficulty_feeling?: string | null;
+  rating?: number | null; // 1-5 stars
+  mood_tags?: string[] | null;
 }
 
 // ==================== 推荐相关 ====================
