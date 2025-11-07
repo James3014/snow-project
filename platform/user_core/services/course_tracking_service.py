@@ -464,7 +464,7 @@ def load_achievement_definitions(db: Session, yaml_path: str) -> int:
             existing.category = defn['category']
             existing.points = defn['points']
             existing.requirements = defn['requirements']
-            existing.is_hidden = defn.get('is_hidden', 0)
+            existing.is_hidden = defn.get('is_hidden', False)
             existing.display_order = defn.get('display_order', 0)
         else:
             # Create new
@@ -478,7 +478,7 @@ def load_achievement_definitions(db: Session, yaml_path: str) -> int:
                 category=defn['category'],
                 points=defn['points'],
                 requirements=defn['requirements'],
-                is_hidden=defn.get('is_hidden', 0),
+                is_hidden=defn.get('is_hidden', False),
                 display_order=defn.get('display_order', 0)
             )
             db.add(new_defn)
@@ -628,7 +628,7 @@ def get_achievement_definitions(
     query = db.query(AchievementDefinition)
 
     if not include_hidden:
-        query = query.filter(AchievementDefinition.is_hidden == 0)
+        query = query.filter(AchievementDefinition.is_hidden == False)
 
     if category:
         query = query.filter(AchievementDefinition.category == category)
