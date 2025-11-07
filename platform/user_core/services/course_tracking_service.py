@@ -79,6 +79,14 @@ def record_course_visit(
         # Check and award achievements after recording visit
         _check_and_award_achievements(db, user_id)
 
+        # Auto-generate activity feed item
+        try:
+            from services import social_service
+            social_service.create_feed_item_from_course_visit(db, db_visit)
+        except Exception as e:
+            # Don't fail the course visit if feed generation fails
+            print(f"Failed to create feed item: {e}")
+
         return db_visit
     except IntegrityError as e:
         db.rollback()
@@ -486,6 +494,14 @@ def _check_and_award_achievements(db: Session, user_id: uuid.UUID) -> List[UserA
         db.commit()
         for ach in newly_awarded:
             db.refresh(ach)
+
+            # Auto-generate activity feed item for each achievement
+            try:
+                from services import social_service
+                social_service.create_feed_item_from_achievement(db, ach)
+            except Exception as e:
+                # Don't fail if feed generation fails
+                print(f"Failed to create feed item for achievement: {e}")
 
     return newly_awarded
 

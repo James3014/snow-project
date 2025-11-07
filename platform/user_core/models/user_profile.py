@@ -15,6 +15,11 @@ class UserProfile(Base):
 
     user_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     legacy_ids = Column(JSON)
+
+    # Display information for social features
+    display_name = Column(String(100), nullable=True)  # User's display name
+    avatar_url = Column(String(500), nullable=True)    # Profile picture URL
+
     preferred_language = Column(String(10))
     experience_level = Column(String(50))
     roles = Column(JSON) # Consider a dedicated roles table in a real app
