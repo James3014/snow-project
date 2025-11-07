@@ -10,6 +10,8 @@ interface EnhancedCourseRecordModalProps {
   courseName: string;
   onClose: () => void;
   onSubmit: (data: CourseRecordData) => void;
+  initialData?: CourseRecordData;
+  mode?: 'create' | 'edit';
 }
 
 export interface CourseRecordData {
@@ -55,13 +57,15 @@ export default function EnhancedCourseRecordModal({
   courseName,
   onClose,
   onSubmit,
+  initialData,
+  mode = 'create',
 }: EnhancedCourseRecordModalProps) {
-  const [rating, setRating] = useState<number>(0);
-  const [snowCondition, setSnowCondition] = useState<string>('');
-  const [weather, setWeather] = useState<string>('');
-  const [difficultyFeeling, setDifficultyFeeling] = useState<string>('');
-  const [moodTags, setMoodTags] = useState<string[]>([]);
-  const [notes, setNotes] = useState<string>('');
+  const [rating, setRating] = useState<number>(initialData?.rating || 0);
+  const [snowCondition, setSnowCondition] = useState<string>(initialData?.snow_condition || '');
+  const [weather, setWeather] = useState<string>(initialData?.weather || '');
+  const [difficultyFeeling, setDifficultyFeeling] = useState<string>(initialData?.difficulty_feeling || '');
+  const [moodTags, setMoodTags] = useState<string[]>(initialData?.mood_tags || []);
+  const [notes, setNotes] = useState<string>(initialData?.notes || '');
 
   if (!isOpen) return null;
 
@@ -103,7 +107,7 @@ export default function EnhancedCourseRecordModal({
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-t-2xl">
-          <h2 className="text-2xl font-bold">記錄雪道體驗</h2>
+          <h2 className="text-2xl font-bold">{mode === 'edit' ? '編輯雪道體驗' : '記錄雪道體驗'}</h2>
           <p className="text-primary-100 mt-1">{courseName}</p>
         </div>
 
