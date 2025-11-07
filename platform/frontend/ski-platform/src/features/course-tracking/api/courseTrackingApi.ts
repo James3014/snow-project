@@ -32,6 +32,10 @@ export const courseVisitApi = {
     return userCoreApi.get<CourseVisit[]>(`/users/${userId}/course-visits${params}`);
   },
 
+  // 更新雪道访问记录
+  update: (userId: string, visitId: string, data: Partial<CourseVisitCreate>) =>
+    userCoreApi.patch<CourseVisit>(`/users/${userId}/course-visits/${visitId}`, data),
+
   // 删除雪道访问记录
   delete: (userId: string, visitId: string) =>
     userCoreApi.delete(`/users/${userId}/course-visits/${visitId}`),

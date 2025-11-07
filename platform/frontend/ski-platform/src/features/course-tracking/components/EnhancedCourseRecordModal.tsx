@@ -2,7 +2,7 @@
  * Enhanced Course Record Modal
  * 增強的雪道記錄模態框 - 支援評分、雪況、天氣、心情標籤等
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@/shared/components/Button';
 
 interface EnhancedCourseRecordModalProps {
@@ -10,15 +10,17 @@ interface EnhancedCourseRecordModalProps {
   courseName: string;
   onClose: () => void;
   onSubmit: (data: CourseRecordData) => void;
+  initialData?: CourseRecordData;
+  mode?: 'create' | 'edit';
 }
 
 export interface CourseRecordData {
-  snow_condition?: string;
-  weather?: string;
-  difficulty_feeling?: string;
-  rating?: number;
-  mood_tags?: string[];
-  notes?: string;
+  snow_condition?: string | null;
+  weather?: string | null;
+  difficulty_feeling?: string | null;
+  rating?: number | null;
+  mood_tags?: string[] | null;
+  notes?: string | null;
 }
 
 const SNOW_CONDITIONS = [
@@ -55,27 +57,55 @@ export default function EnhancedCourseRecordModal({
   courseName,
   onClose,
   onSubmit,
+  initialData,
+  mode = 'create',
 }: EnhancedCourseRecordModalProps) {
-  const [rating, setRating] = useState<number>(0);
-  const [snowCondition, setSnowCondition] = useState<string>('');
-  const [weather, setWeather] = useState<string>('');
-  const [difficultyFeeling, setDifficultyFeeling] = useState<string>('');
-  const [moodTags, setMoodTags] = useState<string[]>([]);
-  const [notes, setNotes] = useState<string>('');
+  const [rating, setRating] = useState<number>(initialData?.rating || 0);
+  const [snowCondition, setSnowCondition] = useState<string>(initialData?.snow_condition || '');
+  const [weather, setWeather] = useState<string>(initialData?.weather || '');
+  const [difficultyFeeling, setDifficultyFeeling] = useState<string>(initialData?.difficulty_feeling || '');
+  const [moodTags, setMoodTags] = useState<string[]>(initialData?.mood_tags || []);
+  const [notes, setNotes] = useState<string>(initialData?.notes || '');
+
+  // Update form state when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData) {
+      setRating(initialData.rating || 0);
+      setSnowCondition(initialData.snow_condition || '');
+      setWeather(initialData.weather || '');
+      setDifficultyFeeling(initialData.difficulty_feeling || '');
+      setMoodTags(initialData.mood_tags || []);
+      setNotes(initialData.notes || '');
+    }
+  }, [initialData]);
 
   if (!isOpen) return null;
 
   const handleSubmit = () => {
-    const data: CourseRecordData = {};
+    // In edit mode, send all fields (use null for empty to allow clearing)
+    // In create mode, only send non-empty fields
+    if (mode === 'edit') {
+      const data = {
+        rating: rating > 0 ? rating : null,
+        snow_condition: snowCondition || null,
+        weather: weather || null,
+        difficulty_feeling: difficultyFeeling || null,
+        mood_tags: moodTags.length > 0 ? moodTags : null,
+        notes: notes.trim() || null,
+      };
+      onSubmit(data as CourseRecordData);
+    } else {
+      // Create mode: only include non-empty fields
+      const data: CourseRecordData = {};
+      if (rating > 0) data.rating = rating;
+      if (snowCondition) data.snow_condition = snowCondition;
+      if (weather) data.weather = weather;
+      if (difficultyFeeling) data.difficulty_feeling = difficultyFeeling;
+      if (moodTags.length > 0) data.mood_tags = moodTags;
+      if (notes.trim()) data.notes = notes.trim();
+      onSubmit(data);
+    }
 
-    if (rating > 0) data.rating = rating;
-    if (snowCondition) data.snow_condition = snowCondition;
-    if (weather) data.weather = weather;
-    if (difficultyFeeling) data.difficulty_feeling = difficultyFeeling;
-    if (moodTags.length > 0) data.mood_tags = moodTags;
-    if (notes.trim()) data.notes = notes.trim();
-
-    onSubmit(data);
     handleClose();
   };
 
@@ -103,7 +133,7 @@ export default function EnhancedCourseRecordModal({
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-t-2xl">
-          <h2 className="text-2xl font-bold">記錄雪道體驗</h2>
+          <h2 className="text-2xl font-bold">{mode === 'edit' ? '編輯雪道體驗' : '記錄雪道體驗'}</h2>
           <p className="text-primary-100 mt-1">{courseName}</p>
         </div>
 
