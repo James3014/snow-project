@@ -21,6 +21,8 @@ export default function Navbar() {
     { path: '/leaderboard', label: '排行榜' },
   ];
 
+  const isAdmin = user?.roles && user.roles.includes('admin');
+
   const isActive = (path: string) => {
     return location.pathname.startsWith(path);
   };
@@ -61,6 +63,14 @@ export default function Navbar() {
           <div className="flex items-center space-x-4">
             {isAuthenticated && user ? (
               <>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+                  >
+                    ⚙️ 管理後台
+                  </Link>
+                )}
                 <div className="text-sm text-gray-600">
                   <span className="inline-flex items-center">
                     <span className="mr-2">👤</span>

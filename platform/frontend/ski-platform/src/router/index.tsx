@@ -4,6 +4,7 @@
  */
 import { createBrowserRouter } from 'react-router-dom';
 import RootLayout from '@/shell/RootLayout';
+import AdminRoute from '@/shared/components/auth/AdminRoute';
 
 // Lazy load pages for code splitting
 import { lazy } from 'react';
@@ -20,6 +21,9 @@ const FeedPage = lazy(() => import('@/features/activity-feed/pages/FeedPage'));
 const SkiMapPage = lazy(() => import('@/features/ski-map/pages/SkiMapPage'));
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'));
 const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage'));
+const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'));
+const UserListPage = lazy(() => import('@/features/admin/pages/UserListPage'));
+const UserDetailPage = lazy(() => import('@/features/admin/pages/UserDetailPage'));
 
 export const router = createBrowserRouter([
   {
@@ -77,6 +81,18 @@ export const router = createBrowserRouter([
       {
         path: 'ski-map',
         element: <SkiMapPage />,
+      },
+      {
+        path: 'admin',
+        element: <AdminRoute><AdminDashboard /></AdminRoute>,
+      },
+      {
+        path: 'admin/users',
+        element: <AdminRoute><UserListPage /></AdminRoute>,
+      },
+      {
+        path: 'admin/users/:userId',
+        element: <AdminRoute><UserDetailPage /></AdminRoute>,
       },
     ],
   },
