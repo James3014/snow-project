@@ -59,24 +59,49 @@ export default function CourseHistory() {
   const handleEditSubmit = async (data: CourseRecordData) => {
     if (!userId || !editingVisit) return;
 
-    try {
-      // 先刪除舊記錄
-      await courseTrackingApi.visits.delete(userId, editingVisit.id);
+    const oldVisitId = editingVisit.id;
+    let newVisitCreated = false;
 
-      // 創建新記錄（包含更新的數據）
+    try {
+      // 步驟 1: 先創建新記錄（避免資料丟失）
       await courseTrackingApi.visits.create(userId, {
         resort_id: editingVisit.resort_id,
         course_name: editingVisit.course_name,
         visited_date: editingVisit.visited_date,
         ...data,
       });
+      newVisitCreated = true;
 
+      // 步驟 2: 創建成功後再刪除舊記錄
+      try {
+        await courseTrackingApi.visits.delete(userId, oldVisitId);
+      } catch (deleteError) {
+        // 如果刪除失敗，至少新記錄已經創建，用戶資料不會丟失
+        console.error('刪除舊記錄失敗，但新記錄已創建:', deleteError);
+        dispatch(addToast({
+          type: 'warning',
+          message: '記錄已更新，但舊記錄刪除失敗，請手動刪除重複記錄'
+        }));
+        setIsEditModalOpen(false);
+        setEditingVisit(null);
+        loadVisits();
+        return;
+      }
+
+      // 兩步都成功
       dispatch(addToast({ type: 'success', message: '記錄已更新' }));
       setIsEditModalOpen(false);
       setEditingVisit(null);
       loadVisits();
     } catch (error) {
-      dispatch(addToast({ type: 'error', message: '更新失敗' }));
+      // 如果創建新記錄失敗，舊記錄仍然存在，不會丟失資料
+      if (!newVisitCreated) {
+        dispatch(addToast({ type: 'error', message: '更新失敗，請稍後再試' }));
+      } else {
+        // 這種情況理論上不會發生，因為已經在 try 裡處理了
+        dispatch(addToast({ type: 'error', message: '更新過程出現異常' }));
+      }
+      console.error('編輯記錄錯誤:', error);
     }
   };
 

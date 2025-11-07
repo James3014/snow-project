@@ -15,78 +15,85 @@
 
 ## 🔍 發現的問題
 
-### 1. ⚠️ **嚴重** - 編輯記錄時的資料丟失風險
+### 1. ✅ **已修復** - 編輯記錄時的資料丟失風險
 
 **檔案**: `src/features/course-tracking/pages/CourseHistory.tsx`
-**行數**: 59-81
+**行數**: 59-106
+**修復日期**: 2025-11-06
+**狀態**: ✅ 已修復
 
-**問題描述**:
+**原問題描述**:
 在 `handleEditSubmit` 函數中，使用「先刪除舊記錄，再創建新記錄」的方式來更新資料。如果刪除成功但創建失敗（網絡中斷、API 錯誤等），會導致用戶的記錄永久丟失。
 
-**當前程式碼**:
+**修復方案**:
+已改為「先創建新記錄，再刪除舊記錄」的順序，並加強了錯誤處理：
+1. ✅ 先創建新記錄 - 如果失敗，舊記錄仍然存在
+2. ✅ 創建成功後再刪除舊記錄
+3. ✅ 如果刪除失敗，會顯示警告訊息提醒用戶手動刪除重複記錄
+4. ✅ 無論哪一步失敗，都不會導致資料永久丟失
+
+**修復後的程式碼**:
 ```typescript
 const handleEditSubmit = async (data: CourseRecordData) => {
   if (!userId || !editingVisit) return;
 
-  try {
-    // 先刪除舊記錄
-    await courseTrackingApi.visits.delete(userId, editingVisit.id);
+  const oldVisitId = editingVisit.id;
+  let newVisitCreated = false;
 
-    // 創建新記錄（包含更新的數據）
+  try {
+    // 步驟 1: 先創建新記錄（避免資料丟失）
     await courseTrackingApi.visits.create(userId, {
       resort_id: editingVisit.resort_id,
       course_name: editingVisit.course_name,
       visited_date: editingVisit.visited_date,
       ...data,
     });
+    newVisitCreated = true;
 
+    // 步驟 2: 創建成功後再刪除舊記錄
+    try {
+      await courseTrackingApi.visits.delete(userId, oldVisitId);
+    } catch (deleteError) {
+      // 如果刪除失敗，至少新記錄已經創建，用戶資料不會丟失
+      console.error('刪除舊記錄失敗，但新記錄已創建:', deleteError);
+      dispatch(addToast({
+        type: 'warning',
+        message: '記錄已更新，但舊記錄刪除失敗，請手動刪除重複記錄'
+      }));
+      setIsEditModalOpen(false);
+      setEditingVisit(null);
+      loadVisits();
+      return;
+    }
+
+    // 兩步都成功
     dispatch(addToast({ type: 'success', message: '記錄已更新' }));
     setIsEditModalOpen(false);
     setEditingVisit(null);
     loadVisits();
   } catch (error) {
-    dispatch(addToast({ type: 'error', message: '更新失敗' }));
+    // 如果創建新記錄失敗，舊記錄仍然存在，不會丟失資料
+    if (!newVisitCreated) {
+      dispatch(addToast({ type: 'error', message: '更新失敗，請稍後再試' }));
+    } else {
+      dispatch(addToast({ type: 'error', message: '更新過程出現異常' }));
+    }
+    console.error('編輯記錄錯誤:', error);
   }
 };
 ```
 
-**建議修復**:
+**長期建議**:
+後端提供真正的 UPDATE API (PUT/PATCH 端點)，這樣可以：
+- 原子性操作（atomic operation）
+- 避免前端複雜的錯誤處理邏輯
+- 更好的效能（只需一次 API 呼叫）
 
-**方案 1（建議）**: 先創建後刪除
-```typescript
-const handleEditSubmit = async (data: CourseRecordData) => {
-  if (!userId || !editingVisit) return;
-
-  try {
-    // 先創建新記錄
-    const newVisit = await courseTrackingApi.visits.create(userId, {
-      resort_id: editingVisit.resort_id,
-      course_name: editingVisit.course_name,
-      visited_date: editingVisit.visited_date,
-      ...data,
-    });
-
-    // 創建成功後再刪除舊記錄
-    await courseTrackingApi.visits.delete(userId, editingVisit.id);
-
-    dispatch(addToast({ type: 'success', message: '記錄已更新' }));
-    setIsEditModalOpen(false);
-    setEditingVisit(null);
-    loadVisits();
-  } catch (error) {
-    dispatch(addToast({ type: 'error', message: '更新失敗' }));
-    // 如果是在刪除舊記錄時失敗，至少新記錄已經創建
-  }
-};
-```
-
-**方案 2（最佳）**: 後端提供 UPDATE API
-在後端實現真正的 PUT/PATCH 更新端點，避免前端的刪除+創建邏輯。
-
-**影響**:
-- **嚴重性**: 高
-- **可能性**: 中（在網絡不穩定時會發生）
-- **影響範圍**: 編輯記錄功能
+**修復效果**:
+- ✅ 創建失敗時：舊記錄保持不變
+- ✅ 刪除失敗時：新記錄已創建，用戶收到警告訊息
+- ✅ 兩步都成功：正常更新，顯示成功訊息
+- ✅ 零資料丟失風險
 
 ---
 
