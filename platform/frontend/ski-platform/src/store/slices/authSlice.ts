@@ -32,7 +32,12 @@ export const loginThunk = createAsyncThunk(
       localStorage.setItem('auth_token', response.access_token);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.detail || '登入失敗');
+      // 提供更清晰的錯誤訊息
+      const status = error.status || error.response?.status;
+      if (status === 401) {
+        return rejectWithValue('帳號或密碼錯誤，請確認後重試');
+      }
+      return rejectWithValue(error.message || '登入失敗，請稍後再試');
     }
   }
 );
@@ -54,7 +59,14 @@ export const registerThunk = createAsyncThunk(
       localStorage.setItem('auth_token', response.access_token);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.detail || '註冊失敗');
+      // 提供更清晰的錯誤訊息
+      const status = error.status || error.response?.status;
+      const detail = error.message || error.response?.data?.detail;
+
+      if (status === 400 && detail?.includes('Email already registered')) {
+        return rejectWithValue('此 Email 已被註冊，請直接登入或使用其他 Email');
+      }
+      return rejectWithValue(detail || '註冊失敗，請稍後再試');
     }
   }
 );
