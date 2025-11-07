@@ -2,11 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from services import db, course_tracking_service
-from models import user_profile, behavior_event, notification_preference, course_tracking, social
+from models import (
+    user_profile, behavior_event, notification_preference,
+    course_tracking, social,
+    trip_planning as trip_planning_models
+)
 from api import (
     user_profiles, behavior_events, notification_preferences, auth, admin,
     course_tracking as course_tracking_api, share_cards,
-    social as social_api, ski_map
+    social as social_api, ski_map, trip_planning
 )
 
 # Create all tables (for development only)
@@ -15,6 +19,7 @@ behavior_event.Base.metadata.create_all(bind=db.engine)
 notification_preference.Base.metadata.create_all(bind=db.engine)
 course_tracking.Base.metadata.create_all(bind=db.engine)
 social.Base.metadata.create_all(bind=db.engine)
+trip_planning_models.Base.metadata.create_all(bind=db.engine)
 
 app = FastAPI(
     title="SkiDIY User Core Service",
@@ -50,6 +55,8 @@ app.include_router(share_cards.router, prefix="/api", tags=["Share Cards"])
 app.include_router(social_api.router, prefix="/social", tags=["Social Features"])
 # Ski map
 app.include_router(ski_map.router, prefix="/ski-map", tags=["Ski Map"])
+# Trip planning
+app.include_router(trip_planning.router, prefix="/trip-planning", tags=["Trip Planning"])
 
 @app.on_event("startup")
 def startup_event():
