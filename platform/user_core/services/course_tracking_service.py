@@ -128,6 +128,42 @@ def delete_course_visit(db: Session, visit_id: uuid.UUID, user_id: uuid.UUID) ->
     return True
 
 
+def update_course_visit(
+    db: Session,
+    visit_id: uuid.UUID,
+    user_id: uuid.UUID,
+    update
+) -> Optional[CourseVisit]:
+    """
+    Update an existing course visit record.
+
+    Args:
+        db: Database session
+        visit_id: Visit ID to update
+        user_id: User ID (for authorization)
+        update: CourseVisitUpdate schema with fields to update
+
+    Returns:
+        Updated CourseVisit object, or None if not found/not owned by user
+    """
+    visit = db.query(CourseVisit).filter(
+        CourseVisit.id == visit_id,
+        CourseVisit.user_id == user_id
+    ).first()
+
+    if not visit:
+        return None
+
+    # Update only provided fields (exclude_unset means only update fields that were explicitly set)
+    update_data = update.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(visit, field, value)
+
+    db.commit()
+    db.refresh(visit)
+    return visit
+
+
 # ==================== Progress Calculation ====================
 
 def calculate_resort_progress(

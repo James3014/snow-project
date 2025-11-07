@@ -106,6 +106,47 @@ def delete_course_visit(
         )
 
 
+@router.patch(
+    "/{user_id}/course-visits/{visit_id}",
+    response_model=ct_schemas.CourseVisit,
+    summary="Update a course visit"
+)
+def update_course_visit(
+    user_id: uuid.UUID,
+    visit_id: uuid.UUID,
+    update: ct_schemas.CourseVisitUpdate,
+    db_session: Session = Depends(db.get_db)
+):
+    """
+    Update an existing course visit record.
+
+    Only the owning user can update their own visits.
+    All fields are optional - only provided fields will be updated.
+
+    - **visited_date**: Change the visit date
+    - **notes**: Update notes
+    - **snow_condition**: Update snow condition
+    - **weather**: Update weather
+    - **difficulty_feeling**: Update difficulty feeling
+    - **rating**: Update rating (1-5)
+    - **mood_tags**: Update mood tags
+    """
+    visit = course_tracking_service.update_course_visit(
+        db=db_session,
+        visit_id=visit_id,
+        user_id=user_id,
+        update=update
+    )
+
+    if not visit:
+        raise HTTPException(
+            status_code=404,
+            detail="Course visit not found or not owned by this user"
+        )
+
+    return visit
+
+
 # ==================== Progress Endpoints ====================
 
 @router.get(

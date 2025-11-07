@@ -54,6 +54,17 @@ class CourseVisitCreate(BaseModel):
     mood_tags: Optional[List[str]] = None
 
 
+class CourseVisitUpdate(BaseModel):
+    """Schema for updating an existing course visit. All fields are optional."""
+    visited_date: Optional[date] = None
+    notes: Optional[str] = Field(None, max_length=200)
+    snow_condition: Optional[str] = Field(None, max_length=50)
+    weather: Optional[str] = Field(None, max_length=50)
+    difficulty_feeling: Optional[str] = Field(None, max_length=50)
+    rating: Optional[int] = Field(None, ge=1, le=5)
+    mood_tags: Optional[List[str]] = None
+
+
 class CourseVisit(CourseVisitBase):
     """Schema for course visit response."""
     id: UUID4
