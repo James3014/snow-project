@@ -27,11 +27,11 @@ function createApiClient(baseURL: string): AxiosInstance {
   // 請求攔截器
   client.interceptors.request.use(
     (config) => {
-      // 可以在這裡新增認證 token
-      // const token = getAuthToken();
-      // if (token) {
-      //   config.headers.Authorization = `Bearer ${token}`;
-      // }
+      // 從 localStorage 獲取認證 token
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
 
       return config;
     },
