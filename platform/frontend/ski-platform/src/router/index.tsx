@@ -24,6 +24,10 @@ const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage'));
 const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'));
 const UserListPage = lazy(() => import('@/features/admin/pages/UserListPage'));
 const UserDetailPage = lazy(() => import('@/features/admin/pages/UserDetailPage'));
+const SeasonManagement = lazy(() => import('@/features/trip-planning/pages/SeasonManagement'));
+const SeasonDetail = lazy(() => import('@/features/trip-planning/pages/SeasonDetail'));
+const TripExplore = lazy(() => import('@/features/trip-planning/pages/TripExplore'));
+const TripRecommendations = lazy(() => import('@/features/trip-planning/pages/TripRecommendations'));
 
 export const router = createBrowserRouter([
   {
@@ -93,6 +97,22 @@ export const router = createBrowserRouter([
       {
         path: 'admin/users/:userId',
         element: <AdminRoute><UserDetailPage /></AdminRoute>,
+      },
+      {
+        path: 'seasons',
+        element: <SeasonManagement />,
+      },
+      {
+        path: 'seasons/:seasonId',
+        element: <SeasonDetail />,
+      },
+      {
+        path: 'trips/explore',
+        element: <TripExplore />,
+      },
+      {
+        path: 'trips/recommendations',
+        element: <TripRecommendations />,
       },
     ],
   },
