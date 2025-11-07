@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import Card from '@/shared/components/Card';
 import EmptyState, { ErrorEmptyState } from '@/shared/components/EmptyState';
@@ -11,19 +12,21 @@ import type { Season, SeasonCreate } from '../types';
 
 export default function SeasonManagement() {
   const navigate = useNavigate();
+  const userId = useAppSelector((state) => state.auth.user?.user_id);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // 假設的用戶 ID（實際應該從 auth store 獲取）
-  const userId = localStorage.getItem('user_id') || 'test-user-id';
-
   useEffect(() => {
-    loadSeasons();
-  }, []);
+    if (userId) {
+      loadSeasons();
+    }
+  }, [userId]);
 
   const loadSeasons = async () => {
+    if (!userId) return;
+
     try {
       setLoading(true);
       setError(null);
@@ -38,6 +41,8 @@ export default function SeasonManagement() {
   };
 
   const handleCreateSeason = async (data: SeasonCreate) => {
+    if (!userId) return;
+
     try {
       await tripPlanningApi.createSeason(userId, data);
       setShowCreateModal(false);
@@ -49,6 +54,8 @@ export default function SeasonManagement() {
   };
 
   const handleDeleteSeason = async (seasonId: string) => {
+    if (!userId) return;
+
     if (!confirm('確定要刪除這個雪季嗎？這將刪除所有相關的行程！')) {
       return;
     }

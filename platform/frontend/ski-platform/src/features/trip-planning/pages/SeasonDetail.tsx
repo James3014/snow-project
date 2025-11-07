@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import Card from '@/shared/components/Card';
 import TripCreateModal from '../components/TripCreateModal';
@@ -12,6 +13,7 @@ import type { Season, SeasonStats, CalendarTrip, Trip, TripCreate } from '../typ
 export default function SeasonDetail() {
   const { seasonId } = useParams<{ seasonId: string }>();
   const navigate = useNavigate();
+  const userId = useAppSelector((state) => state.auth.user?.user_id);
   const [season, setSeason] = useState<Season | null>(null);
   const [stats, setStats] = useState<SeasonStats | null>(null);
   const [trips, setTrips] = useState<Trip[]>([]);
@@ -21,22 +23,20 @@ export default function SeasonDetail() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const userId = localStorage.getItem('user_id') || 'test-user-id';
-
   useEffect(() => {
-    if (seasonId) {
+    if (seasonId && userId) {
       loadSeasonData();
     }
-  }, [seasonId]);
+  }, [seasonId, userId]);
 
   useEffect(() => {
-    if (activeTab === 'calendar' && seasonId) {
+    if (activeTab === 'calendar' && seasonId && userId) {
       loadCalendarData();
     }
-  }, [activeTab, currentMonth, seasonId]);
+  }, [activeTab, currentMonth, seasonId, userId]);
 
   const loadSeasonData = async () => {
-    if (!seasonId) return;
+    if (!seasonId || !userId) return;
 
     try {
       setLoading(true);
@@ -57,7 +57,7 @@ export default function SeasonDetail() {
   };
 
   const loadCalendarData = async () => {
-    if (!seasonId) return;
+    if (!seasonId || !userId) return;
 
     try {
       const year = currentMonth.getFullYear();
@@ -76,7 +76,7 @@ export default function SeasonDetail() {
   };
 
   const handleCreateTrips = async (trips: Omit<TripCreate, 'season_id'>[]) => {
-    if (!seasonId) return;
+    if (!seasonId || !userId) return;
 
     try {
       // 為每個行程添加 season_id
