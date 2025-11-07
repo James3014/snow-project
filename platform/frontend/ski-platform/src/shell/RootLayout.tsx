@@ -3,11 +3,23 @@
  * 根布局组件
  */
 import { Outlet } from 'react-router-dom';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import ToastContainer from '@/shared/components/ToastContainer';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { loadUserThunk } from '@/store/slices/authSlice';
 
 export default function RootLayout() {
+  const dispatch = useAppDispatch();
+  const { token, isAuthenticated } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    // Load user on mount if we have a token but not authenticated yet
+    if (token && !isAuthenticated) {
+      dispatch(loadUserThunk());
+    }
+  }, [dispatch, token, isAuthenticated]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 导航栏 */}

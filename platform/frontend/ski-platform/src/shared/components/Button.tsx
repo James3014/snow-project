@@ -37,6 +37,7 @@ export default function Button({
 
   return (
     <button
+      type="button"
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       disabled={disabled || isLoading}
       {...props}

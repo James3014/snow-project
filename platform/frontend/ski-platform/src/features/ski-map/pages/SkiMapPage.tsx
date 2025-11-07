@@ -2,19 +2,42 @@
  * 滑雪地圖主頁面
  */
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useSkiMap } from '../hooks/useSkiMap';
 import JapanSkiRegionsMap from '../components/JapanSkiRegionsMap';
-
-// TODO: 從認證上下文獲取當前用戶 ID
-const CURRENT_USER_ID = 'test-user-id';
+import { useAppSelector } from '@/store/hooks';
 
 const SkiMapPage: React.FC = () => {
-  const { mapData, isLoading, error } = useSkiMap(CURRENT_USER_ID);
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { mapData, isLoading, error } = useSkiMap(user?.user_id || '');
 
   const handleRegionClick = (regionId: string) => {
     // TODO: 顯示區域詳情彈窗或導航到詳情頁面
     console.log('點擊區域:', regionId);
   };
+
+  // If not authenticated, show login prompt
+  if (!isAuthenticated || !user) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <div className="text-4xl mb-4">🔒</div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            請先登入
+          </h2>
+          <p className="text-gray-600 mb-6">
+            登入後即可查看您的滑雪征服地圖
+          </p>
+          <Link
+            to="/login"
+            className="inline-block bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 transition-colors"
+          >
+            前往登入
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

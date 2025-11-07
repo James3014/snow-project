@@ -2,10 +2,15 @@
  * Navbar Component
  * 導航欄組件
  */
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { logout } from '@/store/slices/authSlice';
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   const navItems = [
     { path: '/resorts', label: '雪場' },
@@ -16,8 +21,15 @@ export default function Navbar() {
     { path: '/leaderboard', label: '排行榜' },
   ];
 
+  const isAdmin = user?.roles && user.roles.includes('admin');
+
   const isActive = (path: string) => {
     return location.pathname.startsWith(path);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
   };
 
   return (
@@ -47,14 +59,39 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* User Menu - 簡化版 */}
-          <div className="flex items-center">
-            <div className="text-sm text-gray-600">
-              <span className="inline-flex items-center">
-                <span className="mr-2">👤</span>
-                <span>測試用戶</span>
-              </span>
-            </div>
+          {/* User Menu */}
+          <div className="flex items-center space-x-4">
+            {isAuthenticated && user ? (
+              <>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+                  >
+                    ⚙️ 管理後台
+                  </Link>
+                )}
+                <div className="text-sm text-gray-600">
+                  <span className="inline-flex items-center">
+                    <span className="mr-2">👤</span>
+                    <span>{user.display_name}</span>
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                >
+                  登出
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+              >
+                登入
+              </Link>
+            )}
           </div>
         </div>
 
