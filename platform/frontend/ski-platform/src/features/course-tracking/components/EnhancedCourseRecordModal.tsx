@@ -2,7 +2,7 @@
  * Enhanced Course Record Modal
  * 增強的雪道記錄模態框 - 支援評分、雪況、天氣、心情標籤等
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@/shared/components/Button';
 
 interface EnhancedCourseRecordModalProps {
@@ -66,6 +66,18 @@ export default function EnhancedCourseRecordModal({
   const [difficultyFeeling, setDifficultyFeeling] = useState<string>(initialData?.difficulty_feeling || '');
   const [moodTags, setMoodTags] = useState<string[]>(initialData?.mood_tags || []);
   const [notes, setNotes] = useState<string>(initialData?.notes || '');
+
+  // Update form state when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData) {
+      setRating(initialData.rating || 0);
+      setSnowCondition(initialData.snow_condition || '');
+      setWeather(initialData.weather || '');
+      setDifficultyFeeling(initialData.difficulty_feeling || '');
+      setMoodTags(initialData.mood_tags || []);
+      setNotes(initialData.notes || '');
+    }
+  }, [initialData]);
 
   if (!isOpen) return null;
 
