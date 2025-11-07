@@ -18,8 +18,18 @@ const Leaderboard = lazy(() => import('@/features/course-tracking/pages/Leaderbo
 const ShareCard = lazy(() => import('@/features/course-tracking/pages/ShareCard'));
 const FeedPage = lazy(() => import('@/features/activity-feed/pages/FeedPage'));
 const SkiMapPage = lazy(() => import('@/features/ski-map/pages/SkiMapPage'));
+const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'));
+const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage'));
 
 export const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
+  },
   {
     path: '/',
     element: <RootLayout />,

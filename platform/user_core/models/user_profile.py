@@ -16,6 +16,10 @@ class UserProfile(Base):
     user_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     legacy_ids = Column(JSON)
 
+    # Authentication fields
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    hashed_password = Column(String(255), nullable=False)
+
     # Display information for social features
     display_name = Column(String(100), nullable=True)  # User's display name
     avatar_url = Column(String(500), nullable=True)    # Profile picture URL
