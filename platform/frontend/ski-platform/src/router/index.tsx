@@ -15,6 +15,8 @@ const Rankings = lazy(() => import('@/features/course-tracking/pages/Rankings'))
 const Achievements = lazy(() => import('@/features/course-tracking/pages/Achievements'));
 const Leaderboard = lazy(() => import('@/features/course-tracking/pages/Leaderboard'));
 const ShareCard = lazy(() => import('@/features/course-tracking/pages/ShareCard'));
+const FeedPage = lazy(() => import('@/features/activity-feed/pages/FeedPage'));
+const SkiMapPage = lazy(() => import('@/features/ski-map/pages/SkiMapPage'));
 
 export const router = createBrowserRouter([
   {
@@ -52,6 +54,14 @@ export const router = createBrowserRouter([
       {
         path: 'share/achievement/:achievementId',
         element: <ShareCard />,
+      },
+      {
+        path: 'feed',
+        element: <FeedPage />,
+      },
+      {
+        path: 'ski-map',
+        element: <SkiMapPage />,
       },
     ],
   },

@@ -9,6 +9,8 @@ export default function Navbar() {
 
   const navItems = [
     { path: '/resorts', label: '雪場' },
+    { path: '/ski-map', label: '地圖' },
+    { path: '/feed', label: '動態' },
     { path: '/achievements', label: '成就' },
     { path: '/leaderboard', label: '排行榜' },
   ];

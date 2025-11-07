@@ -14,7 +14,7 @@ export const useFeedPolling = ({
   interval = 30000,
   enabled = true,
 }: UseFeedPollingOptions) => {
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!enabled) {

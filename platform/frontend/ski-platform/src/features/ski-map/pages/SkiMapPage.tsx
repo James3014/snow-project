@@ -1,7 +1,7 @@
 /**
  * 滑雪地圖主頁面
  */
-import React, { useState } from 'react';
+import React from 'react';
 import { useSkiMap } from '../hooks/useSkiMap';
 import JapanSkiRegionsMap from '../components/JapanSkiRegionsMap';
 
@@ -10,10 +10,8 @@ const CURRENT_USER_ID = 'test-user-id';
 
 const SkiMapPage: React.FC = () => {
   const { mapData, isLoading, error } = useSkiMap(CURRENT_USER_ID);
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
 
   const handleRegionClick = (regionId: string) => {
-    setSelectedRegion(regionId);
     // TODO: 顯示區域詳情彈窗或導航到詳情頁面
     console.log('點擊區域:', regionId);
   };
