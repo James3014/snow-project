@@ -9,7 +9,7 @@ Provides:
 from fastapi import APIRouter, Header, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr, Field
-from typing import Dict
+from typing import Dict, Any
 import uuid
 
 from services import db
@@ -213,7 +213,7 @@ async def validate_token(
 async def get_current_user(
     authorization: str = Header(...),
     db_session: Session = Depends(db.get_db)
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """
     Get current user's profile information.
 
