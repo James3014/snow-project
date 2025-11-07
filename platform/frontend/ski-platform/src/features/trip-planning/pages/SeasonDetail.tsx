@@ -194,7 +194,7 @@ export default function SeasonDetail() {
       )}
 
       {activeTab === 'stats' && stats && (
-        <StatsView season={season} stats={stats} />
+        <StatsView stats={stats} />
       )}
     </div>
   );
@@ -367,7 +367,7 @@ function TripListView({
 }
 
 // 統計視圖組件
-function StatsView({ season, stats }: { season: Season; stats: SeasonStats }) {
+function StatsView({ stats }: { stats: SeasonStats }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* 目標進度 */}

@@ -2,7 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from services import db, course_tracking_service
-from models import user_profile, behavior_event, notification_preference, course_tracking, social, trip_planning
+from models import (
+    user_profile, behavior_event, notification_preference,
+    course_tracking, social,
+    trip_planning as trip_planning_models
+)
 from api import (
     user_profiles, behavior_events, notification_preferences, auth, admin,
     course_tracking as course_tracking_api, share_cards,
@@ -15,7 +19,7 @@ behavior_event.Base.metadata.create_all(bind=db.engine)
 notification_preference.Base.metadata.create_all(bind=db.engine)
 course_tracking.Base.metadata.create_all(bind=db.engine)
 social.Base.metadata.create_all(bind=db.engine)
-trip_planning.Base.metadata.create_all(bind=db.engine)
+trip_planning_models.Base.metadata.create_all(bind=db.engine)
 
 app = FastAPI(
     title="SkiDIY User Core Service",

@@ -138,7 +138,7 @@ export const tripPlanningApi = {
   },
 
   /** 獲取推薦行程（待實現完整功能） */
-  getRecommendations: (userId: string, tripId?: string) => {
+  getRecommendations: () => {
     // TODO: 實現完整的推薦算法 API
     return Promise.resolve([]) as Promise<TripRecommendation[]>;
   },

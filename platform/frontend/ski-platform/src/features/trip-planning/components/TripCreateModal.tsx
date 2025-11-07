@@ -6,12 +6,11 @@ import { useState } from 'react';
 import type { TripCreate, TripFlexibility, FlightStatus, AccommodationStatus, TripVisibility } from '../types';
 
 interface TripCreateModalProps {
-  seasonId: string;
   onClose: () => void;
   onCreate: (trips: Omit<TripCreate, 'season_id'>[]) => void;
 }
 
-export default function TripCreateModal({ seasonId, onClose, onCreate }: TripCreateModalProps) {
+export default function TripCreateModal({ onClose, onCreate }: TripCreateModalProps) {
   const [batchMode, setBatchMode] = useState(false);
   const [trips, setTrips] = useState<Omit<TripCreate, 'season_id'>[]>([
     {

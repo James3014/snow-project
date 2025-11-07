@@ -12,7 +12,6 @@ export default function TripRecommendations() {
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState<TripRecommendation[]>([]);
   const [loading, setLoading] = useState(true);
-  const userId = localStorage.getItem('user_id') || 'test-user-id';
 
   useEffect(() => {
     loadRecommendations();
@@ -21,7 +20,7 @@ export default function TripRecommendations() {
   const loadRecommendations = async () => {
     try {
       setLoading(true);
-      const data = await tripPlanningApi.getRecommendations(userId);
+      const data = await tripPlanningApi.getRecommendations();
       setRecommendations(data);
     } catch (err) {
       console.error('載入推薦失敗:', err);
