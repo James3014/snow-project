@@ -205,6 +205,22 @@ export default function CourseHistory() {
     );
   }
 
+  // 未登入用戶提示
+  if (!userId) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold">記錄歷史</h1>
+        <EmptyState
+          icon="🔐"
+          title="需要登入"
+          description="登入後即可查看您的滑雪記錄、統計數據和評分排行！"
+          actionText="前往登入"
+          actionLink="/login"
+        />
+      </div>
+    );
+  }
+
   if (visits.length === 0) {
     return (
       <div className="space-y-6">

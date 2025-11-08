@@ -241,6 +241,68 @@ export default function ResortDetail() {
     );
   }
 
+  // 未登入用戶：顯示基本資訊，提示登入以追蹤進度
+  if (!userId) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
+            <p className="text-gray-600">{resort.names.en}</p>
+          </div>
+          <Button onClick={() => navigate('/resorts')}>返回</Button>
+        </div>
+
+        {/* 雪場基本資訊 */}
+        <Card>
+          <Card.Body>
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-lg mb-2">雪場資訊</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-500">地區：</span>
+                    <span className="font-medium">{getRegionName(resort.region)}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">總雪道數：</span>
+                    <span className="font-medium">{resort.snow_stats.courses_total} 條</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">初級雪道：</span>
+                    <span className="font-medium text-green-600">{resort.snow_stats.courses_beginner} 條</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">中級雪道：</span>
+                    <span className="font-medium text-blue-600">{resort.snow_stats.courses_intermediate} 條</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">高級雪道：</span>
+                    <span className="font-medium text-red-600">{resort.snow_stats.courses_advanced} 條</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">纜車數：</span>
+                    <span className="font-medium">{resort.snow_stats.lifts} 條</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+
+        {/* 登入提示 */}
+        <EmptyState
+          icon="🔐"
+          title="登入以追蹤進度"
+          description="登入後即可記錄完成的雪道、查看個人進度、獲得成就！"
+          actionText="前往登入"
+          actionLink="/login"
+        />
+      </div>
+    );
+  }
+
+  // 已登入但載入失敗
   if (!progress) {
     return (
       <div className="space-y-6">
