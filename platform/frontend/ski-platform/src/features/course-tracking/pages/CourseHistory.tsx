@@ -15,6 +15,7 @@ import { ListSkeleton } from '@/shared/components/Skeleton';
 import EmptyState from '@/shared/components/EmptyState';
 import { formatDate } from '@/shared/utils/helpers';
 import EnhancedCourseRecordModal, { type CourseRecordData } from '../components/EnhancedCourseRecordModal';
+import { useDebounce } from '@/shared/hooks/useDebounce';
 
 export default function CourseHistory() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function CourseHistory() {
 
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300); // 搜尋防抖 300ms
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [filterSnowCondition, setFilterSnowCondition] = useState<string>('');
   const [filterWeather, setFilterWeather] = useState<string>('');
@@ -107,22 +109,22 @@ export default function CourseHistory() {
 
   const handleDelete = async (visitId: string) => {
     if (!userId) return;
-    if (!confirm('確定要刪除這筆記錄嗎？')) return;
+    if (!confirm('確定要刪除這筆記錄嗎？\n\n⚠️ 此操作無法復原，記錄的評分、雪況等資訊將永久刪除。')) return;
 
     try {
       await courseTrackingApi.visits.delete(userId, visitId);
-      dispatch(addToast({ type: 'success', message: '記錄已刪除' }));
+      dispatch(addToast({ type: 'success', message: '✓ 記錄已刪除' }));
       loadVisits();
     } catch (error) {
-      dispatch(addToast({ type: 'error', message: '刪除失敗' }));
+      dispatch(addToast({ type: 'error', message: '刪除失敗，請稍後再試' }));
     }
   };
 
-  // 搜尋和篩選
+  // 搜尋和篩選 (使用防抖後的搜尋字串提升效能)
   const filteredVisits = visits.filter(visit => {
-    // Search by course name or resort
-    if (searchQuery && !visit.course_name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !visit.resort_id.toLowerCase().includes(searchQuery.toLowerCase())) {
+    // Search by course name or resort (使用 debouncedSearchQuery)
+    if (debouncedSearchQuery && !visit.course_name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) &&
+        !visit.resort_id.toLowerCase().includes(debouncedSearchQuery.toLowerCase())) {
       return false;
     }
     // Filter by rating

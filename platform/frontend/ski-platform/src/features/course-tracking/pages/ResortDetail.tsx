@@ -353,6 +353,7 @@ export default function ResortDetail() {
             <img
               src={getResortLogoUrl(resort.resort_id)}
               alt={`${resort.names.zh} Logo`}
+              loading="lazy"
               className="w-20 h-20 object-contain rounded-lg"
               onError={(e) => {
                 // 如果圖片載入失敗，顯示預設 emoji
