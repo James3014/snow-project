@@ -2,10 +2,12 @@
  * Trip Create Modal - Simplified Version
  * 行程創建彈窗（簡化版 + 展開選項）
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppSelector } from '@/store/hooks';
+import { resortApiService } from '@/shared/api/resortApi';
 import QuickCourseRecordFlow from './QuickCourseRecordFlow';
 import type { TripCreate, TripStatus, FlightStatus, AccommodationStatus } from '../types';
+import type { Resort } from '@/shared/data/resorts';
 
 interface TripCreateModalProps {
   onClose: () => void;
@@ -17,6 +19,8 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
   const [showNewResortModal, setShowNewResortModal] = useState(false);
   const [showQuickRecord, setShowQuickRecord] = useState(false);
   const [shouldRecordAfterSave, setShouldRecordAfterSave] = useState(false);
+  const [availableResorts, setAvailableResorts] = useState<Resort[]>([]);
+  const [resortsLoading, setResortsLoading] = useState(true);
   const userId = useAppSelector((state) => state.auth.user?.user_id);
 
   const [formData, setFormData] = useState<Omit<TripCreate, 'season_id'>>({
@@ -31,14 +35,23 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
     notes: '',
   });
 
-  // 可用的雪場列表（從現有數據或 API 載入）
-  const availableResorts = [
-    { id: 'rusutsu', name: '留壽都 Rusutsu' },
-    { id: 'niseko_united', name: '二世古 Niseko United' },
-    { id: 'furano', name: '富良野 Furano' },
-    { id: 'tomamu', name: '星野 Tomamu' },
-    { id: 'hakuba', name: '白馬村 Hakuba' },
-  ];
+  // 載入雪場列表
+  useEffect(() => {
+    const loadResorts = async () => {
+      try {
+        setResortsLoading(true);
+        const response = await resortApiService.getAllResorts();
+        setAvailableResorts(response.items);
+      } catch (error) {
+        console.error('載入雪場列表失敗:', error);
+        // 使用降級數據
+        setAvailableResorts([]);
+      } finally {
+        setResortsLoading(false);
+      }
+    };
+    loadResorts();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,16 +103,23 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                     setFormData({ ...formData, resort_id: e.target.value });
                   }
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={resortsLoading}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
-                <option value="">選擇雪場...</option>
+                <option value="">{resortsLoading ? '載入中...' : '選擇雪場...'}</option>
                 {availableResorts.map((resort) => (
-                  <option key={resort.id} value={resort.id}>
-                    {resort.name}
+                  <option key={resort.resort_id} value={resort.resort_id}>
+                    {resort.names.zh} {resort.names.en}
                   </option>
                 ))}
                 <option value="__new__">➕ 新增其他雪場...</option>
               </select>
+              {resortsLoading && (
+                <p className="text-xs text-gray-500 mt-1">⏳ 正在載入雪場列表...</p>
+              )}
+              {!resortsLoading && availableResorts.length === 0 && (
+                <p className="text-xs text-red-500 mt-1">⚠️ 無法載入雪場列表，請重新整理頁面</p>
+              )}
             </div>
 
             {/* 日期範圍 */}
