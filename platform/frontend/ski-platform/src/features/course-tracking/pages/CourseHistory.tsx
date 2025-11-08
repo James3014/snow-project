@@ -2,7 +2,7 @@
  * Course History Page - 雪道記錄歷史
  * 查看所有完成的雪道記錄，可以編輯和刪除
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { courseTrackingApi } from '../api/courseTrackingApi';
@@ -34,24 +34,24 @@ export default function CourseHistory() {
   const [filterWeather, setFilterWeather] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => {
-    if (userId) {
-      loadVisits();
-    }
-  }, [userId]);
-
-  const loadVisits = async () => {
+  const loadVisits = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
     try {
       const data = await courseTrackingApi.visits.list(userId);
       dispatch(setVisits(data));
-    } catch (error) {
+    } catch {
       dispatch(addToast({ type: 'error', message: '載入記錄失敗' }));
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, dispatch]);
+
+  useEffect(() => {
+    if (userId) {
+      loadVisits();
+    }
+  }, [userId, loadVisits]);
 
   const handleEdit = (visit: CourseVisit) => {
     setEditingVisit(visit);
@@ -69,8 +69,8 @@ export default function CourseHistory() {
       setIsEditModalOpen(false);
       setEditingVisit(null);
       loadVisits();
-    } catch (error: any) {
-      console.error('編輯記錄錯誤:', error);
+    } catch (err: unknown) {
+      console.error('編輯記錄錯誤:', err);
       dispatch(addToast({ type: 'error', message: '更新失敗，請稍後再試' }));
     }
   };
@@ -83,7 +83,7 @@ export default function CourseHistory() {
       await courseTrackingApi.visits.delete(userId, visitId);
       dispatch(addToast({ type: 'success', message: '✓ 記錄已刪除' }));
       loadVisits();
-    } catch (error) {
+    } catch {
       dispatch(addToast({ type: 'error', message: '刪除失敗，請稍後再試' }));
     }
   };

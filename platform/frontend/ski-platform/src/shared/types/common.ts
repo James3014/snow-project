@@ -41,6 +41,7 @@ export interface Resort {
   region: string;
   country: string;
   description?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   courses?: any[]; // 详细类型在 course-tracking 中定义
   facilities?: Facility[];
   operating_hours?: OperatingHours;

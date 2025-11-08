@@ -68,7 +68,8 @@ export default function RegisterPage() {
       return;
     }
 
-    // Send registration request
+    // Send registration request (exclude confirmPassword from API payload)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmPassword, ...registrationData } = formData;
     dispatch(registerThunk(registrationData));
   };

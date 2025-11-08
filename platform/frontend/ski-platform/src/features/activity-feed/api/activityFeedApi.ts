@@ -2,7 +2,7 @@
  * 社交動態牆 API 調用
  */
 import { userCoreClient } from '@/shared/api/client';
-import type { FeedResponse, FeedType, CommentsResponse, FollowStats } from '../types/feed.types';
+import type { FeedResponse, FeedType, CommentsResponse, FollowStats, FollowerUser } from '../types/feed.types';
 
 const BASE_URL = '/social';
 
@@ -104,7 +104,7 @@ export const activityFeedApi = {
   /**
    * 獲取粉絲列表
    */
-  getFollowers: async (userId: string, skip = 0, limit = 50): Promise<{ followers: any[]; total: number }> => {
+  getFollowers: async (userId: string, skip = 0, limit = 50): Promise<{ followers: FollowerUser[]; total: number }> => {
     const response = await userCoreClient.get(
       `${BASE_URL}/users/${userId}/followers?skip=${skip}&limit=${limit}`
     );
@@ -114,7 +114,7 @@ export const activityFeedApi = {
   /**
    * 獲取關注列表
    */
-  getFollowing: async (userId: string, skip = 0, limit = 50): Promise<{ following: any[]; total: number }> => {
+  getFollowing: async (userId: string, skip = 0, limit = 50): Promise<{ following: FollowerUser[]; total: number }> => {
     const response = await userCoreClient.get(
       `${BASE_URL}/users/${userId}/following?skip=${skip}&limit=${limit}`
     );

@@ -2,7 +2,7 @@
  * Share Card Preview Modal
  * 分享卡片預覽模態框 - 生成並分享精美的滑雪成就卡片
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Button from '@/shared/components/Button';
 import { courseTrackingApi } from '../api/courseTrackingApi';
 
@@ -30,20 +30,7 @@ export default function ShareCardPreviewModal({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (isOpen) {
-      generateCard();
-    } else {
-      // 清理
-      if (imageUrl) {
-        URL.revokeObjectURL(imageUrl);
-        setImageUrl(null);
-      }
-      setError(null);
-    }
-  }, [isOpen]);
-
-  const generateCard = async () => {
+  const generateCard = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -81,13 +68,27 @@ export default function ShareCardPreviewModal({
       // 創建預覽 URL
       const url = URL.createObjectURL(blob);
       setImageUrl(url);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('生成分享卡片失敗:', err);
-      setError(err.message || '生成失敗，請稍後再試');
+      const errorMessage = err instanceof Error ? err.message : '生成失敗，請稍後再試';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [type, data]);
+
+  useEffect(() => {
+    if (isOpen) {
+      generateCard();
+    } else {
+      // 清理
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+        setImageUrl(null);
+      }
+      setError(null);
+    }
+  }, [isOpen, generateCard, imageUrl]);
 
   const handleDownload = () => {
     if (!imageUrl) return;

@@ -2,7 +2,7 @@
  * User Detail Page
  * 用戶詳情/編輯頁面
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { adminApi } from '@/shared/api/adminApi';
 import type { UserDetail } from '@/shared/api/adminApi';
@@ -27,13 +27,7 @@ export default function UserDetailPage() {
   const [editingRoles, setEditingRoles] = useState(false);
   const [roles, setRoles] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (userId) {
-      loadUser();
-    }
-  }, [userId]);
-
-  const loadUser = async () => {
+  const loadUser = useCallback(async () => {
     if (!userId) return;
 
     try {
@@ -49,12 +43,21 @@ export default function UserDetailPage() {
       });
       setRoles(data.roles || []);
       setError(null);
-    } catch (err: any) {
-      setError(err.response?.data?.detail || '載入用戶資料失敗');
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err.response as { data?: { detail?: string } })?.data?.detail || '載入用戶資料失敗'
+        : '載入用戶資料失敗';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      loadUser();
+    }
+  }, [userId, loadUser]);
 
   const handleSave = async () => {
     if (!userId) return;
@@ -63,8 +66,11 @@ export default function UserDetailPage() {
       await adminApi.updateUser(userId, formData);
       setIsEditing(false);
       loadUser();
-    } catch (err: any) {
-      alert(err.response?.data?.detail || '更新失敗');
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err.response as { data?: { detail?: string } })?.data?.detail || '更新失敗'
+        : '更新失敗';
+      alert(errorMessage);
     }
   };
 
@@ -75,8 +81,11 @@ export default function UserDetailPage() {
       await adminApi.updateUserRoles(userId, roles);
       setEditingRoles(false);
       loadUser();
-    } catch (err: any) {
-      alert(err.response?.data?.detail || '更新角色失敗');
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err.response as { data?: { detail?: string } })?.data?.detail || '更新角色失敗'
+        : '更新角色失敗';
+      alert(errorMessage);
     }
   };
 

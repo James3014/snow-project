@@ -18,7 +18,7 @@ export const skiMapApi = {
   /**
    * 獲取區域詳情
    */
-  getRegionDetail: async (userId: string, region: string): Promise<any> => {
+  getRegionDetail: async (userId: string, region: string): Promise<unknown> => {
     const response = await userCoreClient.get(
       `${BASE_URL}/users/${userId}/ski-map/regions/${encodeURIComponent(region)}`
     );

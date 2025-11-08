@@ -2,7 +2,7 @@
  * User List Page
  * 用戶列表頁面
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { adminApi } from '@/shared/api/adminApi';
 import type { UserListResponse, UserListItem } from '@/shared/api/adminApi';
@@ -18,11 +18,7 @@ export default function UserListPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
 
-  useEffect(() => {
-    loadUsers();
-  }, [page, statusFilter, roleFilter]);
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true);
       const result = await adminApi.listUsers({
@@ -34,12 +30,19 @@ export default function UserListPage() {
       });
       setData(result);
       setError(null);
-    } catch (err: any) {
-      setError(err.response?.data?.detail || '載入用戶列表失敗');
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err.response as { data?: { detail?: string } })?.data?.detail || '載入用戶列表失敗'
+        : '載入用戶列表失敗';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search, statusFilter, roleFilter]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,8 +56,11 @@ export default function UserListPage() {
     try {
       await adminApi.updateUserStatus(userId, newStatus);
       loadUsers();
-    } catch (err: any) {
-      alert(err.response?.data?.detail || '更新失敗');
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err.response as { data?: { detail?: string } })?.data?.detail || '更新失敗'
+        : '更新失敗';
+      alert(errorMessage);
     }
   };
 
@@ -64,8 +70,11 @@ export default function UserListPage() {
     try {
       await adminApi.deleteUser(userId);
       loadUsers();
-    } catch (err: any) {
-      alert(err.response?.data?.detail || '刪除失敗');
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err.response as { data?: { detail?: string } })?.data?.detail || '刪除失敗'
+        : '刪除失敗';
+      alert(errorMessage);
     }
   };
 
