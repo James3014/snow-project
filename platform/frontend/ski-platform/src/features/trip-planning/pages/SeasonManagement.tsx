@@ -8,12 +8,23 @@ import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import Card from '@/shared/components/Card';
 import EmptyState, { ErrorEmptyState } from '@/shared/components/EmptyState';
-import type { Season, SeasonCreate } from '../types';
+import type { Season, SeasonCreate, Trip } from '../types';
+
+// 輔助函數：格式化雪場名稱
+function formatResortName(resortId: string): string {
+  // 將 resort_id 轉換為更友好的顯示名稱
+  // 例如：rusutsu -> Rusutsu, niseko_united -> Niseko United
+  return resortId
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
 
 export default function SeasonManagement() {
   const navigate = useNavigate();
   const userId = useAppSelector((state) => state.auth.user?.user_id);
   const [seasons, setSeasons] = useState<Season[]>([]);
+  const [seasonTrips, setSeasonTrips] = useState<Record<string, Trip[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -35,6 +46,24 @@ export default function SeasonManagement() {
       setError(null);
       const data = await tripPlanningApi.getSeasons(userId);
       setSeasons(data);
+
+      // 載入每個雪季的行程
+      const tripsMap: Record<string, Trip[]> = {};
+      await Promise.all(
+        data.map(async (season) => {
+          try {
+            const trips = await tripPlanningApi.getTrips(userId, { season_id: season.season_id });
+            // 按開始日期排序
+            tripsMap[season.season_id] = trips.sort((a, b) =>
+              new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
+            );
+          } catch (err) {
+            console.error(`載入雪季 ${season.season_id} 的行程失敗:`, err);
+            tripsMap[season.season_id] = [];
+          }
+        })
+      );
+      setSeasonTrips(tripsMap);
     } catch (err) {
       console.error('載入雪季失敗:', err);
       setError('載入雪季資料失敗，請稍後重試');
@@ -180,28 +209,37 @@ export default function SeasonManagement() {
                   {new Date(season.start_date).toLocaleDateString('zh-TW')} - {new Date(season.end_date).toLocaleDateString('zh-TW')}
                 </div>
 
-                {/* Goals */}
-                {(season.goal_trips || season.goal_resorts || season.goal_courses) && (
-                  <div className="border-t pt-4 space-y-2">
-                    <p className="text-sm font-medium text-gray-700 mb-2">本季目標</p>
-                    {season.goal_trips && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">行程數</span>
-                        <span className="font-medium">{season.goal_trips} 趟</span>
-                      </div>
-                    )}
-                    {season.goal_resorts && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">雪場數</span>
-                        <span className="font-medium">{season.goal_resorts} 個</span>
-                      </div>
-                    )}
-                    {season.goal_courses && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">雪道數</span>
-                        <span className="font-medium">{season.goal_courses} 條</span>
-                      </div>
-                    )}
+                {/* 行程雪場列表 */}
+                {seasonTrips[season.season_id] && seasonTrips[season.season_id].length > 0 && (
+                  <div className="border-t pt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-3">📍 行程雪場</p>
+                    <div className="space-y-2">
+                      {seasonTrips[season.season_id].slice(0, 3).map((trip) => {
+                        const startDate = new Date(trip.start_date);
+                        const endDate = new Date(trip.end_date);
+                        const dateRange = `${startDate.getMonth() + 1}/${startDate.getDate()}-${endDate.getMonth() + 1}/${endDate.getDate()}`;
+                        const resortName = trip.title || formatResortName(trip.resort_id);
+
+                        return (
+                          <div key={trip.trip_id} className="flex items-center justify-between text-sm">
+                            <span className="flex items-center text-gray-700">
+                              🏔️ {resortName}
+                            </span>
+                            <span className="text-gray-500 text-xs">{dateRange}</span>
+                          </div>
+                        );
+                      })}
+                      {seasonTrips[season.season_id].length > 3 && (
+                        <div className="text-xs text-gray-500 text-center pt-1">
+                          +{seasonTrips[season.season_id].length - 3} 個行程
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 簡單統計 */}
+                    <div className="mt-3 pt-3 border-t text-xs text-gray-600">
+                      📊 {seasonTrips[season.season_id].length} 趟行程 · {seasonTrips[season.season_id].filter(t => t.trip_status === 'completed').length} 已完成
+                    </div>
                   </div>
                 )}
 
@@ -321,52 +359,6 @@ function CreateSeasonModal({
                 onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-            </div>
-          </div>
-
-          {/* 目標設定 */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">本季目標（選填）</h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  目標行程數
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.goal_trips || ''}
-                  onChange={(e) => setFormData({ ...formData, goal_trips: e.target.value ? parseInt(e.target.value) : undefined })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="0"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  目標雪場數
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.goal_resorts || ''}
-                  onChange={(e) => setFormData({ ...formData, goal_resorts: e.target.value ? parseInt(e.target.value) : undefined })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="0"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  目標雪道數
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.goal_courses || ''}
-                  onChange={(e) => setFormData({ ...formData, goal_courses: e.target.value ? parseInt(e.target.value) : undefined })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="0"
-                />
-              </div>
             </div>
           </div>
 

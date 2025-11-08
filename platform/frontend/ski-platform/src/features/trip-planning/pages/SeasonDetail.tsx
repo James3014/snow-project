@@ -19,7 +19,7 @@ export default function SeasonDetail() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [calendarTrips, setCalendarTrips] = useState<CalendarTrip[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'calendar' | 'list' | 'stats'>('calendar');
+  const [activeTab, setActiveTab] = useState<'resorts' | 'calendar' | 'stats'>('resorts');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -152,33 +152,23 @@ export default function SeasonDetail() {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card className="p-4">
-            <div className="text-sm text-gray-600 mb-1">總行程數</div>
-            <div className="text-2xl font-bold text-gray-900">{stats.trip_count}</div>
-            {stats.goal_progress.trips.goal && (
-              <div className="text-xs text-gray-500 mt-1">
-                目標: {stats.goal_progress.trips.goal}
-              </div>
-            )}
+            <div className="text-sm text-gray-600 mb-1">📍 雪場數</div>
+            <div className="text-2xl font-bold text-gray-900">{stats.unique_resorts} 個</div>
           </Card>
 
           <Card className="p-4">
-            <div className="text-sm text-gray-600 mb-1">已完成</div>
-            <div className="text-2xl font-bold text-green-600">{stats.completed_trips}</div>
+            <div className="text-sm text-gray-600 mb-1">✈️ 行程數</div>
+            <div className="text-2xl font-bold text-blue-600">{stats.trip_count} 趟</div>
           </Card>
 
           <Card className="p-4">
-            <div className="text-sm text-gray-600 mb-1">雪場數</div>
-            <div className="text-2xl font-bold text-gray-900">{stats.unique_resorts}</div>
-            {stats.goal_progress.resorts.goal && (
-              <div className="text-xs text-gray-500 mt-1">
-                目標: {stats.goal_progress.resorts.goal}
-              </div>
-            )}
+            <div className="text-sm text-gray-600 mb-1">✅ 已完成</div>
+            <div className="text-2xl font-bold text-green-600">{stats.completed_trips} 趟</div>
           </Card>
 
           <Card className="p-4">
-            <div className="text-sm text-gray-600 mb-1">雪伴總數</div>
-            <div className="text-2xl font-bold text-blue-600">{stats.total_buddies}</div>
+            <div className="text-sm text-gray-600 mb-1">🎿 滑雪夥伴</div>
+            <div className="text-2xl font-bold text-purple-600">{stats.total_buddies} 位</div>
           </Card>
         </div>
       )}
@@ -187,9 +177,9 @@ export default function SeasonDetail() {
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
           {[
+            { id: 'resorts', label: '雪場行程', icon: '🏔️' },
             { id: 'calendar', label: '日曆視圖', icon: '📅' },
-            { id: 'list', label: '列表視圖', icon: '📋' },
-            { id: 'stats', label: '統計分析', icon: '📊' },
+            { id: 'stats', label: '統計', icon: '📊' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -207,18 +197,18 @@ export default function SeasonDetail() {
       </div>
 
       {/* Tab Content */}
+      {activeTab === 'resorts' && (
+        <ResortGroupedTripsView
+          trips={trips}
+          onTripClick={(tripId) => navigate(`/trips/${tripId}`)}
+        />
+      )}
+
       {activeTab === 'calendar' && (
         <CalendarView
           trips={calendarTrips}
           currentMonth={currentMonth}
           onMonthChange={changeMonth}
-          onTripClick={(tripId) => navigate(`/trips/${tripId}`)}
-        />
-      )}
-
-      {activeTab === 'list' && (
-        <TripListView
-          trips={trips}
           onTripClick={(tripId) => navigate(`/trips/${tripId}`)}
         />
       )}
@@ -351,8 +341,8 @@ function CalendarView({
   );
 }
 
-// 列表視圖組件
-function TripListView({
+// 按雪場分組的行程視圖組件
+function ResortGroupedTripsView({
   trips,
   onTripClick,
 }: {
@@ -367,108 +357,157 @@ function TripListView({
     );
   }
 
+  // 格式化雪場名稱
+  const formatResortName = (resortId: string) => {
+    return resortId
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  // 按雪場分組
+  const groupedByResort = trips.reduce((acc, trip) => {
+    const resortKey = trip.resort_id;
+    if (!acc[resortKey]) {
+      acc[resortKey] = [];
+    }
+    acc[resortKey].push(trip);
+    return acc;
+  }, {} as Record<string, Trip[]>);
+
+  // 獲取狀態樣式
+  const getStatusBadge = (status: string) => {
+    const badges: Record<string, { class: string; text: string }> = {
+      completed: { class: 'bg-green-100 text-green-800', text: '✅ 已完成' },
+      confirmed: { class: 'bg-blue-100 text-blue-800', text: '✈️ 已確認' },
+      planning: { class: 'bg-gray-100 text-gray-800', text: '📋 規劃中' },
+    };
+    return badges[status] || badges.planning;
+  };
+
+  const getTransportIcon = (status: string) => {
+    if (status === 'confirmed' || status === 'booked') return '✈️';
+    if (status === 'ready_to_book') return '🔖';
+    if (status === 'researching') return '🔍';
+    return '📝';
+  };
+
+  const getAccommodationIcon = (status: string) => {
+    if (status === 'confirmed' || status === 'booked') return '🏨';
+    if (status === 'ready_to_book') return '🔖';
+    if (status === 'researching') return '🔍';
+    return '📝';
+  };
+
   return (
-    <div className="space-y-4">
-      {trips.map((trip) => (
-        <Card
-          key={trip.trip_id}
-          className="p-6 cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => onTripClick(trip.trip_id)}
-        >
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                {trip.title || trip.resort_id}
+    <div className="space-y-6">
+      {Object.entries(groupedByResort).map(([resortId, resortTrips]) => {
+        const resortName = formatResortName(resortId);
+        const tripCount = resortTrips.length;
+
+        return (
+          <div key={resortId} className="border rounded-lg overflow-hidden">
+            {/* 雪場標題 */}
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                🏔️ {resortName}
+                <span className="text-sm font-normal text-gray-600">({tripCount} 趟行程)</span>
               </h3>
-              <div className="flex items-center text-sm text-gray-600 space-x-4">
-                <span>
-                  📅 {new Date(trip.start_date).toLocaleDateString('zh-TW')} - {new Date(trip.end_date).toLocaleDateString('zh-TW')}
-                </span>
-                <span>
-                  👥 {trip.current_buddies}/{trip.max_buddies} 雪伴
-                </span>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  trip.trip_status === 'completed' ? 'bg-green-100 text-green-800' :
-                  trip.trip_status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {trip.trip_status === 'completed' ? '已完成' :
-                   trip.trip_status === 'confirmed' ? '已確認' : '規劃中'}
-                </span>
-              </div>
+            </div>
+
+            {/* 行程列表 */}
+            <div className="divide-y">
+              {resortTrips.map((trip) => {
+                const statusBadge = getStatusBadge(trip.trip_status);
+
+                return (
+                  <div
+                    key={trip.trip_id}
+                    onClick={() => onTripClick(trip.trip_id)}
+                    className="p-6 hover:bg-gray-50 cursor-pointer transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusBadge.class}`}>
+                            {statusBadge.text}
+                          </span>
+                          {trip.title && (
+                            <span className="text-sm text-gray-600">{trip.title}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div className="flex items-center text-gray-700">
+                        📅 {new Date(trip.start_date).toLocaleDateString('zh-TW')} - {new Date(trip.end_date).toLocaleDateString('zh-TW')}
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span>{getTransportIcon(trip.flight_status)} 機票</span>
+                        <span>{getAccommodationIcon(trip.accommodation_status)} 住宿</span>
+                      </div>
+                      <div className="flex items-center text-gray-700">
+                        👥 {trip.current_buddies}/{trip.max_buddies} 人
+                      </div>
+                    </div>
+
+                    {trip.notes && (
+                      <div className="mt-3 text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                        📝 {trip.notes}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </Card>
-      ))}
+        );
+      })}
     </div>
   );
 }
 
 // 統計視圖組件
 function StatsView({ stats }: { stats: SeasonStats }) {
+  const completionRate = stats.trip_count > 0 ? Math.round((stats.completed_trips / stats.trip_count) * 100) : 0;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* 目標進度 */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* 行程完成率 */}
       <Card className="p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">目標進度</h3>
-        <div className="space-y-4">
-          {stats.goal_progress.trips.goal && (
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>行程數</span>
-                <span>{stats.goal_progress.trips.actual} / {stats.goal_progress.trips.goal}</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full"
-                  style={{ width: `${Math.min(100, (stats.goal_progress.trips.actual / stats.goal_progress.trips.goal) * 100)}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          {stats.goal_progress.resorts.goal && (
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>雪場數</span>
-                <span>{stats.goal_progress.resorts.actual} / {stats.goal_progress.resorts.goal}</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-green-600 h-2 rounded-full"
-                  style={{ width: `${Math.min(100, (stats.goal_progress.resorts.actual / stats.goal_progress.resorts.goal) * 100)}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          {stats.goal_progress.courses.goal && (
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>雪道數</span>
-                <span>{stats.goal_progress.courses.actual} / {stats.goal_progress.courses.goal}</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-purple-600 h-2 rounded-full"
-                  style={{ width: `${Math.min(100, (stats.goal_progress.courses.actual / stats.goal_progress.courses.goal) * 100)}%` }}
-                />
-              </div>
-            </div>
-          )}
+        <h3 className="text-lg font-bold text-gray-900 mb-4">行程完成率</h3>
+        <div className="text-center">
+          <div className="text-5xl font-bold text-green-600 mb-2">{completionRate}%</div>
+          <p className="text-gray-600">{stats.completed_trips} / {stats.trip_count} 趟已完成</p>
         </div>
       </Card>
 
-      {/* 完成率 */}
+      {/* 雪場統計 */}
       <Card className="p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">完成率</h3>
-        <div className="text-center">
-          <div className="text-4xl font-bold text-green-600 mb-2">
-            {stats.trip_count > 0 ? Math.round((stats.completed_trips / stats.trip_count) * 100) : 0}%
+        <h3 className="text-lg font-bold text-gray-900 mb-4">雪場統計</h3>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">總雪場數</span>
+            <span className="text-2xl font-bold text-gray-900">{stats.unique_resorts}</span>
           </div>
-          <p className="text-gray-600">
-            {stats.completed_trips} / {stats.trip_count} 行程已完成
-          </p>
+          <div className="text-sm text-gray-500 text-center pt-2">
+            本季探索了 {stats.unique_resorts} 個不同雪場
+          </div>
+        </div>
+      </Card>
+
+      {/* 社交統計 */}
+      <Card className="p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">社交統計</h3>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">滑雪夥伴</span>
+            <span className="text-2xl font-bold text-purple-600">{stats.total_buddies}</span>
+          </div>
+          <div className="text-sm text-gray-500 text-center pt-2">
+            與 {stats.total_buddies} 位夥伴一起滑雪
+          </div>
         </div>
       </Card>
     </div>
