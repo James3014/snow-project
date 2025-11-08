@@ -92,6 +92,7 @@ export interface TripCreate {
   title?: string;
   start_date: string;
   end_date: string;
+  trip_status?: TripStatus;
   flexibility?: TripFlexibility;
   flight_status?: FlightStatus;
   accommodation_status?: AccommodationStatus;
