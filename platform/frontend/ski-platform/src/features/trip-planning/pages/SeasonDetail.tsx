@@ -6,9 +6,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
+import { resortApiService } from '@/shared/api/resortApi';
 import Card from '@/shared/components/Card';
 import TripCreateModal from '../components/TripCreateModal';
 import type { Season, SeasonStats, CalendarTrip, Trip, TripCreate } from '../types';
+import type { Resort } from '@/shared/data/resorts';
 
 export default function SeasonDetail() {
   const { seasonId } = useParams<{ seasonId: string }>();
@@ -18,6 +20,7 @@ export default function SeasonDetail() {
   const [stats, setStats] = useState<SeasonStats | null>(null);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [calendarTrips, setCalendarTrips] = useState<CalendarTrip[]>([]);
+  const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'resorts' | 'calendar' | 'stats'>('resorts');
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -28,15 +31,17 @@ export default function SeasonDetail() {
 
     try {
       setLoading(true);
-      const [seasonData, statsData, tripsData] = await Promise.all([
+      const [seasonData, statsData, tripsData, resortsData] = await Promise.all([
         tripPlanningApi.getSeason(seasonId, userId),
         tripPlanningApi.getSeasonStats(seasonId, userId),
         tripPlanningApi.getTrips(userId, { season_id: seasonId }),
+        resortApiService.getAllResorts(),
       ]);
 
       setSeason(seasonData);
       setStats(statsData);
       setTrips(tripsData);
+      setResorts(resortsData.items);
     } catch (err) {
       console.error('載入雪季資料失敗:', err);
     } finally {
@@ -200,6 +205,7 @@ export default function SeasonDetail() {
       {activeTab === 'resorts' && (
         <ResortGroupedTripsView
           trips={trips}
+          resorts={resorts}
           onTripClick={(tripId) => navigate(`/trips/${tripId}`)}
         />
       )}
@@ -344,9 +350,11 @@ function CalendarView({
 // 按雪場分組的行程視圖組件
 function ResortGroupedTripsView({
   trips,
+  resorts,
   onTripClick,
 }: {
   trips: Trip[];
+  resorts: Resort[];
   onTripClick: (tripId: string) => void;
 }) {
   if (trips.length === 0) {
@@ -357,8 +365,19 @@ function ResortGroupedTripsView({
     );
   }
 
-  // 格式化雪場名稱
-  const formatResortName = (resortId: string) => {
+  // 建立雪場 ID 到雪場資料的映射
+  const resortsMap = resorts.reduce((acc, resort) => {
+    acc[resort.resort_id] = resort;
+    return acc;
+  }, {} as Record<string, Resort>);
+
+  // 獲取雪場名稱（優先中文）
+  const getResortName = (resortId: string) => {
+    const resort = resortsMap[resortId];
+    if (resort) {
+      return `${resort.names.zh} ${resort.names.en}`;
+    }
+    // 降級方案：格式化 resort_id
     return resortId
       .split('_')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -402,7 +421,7 @@ function ResortGroupedTripsView({
   return (
     <div className="space-y-6">
       {Object.entries(groupedByResort).map(([resortId, resortTrips]) => {
-        const resortName = formatResortName(resortId);
+        const resortName = getResortName(resortId);
         const tripCount = resortTrips.length;
 
         return (
