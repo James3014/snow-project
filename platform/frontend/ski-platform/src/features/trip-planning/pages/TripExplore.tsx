@@ -2,7 +2,7 @@
  * Public Trip Explore Page
  * 公開行程探索頁面（尋找雪伴）
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import Card from '@/shared/components/Card';
@@ -18,11 +18,7 @@ export default function TripExplore() {
     end_date: '',
   });
 
-  useEffect(() => {
-    loadTrips();
-  }, [filters]);
-
-  const loadTrips = async () => {
+  const loadTrips = useCallback(async () => {
     try {
       setLoading(true);
       // Note: API 尚未完全實現，使用臨時方案
@@ -37,7 +33,11 @@ export default function TripExplore() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadTrips();
+  }, [loadTrips]);
 
   return (
     <div className="container mx-auto px-4 py-8">

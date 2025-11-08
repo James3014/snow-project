@@ -2,7 +2,7 @@
  * Season Management Page
  * 雪季管理頁面
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
@@ -29,16 +29,7 @@ export default function SeasonManagement() {
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  useEffect(() => {
-    if (userId) {
-      loadSeasons();
-    } else {
-      // 未登入時，停止載入狀態
-      setLoading(false);
-    }
-  }, [userId]);
-
-  const loadSeasons = async () => {
+  const loadSeasons = useCallback(async () => {
     if (!userId) return;
 
     try {
@@ -70,7 +61,16 @@ export default function SeasonManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      loadSeasons();
+    } else {
+      // 未登入時，停止載入狀態
+      setLoading(false);
+    }
+  }, [userId, loadSeasons]);
 
   const handleCreateSeason = async (data: SeasonCreate) => {
     if (!userId) return;

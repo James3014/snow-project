@@ -2,7 +2,7 @@
  * Quick Course Record Flow
  * 快速記錄雪道流程組件
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { resortApiService } from '@/shared/api/resortApi';
 import { courseTrackingApi } from '@/features/course-tracking/api/courseTrackingApi';
 import EnhancedCourseRecordModal, { type CourseRecordData } from '@/features/course-tracking/components/EnhancedCourseRecordModal';
@@ -32,11 +32,7 @@ export default function QuickCourseRecordFlow({
   const [currentRecordingIndex, setCurrentRecordingIndex] = useState<number>(-1);
   const [recordedCourses, setRecordedCourses] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    loadResort();
-  }, [resortId]);
-
-  const loadResort = async () => {
+  const loadResort = useCallback(async () => {
     try {
       setLoading(true);
       const resortData = await resortApiService.getResort(resortId);
@@ -46,7 +42,11 @@ export default function QuickCourseRecordFlow({
     } finally {
       setLoading(false);
     }
-  };
+  }, [resortId]);
+
+  useEffect(() => {
+    loadResort();
+  }, [loadResort]);
 
   const handleToggleCourse = (courseName: string) => {
     const newSelected = new Set(selectedCourses);

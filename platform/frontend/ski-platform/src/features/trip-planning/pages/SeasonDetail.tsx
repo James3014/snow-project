@@ -2,7 +2,7 @@
  * Season Detail Page with Calendar View
  * 雪季詳情頁面（含日曆視圖）
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
@@ -23,19 +23,7 @@ export default function SeasonDetail() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  useEffect(() => {
-    if (seasonId && userId) {
-      loadSeasonData();
-    }
-  }, [seasonId, userId]);
-
-  useEffect(() => {
-    if (activeTab === 'calendar' && seasonId && userId) {
-      loadCalendarData();
-    }
-  }, [activeTab, currentMonth, seasonId, userId]);
-
-  const loadSeasonData = async () => {
+  const loadSeasonData = useCallback(async () => {
     if (!seasonId || !userId) return;
 
     try {
@@ -54,9 +42,9 @@ export default function SeasonDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [seasonId, userId]);
 
-  const loadCalendarData = async () => {
+  const loadCalendarData = useCallback(async () => {
     if (!seasonId || !userId) return;
 
     try {
@@ -67,7 +55,19 @@ export default function SeasonDetail() {
     } catch (err) {
       console.error('載入日曆資料失敗:', err);
     }
-  };
+  }, [seasonId, userId, currentMonth]);
+
+  useEffect(() => {
+    if (seasonId && userId) {
+      loadSeasonData();
+    }
+  }, [seasonId, userId, loadSeasonData]);
+
+  useEffect(() => {
+    if (activeTab === 'calendar' && seasonId && userId) {
+      loadCalendarData();
+    }
+  }, [activeTab, currentMonth, seasonId, userId, loadCalendarData]);
 
   const changeMonth = (offset: number) => {
     const newMonth = new Date(currentMonth);
