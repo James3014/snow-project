@@ -143,7 +143,7 @@ export default function EnhancedCourseRecordModal({
             <label className="block text-sm font-semibold text-gray-700 mb-3">
               ⭐ 整體評分（選填）
             </label>
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
@@ -153,10 +153,13 @@ export default function EnhancedCourseRecordModal({
                     star <= rating ? 'text-yellow-400' : 'text-gray-300'
                   }`}
                 >
-                  ⭐
+                  {star <= rating ? '★' : '☆'}
                 </button>
               ))}
             </div>
+            {rating > 0 && (
+              <p className="text-sm text-gray-600 mt-2">已選擇 {rating} 星</p>
+            )}
           </div>
 
           {/* Snow Condition */}
