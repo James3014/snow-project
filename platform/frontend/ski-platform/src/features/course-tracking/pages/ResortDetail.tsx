@@ -95,16 +95,20 @@ export default function ResortDetail() {
           },
           country_code: 'JP',
           region: 'Unknown',
+          coordinates: { lat: 0, lng: 0 },
           snow_stats: {
             lifts: 0,
             courses_total: 0,
-            courses_beginner: 0,
-            courses_intermediate: 0,
-            courses_advanced: 0,
+            beginner_ratio: 0,
+            intermediate_ratio: 0,
+            advanced_ratio: 0,
+            longest_run: 0,
+            vertical_drop: 0,
+            night_ski: false,
           },
           courses: [],
         };
-        setResort(fallbackResort as any);
+        setResort(fallbackResort as Resort);
       } finally {
         setResortLoading(false);
       }
@@ -270,15 +274,15 @@ export default function ResortDetail() {
                   </div>
                   <div>
                     <span className="text-gray-500">初級雪道：</span>
-                    <span className="font-medium text-green-600">{resort.snow_stats.courses_beginner} 條</span>
+                    <span className="font-medium text-green-600">{Math.round(resort.snow_stats.courses_total * resort.snow_stats.beginner_ratio)} 條</span>
                   </div>
                   <div>
                     <span className="text-gray-500">中級雪道：</span>
-                    <span className="font-medium text-blue-600">{resort.snow_stats.courses_intermediate} 條</span>
+                    <span className="font-medium text-blue-600">{Math.round(resort.snow_stats.courses_total * resort.snow_stats.intermediate_ratio)} 條</span>
                   </div>
                   <div>
                     <span className="text-gray-500">高級雪道：</span>
-                    <span className="font-medium text-red-600">{resort.snow_stats.courses_advanced} 條</span>
+                    <span className="font-medium text-red-600">{Math.round(resort.snow_stats.courses_total * resort.snow_stats.advanced_ratio)} 條</span>
                   </div>
                   <div>
                     <span className="text-gray-500">纜車數：</span>
@@ -295,8 +299,7 @@ export default function ResortDetail() {
           icon="🔐"
           title="登入以追蹤進度"
           description="登入後即可記錄完成的雪道、查看個人進度、獲得成就！"
-          actionText="前往登入"
-          actionLink="/login"
+          action={{ label: '前往登入', onClick: () => navigate('/login') }}
         />
       </div>
     );
