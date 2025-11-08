@@ -216,8 +216,7 @@ export default function CourseHistory() {
           icon="🔐"
           title="需要登入"
           description="登入後即可查看您的滑雪記錄、統計數據和評分排行！"
-          actionText="前往登入"
-          actionLink="/login"
+          action={{ label: '前往登入', onClick: () => navigate('/login') }}
         />
       </div>
     );

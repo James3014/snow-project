@@ -1,9 +1,11 @@
 import { useAchievements } from '../hooks/useCourseTracking';
 import { useAppSelector } from '@/store/hooks';
+import { useNavigate } from 'react-router-dom';
 import Card from '@/shared/components/Card';
 import EmptyState from '@/shared/components/EmptyState';
 
 export default function Achievements() {
+  const navigate = useNavigate();
   const userId = useAppSelector((state) => state.auth.user?.user_id);
   const { achievements, loading } = useAchievements();
 
@@ -18,8 +20,7 @@ export default function Achievements() {
           icon="🔐"
           title="需要登入"
           description="登入後即可查看您獲得的成就和積分！"
-          actionText="前往登入"
-          actionLink="/login"
+          action={{ label: '前往登入', onClick: () => navigate('/login') }}
         />
       </div>
     );
@@ -33,8 +34,7 @@ export default function Achievements() {
           icon="🏆"
           title="還沒有獲得成就"
           description="開始記錄滑雪、完成挑戰來獲得成就和積分！"
-          actionText="前往記錄"
-          actionLink="/resorts"
+          action={{ label: '前往記錄', onClick: () => navigate('/resorts') }}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

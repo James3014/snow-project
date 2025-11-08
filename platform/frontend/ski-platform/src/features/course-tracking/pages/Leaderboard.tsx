@@ -1,9 +1,11 @@
 import { useLeaderboard } from '../hooks/useCourseTracking';
 import { useAppSelector } from '@/store/hooks';
+import { useNavigate } from 'react-router-dom';
 import Card from '@/shared/components/Card';
 import EmptyState from '@/shared/components/EmptyState';
 
 export default function Leaderboard() {
+  const navigate = useNavigate();
   const { leaderboard, loading } = useLeaderboard();
   const currentUserId = useAppSelector(state => state.auth.user?.user_id);
 
@@ -18,8 +20,7 @@ export default function Leaderboard() {
           icon="🏆"
           title="排行榜尚無數據"
           description="開始記錄雪道、獲得成就來累積積分，成為第一個上榜的滑雪高手！"
-          actionText="前往記錄"
-          actionLink="/history"
+          action={{ label: '前往記錄', onClick: () => navigate('/history') }}
         />
       ) : (
         <div className="space-y-2">

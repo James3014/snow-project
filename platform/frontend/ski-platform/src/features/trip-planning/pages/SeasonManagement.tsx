@@ -109,8 +109,7 @@ export default function SeasonManagement() {
           icon="🔐"
           title="需要登入"
           description="登入後即可創建雪季、規劃行程、追蹤目標！開始記錄您的滑雪之旅。"
-          actionText="前往登入"
-          actionLink="/login"
+          action={{ label: '前往登入', onClick: () => navigate('/login') }}
         />
       </div>
     );
