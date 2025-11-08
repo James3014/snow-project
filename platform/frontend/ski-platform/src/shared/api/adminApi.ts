@@ -34,8 +34,8 @@ export interface UserDetail {
   status: string;
   bio: string | null;
   coach_cert_level: string | null;
-  preferred_resorts: any[] | null;
-  teaching_languages: any[] | null;
+  preferred_resorts: string[] | null;
+  teaching_languages: string[] | null;
   created_at: string;
   updated_at: string;
 }

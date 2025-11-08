@@ -2,7 +2,7 @@
  * Resort Detail Page - 雪場詳情頁（核心頁面）
  */
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { courseTrackingApi } from '../api/courseTrackingApi';
 import { setProgress, setVisits, addVisit, addToast } from '@/store/slices/courseTrackingSlice';
@@ -74,11 +74,14 @@ export default function ResortDetail() {
         const resort = await resortApiService.getResort(resortId);
         console.log('雪場載入成功:', resort);
         setResort(resort);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('載入雪場失敗 - resortId:', resortId);
         console.error('錯誤詳情:', err);
-        console.error('錯誤狀態碼:', err?.response?.status);
-        console.error('錯誤訊息:', err?.response?.data);
+        if (err && typeof err === 'object' && 'response' in err) {
+          const axiosErr = err as { response?: { status?: number; data?: unknown } };
+          console.error('錯誤狀態碼:', axiosErr.response?.status);
+          console.error('錯誤訊息:', axiosErr.response?.data);
+        }
 
         // 無論什麼錯誤，都不阻擋用戶，只在控制台記錄
         // 暫時不設置錯誤，讓頁面繼續載入
@@ -117,13 +120,7 @@ export default function ResortDetail() {
     loadResort();
   }, [resortId]);
 
-  useEffect(() => {
-    if (userId && resortId && resort) {
-      loadData();
-    }
-  }, [userId, resortId, resort]); // ✅ 添加 resort 依賴
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!userId || !resortId || !resort) return;
     setLoading(true);
     try {
@@ -133,8 +130,8 @@ export default function ResortDetail() {
       ]);
       dispatch(setProgress({ resortId, progress: progressData }));
       dispatch(setVisits(visitsData));
-    } catch (error: any) {
-      console.error('載入進度資料錯誤:', error);
+    } catch {
+      console.error('載入進度資料錯誤');
       // 無論任何錯誤（404, 403, 網絡錯誤等），都創建初始進度讓用戶可以繼續使用
       // 這樣即使後端 API 暫時無法訪問，前端仍能正常顯示雪場資訊
       const initialProgress = {
@@ -152,7 +149,13 @@ export default function ResortDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, resortId, resort, dispatch]);
+
+  useEffect(() => {
+    if (userId && resortId && resort) {
+      loadData();
+    }
+  }, [userId, resortId, resort, loadData]);
 
   const handleToggleCourse = async (courseName: string, isCompleted: boolean) => {
     if (!userId || !resortId) return;
@@ -198,7 +201,7 @@ export default function ResortDetail() {
           setIsShareModalOpen(true);
         }
       }, 500);
-    } catch (error: any) {
+    } catch {
       dispatch(addToast({ type: 'error', message: '記錄失敗，請稍後再試' }));
     }
   };

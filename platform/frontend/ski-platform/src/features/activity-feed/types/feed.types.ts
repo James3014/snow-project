@@ -15,6 +15,7 @@ export interface FeedItem {
   activity_type: 'course_visit' | 'achievement_earned' | 'recommendation_created';
   entity_type: string | null;
   entity_id: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content_json: Record<string, any>;
   visibility: 'public' | 'followers' | 'private';
   likes_count: number;
@@ -23,6 +24,14 @@ export interface FeedItem {
   updated_at: string;
   is_liked: boolean;
   user: UserInfo | null;
+}
+
+export interface FollowerUser {
+  user_id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  experience_level: string | null;
+  is_following: boolean;
 }
 
 export interface FeedResponse {

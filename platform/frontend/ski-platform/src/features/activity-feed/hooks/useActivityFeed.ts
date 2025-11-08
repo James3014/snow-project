@@ -33,8 +33,9 @@ export const useActivityFeed = (feedType: FeedType = 'all') => {
 
         setCursor(response.next_cursor);
         setHasMore(response.has_more);
-      } catch (err: any) {
-        setError(err.message || '獲取動態失敗');
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : '獲取動態失敗';
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -58,7 +59,7 @@ export const useActivityFeed = (feedType: FeedType = 'all') => {
   // 初始加載
   useEffect(() => {
     refresh();
-  }, [feedType]);
+  }, [feedType, refresh]);
 
   // 更新單個項目（用於點讚後更新）
   const updateItem = useCallback((itemId: string, updates: Partial<FeedItem>) => {

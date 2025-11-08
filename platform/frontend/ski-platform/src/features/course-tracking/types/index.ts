@@ -114,6 +114,7 @@ export interface AchievementDefinition {
   icon: string;
   category: AchievementCategory;
   points: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   requirements: Record<string, any>;
   is_hidden: boolean;
   display_order: number;
@@ -124,6 +125,7 @@ export interface UserAchievement {
   id: string;
   user_id: string;
   achievement_type: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   achievement_data?: Record<string, any>;
   points: number;
   earned_at: string;

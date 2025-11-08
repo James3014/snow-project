@@ -22,8 +22,11 @@ export default function AdminDashboard() {
       const data = await adminApi.getStatistics();
       setStatistics(data);
       setError(null);
-    } catch (err: any) {
-      setError(err.response?.data?.detail || '載入統計資料失敗');
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err.response as { data?: { detail?: string } })?.data?.detail || '載入統計資料失敗'
+        : '載入統計資料失敗';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

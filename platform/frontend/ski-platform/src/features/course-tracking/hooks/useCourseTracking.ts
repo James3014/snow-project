@@ -2,7 +2,7 @@
  * Custom Hooks for Course Tracking
  * 課程追蹤自訂 Hooks
  */
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { courseTrackingApi } from '../api/courseTrackingApi';
 import {
@@ -30,24 +30,24 @@ export function useCourseVisits(resortId?: string) {
   const visits = useAppSelector((state) => state.courseTracking.visits);
   const loading = useAppSelector((state) => state.courseTracking.loading.visits);
 
-  useEffect(() => {
-    if (userId) {
-      fetchVisits();
-    }
-  }, [userId, resortId]);
-
-  const fetchVisits = async () => {
+  const fetchVisits = useCallback(async () => {
     if (!userId) return;
     dispatch(setLoadingVisits(true));
     try {
       const data = await courseTrackingApi.visits.list(userId, resortId);
       dispatch(setVisits(data));
-    } catch (error: any) {
+    } catch {
       dispatch(addToast({ type: 'error', message: '載入訪問記錄失敗' }));
     } finally {
       dispatch(setLoadingVisits(false));
     }
-  };
+  }, [userId, resortId, dispatch]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchVisits();
+    }
+  }, [userId, fetchVisits]);
 
   return { visits, loading, refetch: fetchVisits };
 }
@@ -61,24 +61,24 @@ export function useRecommendations(resortId?: string) {
   const recommendations = useAppSelector((state) => state.courseTracking.recommendations);
   const loading = useAppSelector((state) => state.courseTracking.loading.recommendations);
 
-  useEffect(() => {
-    if (userId) {
-      fetchRecommendations();
-    }
-  }, [userId, resortId]);
-
-  const fetchRecommendations = async () => {
+  const fetchRecommendations = useCallback(async () => {
     if (!userId) return;
     dispatch(setLoadingRecommendations(true));
     try {
       const data = await courseTrackingApi.recommendations.list(userId, resortId);
       dispatch(setRecommendations(data));
-    } catch (error: any) {
+    } catch {
       dispatch(addToast({ type: 'error', message: '載入推薦失敗' }));
     } finally {
       dispatch(setLoadingRecommendations(false));
     }
-  };
+  }, [userId, resortId, dispatch]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchRecommendations();
+    }
+  }, [userId, fetchRecommendations]);
 
   return { recommendations, loading, refetch: fetchRecommendations };
 }
@@ -92,24 +92,24 @@ export function useResortProgress(resortId: string, totalCourses: number) {
   const progress = useAppSelector((state) => state.courseTracking.progress[resortId]);
   const loading = useAppSelector((state) => state.courseTracking.loading.progress);
 
-  useEffect(() => {
-    if (userId && resortId) {
-      fetchProgress();
-    }
-  }, [userId, resortId, totalCourses]);
-
-  const fetchProgress = async () => {
+  const fetchProgress = useCallback(async () => {
     if (!userId || !resortId) return;
     dispatch(setLoadingProgress(true));
     try {
       const data = await courseTrackingApi.progress.getResortProgress(userId, resortId, totalCourses);
       dispatch(setProgress({ resortId, progress: data }));
-    } catch (error: any) {
+    } catch {
       dispatch(addToast({ type: 'error', message: '載入進度失敗' }));
     } finally {
       dispatch(setLoadingProgress(false));
     }
-  };
+  }, [userId, resortId, totalCourses, dispatch]);
+
+  useEffect(() => {
+    if (userId && resortId) {
+      fetchProgress();
+    }
+  }, [userId, resortId, fetchProgress]);
 
   return { progress, loading, refetch: fetchProgress };
 }
@@ -122,24 +122,24 @@ export function useCourseRankings(resortId: string) {
   const rankings = useAppSelector((state) => state.courseTracking.rankings[resortId] || []);
   const loading = useAppSelector((state) => state.courseTracking.loading.rankings);
 
-  useEffect(() => {
-    if (resortId) {
-      fetchRankings();
-    }
-  }, [resortId]);
-
-  const fetchRankings = async () => {
+  const fetchRankings = useCallback(async () => {
     if (!resortId) return;
     dispatch(setLoadingRankings(true));
     try {
       const data = await courseTrackingApi.rankings.getCourseRankings(resortId);
       dispatch(setRankings({ resortId, rankings: data }));
-    } catch (error: any) {
+    } catch {
       dispatch(addToast({ type: 'error', message: '載入排名失敗' }));
     } finally {
       dispatch(setLoadingRankings(false));
     }
-  };
+  }, [resortId, dispatch]);
+
+  useEffect(() => {
+    if (resortId) {
+      fetchRankings();
+    }
+  }, [resortId, fetchRankings]);
 
   return { rankings, loading, refetch: fetchRankings };
 }
@@ -153,24 +153,24 @@ export function useAchievements() {
   const achievements = useAppSelector((state) => state.courseTracking.achievements);
   const loading = useAppSelector((state) => state.courseTracking.loading.achievements);
 
-  useEffect(() => {
-    if (userId) {
-      fetchAchievements();
-    }
-  }, [userId]);
-
-  const fetchAchievements = async () => {
+  const fetchAchievements = useCallback(async () => {
     if (!userId) return;
     dispatch(setLoadingAchievements(true));
     try {
       const data = await courseTrackingApi.achievements.getUserAchievements(userId);
       dispatch(setAchievements(data));
-    } catch (error: any) {
+    } catch {
       dispatch(addToast({ type: 'error', message: '載入成就失敗' }));
     } finally {
       dispatch(setLoadingAchievements(false));
     }
-  };
+  }, [userId, dispatch]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchAchievements();
+    }
+  }, [userId, fetchAchievements]);
 
   return { achievements, loading, refetch: fetchAchievements };
 }
@@ -183,21 +183,21 @@ export function useLeaderboard() {
   const leaderboard = useAppSelector((state) => state.courseTracking.leaderboard);
   const loading = useAppSelector((state) => state.courseTracking.loading.leaderboard);
 
-  useEffect(() => {
-    fetchLeaderboard();
-  }, []);
-
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     dispatch(setLoadingLeaderboard(true));
     try {
       const data = await courseTrackingApi.leaderboard.getLeaderboard();
       dispatch(setLeaderboard(data));
-    } catch (error: any) {
+    } catch {
       dispatch(addToast({ type: 'error', message: '載入排行榜失敗' }));
     } finally {
       dispatch(setLoadingLeaderboard(false));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
 
   return { leaderboard, loading, refetch: fetchLeaderboard };
 }

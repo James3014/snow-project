@@ -17,8 +17,9 @@ export const useSkiMap = (userId: string) => {
         setError(null);
         const data = await skiMapApi.getSkiMapData(userId);
         setMapData(data);
-      } catch (err: any) {
-        setError(err.message || '獲取地圖數據失敗');
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : '獲取地圖數據失敗';
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }

@@ -31,10 +31,13 @@ export const loginThunk = createAsyncThunk(
       const response = await authApi.login(credentials);
       localStorage.setItem('auth_token', response.access_token);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // 提供更友善的錯誤訊息
-      const status = error.response?.status;
-      const detail = error.response?.data?.detail;
+      const axiosError = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { status?: number; data?: { detail?: string } } })
+        : null;
+      const status = axiosError?.response?.status;
+      const detail = axiosError?.response?.data?.detail;
 
       let errorMessage = '登入失敗，請稍後再試';
 
@@ -46,7 +49,7 @@ export const loginThunk = createAsyncThunk(
         errorMessage = '登入嘗試次數過多，請稍後再試';
       } else if (detail && typeof detail === 'string') {
         errorMessage = detail;
-      } else if (!error.response) {
+      } else if (!axiosError?.response) {
         errorMessage = '無法連接伺服器，請檢查網路連線';
       }
 
@@ -71,10 +74,13 @@ export const registerThunk = createAsyncThunk(
       const response = await authApi.register(data);
       localStorage.setItem('auth_token', response.access_token);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // 提供更友善的錯誤訊息
-      const status = error.response?.status;
-      const detail = error.response?.data?.detail;
+      const axiosError = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { status?: number; data?: { detail?: string } } })
+        : null;
+      const status = axiosError?.response?.status;
+      const detail = axiosError?.response?.data?.detail;
 
       let errorMessage = '註冊失敗，請稍後再試';
 
@@ -90,7 +96,7 @@ export const registerThunk = createAsyncThunk(
         errorMessage = '此帳號已存在，請直接登入';
       } else if (detail && typeof detail === 'string') {
         errorMessage = detail;
-      } else if (!error.response) {
+      } else if (!axiosError?.response) {
         errorMessage = '無法連接伺服器，請檢查網路連線';
       }
 
@@ -109,9 +115,12 @@ export const loadUserThunk = createAsyncThunk(
       }
       const user = await authApi.getCurrentUser();
       return user;
-    } catch (error: any) {
+    } catch (error: unknown) {
       localStorage.removeItem('auth_token');
-      return rejectWithValue(error.response?.data?.detail || '載入用戶資料失敗');
+      const axiosError = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { data?: { detail?: string } } })
+        : null;
+      return rejectWithValue(axiosError?.response?.data?.detail || '載入用戶資料失敗');
     }
   }
 );
