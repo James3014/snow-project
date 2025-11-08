@@ -68,7 +68,13 @@ def record_course_visit(
         resort_id=visit.resort_id,
         course_name=visit.course_name,
         visited_date=visit.visited_date or date.today(),
-        notes=visit.notes
+        notes=visit.notes,
+        # 增強記錄體驗欄位
+        snow_condition=visit.snow_condition,
+        weather=visit.weather,
+        difficulty_feeling=visit.difficulty_feeling,
+        rating=visit.rating,
+        mood_tags=visit.mood_tags
     )
 
     try:

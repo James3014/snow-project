@@ -32,7 +32,25 @@ export const loginThunk = createAsyncThunk(
       localStorage.setItem('auth_token', response.access_token);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.detail || '登入失敗');
+      // 提供更友善的錯誤訊息
+      const status = error.response?.status;
+      const detail = error.response?.data?.detail;
+
+      let errorMessage = '登入失敗，請稍後再試';
+
+      if (status === 401 || status === 403) {
+        errorMessage = '帳號或密碼錯誤，請重新輸入';
+      } else if (status === 404) {
+        errorMessage = '帳號不存在，請先註冊';
+      } else if (status === 429) {
+        errorMessage = '登入嘗試次數過多，請稍後再試';
+      } else if (detail && typeof detail === 'string') {
+        errorMessage = detail;
+      } else if (!error.response) {
+        errorMessage = '無法連接伺服器，請檢查網路連線';
+      }
+
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -54,7 +72,29 @@ export const registerThunk = createAsyncThunk(
       localStorage.setItem('auth_token', response.access_token);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.detail || '註冊失敗');
+      // 提供更友善的錯誤訊息
+      const status = error.response?.status;
+      const detail = error.response?.data?.detail;
+
+      let errorMessage = '註冊失敗，請稍後再試';
+
+      if (status === 400) {
+        if (detail?.includes('email') || detail?.includes('Email')) {
+          errorMessage = '此電子郵件已被使用，請使用其他郵件或直接登入';
+        } else if (detail?.includes('password')) {
+          errorMessage = '密碼格式不符合要求，請使用更強的密碼';
+        } else {
+          errorMessage = detail || '註冊資料格式錯誤，請檢查後重試';
+        }
+      } else if (status === 409) {
+        errorMessage = '此帳號已存在，請直接登入';
+      } else if (detail && typeof detail === 'string') {
+        errorMessage = detail;
+      } else if (!error.response) {
+        errorMessage = '無法連接伺服器，請檢查網路連線';
+      }
+
+      return rejectWithValue(errorMessage);
     }
   }
 );

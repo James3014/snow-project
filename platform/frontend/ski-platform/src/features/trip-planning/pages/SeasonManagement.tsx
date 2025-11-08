@@ -21,6 +21,9 @@ export default function SeasonManagement() {
   useEffect(() => {
     if (userId) {
       loadSeasons();
+    } else {
+      // 未登入時，停止載入狀態
+      setLoading(false);
     }
   }, [userId]);
 
@@ -90,6 +93,25 @@ export default function SeasonManagement() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">載入中...</p>
         </div>
+      </div>
+    );
+  }
+
+  // 未登入用戶提示
+  if (!userId) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">雪季管理</h1>
+          <p className="text-gray-600">管理您的滑雪季節和行程規劃</p>
+        </div>
+        <EmptyState
+          icon="🔐"
+          title="需要登入"
+          description="登入後即可創建雪季、規劃行程、追蹤目標！開始記錄您的滑雪之旅。"
+          actionText="前往登入"
+          actionLink="/login"
+        />
       </div>
     );
   }
