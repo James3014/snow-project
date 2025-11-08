@@ -34,6 +34,35 @@
 - **修復**: 在 `Leaderboard.tsx` 中添加 EmptyState 組件，提供友善的引導訊息
 - **改善**: 顯示「排行榜尚無數據」提示，引導用戶開始記錄
 
+**3. 雪場詳情頁面未登入體驗 - 已改善 ✅**
+- **問題**: 未登入用戶訪問雪場詳情頁時顯示「載入失敗」錯誤
+- **修復**: 允許未登入用戶查看雪場基本資訊（雪道數、難度分布、纜車數等）
+- **改善**: 顯示友善的「登入以追蹤進度」提示，提供明確的登入入口
+- **文件**: `platform/frontend/ski-platform/src/features/course-tracking/pages/ResortDetail.tsx`
+
+**4. 行程規劃頁面無限載入 - 已修復 ✅**
+- **問題**: 未登入狀態訪問行程頁面時持續顯示載入動畫
+- **原因**: useEffect 中未登入時不執行 loadSeasons，但 loading 初始值為 true
+- **修復**: 未登入時停止載入狀態，顯示友善的登入提示
+- **文件**: `platform/frontend/ski-platform/src/features/trip-planning/pages/SeasonManagement.tsx`
+
+**5. 權限控制不一致 - 已統一 ✅**
+- **問題**: 不同頁面的權限控制策略不一致
+- **改善**: 所有頁面統一使用友善的登入提示，包括：
+  - 記錄歷史頁面（CourseHistory.tsx）
+  - 成就頁面（Achievements.tsx）
+  - 使用一致的 EmptyState 組件風格
+
+**6. 登入/註冊錯誤訊息優化 - 已改善 ✅**
+- **問題**: 登入失敗只顯示簡單的「登入失敗」文字
+- **改善**: 提供更具體的錯誤原因：
+  - 401/403: 「帳號或密碼錯誤，請重新輸入」
+  - 404: 「帳號不存在，請先註冊」
+  - 429: 「登入嘗試次數過多，請稍後再試」
+  - 無網路: 「無法連接伺服器，請檢查網路連線」
+  - 註冊錯誤也提供詳細說明（郵件重複、密碼格式等）
+- **文件**: `platform/frontend/ski-platform/src/store/slices/authSlice.ts`
+
 ### 📈 功能完成度評估
 
 | 功能模組 | 完成度 | 評分 | 備註 |
