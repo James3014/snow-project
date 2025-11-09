@@ -5,13 +5,14 @@
 import { useState, useEffect } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { resortApiService } from '@/shared/api/resortApi';
+import { calculateSeasonId } from '../utils/seasonUtils';
 import QuickCourseRecordFlow from './QuickCourseRecordFlow';
 import type { TripCreate, TripStatus, FlightStatus, AccommodationStatus } from '../types';
 import type { Resort } from '@/shared/data/resorts';
 
 interface TripCreateModalProps {
   onClose: () => void;
-  onCreate: (trips: Omit<TripCreate, 'season_id'>[]) => void;
+  onCreate: (trips: TripCreate[]) => void;
 }
 
 export default function TripCreateModal({ onClose, onCreate }: TripCreateModalProps) {
@@ -56,10 +57,19 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 自動計算雪季 ID
+    const seasonId = calculateSeasonId(formData.start_date);
+
+    // 加上 season_id
+    const tripWithSeason: TripCreate = {
+      ...formData,
+      season_id: seasonId,
+    };
+
     // 如果狀態是「已完成」且用戶選擇立即記錄
     const shouldRecordCourses = formData.trip_status === 'completed' && shouldRecordAfterSave;
 
-    onCreate([formData]);
+    onCreate([tripWithSeason]);
 
     // 如果需要記錄雪道，顯示快速記錄界面
     if (shouldRecordCourses && userId) {

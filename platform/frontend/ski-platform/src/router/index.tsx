@@ -100,7 +100,7 @@ export const router = createBrowserRouter([
         element: <AdminRoute><UserDetailPage /></AdminRoute>,
       },
       {
-        path: 'seasons',
+        path: 'trips',
         element: <SeasonManagement />,
       },
       {

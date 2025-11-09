@@ -111,6 +111,7 @@ export interface TripUpdate {
   title?: string;
   start_date?: string;
   end_date?: string;
+  season_id?: string;
   flexibility?: TripFlexibility;
   flight_status?: FlightStatus;
   accommodation_status?: AccommodationStatus;
