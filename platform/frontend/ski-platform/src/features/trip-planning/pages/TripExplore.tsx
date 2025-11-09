@@ -5,12 +5,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
+import { resortApiService } from '@/shared/api/resortApi';
 import Card from '@/shared/components/Card';
 import type { Trip } from '../types';
+import type { Resort } from '@/shared/data/resorts';
 
 export default function TripExplore() {
   const navigate = useNavigate();
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     resort_id: '',
@@ -38,6 +41,33 @@ export default function TripExplore() {
   useEffect(() => {
     loadTrips();
   }, [loadTrips]);
+
+  useEffect(() => {
+    const loadResorts = async () => {
+      try {
+        const response = await resortApiService.getAllResorts();
+        setResorts(response.items);
+      } catch (error) {
+        console.error('載入雪場列表失敗:', error);
+      }
+    };
+    loadResorts();
+  }, []);
+
+  // 建立雪場 ID 到雪場資料的映射
+  const resortsMap = resorts.reduce((acc, resort) => {
+    acc[resort.resort_id] = resort;
+    return acc;
+  }, {} as Record<string, Resort>);
+
+  // 獲取雪場名稱（優先中文）
+  const getResortName = (resortId: string) => {
+    const resort = resortsMap[resortId];
+    if (resort) {
+      return `${resort.names.zh} ${resort.names.en}`;
+    }
+    return resortId;
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -93,23 +123,26 @@ export default function TripExplore() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips.map((trip) => (
-            <Card key={trip.trip_id} className="p-6 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                {trip.title || trip.resort_id}
-              </h3>
-              <div className="space-y-2 text-sm text-gray-600 mb-4">
-                <div>📅 {new Date(trip.start_date).toLocaleDateString('zh-TW')} - {new Date(trip.end_date).toLocaleDateString('zh-TW')}</div>
-                <div>👥 {trip.current_buddies}/{trip.max_buddies} 雪伴</div>
-              </div>
-              <button
-                onClick={() => navigate(`/trips/${trip.trip_id}`)}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                查看詳情
-              </button>
-            </Card>
-          ))}
+          {trips.map((trip) => {
+            const displayName = trip.title || getResortName(trip.resort_id);
+            return (
+              <Card key={trip.trip_id} className="p-6 hover:shadow-lg transition-shadow">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  {displayName}
+                </h3>
+                <div className="space-y-2 text-sm text-gray-600 mb-4">
+                  <div>📅 {new Date(trip.start_date).toLocaleDateString('zh-TW')} - {new Date(trip.end_date).toLocaleDateString('zh-TW')}</div>
+                  <div>👥 {trip.current_buddies}/{trip.max_buddies} 雪伴</div>
+                </div>
+                <button
+                  onClick={() => navigate(`/trips/${trip.trip_id}`)}
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  查看詳情
+                </button>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
