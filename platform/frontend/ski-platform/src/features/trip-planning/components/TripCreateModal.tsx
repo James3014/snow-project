@@ -30,8 +30,10 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
     start_date: '',
     end_date: '',
     trip_status: 'planning' as TripStatus,
+    flexibility: 'fixed',
     flight_status: 'not_planned' as FlightStatus,
     accommodation_status: 'not_planned' as AccommodationStatus,
+    visibility: 'private',
     max_buddies: 1,
     notes: '',
   });
@@ -142,7 +144,18 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                   type="date"
                   required
                   value={formData.start_date}
-                  onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                  onChange={(e) => {
+                    const startDate = e.target.value;
+                    // 自動設置結束日期為隔天
+                    if (startDate) {
+                      const nextDay = new Date(startDate);
+                      nextDay.setDate(nextDay.getDate() + 1);
+                      const endDateStr = nextDay.toISOString().split('T')[0];
+                      setFormData({ ...formData, start_date: startDate, end_date: endDateStr });
+                    } else {
+                      setFormData({ ...formData, start_date: startDate });
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
