@@ -95,15 +95,18 @@ export default function AdminDashboard() {
             <p className="text-sm text-gray-600">查看和管理所有用戶</p>
           </Link>
 
+          <Link
+            to="/admin/ai-config"
+            className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+          >
+            <div className="text-2xl mb-2">🤖</div>
+            <h3 className="font-medium text-gray-900">AI 助手配置</h3>
+            <p className="text-sm text-gray-600">配置 AI 模型和 API Key</p>
+          </Link>
+
           <div className="block p-4 border border-gray-200 rounded-lg bg-gray-50">
             <div className="text-2xl mb-2">📊</div>
             <h3 className="font-medium text-gray-500">統計報表</h3>
-            <p className="text-sm text-gray-400">即將推出</p>
-          </div>
-
-          <div className="block p-4 border border-gray-200 rounded-lg bg-gray-50">
-            <div className="text-2xl mb-2">⚙️</div>
-            <h3 className="font-medium text-gray-500">系統設置</h3>
             <p className="text-sm text-gray-400">即將推出</p>
           </div>
         </div>
