@@ -213,6 +213,7 @@ export default function SeasonDetail() {
       {activeTab === 'calendar' && (
         <CalendarView
           trips={calendarTrips}
+          resorts={resorts}
           currentMonth={currentMonth}
           onMonthChange={changeMonth}
           onTripClick={(tripId) => navigate(`/trips/${tripId}`)}
@@ -237,11 +238,13 @@ export default function SeasonDetail() {
 // 日曆視圖組件
 function CalendarView({
   trips,
+  resorts,
   currentMonth,
   onMonthChange,
   onTripClick,
 }: {
   trips: CalendarTrip[];
+  resorts: Resort[];
   currentMonth: Date;
   onMonthChange: (offset: number) => void;
   onTripClick: (tripId: string) => void;
@@ -252,6 +255,21 @@ function CalendarView({
   const lastDay = new Date(year, month + 1, 0);
   const daysInMonth = lastDay.getDate();
   const startingDayOfWeek = firstDay.getDay();
+
+  // 建立雪場 ID 到雪場資料的映射
+  const resortsMap = resorts.reduce((acc, resort) => {
+    acc[resort.resort_id] = resort;
+    return acc;
+  }, {} as Record<string, Resort>);
+
+  // 獲取雪場名稱（優先中文）
+  const getResortName = (resortId: string) => {
+    const resort = resortsMap[resortId];
+    if (resort) {
+      return resort.names.zh;
+    }
+    return resortId;
+  };
 
   // 生成日曆格子
   const calendarDays: (number | null)[] = [];
@@ -325,16 +343,19 @@ function CalendarView({
             >
               <div className="text-sm font-medium mb-1">{day}</div>
               <div className="space-y-1">
-                {dayTrips.slice(0, 2).map((trip) => (
-                  <div
-                    key={trip.trip_id}
-                    onClick={() => onTripClick(trip.trip_id)}
-                    className="text-xs bg-blue-100 text-blue-800 px-1 py-0.5 rounded cursor-pointer hover:bg-blue-200 truncate"
-                    title={trip.title || trip.resort_id}
-                  >
-                    {trip.title || trip.resort_id}
-                  </div>
-                ))}
+                {dayTrips.slice(0, 2).map((trip) => {
+                  const displayName = trip.title || getResortName(trip.resort_id);
+                  return (
+                    <div
+                      key={trip.trip_id}
+                      onClick={() => onTripClick(trip.trip_id)}
+                      className="text-xs bg-blue-100 text-blue-800 px-1 py-0.5 rounded cursor-pointer hover:bg-blue-200 truncate"
+                      title={displayName}
+                    >
+                      {displayName}
+                    </div>
+                  );
+                })}
                 {dayTrips.length > 2 && (
                   <div className="text-xs text-gray-500">+{dayTrips.length - 2}</div>
                 )}

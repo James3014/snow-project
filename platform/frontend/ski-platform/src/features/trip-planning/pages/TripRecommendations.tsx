@@ -5,16 +5,31 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
+import { resortApiService } from '@/shared/api/resortApi';
 import Card from '@/shared/components/Card';
 import type { TripRecommendation } from '../types';
+import type { Resort } from '@/shared/data/resorts';
 
 export default function TripRecommendations() {
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState<TripRecommendation[]>([]);
+  const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadRecommendations();
+  }, []);
+
+  useEffect(() => {
+    const loadResorts = async () => {
+      try {
+        const response = await resortApiService.getAllResorts();
+        setResorts(response.items);
+      } catch (error) {
+        console.error('載入雪場列表失敗:', error);
+      }
+    };
+    loadResorts();
   }, []);
 
   const loadRecommendations = async () => {
@@ -27,6 +42,21 @@ export default function TripRecommendations() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // 建立雪場 ID 到雪場資料的映射
+  const resortsMap = resorts.reduce((acc, resort) => {
+    acc[resort.resort_id] = resort;
+    return acc;
+  }, {} as Record<string, Resort>);
+
+  // 獲取雪場名稱（優先中文）
+  const getResortName = (resortId: string) => {
+    const resort = resortsMap[resortId];
+    if (resort) {
+      return `${resort.names.zh} ${resort.names.en}`;
+    }
+    return resortId;
   };
 
   const getScoreColor = (score: number) => {
@@ -65,13 +95,15 @@ export default function TripRecommendations() {
         </Card>
       ) : (
         <div className="space-y-6">
-          {recommendations.map((rec) => (
-            <Card key={rec.trip.trip_id} className="p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {rec.trip.title || rec.trip.resort_id}
-                  </h3>
+          {recommendations.map((rec) => {
+            const displayName = rec.trip.title || getResortName(rec.trip.resort_id);
+            return (
+              <Card key={rec.trip.trip_id} className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {displayName}
+                    </h3>
                   <div className="flex items-center gap-4 text-sm text-gray-600">
                     <span>📅 {new Date(rec.trip.start_date).toLocaleDateString('zh-TW')} - {new Date(rec.trip.end_date).toLocaleDateString('zh-TW')}</span>
                     <span>👤 {rec.trip.owner_info.display_name}</span>
@@ -143,7 +175,8 @@ export default function TripRecommendations() {
                 </button>
               </div>
             </Card>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

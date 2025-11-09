@@ -8,7 +8,8 @@ import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { resortApiService } from '@/shared/api/resortApi';
 import Card from '@/shared/components/Card';
-import type { Trip } from '../types';
+import TripEditModal from '../components/TripEditModal';
+import type { Trip, TripUpdate } from '../types';
 import type { Resort } from '@/shared/data/resorts';
 
 export default function TripDetail() {
@@ -19,6 +20,7 @@ export default function TripDetail() {
   const [resort, setResort] = useState<Resort | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const loadTripData = useCallback(async () => {
     if (!tripId) return;
@@ -51,6 +53,14 @@ export default function TripDetail() {
       loadTripData();
     }
   }, [tripId, loadTripData]);
+
+  const handleUpdateTrip = async (tripId: string, data: TripUpdate) => {
+    if (!userId) return;
+
+    await tripPlanningApi.updateTrip(tripId, userId, data);
+    // 重新載入資料
+    await loadTripData();
+  };
 
   if (loading) {
     return (
@@ -148,6 +158,13 @@ export default function TripDetail() {
               {statusBadge.text}
             </span>
           </div>
+
+          <button
+            onClick={() => setShowEditModal(true)}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            ✏️ 編輯
+          </button>
         </div>
       </div>
 
@@ -282,6 +299,15 @@ export default function TripDetail() {
           )}
         </div>
       </div>
+
+      {/* Trip Edit Modal */}
+      {showEditModal && trip && (
+        <TripEditModal
+          trip={trip}
+          onClose={() => setShowEditModal(false)}
+          onUpdate={handleUpdateTrip}
+        />
+      )}
     </div>
   );
 }
