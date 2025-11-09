@@ -79,10 +79,10 @@ export default function TripDetail() {
         <Card className="p-12 text-center">
           <p className="text-red-600 mb-4">{error || '找不到行程'}</p>
           <button
-            onClick={() => navigate('/seasons')}
+            onClick={() => navigate('/trips')}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            返回雪季列表
+            返回我的行程
           </button>
         </Card>
       </div>
