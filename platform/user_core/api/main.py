@@ -13,6 +13,14 @@ from api import (
     social as social_api, ski_map, trip_planning
 )
 
+# AI Assistant imports - optional feature
+try:
+    from api import ai_assistant, admin_ai_config
+    AI_ASSISTANT_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️ AI Assistant not available: {e}")
+    AI_ASSISTANT_AVAILABLE = False
+
 # Create all tables (for development only)
 user_profile.Base.metadata.create_all(bind=db.engine)
 behavior_event.Base.metadata.create_all(bind=db.engine)
@@ -57,6 +65,15 @@ app.include_router(social_api.router, prefix="/social", tags=["Social Features"]
 app.include_router(ski_map.router, prefix="/ski-map", tags=["Ski Map"])
 # Trip planning
 app.include_router(trip_planning.router, prefix="/trip-planning", tags=["Trip Planning"])
+
+# AI Assistant - optional feature
+if AI_ASSISTANT_AVAILABLE:
+    try:
+        app.include_router(ai_assistant.router, tags=["AI Assistant"])
+        app.include_router(admin_ai_config.router, tags=["Admin - AI Config"])
+        print("✅ AI Assistant enabled")
+    except Exception as e:
+        print(f"⚠️ Failed to enable AI Assistant: {e}")
 
 @app.on_event("startup")
 def startup_event():
