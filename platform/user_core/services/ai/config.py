@@ -80,7 +80,7 @@ def create_ai_provider(config: Optional[AIConfig] = None):
         from .anthropic_adapter import AnthropicAdapter
         return AnthropicAdapter(config.api_key, config.model)
     elif config.provider == AIProviderType.GEMINI:
-        # TODO: 實作 Gemini Adapter
-        raise NotImplementedError("Gemini adapter not implemented yet")
+        from .gemini_adapter import GeminiAdapter
+        return GeminiAdapter(config.api_key, config.model)
     else:
         raise ValueError(f"Unknown provider: {config.provider}")
