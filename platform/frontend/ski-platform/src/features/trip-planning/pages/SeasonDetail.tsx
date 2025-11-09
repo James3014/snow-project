@@ -80,19 +80,13 @@ export default function SeasonDetail() {
     setCurrentMonth(newMonth);
   };
 
-  const handleCreateTrips = async (trips: Omit<TripCreate, 'season_id'>[]) => {
+  const handleCreateTrips = async (trips: TripCreate[]) => {
     if (!seasonId || !userId) return;
 
     try {
-      // 為每個行程添加 season_id
-      const tripsWithSeason = trips.map(trip => ({
-        ...trip,
-        season_id: seasonId,
-      }));
-
       // 批次創建行程
       await Promise.all(
-        tripsWithSeason.map(trip => tripPlanningApi.createTrip(userId, trip))
+        trips.map(trip => tripPlanningApi.createTrip(userId, trip))
       );
 
       // 重新載入數據
@@ -124,24 +118,21 @@ export default function SeasonDetail() {
       {/* Header */}
       <div className="mb-8">
         <button
-          onClick={() => navigate('/seasons')}
+          onClick={() => navigate('/trips')}
           className="text-blue-600 hover:text-blue-700 mb-4 flex items-center"
         >
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          返回雪季列表
+          返回我的行程
         </button>
 
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{season.title}</h1>
-            {season.description && (
-              <p className="text-gray-600">{season.description}</p>
-            )}
-            <p className="text-sm text-gray-500 mt-2">
-              {new Date(season.start_date).toLocaleDateString('zh-TW')} - {new Date(season.end_date).toLocaleDateString('zh-TW')}
-            </p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              📅 {seasonId} 雪季
+            </h1>
+            <p className="text-gray-600">查看這個雪季的所有行程和統計資料</p>
           </div>
 
           <button

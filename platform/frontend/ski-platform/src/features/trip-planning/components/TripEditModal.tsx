@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import { resortApiService } from '@/shared/api/resortApi';
+import { calculateSeasonId } from '../utils/seasonUtils';
 import type { Trip, TripUpdate, TripStatus, FlightStatus, AccommodationStatus } from '../types';
 import type { Resort } from '@/shared/data/resorts';
 
@@ -53,7 +54,15 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
 
     try {
       setSaving(true);
-      await onUpdate(trip.trip_id, formData);
+
+      // 如果日期改變了，重新計算 season_id
+      const seasonId = calculateSeasonId(formData.start_date || trip.start_date);
+      const updateData: TripUpdate = {
+        ...formData,
+        season_id: seasonId,
+      };
+
+      await onUpdate(trip.trip_id, updateData);
       onClose();
     } catch (error) {
       console.error('更新行程失敗:', error);
