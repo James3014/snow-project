@@ -6,6 +6,7 @@ import { Outlet } from 'react-router-dom';
 import { Suspense, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import ToastContainer from '@/shared/components/ToastContainer';
+import FloatingAIButton from '@/features/ai/components/FloatingAIButton';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadUserThunk } from '@/store/slices/authSlice';
 
@@ -40,6 +41,9 @@ export default function RootLayout() {
 
       {/* Toast 通知容器 */}
       <ToastContainer />
+
+      {/* AI 助手浮動按鈕 */}
+      <FloatingAIButton />
     </div>
   );
 }
