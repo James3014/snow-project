@@ -17,7 +17,7 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'fukushima_inawashiro',
   },
   {
-    pinyin: ['hoshinoresortsnekomamountain', 'xingyejituan', 'xingyejituan nekoma mountain', 'hoshino resorts nekoma mountain', 'nekoma', 'xingye', 'xingyeji'],
+    pinyin: ['hoshinoresortsnekomamountain', 'xingyejituannekoma', 'xingyejituan nekoma mountain', 'hoshino resorts nekoma mountain', 'nekoma', 'hoshinonekoma', 'hoshino nekoma', '星野nekoma', '星野ネコマ', 'ネコマ', 'xingye nekoma', 'xingyeji nekoma', '星野リゾート ネコマ マウンテン', '星野リゾートネコママウンテン'],
     chinese: '星野集團 NEKOMA MOUNTAIN',
     resortId: 'fukushima_nekoma_mountain',
   },
@@ -37,7 +37,7 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'gunma_oze_iwakura',
   },
   {
-    pinyin: ['qunmawhite valley', 'gunmawhitevalley', 'qunmaw', 'gunmawhitevalleyskiresort', 'gunma white valley ski resort', 'qunmawh', 'qunma', 'white valley', 'qunmawhite valleyhuaxuechang', 'gunmawhitevalleyski'],
+    pinyin: ['qunmawhite valley', 'gunmawhitevalley', 'qunmaw', 'gunmawhitevalleyskiresort', 'gunma white valley ski resort', 'qunmawh', 'qunma', 'white valley', 'qunmawhite valleyhuaxuechang', 'gunmawhitevalleyski', '群馬みなかみホワイトバレースキー場', 'ホワイトバレー'],
     chinese: '群馬White Valley滑雪場',
     resortId: 'gunma_white_valley',
   },
@@ -47,22 +47,22 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'hokkaido_furano',
   },
   {
-    pinyin: ['niseko', 'ershigum', 'ershi', 'nisekomoiwaski', 'niseko moiwa ski resort', 'nisekomoiwa', 'ershigumoiwahuaxuechang', '二世古', 'nisekomoiwaskiresort', 'ershigu', 'ershigumoiwa', '二世谷'],
+    pinyin: ['niseko', 'ershigum', 'ershi', 'nisekomoiwaski', 'niseko moiwa ski resort', 'nisekomoiwa', 'ershigumoiwahuaxuechang', '二世古', 'nisekomoiwaskiresort', 'ershigu', 'ershigumoiwa', '二世谷', 'ニセコモイワスキー場', 'ニセコモイワ', 'ニセコ'],
     chinese: '二世谷Moiwa滑雪場',
     resortId: 'hokkaido_niseko_moiwa',
   },
   {
-    pinyin: ['liushoudoudujiacun', '留壽都', 'rusutsu resort', 'rusutsu', 'liushoudoudu', 'liushoudou', 'liushou', 'rusutsuresort'],
+    pinyin: ['liushoudoudujiacun', '留壽都', 'rusutsu resort', 'rusutsu', 'liushoudoudu', 'liushoudou', 'liushou', 'rusutsuresort', 'ルスツリゾート', 'ルスツ'],
     chinese: '留壽都度假村',
     resortId: 'hokkaido_rusutsu',
   },
   {
-    pinyin: ['teine', 'zhahuangshoudaohuaxuechang', 'zhahuangshoudao', 'sapporoteineski', 'sapporo teine ski resort', 'sapporo', '手稻', 'zhahuangshou', 'sapporoteineskiresort', 'sapporoteine', 'zhahuang', '札幌'],
+    pinyin: ['teine', 'zhahuangshoudaohuaxuechang', 'zhahuangshoudao', 'sapporoteineski', 'sapporo teine ski resort', 'sapporo', '手稻', 'zhahuangshou', 'sapporoteineskiresort', 'sapporoteine', 'zhahuang', '札幌', 'サッポロテイネスキー場', 'サッポロテイネ', 'テイネ'],
     chinese: '札幌手稻滑雪場',
     resortId: 'hokkaido_sapporo_teine',
   },
   {
-    pinyin: ['星野', 'hoshinoresortstomamu', 'hoshino resorts tomamu', 'xingyejituan', 'tomamu', 'xingyejituantomamudujiacun', 'xingyejituantomamu', 'xingye', 'xingyeji'],
+    pinyin: ['hoshinoresortstomamu', 'hoshino resorts tomamu', 'xingyejituantomamu', 'tomamu', 'xingyejituantomamudujiacun', 'hoshinotomamu', 'hoshino tomamu', '星野tomamu', '星野トマム', 'トマム', 'xingye tomamu', 'xingyeji tomamu', '星野リゾート トマム', '星野リゾートトマム'],
     chinese: '星野集團TOMAMU度假村',
     resortId: 'hokkaido_tomamu',
   },
@@ -107,12 +107,12 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'hakuba_tsugaike_kogen',
   },
   {
-    pinyin: ['karuizawaprincehotel', 'qingjingze', 'qingjingzewangzidafandianhuaxuechang', 'karuizawa', 'karuizawaprincehotelski', 'karuizawaprincehotelskiresort', '王子', 'karuizawa prince hotel ski resort', 'qingjingzewangzidafandian', 'wangzi', 'qingjingzewang', '輕井澤', 'qingjing'],
+    pinyin: ['karuizawaprincehotel', 'qingjingze', 'qingjingzewangzidafandianhuaxuechang', 'karuizawa', 'karuizawaprincehotelski', 'karuizawaprincehotelskiresort', '王子', 'karuizawa prince hotel ski resort', 'qingjingzewangzidafandian', 'wangzi', 'qingjingzewang', '輕井澤', 'qingjing', '軽井沢プリンスホテルスキー場', '軽井沢プリンス', '軽井沢'],
     chinese: '輕井澤王子大飯店滑雪場',
     resortId: 'nagano_karuizawa_prince',
   },
   {
-    pinyin: ['kurohimekogensnowpark', 'heijigaoyuan', 'heiji', 'kurohime', 'kurohime kogen snow park', 'heijigao', 'heijigaoyuanhuaxuegongyuan', '黑姬'],
+    pinyin: ['kurohimekogensnowpark', 'heijigaoyuan', 'heiji', 'kurohime', 'kurohime kogen snow park', 'heijigao', 'heijigaoyuanhuaxuegongyuan', '黑姬', '黒姫高原スノーパーク', '黒姫', '黒姫高原'],
     chinese: '黑姬高原滑雪公園',
     resortId: 'nagano_kurohime_kogen',
   },
@@ -122,42 +122,42 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'nagano_madarao_kogen',
   },
   {
-    pinyin: ['yezewenquan', 'yezewen', 'yeze', 'nozawaonsensnow', 'yezewenquanhuaxuechang', 'nozawaonsen', 'nozawaonsensnowresort', 'nozawa onsen snow resort', '野澤', 'nozawa'],
+    pinyin: ['yezewenquan', 'yezewen', 'yeze', 'nozawaonsensnow', 'yezewenquanhuaxuechang', 'nozawaonsen', 'nozawaonsensnowresort', 'nozawa onsen snow resort', '野澤', 'nozawa', '野沢温泉スキー場', '野沢温泉', '野沢'],
     chinese: '野澤溫泉滑雪場',
     resortId: 'nagano_nozawa_onsen',
   },
   {
-    pinyin: ['ryuooskipark', 'ryuoo', 'longwanghuaxue', 'ryuoo ski park', 'longwang', 'longwanghuaxuegongyuan', 'longwanghua', '龍王'],
+    pinyin: ['ryuooskipark', 'ryuoo', 'longwanghuaxue', 'ryuoo ski park', 'longwang', 'longwanghuaxuegongyuan', 'longwanghua', '龍王', '竜王', 'ryuoo滑雪', '竜王スキーパーク', '竜王スキー'],
     chinese: '竜王滑雪公園',
     resortId: 'nagano_ryuoo_ski_park',
   },
   {
-    pinyin: ['chicang', 'guanguang', 'akakurakankoresort', 'akakura kanko resort', 'chicangguanguangxuechang', '赤倉', '觀光', 'chicangguan', 'akakura', 'chicangguanguang', 'akakurakanko'],
+    pinyin: ['chicangguanguang', 'guanguang', 'akakurakankoresort', 'akakura kanko resort', 'chicangguanguangxuechang', '赤倉觀光', '觀光', 'chicangguan', 'akakura kanko', 'akakurakanko', '赤倉観光', '赤倉観光リゾート'],
     chinese: '赤倉觀光雪場',
     resortId: 'myoko_akakura_kanko',
   },
   {
-    pinyin: ['chicang', 'akakuraonsenski', 'chicangwenquanhuaxuechang', 'chicangwenquan', 'chicangwen', '赤倉溫泉', 'akakuraonsenskiresort', 'akakuraonsen', 'akakura onsen ski resort'],
+    pinyin: ['chicangwenquan', 'akakuraonsenski', 'chicangwenquanhuaxuechang', 'chicangwen', '赤倉溫泉', 'akakuraonsenskiresort', 'akakuraonsen', 'akakura onsen ski resort', 'akakura onsen', '赤倉温泉', '赤倉温泉スキー場'],
     chinese: '赤倉溫泉滑雪場',
     resortId: 'myoko_akakura_onsen',
   },
   {
-    pinyin: ['池之平', 'ikenotaira onsen alpenblick ski resort', 'miaogaochizhipingwenquan', 'ikenotaira', 'miaogao', 'miaogaochi', 'ikenotairaonsenalpenblickskiresort', 'ikenotairaonsenalpenblickski', 'ikenotairaonsenalpenblick', 'miaogaochizhi', 'miaogaochizhipingwenquanhuaxuechang', 'chizhiping'],
+    pinyin: ['池之平', 'ikenotaira onsen alpenblick ski resort', 'miaogaochizhipingwenquan', 'ikenotaira', 'miaogao', 'miaogaochi', 'ikenotairaonsenalpenblickskiresort', 'ikenotairaonsenalpenblickski', 'ikenotairaonsenalpenblick', 'miaogaochizhi', 'miaogaochizhipingwenquanhuaxuechang', 'chizhiping', '池の平温泉アルペンブリックスキー場', '池の平', '池の平温泉'],
     chinese: '妙高池之平溫泉滑雪場',
     resortId: 'myoko_ikenotaira',
   },
   {
-    pinyin: ['lotte', 'lottearairesort', 'lottearai', 'letianxinjingdujiacun', 'arai', 'xinjing', 'lotte arai resort', 'letian', '新井', 'letianxinjing', '樂天', 'letianxin'],
+    pinyin: ['lotte', 'lottearairesort', 'lottearai', 'letianxinjingdujiacun', 'arai', 'xinjing', 'lotte arai resort', 'letian', '新井', 'letianxinjing', '樂天', 'letianxin', 'ロッテアライリゾート', 'ロッテアライ', 'ロッテ'],
     chinese: '樂天新井度假村',
     resortId: 'myoko_lotte_arai',
   },
   {
-    pinyin: ['shanzhiyuan', 'myokosuginoharaski', 'miaogaoshanzhiyuanhuaxuechang', 'myokosuginoharaskiresort', 'miaogao', 'miaogaoshanzhi', 'miaogaoshanzhiyuan', 'myoko suginohara ski resort', '杉之原', 'miaogaoshan', 'suginohara', 'myokosuginohara'],
+    pinyin: ['shanzhiyuan', 'myokosuginoharaski', 'miaogaoshanzhiyuanhuaxuechang', 'myokosuginoharaskiresort', 'miaogao', 'miaogaoshanzhi', 'miaogaoshanzhiyuan', 'myoko suginohara ski resort', '杉之原', 'miaogaoshan', 'suginohara', 'myokosuginohara', '妙高杉ノ原スキー場', '杉ノ原'],
     chinese: '妙高杉之原滑雪場',
     resortId: 'myoko_suginohara',
   },
   {
-    pinyin: ['tangze', 'ga', 'galayuzawa', 'galayuzawasnowresort', 'galatangze', 'gala yuzawa snow resort', '湯澤', 'galatangzehuaxuechang', 'gal', 'gala', 'galayuzawasnow', 'yuzawa'],
+    pinyin: ['tangze', 'ga', 'galayuzawa', 'galayuzawasnowresort', 'galatangze', 'gala yuzawa snow resort', '湯澤', 'galatangzehuaxuechang', 'gal', 'gala', 'galayuzawasnow', 'yuzawa', 'GALA湯沢スキー場', 'GALA湯沢', 'ガーラ'],
     chinese: 'GALA湯澤滑雪場',
     resortId: 'yuzawa_gala',
   },
@@ -177,7 +177,7 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'yuzawa_joetsu_kokusai',
   },
   {
-    pinyin: ['shenlehuaxuechang', 'shenle', 'shenlehua', 'kagura ski resort', '神樂', 'shenlehuaxue', 'kaguraskiresort', 'kaguraski', 'kagura'],
+    pinyin: ['shenlehuaxuechang', 'shenle', 'shenlehua', 'kagura ski resort', '神樂', 'shenlehuaxue', 'kaguraskiresort', 'kaguraski', 'kagura', 'かぐらスキー場', 'かぐら', 'カグラ'],
     chinese: '神樂滑雪場',
     resortId: 'yuzawa_kagura',
   },
@@ -192,7 +192,7 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'yuzawa_maiko_kogen',
   },
   {
-    pinyin: ['naebaskiresort', 'miaochang', 'miaochanghuaxue', 'naebaski', 'miaochanghuaxuechang', 'miaochanghua', 'naeba', 'naeba ski resort', '苗場'],
+    pinyin: ['naebaskiresort', 'miaochang', 'miaochanghuaxue', 'naebaski', 'miaochanghuaxuechang', 'miaochanghua', 'naeba', 'naeba ski resort', '苗場', '苗場スキー場', '苗場ski', 'ナエバ'],
     chinese: '苗場滑雪場',
     resortId: 'yuzawa_naeba',
   },
@@ -207,7 +207,7 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'yuzawa_naspa_ski_garden',
   },
   {
-    pinyin: ['tangzegongyuanhuaxuechang', 'tangze', 'yuzawaparkresort', '公園', 'park', 'tangzegong', 'yuzawa park resort', 'yuzawapark', 'tangzegongyuan', 'gongyuan'],
+    pinyin: ['tangzegongyuanhuaxuechang', 'tangze', 'yuzawaparkresort', 'tangzegong', 'yuzawa park resort', 'yuzawapark', 'tangzegongyuan', '湯沢パークスキー場', '湯沢パーク', 'yuzawa park'],
     chinese: '湯澤公園滑雪場',
     resortId: 'yuzawa_park',
   },
@@ -217,12 +217,12 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'tochigi_edelweiss',
   },
   {
-    pinyin: ['獵人', 'lierenshanyanyuan', 'huntermountainshiobara', 'lierenshanyanyuanhuaxuechang', 'lierenshan', 'lieren', 'lierenshanyan', 'hunter', 'hunter mountain shiobara'],
+    pinyin: ['獵人', 'lierenshanyanyuan', 'huntermountainshiobara', 'lierenshanyanyuanhuaxuechang', 'lierenshan', 'lieren', 'lierenshanyan', 'hunter', 'hunter mountain shiobara', 'ハンターマウンテン塩原', 'ハンターマウンテン', 'ハンター'],
     chinese: '獵人山鹽原滑雪場',
     resortId: 'tochigi_hunter_mountain_shiobara',
   },
   {
-    pinyin: ['zao onsen ski resort', 'zao', 'cangwangwenquan', 'cangwangwenquanhuaxuechang', 'zaoonsenskiresort', 'cangwangwen', 'cangwang', 'zaoonsen', '藏王', 'zaoonsenski'],
+    pinyin: ['zao onsen ski resort', 'zao', 'cangwangwenquan', 'cangwangwenquanhuaxuechang', 'zaoonsenskiresort', 'cangwangwen', 'cangwang', 'zaoonsen', '藏王', 'zaoonsenski', '蔵王温泉スキー場', '蔵王温泉', '蔵王'],
     chinese: '藏王溫泉滑雪場',
     resortId: 'yamagata_zao_onsen',
   },
