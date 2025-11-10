@@ -229,23 +229,56 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
 ];
 
 /**
- * 將拼音轉換為雪場 ID
+ * 將拼音或中文轉換為雪場 ID（支持中文直接匹配）
  */
 export function pinyinToResortId(pinyin: string): string | null {
   const normalized = pinyin.toLowerCase().trim();
 
+  // 優先匹配較長的拼音（避免"白馬"匹配到第一個就返回）
+  let bestMatch: { resortId: string; matchLength: number } | null = null;
+
   for (const mapping of RESORT_PINYIN_MAP) {
     // 完全匹配
     if (mapping.pinyin.includes(normalized)) {
-      return mapping.resortId;
+      const matchLength = normalized.length;
+      if (!bestMatch || matchLength > bestMatch.matchLength) {
+        bestMatch = { resortId: mapping.resortId, matchLength };
+      }
     }
     // 包含匹配（用於處理用戶輸入較長的情況）
-    if (mapping.pinyin.some(p => normalized.includes(p) && p.length >= 3)) {
-      return mapping.resortId;
+    else if (mapping.pinyin.some(p => normalized.includes(p) && p.length >= 3)) {
+      const matchedPinyin = mapping.pinyin.find(p => normalized.includes(p) && p.length >= 3);
+      if (matchedPinyin) {
+        const matchLength = matchedPinyin.length;
+        if (!bestMatch || matchLength > bestMatch.matchLength) {
+          bestMatch = { resortId: mapping.resortId, matchLength };
+        }
+      }
     }
   }
 
-  return null;
+  return bestMatch ? bestMatch.resortId : null;
+}
+
+/**
+ * 獲取所有匹配的雪場 ID（用於檢測歧義）
+ */
+export function getAllMatchingResortIds(pinyin: string): string[] {
+  const normalized = pinyin.toLowerCase().trim();
+  const matchedIds: string[] = [];
+
+  for (const mapping of RESORT_PINYIN_MAP) {
+    // 完全匹配
+    if (mapping.pinyin.includes(normalized)) {
+      matchedIds.push(mapping.resortId);
+    }
+    // 包含匹配（用於處理用戶輸入較長的情況）
+    else if (mapping.pinyin.some(p => normalized.includes(p) && p.length >= 3)) {
+      matchedIds.push(mapping.resortId);
+    }
+  }
+
+  return matchedIds;
 }
 
 /**
