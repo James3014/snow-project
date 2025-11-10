@@ -231,7 +231,16 @@ export function extractDates(input: string): {
         endDay: parseInt(m[3])
       })
     },
-    // 格式 3: 11號到20號 (需要從上下文推斷月份)
+    // 格式 3: 12-22到26、12-22至26 (新增！用戶實際使用的格式)
+    {
+      regex: /(\d{1,2})-(\d{1,2})[\s]*[到至]\s*(\d{1,2})[日號]?/,
+      extract: (m: RegExpMatchArray) => ({
+        month: parseInt(m[1]),
+        startDay: parseInt(m[2]),
+        endDay: parseInt(m[3])
+      })
+    },
+    // 格式 4: 11號到20號 (需要從上下文推斷月份)
     {
       regex: /(\d{1,2})[號日][\s]*[到至~－\-─|]\s*(\d{1,2})[號日]/,
       extract: (m: RegExpMatchArray, fullInput: string) => {
