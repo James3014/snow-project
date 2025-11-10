@@ -77,12 +77,12 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'iwate_shizukuishi',
   },
   {
-    pinyin: ['baimacortinahuaxuechang', 'baimacortina', 'cortina', 'baimac', 'baima', 'hakubacortina', 'hakubacortinaskiresort', 'hakubacortinaski', 'baimaco', 'hakuba cortina ski resort'],
+    pinyin: ['baimacortinahuaxuechang', 'baimacortina', 'cortina', 'baimac', 'baima', '白馬', 'hakubacortina', 'hakubacortinaskiresort', 'hakubacortinaski', 'baimaco', 'hakuba cortina ski resort'],
     chinese: '白馬Cortina滑雪場',
     resortId: 'hakuba_cortina',
   },
   {
-    pinyin: ['goryu', 'wulong', 'hakubagoryu&hakuba47wintersportspark', 'baimawulong & hakuba47 huaxuechang', 'hakuba goryu & hakuba47 winter sports park', 'baima', '五龍', 'baimawulong', 'baimawulong & hakuba47 ', '47', 'baimawu'],
+    pinyin: ['goryu', 'wulong', 'hakubagoryu&hakuba47wintersportspark', 'baimawulong & hakuba47 huaxuechang', 'hakuba goryu & hakuba47 winter sports park', 'baima', '白馬', '五龍', 'baimawulong', 'baimawulong & hakuba47 ', '47', 'baimawu'],
     chinese: '白馬五龍 & Hakuba47 滑雪場',
     resortId: 'hakuba_goryu_47',
   },
@@ -92,17 +92,17 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'hakuba_happo_one',
   },
   {
-    pinyin: ['baimayanyuehuaxuechang', '岩岳', 'yanyue', 'baimayanyue', 'baima', 'hakubaiwatakesnowfield', 'hakuba iwatake snow field', 'iwatake', 'baimayan'],
+    pinyin: ['baimayanyuehuaxuechang', '岩岳', 'yanyue', 'baimayanyue', 'baima', '白馬', 'hakubaiwatakesnowfield', 'hakuba iwatake snow field', 'iwatake', 'baimayan'],
     chinese: '白馬岩岳滑雪場',
     resortId: 'hakuba_iwatake',
   },
   {
-    pinyin: ['hakubanorikuraonsenski', 'hakubanorikuraonsen', 'baimacheng', 'baima', 'chengan', 'baimachenganwenquan', 'hakubanorikuraonsenskiresort', 'baimachenganwenquanhuaxuechang', '乗鞍', 'hakuba norikura onsen ski resort', 'norikura', 'baimachengan'],
+    pinyin: ['hakubanorikuraonsenski', 'hakubanorikuraonsen', 'baimacheng', 'baima', '白馬', 'chengan', 'baimachenganwenquan', 'hakubanorikuraonsenskiresort', 'baimachenganwenquanhuaxuechang', '乗鞍', 'hakuba norikura onsen ski resort', 'norikura', 'baimachengan'],
     chinese: '白馬乗鞍溫泉滑雪場',
     resortId: 'hakuba_norikura',
   },
   {
-    pinyin: ['hakubatsugaikekogen', 'hakuba tsugaike kogen ski resort', 'baimameichigaoyuan', 'tsugaike', 'baimameichi', '栂池', 'hakubatsugaikekogenski', 'baima', 'baimameichigaoyuanhuaxuechang', 'hakubatsugaikekogenskiresort', 'meichi', 'baimamei'],
+    pinyin: ['hakubatsugaikekogen', 'hakuba tsugaike kogen ski resort', 'baimameichigaoyuan', 'tsugaike', 'baimameichi', '栂池', 'hakubatsugaikekogenski', 'baima', '白馬', 'baimameichigaoyuanhuaxuechang', 'hakubatsugaikekogenskiresort', 'meichi', 'baimamei'],
     chinese: '白馬栂池高原滑雪場',
     resortId: 'hakuba_tsugaike_kogen',
   },
@@ -246,8 +246,15 @@ export function pinyinToResortId(pinyin: string): string | null {
       }
     }
     // 包含匹配（用於處理用戶輸入較長的情況）
-    else if (mapping.pinyin.some(p => normalized.includes(p) && p.length >= 3)) {
-      const matchedPinyin = mapping.pinyin.find(p => normalized.includes(p) && p.length >= 3);
+    else {
+      const matchedPinyin = mapping.pinyin.find(p => {
+        if (!normalized.includes(p)) return false;
+        // 中文詞：長度 >= 2 即可
+        // 英文詞：長度 >= 3
+        const minLength = hasChinese(p) ? 2 : 3;
+        return p.length >= minLength;
+      });
+
       if (matchedPinyin) {
         const matchLength = matchedPinyin.length;
         if (!bestMatch || matchLength > bestMatch.matchLength) {
@@ -258,6 +265,13 @@ export function pinyinToResortId(pinyin: string): string | null {
   }
 
   return bestMatch ? bestMatch.resortId : null;
+}
+
+/**
+ * 檢查字串是否包含中文字符
+ */
+function hasChinese(str: string): boolean {
+  return /[\u4e00-\u9fa5]/.test(str);
 }
 
 /**
@@ -273,7 +287,13 @@ export function getAllMatchingResortIds(pinyin: string): string[] {
       matchedIds.push(mapping.resortId);
     }
     // 包含匹配（用於處理用戶輸入較長的情況）
-    else if (mapping.pinyin.some(p => normalized.includes(p) && p.length >= 3)) {
+    else if (mapping.pinyin.some(p => {
+      if (!normalized.includes(p)) return false;
+      // 中文詞：長度 >= 2 即可
+      // 英文詞：長度 >= 3
+      const minLength = hasChinese(p) ? 2 : 3;
+      return p.length >= minLength;
+    })) {
       matchedIds.push(mapping.resortId);
     }
   }
@@ -293,7 +313,8 @@ export function pinyinToChinese(pinyin: string): string | null {
       return mapping.chinese;
     }
     // 包含匹配
-    if (mapping.pinyin.some(p => normalized.includes(p) && p.length >= 3)) {
+    const minLength = hasChinese(normalized) ? 2 : 3;
+    if (mapping.pinyin.some(p => normalized.includes(p) && p.length >= minLength)) {
       return mapping.chinese;
     }
   }
