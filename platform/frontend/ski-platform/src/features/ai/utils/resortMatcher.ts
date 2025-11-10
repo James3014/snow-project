@@ -4,7 +4,7 @@
  */
 
 import { calculateSimilarity } from './levenshtein';
-import { pinyinToChinese, pinyinToResortId, isPossiblyPinyin } from './pinyinMapper';
+import { pinyinToChinese, pinyinToResortId, isPossiblyPinyin, getAllMatchingResortIds } from './pinyinMapper';
 import type { Resort } from '@/shared/data/resorts';
 import { resortApiService } from '@/shared/api/resortApi';
 
@@ -145,7 +145,7 @@ function matchResortName(
 }
 
 /**
- * 匹配單個雪場
+ * 匹配單個雪場（增強版：支持中文、多個匹配時返回建議）
  */
 export async function matchResort(input: string): Promise<ResortMatch | null> {
   if (!input || input.trim().length === 0) {
@@ -159,23 +159,36 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
 
   const trimmedInput = input.trim();
 
-  // 1. 檢查是否是拼音輸入
-  if (isPossiblyPinyin(trimmedInput)) {
-    const resortId = pinyinToResortId(trimmedInput);
-    if (resortId) {
-      // 直接通過 resort ID 查找
-      const resort = resorts.find(r => r.resort_id === resortId);
-      if (resort) {
-        return {
-          resort,
-          matchedField: 'pinyin',
-          matchedValue: trimmedInput,
-          confidence: 0.95, // 拼音匹配信心度
-        };
-      }
-    }
+  // 1. 先嘗試拼音映射（支持中文和英文）
+  // 檢查是否有歧義（多個雪場匹配同一個輸入）
+  const allMatchingIds = getAllMatchingResortIds(trimmedInput);
 
-    // 如果沒有直接匹配，嘗試轉換為中文名稱
+  if (allMatchingIds.length === 1) {
+    // 唯一匹配，高信心度
+    const resort = resorts.find(r => r.resort_id === allMatchingIds[0]);
+    if (resort) {
+      return {
+        resort,
+        matchedField: 'pinyin',
+        matchedValue: trimmedInput,
+        confidence: 0.95,
+      };
+    }
+  } else if (allMatchingIds.length > 1) {
+    // 多個匹配，返回第一個但降低信心度（會觸發建議系統）
+    const resort = resorts.find(r => r.resort_id === allMatchingIds[0]);
+    if (resort) {
+      return {
+        resort,
+        matchedField: 'pinyin',
+        matchedValue: trimmedInput,
+        confidence: 0.65, // 降低信心度，讓 intentParser 提供建議
+      };
+    }
+  }
+
+  // 2. 如果是拼音（純英文），嘗試轉換為中文
+  if (isPossiblyPinyin(trimmedInput)) {
     const chineseName = pinyinToChinese(trimmedInput);
     if (chineseName) {
       const match = await matchResortByName(chineseName, resorts);
@@ -190,8 +203,33 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
     }
   }
 
-  // 2. 直接名稱匹配
-  return matchResortByName(trimmedInput, resorts);
+  // 3. 直接名稱匹配
+  const directMatch = matchResortByName(trimmedInput, resorts);
+  if (directMatch) {
+    return directMatch;
+  }
+
+  // 4. 如果直接匹配失敗，檢查是否有多個部分匹配（返回信心度最高的）
+  const partialMatches: ResortMatch[] = [];
+  for (const resort of resorts) {
+    const match = matchResortName(trimmedInput, resort);
+    if (match && match.confidence >= 0.5) {
+      partialMatches.push({
+        resort,
+        confidence: match.confidence,
+        matchedField: match.field,
+        matchedValue: match.value,
+      });
+    }
+  }
+
+  if (partialMatches.length > 0) {
+    // 按信心度排序，返回最高的
+    partialMatches.sort((a, b) => b.confidence - a.confidence);
+    return partialMatches[0];
+  }
+
+  return null;
 }
 
 /**
