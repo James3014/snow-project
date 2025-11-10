@@ -291,8 +291,8 @@ function handleCreateTripIntent(
     };
   }
 
-  // 所有資訊都齊全，進入確認階段
-  return prepareConfirmation(updatedContext);
+  // 所有資訊都齊全，直接創建行程
+  return prepareCreation(updatedContext);
 }
 
 /**
@@ -359,9 +359,9 @@ async function handleDateInput(
       },
     };
 
-    // 如果同時有天數或結束日期，進入確認
+    // 如果同時有天數或結束日期，直接創建行程
     if (intent.duration || intent.endDate) {
-      return prepareConfirmation(updatedContext);
+      return prepareCreation(updatedContext);
     }
 
     // 繼續詢問天數
@@ -408,7 +408,7 @@ async function handleDurationInput(
       },
     };
 
-    return prepareConfirmation(updatedContext);
+    return prepareCreation(updatedContext);
   } else {
     return {
       response: {
@@ -421,15 +421,15 @@ async function handleDurationInput(
 }
 
 /**
- * 準備確認訊息
+ * 準備創建行程
  */
-function prepareConfirmation(
+function prepareCreation(
   context: ConversationContext
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
   const { resort, startDate, duration } = context.accumulatedData;
 
   if (!resort || !startDate || !duration) {
-    throw new Error('Missing required data for confirmation');
+    throw new Error('Missing required data for creation');
   }
 
   const dateStr = startDate.toLocaleDateString('zh-TW', {
@@ -437,21 +437,17 @@ function prepareConfirmation(
     day: 'numeric',
   });
 
-  const message = `讓我確認一下：\n\n📍 雪場：${resort.resort.names.zh}\n📅 日期：${dateStr}\n⏱️ 天數：${duration} 天\n\n確定要建立這個行程嗎？`;
+  const message = `好的！正在建立行程：\n\n📍 雪場：${resort.resort.names.zh}\n📅 日期：${dateStr}\n⏱️ 天數：${duration} 天`;
 
   return {
     response: {
       message,
-      nextState: 'CONFIRMING_TRIP',
-      requiresConfirmation: true,
-      buttonOptions: [
-        { id: 'confirm', label: '確定建立', action: 'CONFIRM' },
-        { id: 'cancel', label: '取消', action: 'CANCEL' },
-      ],
+      nextState: 'CREATING_TRIP',
+      data: context.accumulatedData,
     },
     updatedContext: {
       ...context,
-      state: 'CONFIRMING_TRIP',
+      state: 'CREATING_TRIP',
     },
   };
 }
