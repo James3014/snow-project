@@ -24,7 +24,6 @@ const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage'));
 const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'));
 const UserListPage = lazy(() => import('@/features/admin/pages/UserListPage'));
 const UserDetailPage = lazy(() => import('@/features/admin/pages/UserDetailPage'));
-const AIConfigPage = lazy(() => import('@/features/admin/pages/AIConfigPage'));
 const SeasonManagement = lazy(() => import('@/features/trip-planning/pages/SeasonManagement'));
 const SeasonDetail = lazy(() => import('@/features/trip-planning/pages/SeasonDetail'));
 const TripDetail = lazy(() => import('@/features/trip-planning/pages/TripDetail'));
@@ -99,10 +98,6 @@ export const router = createBrowserRouter([
       {
         path: 'admin/users/:userId',
         element: <AdminRoute><UserDetailPage /></AdminRoute>,
-      },
-      {
-        path: 'admin/ai-config',
-        element: <AdminRoute><AIConfigPage /></AdminRoute>,
       },
       {
         path: 'trips',
