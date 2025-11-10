@@ -132,12 +132,12 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'nagano_ryuoo_ski_park',
   },
   {
-    pinyin: ['chicangguanguang', 'guanguang', 'akakurakankoresort', 'akakura kanko resort', 'chicangguanguangxuechang', '赤倉觀光', '觀光', 'chicangguan', 'akakura kanko', 'akakurakanko', '赤倉観光', '赤倉観光リゾート'],
+    pinyin: ['chicangguanguang', 'guanguang', 'akakurakankoresort', 'akakura kanko resort', 'chicangguanguangxuechang', '赤倉觀光', '觀光', 'chicangguan', 'akakura kanko', 'akakurakanko', '赤倉観光', '赤倉観光リゾート', '赤倉', 'chicang', 'akakura'],
     chinese: '赤倉觀光雪場',
     resortId: 'myoko_akakura_kanko',
   },
   {
-    pinyin: ['chicangwenquan', 'akakuraonsenski', 'chicangwenquanhuaxuechang', 'chicangwen', '赤倉溫泉', 'akakuraonsenskiresort', 'akakuraonsen', 'akakura onsen ski resort', 'akakura onsen', '赤倉温泉', '赤倉温泉スキー場'],
+    pinyin: ['chicangwenquan', 'akakuraonsenski', 'chicangwenquanhuaxuechang', 'chicangwen', '赤倉溫泉', 'akakuraonsenskiresort', 'akakuraonsen', 'akakura onsen ski resort', 'akakura onsen', '赤倉温泉', '赤倉温泉スキー場', '赤倉', 'chicang', 'akakura'],
     chinese: '赤倉溫泉滑雪場',
     resortId: 'myoko_akakura_onsen',
   },
@@ -207,7 +207,7 @@ export const RESORT_PINYIN_MAP: PinyinMapping[] = [
     resortId: 'yuzawa_naspa_ski_garden',
   },
   {
-    pinyin: ['tangzegongyuanhuaxuechang', 'tangze', 'yuzawaparkresort', 'tangzegong', 'yuzawa park resort', 'yuzawapark', 'tangzegongyuan', '湯沢パークスキー場', '湯沢パーク', 'yuzawa park'],
+    pinyin: ['tangzegongyuanhuaxuechang', 'yuzawaparkresort', 'tangzegong', 'yuzawa park resort', 'yuzawapark', 'tangzegongyuan', '湯沢パークスキー場', '湯沢パーク', 'yuzawa park', '湯澤公園', '湯澤パーク', 'yuzawaparkskiresort'],
     chinese: '湯澤公園滑雪場',
     resortId: 'yuzawa_park',
   },
