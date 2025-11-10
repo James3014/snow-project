@@ -399,6 +399,20 @@ async function handleDurationInput(
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
   const intent = await parseIntent(input);
 
+  // 情況1：用戶提供了結束日期（如 "26號"、"12-22到26"）
+  if (intent.endDate && context.accumulatedData.startDate) {
+    const updatedContext = {
+      ...context,
+      accumulatedData: {
+        ...context.accumulatedData,
+        endDate: intent.endDate,
+      },
+    };
+
+    return prepareCreation(updatedContext);
+  }
+
+  // 情況2：用戶提供了天數（如 "5天"、"一週"）
   if (intent.duration) {
     const updatedContext = {
       ...context,
@@ -409,15 +423,16 @@ async function handleDurationInput(
     };
 
     return prepareCreation(updatedContext);
-  } else {
-    return {
-      response: {
-        message: '抱歉，我沒能理解天數。\n可以換個說法試試嗎？\n例如：5天、一週、三天兩夜',
-        nextState: 'AWAITING_DURATION',
-      },
-      updatedContext: context,
-    };
   }
+
+  // 情況3：無法理解輸入
+  return {
+    response: {
+      message: '抱歉，我沒能理解天數或結束日期。\n可以換個說法試試嗎？\n例如：5天、一週、26號、12月26日',
+      nextState: 'AWAITING_DURATION',
+    },
+    updatedContext: context,
+  };
 }
 
 /**
