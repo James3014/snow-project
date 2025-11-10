@@ -3,8 +3,14 @@
  * 测试所有雪场的中文名、英文名、日文名、拼音、别名等是否能被正确识别
  */
 
-import { pinyinToResortId, getAllMatchingResortIds, pinyinToChinese } from '../platform/frontend/ski-platform/src/features/ai/utils/pinyinMapper';
-import resortsData from '../data/resorts_for_matcher.json';
+import { pinyinToResortId, getAllMatchingResortIds, pinyinToChinese } from '../platform/frontend/ski-platform/src/features/ai/utils/pinyinMapper.js';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const resortsData = JSON.parse(readFileSync(join(__dirname, '../data/resorts_for_matcher.json'), 'utf8'));
 
 interface TestCase {
   input: string;

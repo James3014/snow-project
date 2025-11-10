@@ -3,7 +3,7 @@
  * 测试各种日期格式是否能被正确识别
  */
 
-import { parseDate, extractDates } from '../platform/frontend/ski-platform/src/features/ai/utils/dateParser';
+import { parseDate, extractDates } from '../platform/frontend/ski-platform/src/features/ai/utils/dateParser.js';
 
 interface DateTestCase {
   input: string;
