@@ -19,11 +19,13 @@ export default function SeasonManagement() {
   const navigate = useNavigate();
   const userId = useAppSelector((state) => state.auth.user?.user_id);
   const [seasonGroups, setSeasonGroups] = useState<SeasonGroup[]>([]);
+  const [allTrips, setAllTrips] = useState<any[]>([]); // 保存所有行程
   const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [expandedSeasons, setExpandedSeasons] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<'season' | 'date'>('date'); // 默認按日期排序
 
   const loadTripsAndGroup = useCallback(async () => {
     if (!userId) return;
@@ -39,6 +41,12 @@ export default function SeasonManagement() {
       ]);
 
       setResorts(resortsData.items);
+
+      // 保存所有行程（按日期倒序排序）
+      const sortedTrips = [...tripsData].sort((a, b) =>
+        new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
+      );
+      setAllTrips(sortedTrips);
 
       // 按雪季分組
       const groups = groupTripsBySeasons(tripsData);
@@ -160,10 +168,37 @@ export default function SeasonManagement() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">我的滑雪行程</h1>
-          <p className="text-gray-600">按雪季自動分組，輕鬆管理您的滑雪記錄</p>
+          <p className="text-gray-600">
+            {viewMode === 'date' ? '按日期排序，最新的行程在前' : '按雪季自動分組，輕鬆管理您的滑雪記錄'}
+          </p>
         </div>
         <div className="flex gap-3">
-          {seasonGroups.length > 0 && (
+          {/* 視圖切換按鈕 */}
+          {allTrips.length > 0 && (
+            <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setViewMode('date')}
+                className={`px-4 py-2 font-medium transition-colors ${
+                  viewMode === 'date'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                📅 按日期
+              </button>
+              <button
+                onClick={() => setViewMode('season')}
+                className={`px-4 py-2 font-medium transition-colors border-l border-gray-300 ${
+                  viewMode === 'season'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                ❄️ 按雪季
+              </button>
+            </div>
+          )}
+          {seasonGroups.length > 0 && viewMode === 'season' && (
             <button
               onClick={toggleAllSeasons}
               className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
@@ -180,15 +215,65 @@ export default function SeasonManagement() {
         </div>
       </div>
 
-      {/* Season Groups List */}
-      {seasonGroups.length === 0 ? (
+      {/* Content - 根據 viewMode 顯示不同視圖 */}
+      {allTrips.length === 0 ? (
         <EmptyState
           icon="🎿"
           title="還沒有任何行程"
           description="創建您的第一個滑雪行程，開始記錄美好的回憶"
           action={{ label: '創建第一個行程', onClick: () => setShowCreateModal(true) }}
         />
+      ) : viewMode === 'date' ? (
+        /* 按日期排序視圖 */
+        <div className="space-y-4">
+          {allTrips.map((trip) => {
+            const resort = resortsMap[trip.resort_id];
+            const statusBadge = getStatusBadge(trip.trip_status);
+
+            return (
+              <Card
+                key={trip.trip_id}
+                className="cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => navigate(`/trips/${trip.trip_id}`)}
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {resort ? `${resort.names.zh} ${resort.names.en}` : trip.resort_id}
+                      </h3>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusBadge.class}`}>
+                        {statusBadge.text}
+                      </span>
+                    </div>
+                    {trip.title && (
+                      <p className="text-gray-600 mb-2">{trip.title}</p>
+                    )}
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <span>📅 {formatDateRange(trip.start_date, trip.end_date)}</span>
+                      {trip.current_buddies > 0 && (
+                        <span>👥 {trip.current_buddies} 位雪伴</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/trips/${trip.trip_id}`);
+                      }}
+                      className="text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      查看詳情 →
+                    </button>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
       ) : (
+        /* 按雪季分組視圖 */
         <div className="space-y-4">
           {seasonGroups.map((group) => {
             const isExpanded = expandedSeasons.has(group.seasonId);
