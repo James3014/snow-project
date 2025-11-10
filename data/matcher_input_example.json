@@ -1,0 +1,15 @@
+{
+  "resorts": "<!-- 從 resorts_for_matcher.json 複製 resorts 陣列到這裡 -->",
+  "user_query": "想去北海道，2月出發，家庭友善，預算中等到中高，粉雪，夜滑加分",
+  "top_k": 3,
+  "output_lang": "zh-Hant",
+  "score_threshold": 55,
+  "recognized_preferences": {
+    "region": "Hokkaido",
+    "trip_months": 2,
+    "family_kids": true,
+    "budget_level": [3, 4],
+    "powder_bias": "high",
+    "night_skiing": true
+  }
+}
