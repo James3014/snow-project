@@ -426,10 +426,22 @@ async function handleDurationInput(
 function prepareCreation(
   context: ConversationContext
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
-  const { resort, startDate, duration } = context.accumulatedData;
+  const { resort, startDate, endDate, duration: providedDuration } = context.accumulatedData;
 
-  if (!resort || !startDate || !duration) {
+  if (!resort || !startDate) {
     throw new Error('Missing required data for creation');
+  }
+
+  // 確保有 endDate 或 duration（至少一個）
+  if (!endDate && !providedDuration) {
+    throw new Error('Missing date range or duration');
+  }
+
+  // 計算 duration（如果需要）
+  let duration = providedDuration;
+  if (!duration && endDate) {
+    const diffTime = endDate.getTime() - startDate.getTime();
+    duration = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   }
 
   const dateStr = startDate.toLocaleDateString('zh-TW', {
@@ -437,7 +449,17 @@ function prepareCreation(
     day: 'numeric',
   });
 
-  const message = `好的！正在建立行程：\n\n📍 雪場：${resort.resort.names.zh}\n📅 日期：${dateStr}\n⏱️ 天數：${duration} 天`;
+  // 如果有 endDate，顯示日期範圍
+  let dateDisplay = dateStr;
+  if (endDate) {
+    const endDateStr = endDate.toLocaleDateString('zh-TW', {
+      month: 'numeric',
+      day: 'numeric',
+    });
+    dateDisplay = `${dateStr} - ${endDateStr}`;
+  }
+
+  const message = `好的！正在建立行程：\n\n📍 雪場：${resort.resort.names.zh}\n📅 日期：${dateDisplay}\n⏱️ 天數：${duration} 天`;
 
   return {
     response: {

@@ -150,15 +150,32 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
 
   // 建立行程
   const handleCreateTrip = async (context: ConversationContext) => {
-    const { resort, startDate, duration } = context.accumulatedData;
+    const { resort, startDate, endDate: providedEndDate, duration: providedDuration } = context.accumulatedData;
 
-    if (!resort || !startDate || !duration || !user) {
+    if (!resort || !startDate || !user) {
       throw new Error('缺少必要資訊');
     }
 
+    // 確保有 endDate 和 duration（至少一個）
+    if (!providedEndDate && !providedDuration) {
+      throw new Error('缺少日期範圍或天數');
+    }
+
     try {
-      // 計算結束日期
-      const endDate = calculateEndDate(startDate, duration);
+      // 優先使用提供的 endDate，否則從 duration 計算
+      let endDate: Date;
+      let duration: number;
+
+      if (providedEndDate) {
+        endDate = providedEndDate;
+        // 計算天數（從 startDate 到 endDate）
+        const diffTime = endDate.getTime() - startDate.getTime();
+        duration = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      } else {
+        // 使用 duration 計算 endDate
+        duration = providedDuration!;
+        endDate = calculateEndDate(startDate, duration);
+      }
 
       // 計算雪季 ID
       const seasonId = calculateSeasonId(startDate.toISOString().split('T')[0]);
