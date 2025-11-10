@@ -4,7 +4,7 @@
  */
 
 import { calculateSimilarity } from './levenshtein';
-import { pinyinToChinese, isPossiblyPinyin } from './pinyinMapper';
+import { pinyinToChinese, pinyinToResortId, isPossiblyPinyin } from './pinyinMapper';
 import type { Resort } from '@/shared/data/resorts';
 import { resortApiService } from '@/shared/api/resortApi';
 
@@ -130,16 +130,30 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
 
   // 1. 檢查是否是拼音輸入
   if (isPossiblyPinyin(trimmedInput)) {
+    const resortId = pinyinToResortId(trimmedInput);
+    if (resortId) {
+      // 直接通過 resort ID 查找
+      const resort = resorts.find(r => r.resort_id === resortId);
+      if (resort) {
+        return {
+          resort,
+          matchedField: 'pinyin',
+          matchedValue: trimmedInput,
+          confidence: 0.95, // 拼音匹配信心度
+        };
+      }
+    }
+
+    // 如果沒有直接匹配，嘗試轉換為中文名稱
     const chineseName = pinyinToChinese(trimmedInput);
     if (chineseName) {
-      // 使用轉換後的中文名稱再次匹配
       const match = await matchResortByName(chineseName, resorts);
       if (match) {
         return {
           ...match,
           matchedField: 'pinyin',
           matchedValue: trimmedInput,
-          confidence: Math.min(match.confidence, 0.95), // 拼音匹配略微降低信心度
+          confidence: Math.min(match.confidence, 0.90),
         };
       }
     }
@@ -194,7 +208,23 @@ export async function getSuggestions(
   const trimmedInput = input.trim();
   const matches: ResortMatch[] = [];
 
-  // 如果是拼音，先嘗試轉換
+  // 如果是拼音，先嘗試直接匹配 resort ID
+  if (isPossiblyPinyin(trimmedInput)) {
+    const resortId = pinyinToResortId(trimmedInput);
+    if (resortId) {
+      const resort = resorts.find(r => r.resort_id === resortId);
+      if (resort) {
+        return [{
+          resort,
+          confidence: 0.95,
+          matchedField: 'pinyin',
+          matchedValue: trimmedInput,
+        }];
+      }
+    }
+  }
+
+  // 如果是拼音且沒有直接匹配，嘗試轉換為中文
   let searchInput = trimmedInput;
   if (isPossiblyPinyin(trimmedInput)) {
     const chineseName = pinyinToChinese(trimmedInput);
