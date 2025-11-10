@@ -139,6 +139,15 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
       return;
     }
 
+    if (action === 'RESTART') {
+      // 重新開始建立行程
+      setConversationContext(createInitialContext());
+      addMessage('user', '重新開始');
+      addMessage('assistant', '好的！讓我們重新開始。\n請告訴我你想去哪個雪場？\n例如：二世谷、白馬、留壽都');
+      setButtons([]);
+      return;
+    }
+
     // 其他動作作為文字輸入處理
     handleUserInput(clickedButton.label);
   };

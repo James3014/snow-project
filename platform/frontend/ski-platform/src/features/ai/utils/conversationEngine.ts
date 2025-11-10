@@ -253,6 +253,7 @@ function handleCreateTripIntent(
           : '請告訴我你想去哪個雪場？\n例如：二世谷、白馬、留壽都',
         nextState: 'AWAITING_RESORT',
         suggestions: suggestions.length > 0 ? suggestions : undefined,
+        buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
       },
       updatedContext: {
         ...updatedContext,
@@ -264,8 +265,9 @@ function handleCreateTripIntent(
   if (!mergedData.startDate) {
     return {
       response: {
-        message: `好的，去 ${mergedData.resort.resort.names.zh}！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
+        message: `好的，去 ${mergedData.resort.resort.names.zh}！\n\n📍 雪場：${mergedData.resort.resort.names.zh}\n\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
         nextState: 'AWAITING_DATE',
+        buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
       },
       updatedContext: {
         ...updatedContext,
@@ -281,8 +283,9 @@ function handleCreateTripIntent(
     });
     return {
       response: {
-        message: `${dateStr} 出發前往 ${mergedData.resort.resort.names.zh}！\n打算待幾天呢？\n例如：5天、一週`,
+        message: `${dateStr} 出發前往 ${mergedData.resort.resort.names.zh}！\n\n📍 雪場：${mergedData.resort.resort.names.zh}\n📅 出發日：${dateStr}\n\n打算待幾天呢？\n例如：5天、一週、26號（結束日期）`,
         nextState: 'AWAITING_DURATION',
+        buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
       },
       updatedContext: {
         ...updatedContext,
@@ -310,10 +313,38 @@ async function handleResortInput(
       accumulatedData: {
         ...context.accumulatedData,
         resort: intent.resort,
+        // 如果用戶同時提供了日期或天數，也一併更新
+        startDate: intent.startDate || context.accumulatedData.startDate,
+        endDate: intent.endDate || context.accumulatedData.endDate,
+        duration: intent.duration || context.accumulatedData.duration,
       },
     };
 
-    // 繼續詢問日期
+    // 檢查是否所有資訊都齊全
+    if (intent.startDate && (intent.endDate || intent.duration)) {
+      // 用戶一次提供了雪場、日期和天數/結束日期，直接創建
+      return prepareCreation(updatedContext);
+    }
+
+    // 有雪場和日期，缺天數
+    if (intent.startDate) {
+      const dateStr = intent.startDate.toLocaleDateString('zh-TW', {
+        month: 'numeric',
+        day: 'numeric',
+      });
+      return {
+        response: {
+          message: `好的，${dateStr} 前往 ${intent.resort.resort.names.zh}！\n打算待幾天呢？\n例如：5天、一週`,
+          nextState: 'AWAITING_DURATION',
+        },
+        updatedContext: {
+          ...updatedContext,
+          state: 'AWAITING_DURATION',
+        },
+      };
+    }
+
+    // 只有雪場，繼續詢問日期
     return {
       response: {
         message: `好的，去 ${intent.resort.resort.names.zh}！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
@@ -348,6 +379,27 @@ async function handleDateInput(
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
   const intent = await parseIntent(input);
 
+  // 檢測用戶是否想重新選擇雪場（意圖改變）
+  if (intent.resort && intent.resort.resort.resort_id !== context.accumulatedData.resort?.resort.resort_id) {
+    // 用戶輸入了新的雪場名稱，重新開始
+    return {
+      response: {
+        message: `檢測到您想更換雪場到 ${intent.resort.resort.names.zh}。\n讓我們重新開始吧！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
+        nextState: 'AWAITING_DATE',
+      },
+      updatedContext: {
+        ...context,
+        accumulatedData: {
+          resort: intent.resort,
+          startDate: intent.startDate,
+          endDate: intent.endDate,
+          duration: intent.duration,
+        },
+        state: 'AWAITING_DATE',
+      },
+    };
+  }
+
   if (intent.startDate) {
     const updatedContext = {
       ...context,
@@ -369,9 +421,10 @@ async function handleDateInput(
       month: 'numeric',
       day: 'numeric',
     });
+    const resortName = context.accumulatedData.resort?.resort.names.zh || '目的地';
     return {
       response: {
-        message: `${dateStr} 出發！\n打算待幾天呢？\n例如：5天、一週`,
+        message: `${dateStr} 出發前往 ${resortName}！\n打算待幾天呢？\n例如：5天、一週、26號`,
         nextState: 'AWAITING_DURATION',
       },
       updatedContext: {
@@ -398,6 +451,27 @@ async function handleDurationInput(
   context: ConversationContext
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
   const intent = await parseIntent(input);
+
+  // 檢測用戶是否想重新選擇雪場（意圖改變）
+  if (intent.resort && intent.resort.resort.resort_id !== context.accumulatedData.resort?.resort.resort_id) {
+    // 用戶輸入了新的雪場名稱，重新開始
+    return {
+      response: {
+        message: `檢測到您想更換雪場到 ${intent.resort.resort.names.zh}。\n讓我們重新開始吧！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
+        nextState: 'AWAITING_DATE',
+      },
+      updatedContext: {
+        ...context,
+        accumulatedData: {
+          resort: intent.resort,
+          startDate: intent.startDate,
+          endDate: intent.endDate,
+          duration: intent.duration,
+        },
+        state: 'AWAITING_DATE',
+      },
+    };
+  }
 
   // 情況1：用戶提供了結束日期（如 "26號"、"12-22到26"）
   if (intent.endDate && context.accumulatedData.startDate) {
