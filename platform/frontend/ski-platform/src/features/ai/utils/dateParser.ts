@@ -211,6 +211,53 @@ export function extractDates(input: string): {
 } {
   const result: { startDate?: Date; endDate?: Date } = {};
 
+  // 增強版日期範圍格式匹配 - 支持更多格式
+  const rangePatterns = [
+    // 格式 1: 12月11到20日、12月11至20日、12月11~20日 (最常見)
+    {
+      regex: /(\d{1,2})月(\d{1,2})[日號]?[\s]*[到至~－\-─|]\s*(\d{1,2})[日號]?/,
+      extract: (m: RegExpMatchArray) => ({
+        month: parseInt(m[1]),
+        startDay: parseInt(m[2]),
+        endDay: parseInt(m[3])
+      })
+    },
+    // 格式 2: 12/11-20、12/11到20
+    {
+      regex: /(\d{1,2})[\/](\d{1,2})[\s]*[到至~－\-─|]\s*(\d{1,2})[日號]?/,
+      extract: (m: RegExpMatchArray) => ({
+        month: parseInt(m[1]),
+        startDay: parseInt(m[2]),
+        endDay: parseInt(m[3])
+      })
+    },
+    // 格式 3: 11號到20號 (需要從上下文推斷月份)
+    {
+      regex: /(\d{1,2})[號日][\s]*[到至~－\-─|]\s*(\d{1,2})[號日]/,
+      extract: (m: RegExpMatchArray, fullInput: string) => {
+        const monthMatch = fullInput.match(/(\d{1,2})月/);
+        const month = monthMatch ? parseInt(monthMatch[1]) : new Date().getMonth() + 1;
+        return {
+          month,
+          startDay: parseInt(m[1]),
+          endDay: parseInt(m[2])
+        };
+      }
+    },
+  ];
+
+  for (const { regex, extract } of rangePatterns) {
+    const match = input.match(regex);
+    if (match) {
+      const { month, startDay, endDay } = extract(match, input);
+      const year = getSeasonYear(month);
+
+      result.startDate = new Date(year, month - 1, startDay);
+      result.endDate = new Date(year, month - 1, endDay);
+      return result;
+    }
+  }
+
   // 先嘗試找兩個絕對日期
   const fullDatePattern = /(\d{4}[\/\-年]\d{1,2}[\/\-月]\d{1,2}[日號]?|\d{1,2}[\/\-月]\d{1,2}[日號]?)/g;
   const matches = [...input.matchAll(fullDatePattern)];

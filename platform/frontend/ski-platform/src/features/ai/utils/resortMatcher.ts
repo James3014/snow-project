@@ -53,7 +53,7 @@ export function clearResortCache(): void {
 }
 
 /**
- * 匹配雪場名稱
+ * 匹配雪場名稱（增強版）
  */
 function matchResortName(
   input: string,
@@ -62,7 +62,7 @@ function matchResortName(
   const normalized = input.toLowerCase().trim();
   const { names } = resort;
 
-  // 精確匹配（最高優先級）
+  // 1. 精確匹配（最高優先級）
   if (names.zh.toLowerCase() === normalized) {
     return { confidence: 1.0, field: 'zh', value: names.zh };
   }
@@ -73,40 +73,71 @@ function matchResortName(
     return { confidence: 1.0, field: 'ja', value: names.ja };
   }
 
-  // 包含匹配（高優先級）
-  if (names.zh.toLowerCase().includes(normalized)) {
-    return { confidence: 0.95, field: 'zh', value: names.zh };
+  // 2. 短名稱完全匹配（高信心度）
+  // 例如：用戶輸入"二世谷"，雪場名是"二世谷Moiwa滑雪場"
+  const zhShort = names.zh.toLowerCase().replace(/滑雪場|度假村|滑雪度假村|滑雪公園|溫泉|高原/g, '').trim();
+  const enShort = names.en.toLowerCase().replace(/resort|ski resort|ski area|snow resort|ski|snow/g, '').trim();
+
+  if (zhShort && normalized === zhShort) {
+    return { confidence: 0.98, field: 'zh', value: names.zh };
   }
-  if (names.en.toLowerCase().includes(normalized)) {
-    return { confidence: 0.95, field: 'en', value: names.en };
-  }
-  if (names.ja.includes(normalized)) {
-    return { confidence: 0.95, field: 'ja', value: names.ja };
+  if (enShort && normalized === enShort) {
+    return { confidence: 0.98, field: 'en', value: names.en };
   }
 
-  // 反向包含（用戶輸入更長）
-  if (normalized.includes(names.zh.toLowerCase())) {
-    return { confidence: 0.9, field: 'zh', value: names.zh };
+  // 3. 包含匹配（用戶輸入是名稱的一部分）
+  if (names.zh.toLowerCase().includes(normalized) && normalized.length >= 2) {
+    const matchRatio = normalized.length / names.zh.length;
+    return { confidence: 0.9 + matchRatio * 0.05, field: 'zh', value: names.zh };
   }
-  if (normalized.includes(names.en.toLowerCase())) {
-    return { confidence: 0.9, field: 'en', value: names.en };
+  if (names.en.toLowerCase().includes(normalized) && normalized.length >= 3) {
+    const matchRatio = normalized.length / names.en.length;
+    return { confidence: 0.9 + matchRatio * 0.05, field: 'en', value: names.en };
+  }
+  if (names.ja.includes(normalized) && normalized.length >= 2) {
+    return { confidence: 0.9, field: 'ja', value: names.ja };
   }
 
-  // 模糊匹配（使用編輯距離）
-  const zhSimilarity = calculateSimilarity(normalized, names.zh);
-  const enSimilarity = calculateSimilarity(normalized, names.en);
+  // 4. 反向包含（名稱是用戶輸入的一部分）
+  if (normalized.includes(names.zh.toLowerCase()) && names.zh.length >= 2) {
+    return { confidence: 0.85, field: 'zh', value: names.zh };
+  }
+  if (normalized.includes(names.en.toLowerCase()) && names.en.length >= 3) {
+    return { confidence: 0.85, field: 'en', value: names.en };
+  }
+
+  // 5. 部分詞匹配（用於多字名稱）
+  const zhWords = names.zh.split(/[、，\s]+/);
+  const enWords = names.en.toLowerCase().split(/[\s\-]+/);
+
+  for (const word of zhWords) {
+    if (word.length >= 2 && normalized.includes(word.toLowerCase())) {
+      return { confidence: 0.8, field: 'zh', value: names.zh };
+    }
+  }
+
+  for (const word of enWords) {
+    if (word.length >= 3 && normalized.includes(word)) {
+      return { confidence: 0.8, field: 'en', value: names.en };
+    }
+  }
+
+  // 6. 模糊匹配（使用編輯距離，但提高閾值）
+  const zhSimilarity = calculateSimilarity(normalized, names.zh.toLowerCase());
+  const enSimilarity = calculateSimilarity(normalized, names.en.toLowerCase());
   const jaSimilarity = calculateSimilarity(normalized, names.ja);
 
   const maxSimilarity = Math.max(zhSimilarity, enSimilarity, jaSimilarity);
 
-  // 只有相似度超過 0.6 才認為是匹配
-  if (maxSimilarity >= 0.6) {
+  // 降低閾值到 0.5，但保持較低信心度
+  if (maxSimilarity >= 0.5) {
+    const confidence = maxSimilarity * 0.8; // 降低信心度
     if (maxSimilarity === zhSimilarity) {
-      return { confidence: maxSimilarity, field: 'zh', value: names.zh };
+      return { confidence, field: 'zh', value: names.zh };
     } else if (maxSimilarity === enSimilarity) {
-      return { confidence: maxSimilarity, field: 'en', value: names.en };
+      return { confidence, field: 'en', value: names.en };
     } else {
-      return { confidence: maxSimilarity, field: 'ja', value: names.ja };
+      return { confidence, field: 'ja', value: names.ja };
     }
   }
 
