@@ -177,12 +177,41 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
         endDate = calculateEndDate(startDate, duration);
       }
 
-      // 計算雪季 ID
-      const seasonId = calculateSeasonId(startDate.toISOString().split('T')[0]);
+      // 計算雪季標識符（如 "2024-2025"）
+      const seasonName = calculateSeasonId(startDate.toISOString().split('T')[0]);
 
-      // 建立行程
+      // 檢查或創建雪季
+      let actualSeasonId: string;
+
+      try {
+        // 獲取用戶的所有雪季
+        const seasons = await tripPlanningApi.getSeasons(user.user_id);
+
+        // 查找匹配的雪季（通過 title）
+        const existingSeason = seasons.find(s => s.title === seasonName);
+
+        if (existingSeason) {
+          // 使用現有雪季的 ID
+          actualSeasonId = existingSeason.season_id;
+        } else {
+          // 創建新雪季
+          const [startYear, endYear] = seasonName.split('-').map(Number);
+          const newSeason = await tripPlanningApi.createSeason(user.user_id, {
+            title: seasonName,
+            description: `${startYear}-${endYear} 滑雪季`,
+            start_date: `${startYear}-11-01`,
+            end_date: `${endYear}-04-30`,
+          });
+          actualSeasonId = newSeason.season_id;
+        }
+      } catch (error) {
+        console.error('處理雪季失敗:', error);
+        throw new Error('無法創建或獲取雪季');
+      }
+
+      // 建立行程（使用實際的 season_id）
       const response = await tripPlanningApi.createTrip(user.user_id, {
-        season_id: seasonId,
+        season_id: actualSeasonId,
         resort_id: resort.resort.resort_id,
         start_date: startDate.toISOString().split('T')[0],
         end_date: endDate.toISOString().split('T')[0],
