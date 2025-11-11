@@ -153,6 +153,14 @@ const USER_REPORTED_ISSUES = [
     description: '跨年日期+雪場',
     originalError: '日期識別問題',
   },
+  {
+    issue: 'Issue #6',
+    date: '2025-11-11 10:42',
+    input: '我在2月20-28要去苗場',
+    expected: 'yuzawa_naeba',
+    description: '「我在」+日期範圍+「要去」+雪場的格式',
+    originalError: '系統回覆「請告訴我你想去哪個雪場？」',
+  },
 ];
 
 // 執行測試
