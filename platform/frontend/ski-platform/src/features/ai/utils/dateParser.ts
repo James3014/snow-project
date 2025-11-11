@@ -285,18 +285,20 @@ export function extractDates(input: string): {
 
       // 處理跨月格式
       if ('crossMonth' in extracted && extracted.crossMonth) {
-        result.startDate = new Date(extracted.startYear!, extracted.startMonth! - 1, extracted.startDay!);
-        result.endDate = new Date(extracted.endYear!, extracted.endMonth! - 1, extracted.endDay!);
+        result.startDate = new Date(extracted.startYear, extracted.startMonth - 1, extracted.startDay);
+        result.endDate = new Date(extracted.endYear, extracted.endMonth - 1, extracted.endDay);
         return result;
       }
 
       // 處理同月格式
-      const { month, startDay, endDay } = extracted;
-      const year = getSeasonYear(month!);
+      if ('month' in extracted) {
+        const { month, startDay, endDay } = extracted;
+        const year = getSeasonYear(month);
 
-      result.startDate = new Date(year, month! - 1, startDay!);
-      result.endDate = new Date(year, month! - 1, endDay!);
-      return result;
+        result.startDate = new Date(year, month - 1, startDay);
+        result.endDate = new Date(year, month - 1, endDay);
+        return result;
+      }
     }
   }
 
