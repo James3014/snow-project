@@ -217,6 +217,40 @@ const testCases = [
     input: '建立苗場行程',
     expected: 'yuzawa_naeba',
   },
+
+  // === 語序變化：雪場在前 ===
+  {
+    category: '【語序】雪場+日期',
+    input: '苗場2月21-28',
+    expected: 'yuzawa_naeba',
+  },
+  {
+    category: '【語序】雪場+我要+日期+去',
+    input: '苗場我要在2月21-28去',
+    expected: 'yuzawa_naeba',
+  },
+  {
+    category: '【語序】雪場+我+日期+想去',
+    input: '苗場我2月想去',
+    expected: 'yuzawa_naeba',
+  },
+  {
+    category: '【語序】雪場+日期+要去',
+    input: '苗場2月20日要去',
+    expected: 'yuzawa_naeba',
+  },
+
+  // === 語序變化：雪場在中間 ===
+  {
+    category: '【語序】我+雪場+日期',
+    input: '我苗場2月',
+    expected: 'yuzawa_naeba',
+  },
+  {
+    category: '【語序】日期+雪場+要去',
+    input: '2月苗場要去',
+    expected: 'yuzawa_naeba',
+  },
 ];
 
 // 執行測試

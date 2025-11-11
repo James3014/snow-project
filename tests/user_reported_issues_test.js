@@ -161,6 +161,14 @@ const USER_REPORTED_ISSUES = [
     description: '「我在」+日期範圍+「要去」+雪場的格式',
     originalError: '系統回覆「請告訴我你想去哪個雪場？」',
   },
+  {
+    issue: 'Issue #7',
+    date: '2025-11-11 10:57',
+    input: '苗場我要在2月21-28去',
+    expected: 'yuzawa_naeba',
+    description: '雪場在前的語序變化',
+    originalError: '系統回覆「請告訴我你想去哪個雪場？」',
+  },
 ];
 
 // 執行測試
