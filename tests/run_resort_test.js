@@ -36,6 +36,7 @@ const testCases = [
 
   // 句子中
   { input: '2月3到8日去苗場', expected: 'yuzawa_naeba', type: 'single' },
+  { input: '新增苗場2月3到7日', expected: 'yuzawa_naeba', type: 'single' },
   { input: '想去野澤溫泉滑雪', expected: 'nagano_nozawa_onsen', type: 'single' },
   { input: '12月去留壽都', expected: 'hokkaido_rusutsu', type: 'single' },
   { input: '明年1月去二世谷滑雪', expected: 'hokkaido_niseko_moiwa', type: 'single' },
