@@ -129,11 +129,11 @@ function matchResortName(
   const chineseSequences = normalized.match(/[\u4e00-\u9fa5]+/g) || [];
   for (let seq of chineseSequences) {
     if (seq.length >= 3) {
-      // 移除常見的動作詞前綴
-      const cleanedSeq = seq.replace(/^(去|到|想去|打算去|打算|想|準備去|準備|計劃去|計劃|前往)/, '');
+      // 移除常見的動作詞前綴（包括「新增」、「建立」、「創建」等行程創建關鍵詞）
+      const cleanedSeq = seq.replace(/^(新增|建立|創建|規劃|計劃|安排|去|到|想去|打算去|打算|想|準備去|準備|計劃去|前往)/, '');
 
-      // 再次檢查長度
-      if (cleanedSeq.length >= 3) {
+      // 再次檢查長度（至少 2 個字符，如「苗場」、「白馬」）
+      if (cleanedSeq.length >= 2) {
         // 檢查雪場名或短名稱是否包含這個序列
         if (names.zh.toLowerCase().includes(cleanedSeq) || (zhShort && zhShort.toLowerCase().includes(cleanedSeq))) {
           // 但要排除太通用的詞（如「滑雪」、「度假」等）
