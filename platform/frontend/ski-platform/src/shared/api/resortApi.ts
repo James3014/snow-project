@@ -20,7 +20,7 @@ export interface ResortListResponse {
  */
 export const resortApiService = {
   // 獲取所有雪場列表
-  getAllResorts: () => resortApi.get<ResortListResponse>('/resorts'),
+  getAllResorts: () => resortApi.get<ResortListResponse>('/resorts?limit=100'),
 
   // 獲取單個雪場詳情
   getResort: (resortId: string) => resortApi.get<Resort>(`/resorts/${resortId}`),
