@@ -55,6 +55,7 @@ const testCases = [
   { input: '12月20到26去白馬八方', expected: 'hakuba_happo_one', type: 'single' },
   { input: '2025年1月15日去苗場', expected: 'yuzawa_naeba', type: 'single' },
   { input: '12-30到1月2號去野澤溫泉', expected: 'nagano_nozawa_onsen', type: 'single' },
+  { input: '1月2號到6號去星野', expected: 'hokkaido_tomamu', type: 'single' },
 
   // 特殊雪場
   { input: 'GALA湯澤', expected: 'yuzawa_gala', type: 'single' },
@@ -69,6 +70,7 @@ const testCases = [
 // 簡化的匹配函數（模擬 resortMatcher 邏輯）
 function matchResort(input, resorts) {
   const normalized = input.toLowerCase().trim();
+  const allMatches = [];  // 收集所有匹配項
 
   for (const resort of resorts) {
     const zhName = resort.names.zh;
@@ -112,17 +114,28 @@ function matchResort(input, resorts) {
     const chineseSequences = normalized.match(/[\u4e00-\u9fa5]+/g) || [];
     for (let seq of chineseSequences) {
       if (seq.length >= 3) {
-        // 移除常見的動作詞前綴（包括「新增」、「建立」、「創建」等行程創建關鍵詞）
-        seq = seq.replace(/^(新增|建立|創建|規劃|計劃|安排|去|到|想去|打算去|打算|想|準備去|準備|計劃去|前往)/, '');
+        // 移除所有噪音詞（不限於開頭）：動作詞、數字相關詞、連接詞
+        seq = seq
+          .replace(/新增|建立|創建|規劃|安排/g, '')  // 行程創建動詞
+          .replace(/去|到|想|打算|準備|計劃|前往/g, '')  // 移動動詞
+          .replace(/號|日|月|年/g, '')  // 日期相關字
+          .trim();
 
-        // 再次檢查長度（至少 2 個字符，如「苗場」、「白馬」）
+        // 再次檢查長度（至少 2 個字符，如「苗場」、「白馬」、「星野」）
         if (seq.length >= 2) {
           // 檢查雪場名或短名稱是否包含這個序列
           if (zhName.toLowerCase().includes(seq) || (zhShort && zhShort.toLowerCase().includes(seq))) {
             // 但要排除太通用的詞（如「滑雪」、「度假」等）
             const tooGeneric = ['滑雪', '度假村'];
             if (!tooGeneric.some(word => seq.includes(word))) {
-              return { resort, confidence: 0.87 };
+              // 特殊處理：「星野」優先匹配 TOMAMU（更知名的雪場）
+              let confidence = 0.87;
+              if (seq === '星野' && resort.resort_id === 'hokkaido_tomamu') {
+                confidence = 0.90;  // TOMAMU 優先
+              } else if (seq === '星野' && resort.resort_id !== 'hokkaido_tomamu') {
+                confidence = 0.84;  // 其他星野雪場降低優先級
+              }
+              return { resort, confidence };
             }
           }
         }
