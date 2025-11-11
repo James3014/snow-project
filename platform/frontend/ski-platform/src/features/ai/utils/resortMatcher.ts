@@ -7,6 +7,7 @@ import { calculateSimilarity } from './levenshtein';
 import { pinyinToChinese, pinyinToResortId, isPossiblyPinyin, getAllMatchingResortIds } from './pinyinMapper';
 import type { Resort } from '@/shared/data/resorts';
 import { resortApiService } from '@/shared/api/resortApi';
+import { getLocalResorts } from '@/shared/data/local-resorts';
 
 export interface ResortMatch {
   resort: Resort;
@@ -35,12 +36,20 @@ async function getResorts(): Promise<Resort[]> {
     const response = await resortApiService.getAllResorts();
     resortsCache = response.items || [];
     lastFetchTime = now;
+
+    // 如果 API 返回空數據，使用本地資料
+    if (resortsCache.length === 0) {
+      console.warn('API returned empty resorts list, falling back to local data');
+      resortsCache = getLocalResorts();
+    }
+
     return resortsCache;
   } catch (error) {
-    console.error('Failed to fetch resorts:', error);
-    // 如果API失敗，返回空數組（或可以考慮使用本地備份數據）
-    resortsCache = [];
-    return [];
+    console.error('Failed to fetch resorts from API, using local fallback data:', error);
+    // 如果 API 失敗，使用本地備份數據
+    resortsCache = getLocalResorts();
+    lastFetchTime = now;
+    return resortsCache;
   }
 }
 
