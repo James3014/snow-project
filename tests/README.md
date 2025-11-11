@@ -1,8 +1,39 @@
-# 雪场识别和日期识别全面测试
+# 雪場識別測試套件
 
-这些测试文件用于全面验证对话功能中的雪场识别和日期识别功能。
+本目錄包含所有雪場識別相關的測試，確保系統穩定可靠。
 
-## 测试文件说明
+## 🔴 重要：用戶回報問題測試
+
+### `user_reported_issues_test.js` ⭐ **每次修改後必須運行**
+
+這是**最重要的測試**，包含所有用戶實際發現並回報的 bug。
+
+**運行方式**：
+```bash
+node tests/user_reported_issues_test.js
+```
+
+**當前測試案例**（修復率：100%）：
+- ✅ Issue #1 (2025-11-11): "新增苗場2月3到7日" → 苗場滑雪場
+- ✅ Issue #2 (2025-11-11): "1月2號到6號去星野" → 星野TOMAMU
+- ✅ Issue #3: "2月3到8日去苗場" → 苗場滑雪場
+- ✅ Issue #4: "12月20到26去白馬八方" → 白馬八方尾根
+- ✅ Issue #5: "12-30到1月2號去野澤溫泉" → 野澤溫泉
+
+**如何添加新的用戶回報問題**：
+發現新 bug 時，請立即在 `user_reported_issues_test.js` 中添加：
+```javascript
+{
+  issue: 'Issue #N',
+  date: '2025-XX-XX',
+  input: '用戶的實際輸入',
+  expected: 'expected_resort_id',
+  description: '問題描述',
+  originalError: '原始錯誤信息',
+}
+```
+
+## 其他測試文件
 
 ### 1. `resort_recognition_test.ts`
 - **目的**: 测试所有雪场的各种变体是否能被正确识别
