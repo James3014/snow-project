@@ -98,6 +98,8 @@ export async function processUserInput(
   switch (context.state) {
     case 'MAIN_MENU':
     case 'AWAITING_INPUT':
+    case 'TRIP_CREATED':    // 行程建立後，允許繼續建立新行程
+    case 'VIEWING_TRIPS':   // 查看行程後，允許繼續操作
       return await handleInitialInput(input, updatedContext);
 
     case 'AWAITING_RESORT':
