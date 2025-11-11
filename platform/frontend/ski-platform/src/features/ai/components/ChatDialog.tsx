@@ -105,7 +105,13 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
       if (response.nextState === 'CREATING_TRIP') {
         await handleCreateTrip(updatedContext);
       } else if (response.nextState === 'VIEWING_TRIPS') {
-        handleViewTrips();
+        // 如果有刪除識別資訊且需要確認，處理刪除
+        const responseData = response.data as { deleteIdentifier?: { resortId?: string; startDate?: Date; tripNumber?: number } } | undefined;
+        if (responseData?.deleteIdentifier && response.requiresConfirmation) {
+          await handleDeleteTrip(responseData.deleteIdentifier);
+        } else {
+          handleViewTrips();
+        }
       }
     } catch (error) {
       console.error('Error processing input:', error);
@@ -253,6 +259,65 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
       onClose();
       navigate('/trips');
     }, 1000);
+  };
+
+  // 刪除行程
+  const handleDeleteTrip = async (deleteIdentifier: {
+    resortId?: string;
+    startDate?: Date;
+    tripNumber?: number;
+  }) => {
+    if (!user) {
+      throw new Error('用戶未登入');
+    }
+
+    try {
+      // 獲取用戶的所有行程
+      const trips = await tripPlanningApi.getTrips(user.user_id);
+
+      // 根據識別資訊找到匹配的行程
+      let matchedTrip = null;
+
+      if (deleteIdentifier.tripNumber && trips.length >= deleteIdentifier.tripNumber) {
+        // 按編號匹配（假設按日期排序）
+        const sortedTrips = trips.sort((a, b) =>
+          new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
+        );
+        matchedTrip = sortedTrips[deleteIdentifier.tripNumber - 1];
+      } else if (deleteIdentifier.resortId) {
+        // 按雪場匹配
+        matchedTrip = trips.find(t => t.resort_id === deleteIdentifier.resortId);
+      } else if (deleteIdentifier.startDate) {
+        // 按日期匹配
+        const targetDate = deleteIdentifier.startDate.toISOString().split('T')[0];
+        matchedTrip = trips.find(t => t.start_date === targetDate);
+      }
+
+      if (!matchedTrip) {
+        addMessage('assistant', '找不到符合條件的行程。請確認行程是否存在。');
+        setButtons([
+          { id: 'view', label: '查看我的行程', action: 'VIEW_TRIPS' },
+          { id: 'back', label: '返回主選單', action: 'MAIN_MENU' },
+        ]);
+        return;
+      }
+
+      // 刪除行程
+      await tripPlanningApi.deleteTrip(matchedTrip.trip_id, user.user_id);
+
+      // 成功訊息
+      addMessage('assistant', `✅ 已成功刪除行程：${matchedTrip.title}\n\n還有什麼我可以幫忙的嗎？`);
+      setButtons([
+        { id: 'create', label: '建立新行程', action: 'CREATE_TRIP' },
+        { id: 'view', label: '查看我的行程', action: 'VIEW_TRIPS' },
+      ]);
+
+      // 重置對話狀態
+      setConversationContext(createInitialContext());
+    } catch (error) {
+      console.error('Failed to delete trip:', error);
+      throw new Error('刪除行程失敗，請稍後再試');
+    }
   };
 
   return (

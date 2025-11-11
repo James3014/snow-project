@@ -187,6 +187,9 @@ async function handleInitialInput(
         },
       };
 
+    case 'DELETE_TRIP':
+      return handleDeleteTripIntent(intent, updatedContext);
+
     case 'CREATE_TRIP':
       return handleCreateTripIntent(intent, updatedContext);
 
@@ -242,6 +245,72 @@ function handleChatIntent(
     updatedContext: {
       ...context,
       state: 'MAIN_MENU',
+    },
+  };
+}
+
+/**
+ * 處理刪除行程意圖
+ */
+function handleDeleteTripIntent(
+  intent: ParsedIntent,
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  // 檢查是否有識別資訊
+  const hasResort = !!intent.resort;
+  const hasDate = !!intent.startDate;
+  const hasTripNumber = !!intent.duration; // 複用 duration 欄位儲存編號
+
+  // 如果沒有任何識別資訊，請求用戶提供
+  if (!hasResort && !hasDate && !hasTripNumber) {
+    return {
+      response: {
+        message: '請告訴我要刪除哪個行程？\n\n你可以說：\n• "刪除苗場行程"\n• "刪除第1個行程"\n• "刪除2月的行程"',
+        nextState: 'VIEWING_TRIPS',
+        buttonOptions: [
+          { id: 'view', label: '查看我的行程', action: 'VIEW_TRIPS' },
+          { id: 'cancel', label: '取消', action: 'CANCEL' },
+        ],
+      },
+      updatedContext: {
+        ...context,
+        state: 'VIEWING_TRIPS',
+      },
+    };
+  }
+
+  // 構建刪除提示訊息
+  let identifier = '';
+  if (hasTripNumber) {
+    identifier = `第 ${intent.duration} 個行程`;
+  } else if (hasResort) {
+    identifier = `${intent.resort!.resort.names.zh} 的行程`;
+  } else if (hasDate) {
+    const dateStr = intent.startDate!.toLocaleDateString('zh-TW', {
+      month: 'numeric',
+      day: 'numeric',
+    });
+    identifier = `${dateStr} 的行程`;
+  }
+
+  // 返回確認訊息和數據
+  return {
+    response: {
+      message: `要刪除${identifier}嗎？`,
+      nextState: 'VIEWING_TRIPS',
+      requiresConfirmation: true,
+      data: {
+        deleteIdentifier: {
+          resortId: intent.resort?.resort.resort_id,
+          startDate: intent.startDate,
+          tripNumber: intent.duration,
+        },
+      },
+    },
+    updatedContext: {
+      ...context,
+      state: 'VIEWING_TRIPS',
+      intent,
     },
   };
 }
