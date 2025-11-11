@@ -115,7 +115,16 @@ function matchResortName(
     return { confidence: 0.85, field: 'en', value: names.en };
   }
 
-  // 5. 部分詞匹配（用於多字名稱）
+  // 5. 用戶輸入包含短名稱（用於句子中的雪場名）
+  // 例如：用戶輸入「2月3到8日去苗場」，雪場名是「苗場滑雪場」
+  if (zhShort && zhShort.length >= 2 && normalized.includes(zhShort.toLowerCase())) {
+    return { confidence: 0.85, field: 'zh', value: names.zh };
+  }
+  if (enShort && enShort.length >= 3 && normalized.includes(enShort.toLowerCase())) {
+    return { confidence: 0.85, field: 'en', value: names.en };
+  }
+
+  // 6. 部分詞匹配（用於多字名稱）
   const zhWords = names.zh.split(/[、，\s]+/);
   const enWords = names.en.toLowerCase().split(/[\s\-]+/);
 
@@ -131,7 +140,7 @@ function matchResortName(
     }
   }
 
-  // 6. 模糊匹配（使用編輯距離，但提高閾值）
+  // 7. 模糊匹配（使用編輯距離，但提高閾值）
   const zhSimilarity = calculateSimilarity(normalized, names.zh.toLowerCase());
   const enSimilarity = calculateSimilarity(normalized, names.en.toLowerCase());
   const jaSimilarity = calculateSimilarity(normalized, names.ja);

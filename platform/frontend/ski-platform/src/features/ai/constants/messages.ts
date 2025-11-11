@@ -26,12 +26,6 @@ export const MAIN_MENU_BUTTONS: ButtonOption[] = [
     emoji: '📊',
     action: 'VIEW_TRIPS'
   },
-  {
-    id: 'chat',
-    label: '閒聊',
-    emoji: '💬',
-    action: 'CHAT'
-  },
 ];
 
 // 返回按鈕

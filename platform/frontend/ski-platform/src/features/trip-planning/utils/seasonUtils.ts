@@ -57,7 +57,8 @@ export interface SeasonStats {
  * 雪季分組資料
  */
 export interface SeasonGroup {
-  seasonId: string;
+  seasonId: string;       // UUID 或計算出的 ID（如 "2024-2025"）
+  seasonTitle: string;    // 人類可讀的雪季名稱（如 "2024-2025"）
   trips: Trip[];
   stats: SeasonStats;
 }
@@ -93,12 +94,18 @@ export function groupTripsBySeasons(trips: Trip[]): SeasonGroup[] {
 
   // 轉換為陣列並排序（最新的雪季在前）
   return Object.entries(groups)
-    .map(([seasonId, trips]) => ({
-      seasonId,
-      trips: trips.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime()),
-      stats: calculateSeasonStats(trips),
-    }))
-    .sort((a, b) => b.seasonId.localeCompare(a.seasonId));
+    .map(([seasonId, trips]) => {
+      // 計算人類可讀的雪季名稱（從行程日期推算）
+      const seasonTitle = calculateSeasonId(trips[0].start_date);
+
+      return {
+        seasonId,
+        seasonTitle,
+        trips: trips.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime()),
+        stats: calculateSeasonStats(trips),
+      };
+    })
+    .sort((a, b) => b.seasonTitle.localeCompare(a.seasonTitle));
 }
 
 /**
