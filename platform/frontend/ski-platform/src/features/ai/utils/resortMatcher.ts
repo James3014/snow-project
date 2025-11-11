@@ -129,17 +129,30 @@ function matchResortName(
   const chineseSequences = normalized.match(/[\u4e00-\u9fa5]+/g) || [];
   for (let seq of chineseSequences) {
     if (seq.length >= 3) {
-      // 移除常見的動作詞前綴（包括「新增」、「建立」、「創建」等行程創建關鍵詞）
-      const cleanedSeq = seq.replace(/^(新增|建立|創建|規劃|計劃|安排|去|到|想去|打算去|打算|想|準備去|準備|計劃去|前往)/, '');
+      // 移除所有噪音詞（不限於開頭）：動作詞、數字相關詞、連接詞
+      let cleanedSeq = seq
+        .replace(/新增|建立|創建|規劃|安排/g, '')  // 行程創建動詞
+        .replace(/去|到|想|打算|準備|計劃|前往/g, '')  // 移動動詞
+        .replace(/號|日|月|年/g, '');  // 日期相關字
 
-      // 再次檢查長度（至少 2 個字符，如「苗場」、「白馬」）
+      // 移除前後空白
+      cleanedSeq = cleanedSeq.trim();
+
+      // 再次檢查長度（至少 2 個字符，如「苗場」、「白馬」、「星野」）
       if (cleanedSeq.length >= 2) {
         // 檢查雪場名或短名稱是否包含這個序列
         if (names.zh.toLowerCase().includes(cleanedSeq) || (zhShort && zhShort.toLowerCase().includes(cleanedSeq))) {
           // 但要排除太通用的詞（如「滑雪」、「度假」等）
           const tooGeneric = ['滑雪', '度假村'];
           if (!tooGeneric.some(word => cleanedSeq.includes(word))) {
-            return { confidence: 0.87, field: 'zh', value: names.zh };
+            // 特殊處理：「星野」優先匹配 TOMAMU（更知名的雪場）
+            let confidence = 0.87;
+            if (cleanedSeq === '星野' && resort.resort_id === 'hokkaido_tomamu') {
+              confidence = 0.90;  // TOMAMU 優先
+            } else if (cleanedSeq === '星野' && resort.resort_id !== 'hokkaido_tomamu') {
+              confidence = 0.84;  // 其他星野雪場降低優先級
+            }
+            return { confidence, field: 'zh', value: names.zh };
           }
         }
       }
