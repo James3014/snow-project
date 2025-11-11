@@ -71,6 +71,12 @@ const TEST_CASES: TestCase[] = [
     shouldMatch: true,
   },
   {
+    input: '新增苗場2月3到7日',
+    expectedResort: 'yuzawa_naeba',
+    scenario: '句子中：新增苗場2月3到7日',
+    shouldMatch: true,
+  },
+  {
     input: '想去野澤溫泉滑雪',
     expectedResort: 'nagano_nozawa_onsen',
     scenario: '句子中：想去野澤溫泉滑雪',
