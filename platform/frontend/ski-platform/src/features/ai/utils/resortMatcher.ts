@@ -115,9 +115,53 @@ function matchResortName(
     return { confidence: 0.85, field: 'en', value: names.en };
   }
 
-  // 5. 部分詞匹配（用於多字名稱）
-  const zhWords = names.zh.split(/[、，\s]+/);
-  const enWords = names.en.toLowerCase().split(/[\s\-]+/);
+  // 5. 用戶輸入包含短名稱（用於句子中的雪場名）
+  // 例如：用戶輸入「2月3到8日去苗場」，雪場名是「苗場滑雪場」
+  if (zhShort && zhShort.length >= 2 && normalized.includes(zhShort.toLowerCase())) {
+    return { confidence: 0.85, field: 'zh', value: names.zh };
+  }
+  if (enShort && enShort.length >= 3 && normalized.includes(enShort.toLowerCase())) {
+    return { confidence: 0.85, field: 'en', value: names.en };
+  }
+
+  // 5.3. 反向匹配：雪場名包含用戶輸入的子串（處理「12月20到26去白馬八方」→「白馬八方尾根」）
+  // 從用戶輸入中提取連續的中文字符序列，移除常見動作詞後檢查是否在雪場名中
+  const chineseSequences = normalized.match(/[\u4e00-\u9fa5]+/g) || [];
+  for (let seq of chineseSequences) {
+    if (seq.length >= 3) {
+      // 移除常見的動作詞前綴
+      const cleanedSeq = seq.replace(/^(去|到|想去|打算去|打算|想|準備去|準備|計劃去|計劃|前往)/, '');
+
+      // 再次檢查長度
+      if (cleanedSeq.length >= 3) {
+        // 檢查雪場名或短名稱是否包含這個序列
+        if (names.zh.toLowerCase().includes(cleanedSeq) || (zhShort && zhShort.toLowerCase().includes(cleanedSeq))) {
+          // 但要排除太通用的詞（如「滑雪」、「度假」等）
+          const tooGeneric = ['滑雪', '度假村'];
+          if (!tooGeneric.some(word => cleanedSeq.includes(word))) {
+            return { confidence: 0.87, field: 'zh', value: names.zh };
+          }
+        }
+      }
+    }
+  }
+
+  // 5.5. 短名稱分詞匹配（處理「二世谷Moiwa」→「二世谷」的情況）
+  // 要求詞長 >= 3，避免「白馬」這種太短的詞導致誤匹配
+  if (zhShort && zhShort.length >= 2) {
+    const zhShortWords = zhShort.split(/[A-Za-z\s&]+/).filter(w => w.length >= 3);
+    for (const word of zhShortWords) {
+      if (normalized.includes(word.toLowerCase())) {
+        return { confidence: 0.82, field: 'zh', value: names.zh };
+      }
+    }
+  }
+
+  // 6. 部分詞匹配（用於多字名稱）
+  // 排除通用後綴，避免誤匹配
+  const excludeWords = ['滑雪場', '度假村', '滑雪度假村', '滑雪公園', '溫泉', '高原', '&', 'ski', 'resort', 'snow', 'winter', 'sports', 'park'];
+  const zhWords = names.zh.split(/[、，\s&]+/).filter(w => !excludeWords.includes(w));
+  const enWords = names.en.toLowerCase().split(/[\s\-&]+/).filter(w => !excludeWords.includes(w));
 
   for (const word of zhWords) {
     if (word.length >= 2 && normalized.includes(word.toLowerCase())) {
@@ -131,7 +175,7 @@ function matchResortName(
     }
   }
 
-  // 6. 模糊匹配（使用編輯距離，但提高閾值）
+  // 7. 模糊匹配（使用編輯距離，但提高閾值）
   const zhSimilarity = calculateSimilarity(normalized, names.zh.toLowerCase());
   const enSimilarity = calculateSimilarity(normalized, names.en.toLowerCase());
   const jaSimilarity = calculateSimilarity(normalized, names.ja);

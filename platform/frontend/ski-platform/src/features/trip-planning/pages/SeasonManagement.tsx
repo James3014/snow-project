@@ -288,7 +288,7 @@ export default function SeasonManagement() {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
                       <h3 className="text-xl font-bold text-gray-900">
-                        📅 {group.seasonId} 雪季
+                        📅 {group.seasonTitle} 雪季
                       </h3>
                       <div className="flex gap-4 text-sm text-gray-600">
                         <span className="flex items-center gap-1">
@@ -376,7 +376,7 @@ export default function SeasonManagement() {
                         onClick={(e) => {
                           e.stopPropagation();
                           // TODO: 實現分享功能
-                          alert(`分享 ${group.seasonId} 雪季功能開發中...`);
+                          alert(`分享 ${group.seasonTitle} 雪季功能開發中...`);
                         }}
                         className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                       >
