@@ -213,6 +213,29 @@ export function extractDates(input: string): {
 
   // 增強版日期範圍格式匹配 - 支持更多格式
   const rangePatterns = [
+    // 格式 0: 跨月格式 12-30到1月2號、12/30到1月2日 (最優先，處理跨年情況)
+    {
+      regex: /(\d{1,2})[\/\-](\d{1,2})[日號]?[\s]*[到至~－\-─|]\s*(\d{1,2})月(\d{1,2})[日號]?/,
+      extract: (m: RegExpMatchArray) => {
+        const startMonth = parseInt(m[1]);
+        const startDay = parseInt(m[2]);
+        const endMonth = parseInt(m[3]);
+        const endDay = parseInt(m[4]);
+
+        const startYear = getSeasonYear(startMonth);
+        const endYear = getSeasonYear(endMonth);
+
+        return {
+          startMonth,
+          startDay,
+          startYear,
+          endMonth,
+          endDay,
+          endYear,
+          crossMonth: true
+        };
+      }
+    },
     // 格式 1: 12月11到20日、12月11至20日、12月11~20日 (最常見)
     {
       regex: /(\d{1,2})月(\d{1,2})[日號]?[\s]*[到至~－\-─|]\s*(\d{1,2})[日號]?/,
@@ -258,11 +281,21 @@ export function extractDates(input: string): {
   for (const { regex, extract } of rangePatterns) {
     const match = input.match(regex);
     if (match) {
-      const { month, startDay, endDay } = extract(match, input);
-      const year = getSeasonYear(month);
+      const extracted = extract(match, input);
 
-      result.startDate = new Date(year, month - 1, startDay);
-      result.endDate = new Date(year, month - 1, endDay);
+      // 處理跨月格式
+      if ('crossMonth' in extracted && extracted.crossMonth) {
+        result.startDate = new Date(extracted.startYear!, extracted.startMonth! - 1, extracted.startDay!);
+        result.endDate = new Date(extracted.endYear!, extracted.endMonth! - 1, extracted.endDay!);
+        return result;
+      }
+
+      // 處理同月格式
+      const { month, startDay, endDay } = extracted;
+      const year = getSeasonYear(month!);
+
+      result.startDate = new Date(year, month! - 1, startDay!);
+      result.endDate = new Date(year, month! - 1, endDay!);
       return result;
     }
   }
