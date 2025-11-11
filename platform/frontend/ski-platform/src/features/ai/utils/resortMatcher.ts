@@ -167,6 +167,60 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
   }
 
   const trimmedInput = input.trim();
+  const normalizedInput = trimmedInput.toLowerCase();
+
+  // 檢測雪場群關鍵詞（需要用戶進一步選擇）
+  const resortGroups = [
+    {
+      keywords: ['白馬', 'hakuba'],
+      names: ['白馬Cortina', '白馬八方尾根', '白馬五龍', '白馬岩岳', '白馬栂池', '白馬乗鞍'],
+      filter: (r: Resort) => r.names.zh.includes('白馬')
+    },
+    {
+      keywords: ['二世谷', 'niseko', 'ニセコ'],
+      names: ['二世谷'],
+      filter: (r: Resort) => r.names.zh.includes('二世谷') || r.names.en.toLowerCase().includes('niseko')
+    },
+    {
+      keywords: ['妙高', 'myoko'],
+      names: ['妙高杉之原', '妙高池之平', '赤倉溫泉', '赤倉觀光', '樂天新井'],
+      filter: (r: Resort) => r.names.zh.includes('妙高') || r.names.zh.includes('赤倉') || r.names.zh.includes('新井')
+    },
+    {
+      keywords: ['湯澤', 'yuzawa'],
+      names: ['GALA湯澤', 'NASPA', '苗場', '神樂', '石打丸山', '湯澤中里', '湯澤公園', '神立高原', '舞子高原', '岩原', '上越國際'],
+      filter: (r: Resort) => r.names.zh.includes('湯澤') || r.resort_id.includes('yuzawa_') ||
+                           r.names.zh.includes('苗場') || r.names.zh.includes('神樂') ||
+                           r.names.zh.includes('石打') || r.names.zh.includes('神立') ||
+                           r.names.zh.includes('舞子') || r.names.zh.includes('岩原') ||
+                           r.names.zh.includes('上越國際')
+    },
+  ];
+
+  for (const group of resortGroups) {
+    if (group.keywords.some(k => normalizedInput === k || normalizedInput.includes(k))) {
+      // 找到所有相關雪場
+      const groupResorts = resorts.filter(group.filter);
+
+      if (groupResorts.length > 1) {
+        // 返回第一個，但降低信心度，讓系統提供選擇
+        return {
+          resort: groupResorts[0],
+          matchedField: 'zh',
+          matchedValue: trimmedInput,
+          confidence: 0.5, // 低信心度，觸發建議
+        };
+      } else if (groupResorts.length === 1) {
+        // 只有一個匹配，直接返回
+        return {
+          resort: groupResorts[0],
+          matchedField: 'zh',
+          matchedValue: trimmedInput,
+          confidence: 0.95,
+        };
+      }
+    }
+  }
 
   // 1. 先嘗試拼音映射（支持中文和英文）
   // 檢查是否有歧義（多個雪場匹配同一個輸入）
@@ -284,7 +338,46 @@ export async function getSuggestions(
   }
 
   const trimmedInput = input.trim();
+  const normalizedInput = trimmedInput.toLowerCase();
   const matches: ResortMatch[] = [];
+
+  // 檢測雪場群 - 如果匹配到雪場群，返回該群所有雪場
+  const resortGroups = [
+    {
+      keywords: ['白馬', 'hakuba'],
+      filter: (r: Resort) => r.names.zh.includes('白馬')
+    },
+    {
+      keywords: ['二世谷', 'niseko', 'ニセコ'],
+      filter: (r: Resort) => r.names.zh.includes('二世谷') || r.names.en.toLowerCase().includes('niseko')
+    },
+    {
+      keywords: ['妙高', 'myoko'],
+      filter: (r: Resort) => r.names.zh.includes('妙高') || r.names.zh.includes('赤倉') || r.names.zh.includes('新井')
+    },
+    {
+      keywords: ['湯澤', 'yuzawa'],
+      filter: (r: Resort) => r.names.zh.includes('湯澤') || r.resort_id.includes('yuzawa_') ||
+                           r.names.zh.includes('苗場') || r.names.zh.includes('神樂') ||
+                           r.names.zh.includes('石打') || r.names.zh.includes('神立') ||
+                           r.names.zh.includes('舞子') || r.names.zh.includes('岩原') ||
+                           r.names.zh.includes('上越國際')
+    },
+  ];
+
+  for (const group of resortGroups) {
+    if (group.keywords.some(k => normalizedInput === k || normalizedInput.includes(k))) {
+      const groupResorts = resorts.filter(group.filter);
+      if (groupResorts.length > 0) {
+        return groupResorts.map(r => ({
+          resort: r,
+          confidence: 0.9,
+          matchedField: 'zh' as const,
+          matchedValue: trimmedInput,
+        }));
+      }
+    }
+  }
 
   // 如果是拼音，先嘗試直接匹配 resort ID
   if (isPossiblyPinyin(trimmedInput)) {
