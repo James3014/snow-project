@@ -8,6 +8,7 @@ import { pinyinToChinese, pinyinToResortId, isPossiblyPinyin, getAllMatchingReso
 import type { Resort } from '@/shared/data/resorts';
 import { resortApiService } from '@/shared/api/resortApi';
 import { getLocalResorts } from '@/shared/data/local-resorts';
+import { getResortAliases, getResortPriority } from './resortAliases';
 
 export interface ResortMatch {
   resort: Resort;
@@ -62,7 +63,7 @@ export function clearResortCache(): void {
 }
 
 /**
- * 匹配雪場名稱（增強版）
+ * 匹配雪場名稱（增強版 - 使用別名系統）
  */
 function matchResortName(
   input: string,
@@ -71,143 +72,60 @@ function matchResortName(
   const normalized = input.toLowerCase().trim();
   const { names } = resort;
 
-  // 1. 精確匹配（最高優先級）
-  if (names.zh.toLowerCase() === normalized) {
-    return { confidence: 1.0, field: 'zh', value: names.zh };
-  }
-  if (names.en.toLowerCase() === normalized) {
-    return { confidence: 1.0, field: 'en', value: names.en };
-  }
-  if (names.ja === normalized) {
-    return { confidence: 1.0, field: 'ja', value: names.ja };
-  }
+  // 獲取雪場的所有別名（按優先級排序：從完整名到通用名）
+  const aliases = getResortAliases(resort.resort_id, names.zh);
 
-  // 2. 短名稱完全匹配（高信心度）
-  // 例如：用戶輸入"二世谷"，雪場名是"二世谷Moiwa滑雪場"
-  const zhShort = names.zh.toLowerCase().replace(/滑雪場|度假村|滑雪度假村|滑雪公園|溫泉|高原/g, '').trim();
-  const enShort = names.en.toLowerCase().replace(/resort|ski resort|ski area|snow resort|ski|snow/g, '').trim();
+  let bestMatch: { confidence: number; field: 'zh' | 'en' | 'ja'; value: string } | null = null;
 
-  if (zhShort && normalized === zhShort) {
-    return { confidence: 0.98, field: 'zh', value: names.zh };
-  }
-  if (enShort && normalized === enShort) {
-    return { confidence: 0.98, field: 'en', value: names.en };
-  }
+  // 遍歷所有別名進行匹配
+  for (let i = 0; i < aliases.length; i++) {
+    const alias = aliases[i].toLowerCase();
 
-  // 3. 包含匹配（用戶輸入是名稱的一部分）
-  if (names.zh.toLowerCase().includes(normalized) && normalized.length >= 2) {
-    const matchRatio = normalized.length / names.zh.length;
-    return { confidence: 0.9 + matchRatio * 0.05, field: 'zh', value: names.zh };
-  }
-  if (names.en.toLowerCase().includes(normalized) && normalized.length >= 3) {
-    const matchRatio = normalized.length / names.en.length;
-    return { confidence: 0.9 + matchRatio * 0.05, field: 'en', value: names.en };
-  }
-  if (names.ja.includes(normalized) && normalized.length >= 2) {
-    return { confidence: 0.9, field: 'ja', value: names.ja };
-  }
-
-  // 4. 反向包含（名稱是用戶輸入的一部分）
-  if (normalized.includes(names.zh.toLowerCase()) && names.zh.length >= 2) {
-    return { confidence: 0.85, field: 'zh', value: names.zh };
-  }
-  if (normalized.includes(names.en.toLowerCase()) && names.en.length >= 3) {
-    return { confidence: 0.85, field: 'en', value: names.en };
-  }
-
-  // 5. 用戶輸入包含短名稱（用於句子中的雪場名）
-  // 例如：用戶輸入「2月3到8日去苗場」，雪場名是「苗場滑雪場」
-  if (zhShort && zhShort.length >= 2 && normalized.includes(zhShort.toLowerCase())) {
-    return { confidence: 0.85, field: 'zh', value: names.zh };
-  }
-  if (enShort && enShort.length >= 3 && normalized.includes(enShort.toLowerCase())) {
-    return { confidence: 0.85, field: 'en', value: names.en };
-  }
-
-  // 5.3. 反向匹配：雪場名包含用戶輸入的子串（處理「12月20到26去白馬八方」→「白馬八方尾根」）
-  // 從用戶輸入中提取連續的中文字符序列，移除常見動作詞後檢查是否在雪場名中
-  const chineseSequences = normalized.match(/[\u4e00-\u9fa5]+/g) || [];
-  for (let seq of chineseSequences) {
-    if (seq.length >= 3) {
-      // 移除所有噪音詞（不限於開頭）：動作詞、數字相關詞、連接詞
-      let cleanedSeq = seq
-        .replace(/新增|建立|創建|規劃|安排/g, '')  // 行程創建動詞
-        .replace(/去|到|想|打算|準備|計劃|前往/g, '')  // 移動動詞
-        .replace(/號|日|月|年/g, '');  // 日期相關字
-
-      // 移除前後空白
-      cleanedSeq = cleanedSeq.trim();
-
-      // 再次檢查長度（至少 2 個字符，如「苗場」、「白馬」、「星野」）
-      if (cleanedSeq.length >= 2) {
-        // 檢查雪場名或短名稱是否包含這個序列
-        if (names.zh.toLowerCase().includes(cleanedSeq) || (zhShort && zhShort.toLowerCase().includes(cleanedSeq))) {
-          // 但要排除太通用的詞（如「滑雪」、「度假」等）
-          const tooGeneric = ['滑雪', '度假村'];
-          if (!tooGeneric.some(word => cleanedSeq.includes(word))) {
-            // 特殊處理：「星野」優先匹配 TOMAMU（更知名的雪場）
-            let confidence = 0.87;
-            if (cleanedSeq === '星野' && resort.resort_id === 'hokkaido_tomamu') {
-              confidence = 0.90;  // TOMAMU 優先
-            } else if (cleanedSeq === '星野' && resort.resort_id !== 'hokkaido_tomamu') {
-              confidence = 0.84;  // 其他星野雪場降低優先級
-            }
-            return { confidence, field: 'zh', value: names.zh };
-          }
-        }
-      }
-    }
-  }
-
-  // 5.5. 短名稱分詞匹配（處理「二世谷Moiwa」→「二世谷」的情況）
-  // 要求詞長 >= 3，避免「白馬」這種太短的詞導致誤匹配
-  if (zhShort && zhShort.length >= 2) {
-    const zhShortWords = zhShort.split(/[A-Za-z\s&]+/).filter(w => w.length >= 3);
-    for (const word of zhShortWords) {
-      if (normalized.includes(word.toLowerCase())) {
-        return { confidence: 0.82, field: 'zh', value: names.zh };
-      }
-    }
-  }
-
-  // 6. 部分詞匹配（用於多字名稱）
-  // 排除通用後綴，避免誤匹配
-  const excludeWords = ['滑雪場', '度假村', '滑雪度假村', '滑雪公園', '溫泉', '高原', '&', 'ski', 'resort', 'snow', 'winter', 'sports', 'park'];
-  const zhWords = names.zh.split(/[、，\s&]+/).filter(w => !excludeWords.includes(w));
-  const enWords = names.en.toLowerCase().split(/[\s\-&]+/).filter(w => !excludeWords.includes(w));
-
-  for (const word of zhWords) {
-    if (word.length >= 2 && normalized.includes(word.toLowerCase())) {
-      return { confidence: 0.8, field: 'zh', value: names.zh };
-    }
-  }
-
-  for (const word of enWords) {
-    if (word.length >= 3 && normalized.includes(word)) {
-      return { confidence: 0.8, field: 'en', value: names.en };
-    }
-  }
-
-  // 7. 模糊匹配（使用編輯距離，但提高閾值）
-  const zhSimilarity = calculateSimilarity(normalized, names.zh.toLowerCase());
-  const enSimilarity = calculateSimilarity(normalized, names.en.toLowerCase());
-  const jaSimilarity = calculateSimilarity(normalized, names.ja);
-
-  const maxSimilarity = Math.max(zhSimilarity, enSimilarity, jaSimilarity);
-
-  // 降低閾值到 0.5，但保持較低信心度
-  if (maxSimilarity >= 0.5) {
-    const confidence = maxSimilarity * 0.8; // 降低信心度
-    if (maxSimilarity === zhSimilarity) {
+    // 1. 精確匹配（最高優先級）
+    if (normalized === alias) {
+      const confidence = i === 0 ? 1.0 : 0.98;  // 第一個別名（完整名）信心度最高
       return { confidence, field: 'zh', value: names.zh };
-    } else if (maxSimilarity === enSimilarity) {
-      return { confidence, field: 'en', value: names.en };
-    } else {
-      return { confidence, field: 'ja', value: names.ja };
+    }
+
+    // 2. 輸入包含別名（用戶提到了這個雪場）
+    if (normalized.includes(alias) && alias.length >= 2) {
+      // 信心度根據別名的具體程度：
+      // - 越具體的別名（如"白馬八方"）信心度越高
+      // - 越通用的別名（如"白馬"）信心度越低
+      let confidence = 0.85;
+
+      if (alias.length >= 4) {
+        confidence = 0.90;  // 長別名（4+字）更具體
+      } else if (alias.length === 3) {
+        confidence = 0.87;  // 中等長度（3字）
+      } else {
+        confidence = 0.80;  // 短別名（2字）需要更謹慎
+      }
+
+      // 如果是排在前面的別名（更準確），提升信心度
+      if (i === 0) confidence += 0.05;
+
+      if (!bestMatch || confidence > bestMatch.confidence) {
+        bestMatch = { confidence, field: 'zh', value: names.zh };
+      }
+    }
+
+    // 3. 別名包含輸入（可能是縮寫）
+    if (alias.includes(normalized) && normalized.length >= 2) {
+      const confidence = 0.75;
+      if (!bestMatch || confidence > bestMatch.confidence) {
+        bestMatch = { confidence, field: 'zh', value: names.zh };
+      }
     }
   }
 
-  return null;
+  // 如果沒有匹配，嘗試模糊匹配（作為後備）
+  const zhSimilarity = calculateSimilarity(normalized, names.zh.toLowerCase());
+  if (zhSimilarity >= 0.7) {
+    return { confidence: zhSimilarity * 0.7, field: 'zh', value: names.zh };
+  }
+
+  return bestMatch;
 }
 
 /**
@@ -344,8 +262,14 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
   }
 
   if (partialMatches.length > 0) {
-    // 按信心度排序，返回最高的
-    partialMatches.sort((a, b) => b.confidence - a.confidence);
+    // 按信心度排序，信心度相同時按優先級排序
+    partialMatches.sort((a, b) => {
+      const confidenceDiff = b.confidence - a.confidence;
+      if (Math.abs(confidenceDiff) < 0.01) {  // 信心度相差<1%視為相同
+        return getResortPriority(b.resort.resort_id) - getResortPriority(a.resort.resort_id);
+      }
+      return confidenceDiff;
+    });
     return partialMatches[0];
   }
 
