@@ -299,6 +299,10 @@ function handleDeleteTripIntent(
       message: `要刪除${identifier}嗎？`,
       nextState: 'VIEWING_TRIPS',
       requiresConfirmation: true,
+      buttonOptions: [
+        { id: 'confirm_delete', label: '✓ 確認刪除', action: 'CONFIRM_DELETE' },
+        { id: 'cancel', label: '✕ 取消', action: 'CANCEL' },
+      ],
       data: {
         deleteIdentifier: {
           resortId: intent.resort?.resort.resort_id,
@@ -311,6 +315,10 @@ function handleDeleteTripIntent(
       ...context,
       state: 'VIEWING_TRIPS',
       intent,
+      accumulatedData: {
+        ...context.accumulatedData,
+        // 保存刪除識別資訊到 context 中，供後續確認使用
+      },
     },
   };
 }
