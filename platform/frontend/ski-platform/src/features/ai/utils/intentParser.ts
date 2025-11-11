@@ -13,6 +13,7 @@ import { matchResort, getSuggestions, type ResortMatch } from './resortMatcher';
 export type IntentAction =
   | 'CREATE_TRIP'    // 建立行程
   | 'VIEW_TRIPS'     // 查看行程
+  | 'DELETE_TRIP'    // 刪除行程
   | 'CHAT'           // 閒聊
   | 'UNKNOWN';       // 無法識別
 
@@ -47,6 +48,10 @@ const ACTION_KEYWORDS = {
     '查看', '查看行程', '我的行程', '行程列表', '看看',
     '顯示行程', '有什麼行程', '行程', '都有什麼',
   ],
+  DELETE_TRIP: [
+    '刪除', '刪除行程', '移除', '移除行程', '取消', '取消行程',
+    '不去', '不去了', '刪掉',
+  ],
   CHAT: [
     '你好', '嗨', 'hi', 'hello', '哈囉', '安安',
     '謝謝', '感謝', 'thanks', '幫助', 'help',
@@ -58,6 +63,13 @@ const ACTION_KEYWORDS = {
  */
 function detectAction(input: string): { action: IntentAction; confidence: number } {
   const normalized = input.toLowerCase().trim();
+
+  // 檢查刪除行程（優先級最高，因為「不去」等詞可能與其他動作衝突）
+  for (const keyword of ACTION_KEYWORDS.DELETE_TRIP) {
+    if (normalized.includes(keyword.toLowerCase())) {
+      return { action: 'DELETE_TRIP', confidence: 1.0 };
+    }
+  }
 
   // 檢查建立行程
   for (const keyword of ACTION_KEYWORDS.CREATE_TRIP) {
@@ -124,7 +136,12 @@ export async function parseIntent(input: string): Promise<ParsedIntent> {
     };
   }
 
-  // 4. 解析建立行程的相關資訊
+  // 4. 如果是刪除行程，解析刪除相關資訊
+  if (action === 'DELETE_TRIP') {
+    return await parseDeleteTripIntent(rawInput, actionConfidence);
+  }
+
+  // 5. 解析建立行程的相關資訊
   return await parseCreateTripIntent(rawInput, action, actionConfidence);
 }
 
@@ -222,6 +239,50 @@ async function parseCreateTripIntent(
     rawInput: input,
     missingFields,
     suggestions,
+  };
+}
+
+/**
+ * 解析刪除行程意圖
+ */
+async function parseDeleteTripIntent(
+  input: string,
+  actionConfidence: number
+): Promise<ParsedIntent> {
+  const missingFields: string[] = [];
+
+  // 嘗試識別要刪除的行程
+  // 可能的方式：
+  // 1. 包含雪場名稱："刪除苗場行程"
+  // 2. 包含編號："刪除第1個行程"
+  // 3. 包含日期："刪除2月的行程"
+
+  // 1. 嘗試匹配雪場
+  const resortMatch = await matchResort(input);
+
+  // 2. 提取日期資訊
+  const dates = extractDates(input);
+
+  // 3. 檢測是否有編號（第1個、第2個等）
+  const numberPattern = /第?(\d+)個?|(\d+)號/;
+  const numberMatch = input.match(numberPattern);
+  const tripNumber = numberMatch ? parseInt(numberMatch[1] || numberMatch[2]) : undefined;
+
+  // 如果沒有任何識別資訊，需要用戶指定
+  if (!resortMatch && !dates.startDate && !tripNumber) {
+    missingFields.push('trip_identifier');
+  }
+
+  return {
+    action: 'DELETE_TRIP',
+    confidence: actionConfidence,
+    resort: resortMatch || undefined,
+    startDate: dates.startDate,
+    endDate: dates.endDate,
+    rawInput: input,
+    missingFields,
+    // 將 tripNumber 存儲在 duration 欄位（複用現有結構）
+    duration: tripNumber,
   };
 }
 

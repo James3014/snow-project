@@ -30,33 +30,26 @@ async function getResorts(): Promise<Resort[]> {
 
   // 使用緩存
   if (resortsCache && now - lastFetchTime < CACHE_DURATION) {
-    console.log('[getResorts] 使用緩存，雪場數量:', resortsCache.length);
     return resortsCache;
   }
 
-  console.log('[getResorts] 從 API 獲取雪場...');
   try {
     const response = await resortApiService.getAllResorts();
-    console.log('[getResorts] API 響應:', response);
     resortsCache = response.items || [];
     lastFetchTime = now;
 
-    console.log('[getResorts] API 返回雪場數量:', resortsCache.length);
-
     // 如果 API 返回空數據，使用本地資料
     if (resortsCache.length === 0) {
-      console.warn('[getResorts] API 返回空數據，使用本地資料');
+      console.warn('API returned empty resorts list, falling back to local data');
       resortsCache = getLocalResorts();
-      console.log('[getResorts] 本地資料雪場數量:', resortsCache.length);
     }
 
     return resortsCache;
   } catch (error) {
-    console.error('[getResorts] API 失敗，使用本地資料:', error);
+    console.error('Failed to fetch resorts from API, using local fallback data:', error);
     // 如果 API 失敗，使用本地備份數據
     resortsCache = getLocalResorts();
     lastFetchTime = now;
-    console.log('[getResorts] 本地資料雪場數量:', resortsCache.length);
     return resortsCache;
   }
 }
@@ -140,14 +133,10 @@ function matchResortName(
  */
 export async function matchResort(input: string): Promise<ResortMatch | null> {
   if (!input || input.trim().length === 0) {
-    console.log('[matchResort] 輸入為空');
     return null;
   }
 
-  console.log('[matchResort] 輸入:', input);
   const resorts = await getResorts();
-  console.log('[matchResort] 獲取到雪場數量:', resorts.length);
-
   if (resorts.length === 0) {
     console.error('[matchResort] 雪場列表為空！');
     return null;
@@ -256,7 +245,6 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
   // 3. 直接名稱匹配
   const directMatch = matchResortByName(trimmedInput, resorts);
   if (directMatch) {
-    console.log('[matchResort] 直接匹配成功:', directMatch.resort.names.zh, '信心度:', directMatch.confidence);
     return directMatch;
   }
 
@@ -274,8 +262,6 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
     }
   }
 
-  console.log('[matchResort] 部分匹配數量:', partialMatches.length);
-
   if (partialMatches.length > 0) {
     // 按信心度排序，信心度相同時按優先級排序
     partialMatches.sort((a, b) => {
@@ -285,11 +271,9 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
       }
       return confidenceDiff;
     });
-    console.log('[matchResort] 最佳匹配:', partialMatches[0].resort.names.zh, '信心度:', partialMatches[0].confidence);
     return partialMatches[0];
   }
 
-  console.error('[matchResort] 沒有找到匹配的雪場');
   return null;
 }
 
