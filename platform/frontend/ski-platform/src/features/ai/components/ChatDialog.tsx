@@ -76,29 +76,64 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
   };
 
   // 處理按鈕點擊
-  const handleButtonClick = (action: string) => {
+  const handleButtonClick = async (action: string) => {
     const clickedButton = buttons.find(b => b.action === action);
     if (!clickedButton) return;
 
-    // 特殊處理一些動作
-    if (action === 'MAIN_MENU') {
-      // 重置到主選單（使用 hook 方法）
-      addMessage('user', '返回主選單');
-      addMessage('assistant', MESSAGES.backToMenu);
-      resetToMenu();
-      return;
-    }
+    // 根據 action 直接觸發對應功能（不再繞道文字解析）
+    switch (action) {
+      case 'MAIN_MENU':
+        // 返回主選單
+        addMessage('user', '返回主選單');
+        addMessage('assistant', MESSAGES.backToMenu);
+        resetToMenu();
+        break;
 
-    if (action === 'RESTART') {
-      // 重新開始建立行程
-      addMessage('user', '重新開始');
-      addMessage('assistant', '好的！讓我們重新開始。\n請告訴我你想去哪個雪場？\n例如：二世谷、白馬、留壽都');
-      resetToMenu();
-      return;
-    }
+      case 'RESTART':
+        // 重新開始建立行程
+        addMessage('user', '重新開始');
+        addMessage('assistant', '好的！讓我們重新開始。\n請告訴我你想去哪個雪場？\n例如：二世谷、白馬、留壽都');
+        resetToMenu();
+        break;
 
-    // 其他動作作為文字輸入處理
-    handleUserInput(clickedButton.label);
+      case 'CREATE_TRIP':
+        // 建立行程：觸發建立流程
+        addMessage('user', '建立行程');
+        await handleUserInput('建立行程');
+        break;
+
+      case 'VIEW_TRIPS':
+        // 查看行程：直接導航
+        addMessage('user', '查看行程');
+        addMessage('assistant', '正在為你打開行程列表...');
+        handleViewTrips();
+        break;
+
+      case 'CANCEL':
+        // 取消：返回主選單
+        addMessage('user', '取消');
+        addMessage('assistant', '好的，已取消。還有什麼我可以幫忙的嗎？');
+        resetToMenu();
+        break;
+
+      case 'CONFIRM':
+        // 確認建立：處理確認
+        addMessage('user', '確定');
+        await handleUserInput('確定');
+        break;
+
+      case 'CONFIRM_DELETE':
+        // 確認刪除：處理刪除確認
+        addMessage('user', '確認刪除');
+        await handleUserInput('確定');
+        break;
+
+      default:
+        // 未知動作：降級為文字輸入處理
+        console.warn(`Unknown button action: ${action}, falling back to text input`);
+        handleUserInput(clickedButton.label);
+        break;
+    }
   };
 
   // 處理建議點擊
