@@ -595,14 +595,18 @@ function handleFoundResort(
   const updatedContext = mergeResortDataToContext(intent, context);
   const resort = intent.resort!;
 
+  // Linus 原則：數據應該從 context 流動，而不是依賴短暫的 intent
+  // 用戶可能在第一次輸入時已提供日期（如"3月20-25去妙高"）
+  const { startDate, endDate, duration } = updatedContext.tripData;
+
   // 場景1：完整信息（雪場 + 日期 + 天數），直接創建
-  if (intent.startDate && (intent.endDate || intent.duration)) {
+  if (startDate && (endDate || duration)) {
     return prepareCreation(updatedContext);
   }
 
   // 場景2：有雪場和日期，缺天數
-  if (intent.startDate) {
-    return createAskDurationResponse(intent.startDate, resort.resort.names.zh, updatedContext);
+  if (startDate) {
+    return createAskDurationResponse(startDate, resort.resort.names.zh, updatedContext);
   }
 
   // 場景3：只有雪場，詢問日期
