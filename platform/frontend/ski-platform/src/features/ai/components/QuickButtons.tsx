@@ -7,7 +7,7 @@ import type { ButtonOption } from '../types';
 
 interface QuickButtonsProps {
   buttons: ButtonOption[];
-  onButtonClick: (action: string) => void;
+  onButtonClick: (action: string) => void | Promise<void>;
 }
 
 export default function QuickButtons({ buttons, onButtonClick }: QuickButtonsProps) {
