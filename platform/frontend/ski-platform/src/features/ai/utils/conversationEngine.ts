@@ -66,10 +66,9 @@ export type ConversationState =
  */
 export interface ConversationContext {
   state: ConversationState;
-  intent?: ParsedIntent;
 
-  // 累積的資訊（用於多輪對話）
-  accumulatedData: {
+  // 行程數據（單一數據源 - Linus原則：消除數據重複）
+  tripData: {
     resort?: ResortMatch;
     startDate?: Date;
     endDate?: Date;
@@ -108,7 +107,7 @@ export interface ConversationResponse {
 export function createInitialContext(): ConversationContext {
   return {
     state: 'MAIN_MENU',
-    accumulatedData: {},
+    tripData: {},
     conversationHistory: [],
   };
 }
@@ -162,7 +161,7 @@ export async function processUserInput(
         updatedContext: {
           ...updatedContext,
           state: 'MAIN_MENU',
-          accumulatedData: {},
+          tripData: {},
         },
       };
   }
@@ -185,14 +184,9 @@ async function handleInitialInput(
 
   // 2. 解析用戶意圖
   const intent = await parseIntent(input);
-  const contextWithIntent = {
-    ...context,
-    intent,
-    state: 'PROCESSING_INTENT' as ConversationState,
-  };
 
-  // 3. 分發到具體處理器
-  return dispatchIntentToHandler(intent, contextWithIntent);
+  // 3. 分發到具體處理器（intent 只作為函數參數使用，不持久化到 context）
+  return dispatchIntentToHandler(intent, context);
 }
 
 /**
@@ -388,10 +382,11 @@ function handleDeleteTripIntent(
     updatedContext: {
       ...context,
       state: 'VIEWING_TRIPS',
-      intent,
-      accumulatedData: {
-        ...context.accumulatedData,
-        // 保存刪除識別資訊到 context 中，供後續確認使用
+      tripData: {
+        ...context.tripData,
+        resort: intent.resort || context.tripData.resort,
+        startDate: intent.startDate || context.tripData.startDate,
+        duration: intent.duration || context.tripData.duration,
       },
     },
   };
@@ -406,15 +401,15 @@ function handleCreateTripIntent(
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
   // 合併累積的資料
   const mergedData = {
-    resort: intent.resort || context.accumulatedData.resort,
-    startDate: intent.startDate || context.accumulatedData.startDate,
-    endDate: intent.endDate || context.accumulatedData.endDate,
-    duration: intent.duration || context.accumulatedData.duration,
+    resort: intent.resort || context.tripData.resort,
+    startDate: intent.startDate || context.tripData.startDate,
+    endDate: intent.endDate || context.tripData.endDate,
+    duration: intent.duration || context.tripData.duration,
   };
 
   const updatedContext = {
     ...context,
-    accumulatedData: mergedData,
+    tripData: mergedData,
   };
 
   // 檢查是否有缺少的資訊
@@ -527,12 +522,12 @@ function mergeResortDataToContext(
 ): ConversationContext {
   return {
     ...context,
-    accumulatedData: {
-      ...context.accumulatedData,
+    tripData: {
+      ...context.tripData,
       resort: intent.resort,
-      startDate: intent.startDate || context.accumulatedData.startDate,
-      endDate: intent.endDate || context.accumulatedData.endDate,
-      duration: intent.duration || context.accumulatedData.duration,
+      startDate: intent.startDate || context.tripData.startDate,
+      endDate: intent.endDate || context.tripData.endDate,
+      duration: intent.duration || context.tripData.duration,
     },
   };
 }
@@ -613,7 +608,7 @@ async function handleDateInput(
   const intent = await parseIntent(input);
 
   // 檢測用戶是否想重新選擇雪場（意圖改變）
-  if (intent.resort && intent.resort.resort.resort_id !== context.accumulatedData.resort?.resort.resort_id) {
+  if (intent.resort && intent.resort.resort.resort_id !== context.tripData.resort?.resort.resort_id) {
     // 用戶輸入了新的雪場名稱，重新開始
     return {
       response: {
@@ -622,7 +617,7 @@ async function handleDateInput(
       },
       updatedContext: {
         ...context,
-        accumulatedData: {
+        tripData: {
           resort: intent.resort,
           startDate: intent.startDate,
           endDate: intent.endDate,
@@ -636,8 +631,8 @@ async function handleDateInput(
   if (intent.startDate) {
     const updatedContext = {
       ...context,
-      accumulatedData: {
-        ...context.accumulatedData,
+      tripData: {
+        ...context.tripData,
         startDate: intent.startDate,
         endDate: intent.endDate,
         duration: intent.duration,
@@ -654,7 +649,7 @@ async function handleDateInput(
       month: 'numeric',
       day: 'numeric',
     });
-    const resortName = context.accumulatedData.resort?.resort.names.zh || '目的地';
+    const resortName = context.tripData.resort?.resort.names.zh || '目的地';
     return {
       response: {
         message: `${dateStr} 出發前往 ${resortName}！\n打算待幾天呢？\n例如：5天、一週、26號`,
@@ -686,7 +681,7 @@ async function handleDurationInput(
   const intent = await parseIntent(input);
 
   // 檢測用戶是否想重新選擇雪場（意圖改變）
-  if (intent.resort && intent.resort.resort.resort_id !== context.accumulatedData.resort?.resort.resort_id) {
+  if (intent.resort && intent.resort.resort.resort_id !== context.tripData.resort?.resort.resort_id) {
     // 用戶輸入了新的雪場名稱，重新開始
     return {
       response: {
@@ -695,7 +690,7 @@ async function handleDurationInput(
       },
       updatedContext: {
         ...context,
-        accumulatedData: {
+        tripData: {
           resort: intent.resort,
           startDate: intent.startDate,
           endDate: intent.endDate,
@@ -707,11 +702,11 @@ async function handleDurationInput(
   }
 
   // 情況1：用戶提供了結束日期（如 "26號"、"12-22到26"）
-  if (intent.endDate && context.accumulatedData.startDate) {
+  if (intent.endDate && context.tripData.startDate) {
     const updatedContext = {
       ...context,
-      accumulatedData: {
-        ...context.accumulatedData,
+      tripData: {
+        ...context.tripData,
         endDate: intent.endDate,
       },
     };
@@ -723,8 +718,8 @@ async function handleDurationInput(
   if (intent.duration) {
     const updatedContext = {
       ...context,
-      accumulatedData: {
-        ...context.accumulatedData,
+      tripData: {
+        ...context.tripData,
         duration: intent.duration,
       },
     };
@@ -748,7 +743,7 @@ async function handleDurationInput(
 function prepareCreation(
   context: ConversationContext
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
-  const { resort, startDate, endDate, duration: providedDuration } = context.accumulatedData;
+  const { resort, startDate, endDate, duration: providedDuration } = context.tripData;
 
   if (!resort || !startDate) {
     throw new Error('Missing required data for creation');
@@ -787,7 +782,7 @@ function prepareCreation(
     response: {
       message,
       nextState: 'CREATING_TRIP',
-      data: context.accumulatedData,
+      data: context.tripData,
     },
     updatedContext: {
       ...context,
@@ -817,7 +812,7 @@ async function handleConfirmation(
       response: {
         message: '正在建立行程...',
         nextState: 'CREATING_TRIP',
-        data: context.accumulatedData,
+        data: context.tripData,
       },
       updatedContext: {
         ...context,
@@ -846,7 +841,7 @@ async function handleConfirmation(
       updatedContext: {
         ...context,
         state: 'MAIN_MENU',
-        accumulatedData: {},
+        tripData: {},
       },
     };
   }
@@ -886,7 +881,7 @@ export function handleTripCreated(
     updatedContext: {
       ...context,
       state: 'TRIP_CREATED',
-      accumulatedData: {},
+      tripData: {},
     },
   };
 }
@@ -911,7 +906,7 @@ export function handleError(
       ...context,
       state: 'MAIN_MENU',
       error,
-      accumulatedData: {},
+      tripData: {},
     },
   };
 }
