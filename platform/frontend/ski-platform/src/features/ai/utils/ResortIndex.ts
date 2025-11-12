@@ -145,7 +145,19 @@ export class ResortIndex {
     const matches: ResortMatch[] = [];
 
     // 1. 检查雪场群 - 返回群内所有雪场
-    const groupResorts = this.groupKeywordMap.get(normalized);
+    // 先尝试精确匹配
+    let groupResorts = this.groupKeywordMap.get(normalized);
+
+    // 如果精确匹配失败，尝试 .includes() 匹配（处理"建立行程 妙高"等情况）
+    if (!groupResorts) {
+      for (const [keyword, resorts] of this.groupKeywordMap) {
+        if (normalized.includes(keyword)) {
+          groupResorts = resorts;
+          break;
+        }
+      }
+    }
+
     if (groupResorts && groupResorts.length > 0) {
       return groupResorts.map(r => ({
         resort: r,
