@@ -3,23 +3,20 @@
  * 階段二：完整版本，支援文字輸入和完整流程
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MessageBubble from './MessageBubble';
 import QuickButtons from './QuickButtons';
 import InputBox from './InputBox';
 import SuggestionList from './SuggestionList';
-import { MESSAGES, MAIN_MENU_BUTTONS } from '../constants/messages';
-import type { Message, ButtonOption } from '../types';
+import { MESSAGES } from '../constants/messages';
 import {
-  createInitialContext,
-  processUserInput,
   handleTripCreated,
-  handleError,
   type ConversationContext,
 } from '../utils/conversationEngine';
 import { useAppSelector } from '@/store/hooks';
 import { useTripCreation } from '../hooks/useTripCreation';
+import { useConversation } from '../hooks/useConversation';
 
 interface ChatDialogProps {
   onClose: () => void;
@@ -29,24 +26,22 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
 
+  // 使用对话管理 Hook（统一管理 5 个状态）
+  const {
+    messages,
+    buttons,
+    suggestions,
+    context,
+    isProcessing,
+    addMessage,
+    processInput,
+    handleError: handleConversationError,
+    resetToMenu,
+    updateResponse,
+  } = useConversation();
+
   // 使用行程创建 Hook（提取业务逻辑）
   const { createTrip } = useTripCreation(user?.user_id);
-
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: MESSAGES.welcome,
-      timestamp: new Date(),
-    },
-  ]);
-
-  const [buttons, setButtons] = useState<ButtonOption[]>(MAIN_MENU_BUTTONS);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [conversationContext, setConversationContext] = useState<ConversationContext>(
-    createInitialContext()
-  );
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -55,19 +50,6 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // 添加訊息的輔助函數
-  const addMessage = (role: 'user' | 'assistant', content: string) => {
-    setMessages(prev => [
-      ...prev,
-      {
-        id: Date.now().toString() + Math.random(),
-        role,
-        content,
-        timestamp: new Date(),
-      },
-    ]);
-  };
-
   // 處理用戶輸入（文字或按鈕）
   const handleUserInput = async (input: string) => {
     if (isProcessing) return;
@@ -75,53 +57,22 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     // 添加用戶訊息
     addMessage('user', input);
 
-    // 清空建議
-    setSuggestions([]);
-
-    setIsProcessing(true);
-
     try {
-      // 處理輸入
-      const { response, updatedContext } = await processUserInput(input, conversationContext);
-
-      // 更新上下文
-      setConversationContext(updatedContext);
+      // 使用 hook 处理输入（自动管理状态）
+      const response = await processInput(input);
 
       // 添加助手回應
       addMessage('assistant', response.message);
 
-      // 更新按鈕
-      if (response.buttonOptions) {
-        setButtons(response.buttonOptions);
-      } else {
-        setButtons([]);
-      }
-
-      // 更新建議
-      if (response.suggestions) {
-        setSuggestions(response.suggestions);
-      }
-
       // 處理特殊狀態
       if (response.nextState === 'CREATING_TRIP') {
-        await handleCreateTrip(updatedContext);
+        await handleCreateTrip(context);
       } else if (response.nextState === 'VIEWING_TRIPS') {
         handleViewTrips();
       }
     } catch (error) {
       console.error('Error processing input:', error);
-      const errorMessage = error instanceof Error ? error.message : '發生未知錯誤';
-      const { response: errorResponse, updatedContext: errorContext } = handleError(
-        conversationContext,
-        errorMessage
-      );
-      setConversationContext(errorContext);
-      addMessage('assistant', errorResponse.message);
-      if (errorResponse.buttonOptions) {
-        setButtons(errorResponse.buttonOptions);
-      }
-    } finally {
-      setIsProcessing(false);
+      handleConversationError(error instanceof Error ? error : new Error('發生未知錯誤'));
     }
   };
 
@@ -132,20 +83,18 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
 
     // 特殊處理一些動作
     if (action === 'MAIN_MENU') {
-      // 重置上下文
-      setConversationContext(createInitialContext());
+      // 重置到主選單（使用 hook 方法）
       addMessage('user', '返回主選單');
       addMessage('assistant', MESSAGES.backToMenu);
-      setButtons(MAIN_MENU_BUTTONS);
+      resetToMenu();
       return;
     }
 
     if (action === 'RESTART') {
       // 重新開始建立行程
-      setConversationContext(createInitialContext());
       addMessage('user', '重新開始');
       addMessage('assistant', '好的！讓我們重新開始。\n請告訴我你想去哪個雪場？\n例如：二世谷、白馬、留壽都');
-      setButtons([]);
+      resetToMenu();
       return;
     }
 
@@ -159,8 +108,8 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
   };
 
   // 建立行程（使用 Hook 提取的业务逻辑）
-  const handleCreateTrip = async (context: ConversationContext) => {
-    const { resort, startDate, endDate, duration } = context.accumulatedData;
+  const handleCreateTrip = async (currentContext: ConversationContext) => {
+    const { resort, startDate, endDate, duration } = currentContext.accumulatedData;
 
     if (!resort || !startDate) {
       throw new Error('缺少必要資訊');
@@ -176,17 +125,14 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
       });
 
       // 處理成功
-      const { response: successResponse, updatedContext } = handleTripCreated(
-        context,
+      const { response: successResponse } = handleTripCreated(
+        currentContext,
         result.tripId
       );
 
-      setConversationContext(updatedContext);
+      // 使用 hook 方法更新状态
       addMessage('assistant', successResponse.message);
-
-      if (successResponse.buttonOptions) {
-        setButtons(successResponse.buttonOptions);
-      }
+      updateResponse(successResponse);
     } catch (error) {
       console.error('Failed to create trip:', error);
       throw error; // 让外层 catch 处理
