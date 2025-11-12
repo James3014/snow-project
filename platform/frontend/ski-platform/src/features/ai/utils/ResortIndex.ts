@@ -12,7 +12,7 @@
 
 import type { Resort } from '@/shared/data/resorts';
 import { getResortAliases, getResortPriority } from './resortAliases';
-import { RESORT_GROUPS, CONFIDENCE_THRESHOLDS } from './resort-config';
+import { RESORT_GROUPS, MatchConfidence } from './resort-config';
 import { calculateSimilarity } from './levenshtein';
 import {
   isPossiblyPinyin,
@@ -208,10 +208,10 @@ export class ResortIndex {
     for (const [keyword, resorts] of this.groupKeywordMap) {
       if (normalized === keyword || normalized.includes(keyword)) {
         if (resorts.length === 1) {
-          // 唯一匹配，高信心度
+          // 唯一匹配，精确信心度
           return {
             resort: resorts[0],
-            confidence: CONFIDENCE_THRESHOLDS.EXACT_ALIAS_PRIMARY,
+            confidence: MatchConfidence.EXACT,
             matchedField: 'zh',
             matchedValue: original,
           };
@@ -219,7 +219,7 @@ export class ResortIndex {
           // 多个匹配，降低信心度触发建议
           return {
             resort: resorts[0],
-            confidence: CONFIDENCE_THRESHOLDS.GROUP_AMBIGUOUS,
+            confidence: MatchConfidence.LOW,
             matchedField: 'zh',
             matchedValue: original,
           };
@@ -246,7 +246,7 @@ export class ResortIndex {
       if (resort) {
         return {
           resort,
-          confidence: CONFIDENCE_THRESHOLDS.EXACT_ALIAS_PRIMARY,
+          confidence: MatchConfidence.EXACT,
           matchedField: 'pinyin',
           matchedValue: original,
         };
@@ -257,7 +257,7 @@ export class ResortIndex {
       if (resort) {
         return {
           resort,
-          confidence: CONFIDENCE_THRESHOLDS.PINYIN_AMBIGUOUS,
+          confidence: MatchConfidence.LOW,
           matchedField: 'pinyin',
           matchedValue: original,
         };
@@ -273,7 +273,7 @@ export class ResortIndex {
           ...match,
           matchedField: 'pinyin',
           matchedValue: original,
-          confidence: Math.min(match.confidence, 0.90),
+          confidence: MatchConfidence.HIGH,
         };
       }
     }
@@ -297,7 +297,7 @@ export class ResortIndex {
 
     return {
       resort: sorted[0],
-      confidence: CONFIDENCE_THRESHOLDS.EXACT_MATCH,
+      confidence: MatchConfidence.EXACT,
       matchedField: 'zh',
       matchedValue: sorted[0].names.zh,
     };
@@ -319,7 +319,7 @@ export class ResortIndex {
 
     return {
       resort: sorted[0],
-      confidence: CONFIDENCE_THRESHOLDS.EXACT_ALIAS_SECONDARY,
+      confidence: MatchConfidence.EXACT,
       matchedField: 'zh',
       matchedValue: sorted[0].names.zh,
     };
@@ -373,42 +373,38 @@ export class ResortIndex {
     for (let i = 0; i < aliases.length; i++) {
       const alias = aliases[i].toLowerCase();
 
-      // 精确匹配
+      // 精确匹配 - 使用 EXACT
       if (input === alias) {
-        const confidence = i === 0 ? CONFIDENCE_THRESHOLDS.EXACT_MATCH : CONFIDENCE_THRESHOLDS.EXACT_ALIAS_PRIMARY;
-        return { confidence, field: 'zh', value: resort.names.zh };
+        return {
+          confidence: MatchConfidence.EXACT,
+          field: 'zh',
+          value: resort.names.zh
+        };
       }
 
-      // 输入包含别名
+      // 输入包含别名 - 使用 HIGH（部分匹配）
       if (input.includes(alias) && alias.length >= 2) {
-        let confidence: number = CONFIDENCE_THRESHOLDS.PARTIAL_MATCH_SHORT;
-        if (alias.length >= 4) {
-          confidence = CONFIDENCE_THRESHOLDS.PARTIAL_MATCH_LONG;
-        } else if (alias.length === 3) {
-          confidence = CONFIDENCE_THRESHOLDS.PARTIAL_MATCH_MEDIUM;
-        }
-        if (i === 0) confidence = Math.min(confidence + 0.05, 1.0);
-
+        const confidence = MatchConfidence.HIGH;
         if (!bestMatch || confidence > bestMatch.confidence) {
           bestMatch = { confidence, field: 'zh', value: resort.names.zh };
         }
       }
 
-      // 别名包含输入
+      // 别名包含输入 - 使用 HIGH（反向部分匹配）
       if (alias.includes(input) && input.length >= 2) {
-        const confidence = CONFIDENCE_THRESHOLDS.FUZZY_MATCH_HIGH;
+        const confidence = MatchConfidence.HIGH;
         if (!bestMatch || confidence > bestMatch.confidence) {
           bestMatch = { confidence, field: 'zh', value: resort.names.zh };
         }
       }
     }
 
-    // 模糊匹配（Levenshtein 距离）
+    // 模糊匹配（Levenshtein 距离）- 使用 HIGH
     if (!bestMatch) {
       const similarity = calculateSimilarity(input, resort.names.zh.toLowerCase());
       if (similarity >= 0.7) {
         return {
-          confidence: similarity * CONFIDENCE_THRESHOLDS.FUZZY_MATCH_MEDIUM,
+          confidence: MatchConfidence.HIGH,
           field: 'zh',
           value: resort.names.zh,
         };

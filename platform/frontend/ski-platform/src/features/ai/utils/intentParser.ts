@@ -6,6 +6,7 @@
 import { extractDates } from './dateParser';
 import { extractDuration, calculateEndDate } from './durationParser';
 import { matchResortV2 as matchResort, getSuggestionsV2 as getSuggestions, type ResortMatch } from './resortMatcher';
+import { MatchConfidence } from './resort-config';
 
 /**
  * 用戶意圖類型
@@ -165,14 +166,15 @@ async function parseCreateTripIntent(
   if (resortMatch) {
     resortConfidence = resortMatch.confidence;
 
-    // 如果信心度太低（如雪場群 0.5），視為需要用戶確認選擇
-    // 不直接使用匹配結果，而是提供建議列表讓用戶選擇
-    if (resortConfidence < 0.8) {
+    // 使用 MatchConfidence 枚舉判斷：
+    // - EXACT (1.0) / HIGH (0.8): 信心度夠高，直接使用
+    // - LOW (0.5): 信心度低（如雪場群、拼音歧義），需要用戶選擇確認
+    if (resortConfidence < MatchConfidence.HIGH) {
       suggestions = await getSuggestions(input, 3);
       missingFields.push('resort');  // 標記為缺失，強制用戶選擇
       // 不計入 totalConfidence，因為需要用戶確認
     } else {
-      // 信心度高，直接使用匹配結果
+      // 信心度高（EXACT 或 HIGH），直接使用匹配結果
       totalConfidence += resortConfidence;
       confidenceCount++;
     }
