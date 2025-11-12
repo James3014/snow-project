@@ -9,6 +9,7 @@ import type { Resort } from '@/shared/data/resorts';
 import { resortApiService } from '@/shared/api/resortApi';
 import { getLocalResorts } from '@/shared/data/local-resorts';
 import { getResortAliases, getResortPriority } from './resortAliases';
+import { ResortIndex } from './ResortIndex';
 
 export interface ResortMatch {
   resort: Resort;
@@ -439,4 +440,60 @@ export async function getResortById(
 ): Promise<Resort | null> {
   const resorts = await getResorts();
   return resorts.find(r => r.resort_id === resortId) || null;
+}
+
+// ==================== V2 方法（使用 ResortIndex）====================
+
+// ResortIndex 緩存
+let resortIndexCache: ResortIndex | null = null;
+let indexLastBuildTime = 0;
+
+/**
+ * 獲取或創建 ResortIndex 實例（帶緩存）
+ */
+async function getResortIndex(): Promise<ResortIndex> {
+  const now = Date.now();
+
+  // 如果緩存有效，直接返回
+  if (resortIndexCache && now - indexLastBuildTime < CACHE_DURATION) {
+    return resortIndexCache;
+  }
+
+  // 獲取雪場列表並創建索引
+  const resorts = await getResorts();
+  resortIndexCache = new ResortIndex(resorts);
+  indexLastBuildTime = now;
+
+  return resortIndexCache;
+}
+
+/**
+ * V2: 匹配單個雪場（使用 ResortIndex，性能優化版本）
+ *
+ * 與 matchResort 功能相同，但使用 Map 索引實現 O(1) 查找
+ */
+export async function matchResortV2(input: string): Promise<ResortMatch | null> {
+  const index = await getResortIndex();
+  return index.match(input);
+}
+
+/**
+ * V2: 獲取建議列表（使用 ResortIndex，性能優化版本）
+ *
+ * 與 getSuggestions 功能相同，但使用 Map 索引實現更快的查找
+ */
+export async function getSuggestionsV2(
+  input: string,
+  limit: number = 3
+): Promise<ResortMatch[]> {
+  const index = await getResortIndex();
+  return index.getSuggestions(input, limit);
+}
+
+/**
+ * 清空 ResortIndex 緩存（用於測試或強制刷新）
+ */
+export function clearResortIndexCache(): void {
+  resortIndexCache = null;
+  indexLastBuildTime = 0;
 }
