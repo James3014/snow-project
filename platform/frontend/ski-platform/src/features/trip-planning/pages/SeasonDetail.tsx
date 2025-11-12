@@ -130,7 +130,7 @@ export default function SeasonDetail() {
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              📅 {seasonId} 雪季
+              📅 {season.title} 雪季
             </h1>
             <p className="text-gray-600">查看這個雪季的所有行程和統計資料</p>
           </div>
