@@ -9,6 +9,41 @@ import {
 } from './intentParser';
 import type { ResortMatch } from './resortMatcher';
 
+// ==================== 工具函数和常量 ====================
+
+/**
+ * 雪場列表詢問關鍵詞（DRY：單一數據源）
+ */
+const RESORT_LIST_KEYWORDS = [
+  '哪些雪場', '有哪些雪場', '可以記錄哪些', '支持哪些雪場', '支援哪些雪場',
+  '有什麼雪場', '都有哪些', '雪場列表', '所有雪場',
+] as const;
+
+/**
+ * 雪場列表回復消息（DRY：單一數據源）
+ */
+const RESORT_LIST_MESSAGE = `目前系統收錄了43個日本知名雪場！
+
+🔥 熱門雪場包括：
+• 北海道：二世谷、留壽都、富良野、Tomamu
+• 長野：白馬、志賀高原、野澤溫泉
+• 新潟：苗場、神樂、妙高赤倉
+• 其他：猪苗代、安比高原等
+
+直接告訴我雪場名稱就可以開始建立行程囉！`;
+
+/**
+ * 檢測用戶是否在詢問雪場列表
+ */
+function isAskingForResortList(input: string): boolean {
+  const normalized = input.toLowerCase();
+  return RESORT_LIST_KEYWORDS.some(keyword =>
+    normalized.includes(keyword.toLowerCase())
+  );
+}
+
+// ==================== 類型定義 ====================
+
 /**
  * 對話狀態
  */
@@ -140,17 +175,11 @@ async function handleInitialInput(
   input: string,
   context: ConversationContext
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
-  // 檢測詢問雪場列表的問題
-  const listQuestions = [
-    '哪些雪場', '有哪些雪場', '可以記錄哪些', '支持哪些雪場', '支援哪些雪場',
-    '有什麼雪場', '都有哪些', '雪場列表', '所有雪場',
-  ];
-
-  const normalizedInput = input.toLowerCase();
-  if (listQuestions.some(q => normalizedInput.includes(q.toLowerCase()))) {
+  // 檢測詢問雪場列表的問題（使用工具函數消除重複）
+  if (isAskingForResortList(input)) {
     return {
       response: {
-        message: `目前系統收錄了43個日本知名雪場！\n\n🔥 熱門雪場包括：\n• 北海道：二世谷、留壽都、富良野、Tomamu\n• 長野：白馬、志賀高原、野澤溫泉\n• 新潟：苗場、神樂、妙高赤倉\n• 其他：猪苗代、安比高原等\n\n直接告訴我雪場名稱就可以開始建立行程囉！\n例如：「二世谷 12月20日 5天」`,
+        message: `${RESORT_LIST_MESSAGE}\n例如：「二世谷 12月20日 5天」`,
         nextState: 'AWAITING_RESORT',
         buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
       },
@@ -405,17 +434,11 @@ async function handleResortInput(
   input: string,
   context: ConversationContext
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
-  // 檢測詢問雪場列表的問題
-  const listQuestions = [
-    '哪些雪場', '有哪些雪場', '可以記錄哪些', '支持哪些雪場', '支援哪些雪場',
-    '有什麼雪場', '都有哪些', '雪場列表', '所有雪場',
-  ];
-
-  const normalizedInput = input.toLowerCase();
-  if (listQuestions.some(q => normalizedInput.includes(q.toLowerCase()))) {
+  // 檢測詢問雪場列表的問題（使用工具函數消除重複）
+  if (isAskingForResortList(input)) {
     return {
       response: {
-        message: `目前系統收錄了43個日本知名雪場！\n\n🔥 熱門雪場包括：\n• 北海道：二世谷、留壽都、富良野、Tomamu\n• 長野：白馬、志賀高原、野澤溫泉\n• 新潟：苗場、神樂、妙高赤倉\n• 其他：猪苗代、安比高原等\n\n直接告訴我雪場名稱就可以開始建立行程囉！\n例如：「二世谷」、「白馬」、「苗場」`,
+        message: `${RESORT_LIST_MESSAGE}\n例如：「二世谷」、「白馬」、「苗場」`,
         nextState: 'AWAITING_RESORT',
         buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
       },
