@@ -5,7 +5,7 @@
 
 import { extractDates } from './dateParser';
 import { extractDuration, calculateEndDate } from './durationParser';
-import { matchResort, getSuggestions, type ResortMatch } from './resortMatcher';
+import { matchResortV2 as matchResort, getSuggestionsV2 as getSuggestions, type ResortMatch } from './resortMatcher';
 
 /**
  * 用戶意圖類型
