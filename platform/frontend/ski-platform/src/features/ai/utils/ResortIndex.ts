@@ -109,21 +109,21 @@ export class ResortIndex {
     const trimmed = input.trim();
     const normalized = trimmed.toLowerCase();
 
-    // 【优先级1】检查雪场群关键词
-    const groupMatch = this.matchGroup(normalized, trimmed);
-    if (groupMatch) return groupMatch;
-
-    // 【优先级2】拼音映射（支持歧义检测）
+    // 【优先级1】拼音映射（支持歧义检测）
     const pinyinMatch = this.matchPinyin(trimmed);
     if (pinyinMatch) return pinyinMatch;
 
-    // 【优先级3】精确匹配（中英日文名）
+    // 【优先级2】精确匹配（中英日文名）
     const exactMatch = this.matchExact(normalized);
     if (exactMatch) return exactMatch;
 
-    // 【优先级4】别名匹配
+    // 【优先级3】别名匹配
     const aliasMatch = this.matchAlias(normalized);
     if (aliasMatch) return aliasMatch;
+
+    // 【优先级4】检查雪场群关键词（降低优先级，只在无精确匹配时触发）
+    const groupMatch = this.matchGroup(normalized, trimmed);
+    if (groupMatch) return groupMatch;
 
     // 【优先级5】模糊匹配（后备方案）
     const fuzzyMatch = this.matchFuzzy(normalized);
@@ -145,7 +145,19 @@ export class ResortIndex {
     const matches: ResortMatch[] = [];
 
     // 1. 检查雪场群 - 返回群内所有雪场
-    const groupResorts = this.groupKeywordMap.get(normalized);
+    // 先尝试精确匹配
+    let groupResorts = this.groupKeywordMap.get(normalized);
+
+    // 如果精确匹配失败，尝试 .includes() 匹配（处理"建立行程 妙高"等情况）
+    if (!groupResorts) {
+      for (const [keyword, resorts] of this.groupKeywordMap) {
+        if (normalized.includes(keyword)) {
+          groupResorts = resorts;
+          break;
+        }
+      }
+    }
+
     if (groupResorts && groupResorts.length > 0) {
       return groupResorts.map(r => ({
         resort: r,
@@ -203,10 +215,14 @@ export class ResortIndex {
 
   /**
    * 匹配雪场群关键词
+   *
+   * 优化：只在输入完全等于地区关键词时触发，避免干扰精确匹配
+   * 例如："白马" 触发群组，"白马八方" 不触发（应该走别名匹配）
    */
   private matchGroup(normalized: string, original: string): ResortMatch | null {
     for (const [keyword, resorts] of this.groupKeywordMap) {
-      if (normalized === keyword || normalized.includes(keyword)) {
+      // 只匹配完全相等的情况，不使用 includes
+      if (normalized === keyword) {
         if (resorts.length === 1) {
           // 唯一匹配，精确信心度
           return {
