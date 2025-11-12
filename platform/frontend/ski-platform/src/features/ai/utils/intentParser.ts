@@ -47,7 +47,7 @@ const ACTION_KEYWORDS = {
   ],
   VIEW_TRIPS: [
     '查看', '查看行程', '我的行程', '行程列表', '看看',
-    '顯示行程', '有什麼行程', '行程', '都有什麼',
+    '顯示行程', '有什麼行程', '都有什麼',
   ],
   DELETE_TRIP: [
     '刪除', '刪除行程', '移除', '移除行程', '取消', '取消行程',
@@ -72,17 +72,17 @@ function detectAction(input: string): { action: IntentAction; confidence: number
     }
   }
 
+  // 檢查查看行程（優先級高於建立行程，因為關鍵詞更明確）
+  for (const keyword of ACTION_KEYWORDS.VIEW_TRIPS) {
+    if (normalized.includes(keyword.toLowerCase())) {
+      return { action: 'VIEW_TRIPS', confidence: 1.0 };
+    }
+  }
+
   // 檢查建立行程
   for (const keyword of ACTION_KEYWORDS.CREATE_TRIP) {
     if (normalized.includes(keyword.toLowerCase())) {
       return { action: 'CREATE_TRIP', confidence: 1.0 };
-    }
-  }
-
-  // 檢查查看行程
-  for (const keyword of ACTION_KEYWORDS.VIEW_TRIPS) {
-    if (normalized.includes(keyword.toLowerCase())) {
-      return { action: 'VIEW_TRIPS', confidence: 1.0 };
     }
   }
 
