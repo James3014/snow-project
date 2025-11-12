@@ -496,11 +496,6 @@ function handleCreateTripIntent(
   }
 
   if (!duration && !endDate) {
-    const dateStr = startDate.toLocaleDateString('zh-TW', {
-      month: 'numeric',
-      day: 'numeric',
-    });
-    const message = `${dateStr} 出發前往 ${resort.resort.names.zh}！\n\n📍 雪場：${resort.resort.names.zh}\n📅 出發日：${dateStr}\n\n打算待幾天呢？\n例如：5天、一週、26號（結束日期）`;
     return createAskDurationResponse(startDate, resort.resort.names.zh, updatedContext);
   }
 
@@ -551,7 +546,8 @@ function handleFoundResort(
   }
 
   // 場景3：只有雪場，詢問日期
-  return createAskDateResponse(resort.resort.names.zh, updatedContext);
+  const message = `好的，去 ${resort.resort.names.zh}！\n什麼時候出發呢？\n例如：12/15、明天、下週一`;
+  return createAskDateResponse(message, updatedContext);
 }
 
 /**
@@ -599,16 +595,39 @@ function createAskDurationResponse(
 }
 
 /**
- * 創建詢問日期的響應
+ * 創建詢問雪場的響應
  */
-function createAskDateResponse(
-  resortName: string,
+function createAskResortResponse(
+  message: string,
+  suggestions: string[],
   context: ConversationContext
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
   return {
     response: {
-      message: `好的，去 ${resortName}！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
+      message,
+      nextState: 'AWAITING_RESORT',
+      suggestions: suggestions.length > 0 ? suggestions : undefined,
+      buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
+    },
+    updatedContext: {
+      ...context,
+      state: 'AWAITING_RESORT',
+    },
+  };
+}
+
+/**
+ * 創建詢問日期的響應
+ */
+function createAskDateResponse(
+  message: string,
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  return {
+    response: {
+      message,
       nextState: 'AWAITING_DATE',
+      buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
     },
     updatedContext: {
       ...context,

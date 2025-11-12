@@ -108,7 +108,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
 
   // 建立行程（使用 Hook 提取的业务逻辑）
   const handleCreateTrip = async (currentContext: ConversationContext) => {
-    const { resort, startDate, endDate, duration } = currentContext.accumulatedData;
+    const { resort, startDate, endDate, duration } = currentContext.tripData;
 
     if (!resort || !startDate) {
       throw new Error('缺少必要資訊');
