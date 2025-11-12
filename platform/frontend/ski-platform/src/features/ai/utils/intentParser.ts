@@ -164,12 +164,17 @@ async function parseCreateTripIntent(
 
   if (resortMatch) {
     resortConfidence = resortMatch.confidence;
-    totalConfidence += resortConfidence;
-    confidenceCount++;
 
-    // 如果信心度不高，提供建議
+    // 如果信心度太低（如雪場群 0.5），視為需要用戶確認選擇
+    // 不直接使用匹配結果，而是提供建議列表讓用戶選擇
     if (resortConfidence < 0.8) {
       suggestions = await getSuggestions(input, 3);
+      missingFields.push('resort');  // 標記為缺失，強制用戶選擇
+      // 不計入 totalConfidence，因為需要用戶確認
+    } else {
+      // 信心度高，直接使用匹配結果
+      totalConfidence += resortConfidence;
+      confidenceCount++;
     }
   } else {
     missingFields.push('resort');
@@ -232,7 +237,9 @@ async function parseCreateTripIntent(
   return {
     action: finalAction,
     confidence: Math.max(0, Math.min(1, totalConfidence)),
-    resort: resortMatch || undefined,
+    // 如果 missingFields 包含 'resort'，不返回 resort（即使有低信心度匹配）
+    // 這樣 conversationEngine 才會正確處理需要用戶選擇的情況
+    resort: missingFields.includes('resort') ? undefined : (resortMatch || undefined),
     startDate,
     endDate,
     duration,
