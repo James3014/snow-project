@@ -18,10 +18,8 @@ import {
   handleError,
   type ConversationContext,
 } from '../utils/conversationEngine';
-import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
-import { calculateSeasonId } from '@/features/trip-planning/utils/seasonUtils';
-import { calculateEndDate } from '../utils/durationParser';
 import { useAppSelector } from '@/store/hooks';
+import { useTripCreation } from '../hooks/useTripCreation';
 
 interface ChatDialogProps {
   onClose: () => void;
@@ -30,6 +28,9 @@ interface ChatDialogProps {
 export default function ChatDialog({ onClose }: ChatDialogProps) {
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
+
+  // 使用行程创建 Hook（提取业务逻辑）
+  const { createTrip } = useTripCreation(user?.user_id);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -157,81 +158,27 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     handleUserInput(suggestion);
   };
 
-  // 建立行程
+  // 建立行程（使用 Hook 提取的业务逻辑）
   const handleCreateTrip = async (context: ConversationContext) => {
-    const { resort, startDate, endDate: providedEndDate, duration: providedDuration } = context.accumulatedData;
+    const { resort, startDate, endDate, duration } = context.accumulatedData;
 
-    if (!resort || !startDate || !user) {
+    if (!resort || !startDate) {
       throw new Error('缺少必要資訊');
     }
 
-    // 確保有 endDate 和 duration（至少一個）
-    if (!providedEndDate && !providedDuration) {
-      throw new Error('缺少日期範圍或天數');
-    }
-
     try {
-      // 優先使用提供的 endDate，否則從 duration 計算
-      let endDate: Date;
-      let duration: number;
-
-      if (providedEndDate) {
-        endDate = providedEndDate;
-        // 計算天數（從 startDate 到 endDate）
-        const diffTime = endDate.getTime() - startDate.getTime();
-        duration = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-      } else {
-        // 使用 duration 計算 endDate
-        duration = providedDuration!;
-        endDate = calculateEndDate(startDate, duration);
-      }
-
-      // 計算雪季標識符（如 "2024-2025"）
-      const seasonName = calculateSeasonId(startDate.toISOString().split('T')[0]);
-
-      // 檢查或創建雪季
-      let actualSeasonId: string;
-
-      try {
-        // 獲取用戶的所有雪季
-        const seasons = await tripPlanningApi.getSeasons(user.user_id);
-
-        // 查找匹配的雪季（通過 title）
-        const existingSeason = seasons.find(s => s.title === seasonName);
-
-        if (existingSeason) {
-          // 使用現有雪季的 ID
-          actualSeasonId = existingSeason.season_id;
-        } else {
-          // 創建新雪季
-          const [startYear, endYear] = seasonName.split('-').map(Number);
-          const newSeason = await tripPlanningApi.createSeason(user.user_id, {
-            title: seasonName,
-            description: `${startYear}-${endYear} 滑雪季`,
-            start_date: `${startYear}-11-01`,
-            end_date: `${endYear}-04-30`,
-          });
-          actualSeasonId = newSeason.season_id;
-        }
-      } catch (error) {
-        console.error('處理雪季失敗:', error);
-        throw new Error('無法創建或獲取雪季');
-      }
-
-      // 建立行程（使用實際的 season_id）
-      const response = await tripPlanningApi.createTrip(user.user_id, {
-        season_id: actualSeasonId,
-        resort_id: resort.resort.resort_id,
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0],
-        title: `${resort.resort.names.zh} ${duration}日遊`,
-        trip_status: 'planning',
+      // 使用 useTripCreation hook 处理所有业务逻辑
+      const result = await createTrip({
+        resort,
+        startDate,
+        endDate,
+        duration,
       });
 
       // 處理成功
       const { response: successResponse, updatedContext } = handleTripCreated(
         context,
-        response.trip_id
+        result.tripId
       );
 
       setConversationContext(updatedContext);
@@ -242,7 +189,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
       }
     } catch (error) {
       console.error('Failed to create trip:', error);
-      throw new Error('建立行程失敗，請稍後再試');
+      throw error; // 让外层 catch 处理
     }
   };
 
