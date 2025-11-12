@@ -71,16 +71,16 @@ export const RESORT_GROUPS: ResortGroup[] = [
  * "Perfection is achieved not when there is nothing more to add,
  *  but when there is nothing left to take away." - Antoine de Saint-Exupéry
  */
-export enum MatchConfidence {
+export const MatchConfidence = {
   /** 精确匹配（1.0）- 直接使用，无需确认 */
-  EXACT = 1.0,
+  EXACT: 1.0,
 
   /** 高置信度（0.8）- 通常可用，某些场景需要确认 */
-  HIGH = 0.8,
+  HIGH: 0.8,
 
   /** 低置信度（0.5）- 需要用户选择确认 */
-  LOW = 0.5,
-}
+  LOW: 0.5,
+} as const;
 
 /**
  * 匹配信心度阈值（向后兼容版本，逐步废弃）
