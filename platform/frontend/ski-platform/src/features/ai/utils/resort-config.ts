@@ -60,25 +60,46 @@ export const RESORT_GROUPS: ResortGroup[] = [
 ];
 
 /**
- * 匹配信心度阈值（当前版本）
+ * 匹配信心度枚举
  *
- * TODO: Linus 建议简化为 3 个级别
- * - EXACT: 1.0 (精确匹配)
- * - HIGH: 0.8 (高置信度)
- * - LOW: 0.5 (需要用户确认)
+ * 简化版信心度系统（遵循 Linus 建议）：
+ * - EXACT: 精确匹配，直接使用
+ * - HIGH: 高置信度，可能需要确认但通常可用
+ * - LOW: 需要用户选择确认
+ *
+ * 设计原则：
+ * "Perfection is achieved not when there is nothing more to add,
+ *  but when there is nothing left to take away." - Antoine de Saint-Exupéry
+ */
+export enum MatchConfidence {
+  /** 精确匹配（1.0）- 直接使用，无需确认 */
+  EXACT = 1.0,
+
+  /** 高置信度（0.8）- 通常可用，某些场景需要确认 */
+  HIGH = 0.8,
+
+  /** 低置信度（0.5）- 需要用户选择确认 */
+  LOW = 0.5,
+}
+
+/**
+ * 匹配信心度阈值（向后兼容版本，逐步废弃）
+ *
+ * @deprecated 请使用 MatchConfidence 枚举代替
+ * 将在下一版本中移除
  */
 export const CONFIDENCE_THRESHOLDS = {
-  EXACT_MATCH: 1.0,           // 完全精确匹配
-  EXACT_ALIAS_PRIMARY: 0.98,  // 主要别名精确匹配
-  EXACT_ALIAS_SECONDARY: 0.95, // 次要别名精确匹配
-  PARTIAL_MATCH_LONG: 0.90,   // 长字符串部分匹配（≥4字符）
-  PARTIAL_MATCH_MEDIUM: 0.87, // 中等字符串部分匹配（3字符）
-  PARTIAL_MATCH_SHORT: 0.80,  // 短字符串部分匹配（2字符）
-  FUZZY_MATCH_HIGH: 0.75,     // 高相似度模糊匹配
-  FUZZY_MATCH_MEDIUM: 0.70,   // 中等相似度模糊匹配
-  PINYIN_AMBIGUOUS: 0.65,     // 拼音映射但有歧义
-  GROUP_AMBIGUOUS: 0.5,       // 雪场群匹配但需要用户选择
-  FUZZY_MATCH_LOW: 0.5,       // 低相似度模糊匹配
+  EXACT_MATCH: MatchConfidence.EXACT,           // 完全精确匹配
+  EXACT_ALIAS_PRIMARY: 0.98,                    // 主要别名精确匹配 → 映射到 EXACT
+  EXACT_ALIAS_SECONDARY: 0.95,                  // 次要别名精确匹配 → 映射到 EXACT
+  PARTIAL_MATCH_LONG: 0.90,                     // 长字符串部分匹配 → 映射到 HIGH
+  PARTIAL_MATCH_MEDIUM: 0.87,                   // 中等字符串部分匹配 → 映射到 HIGH
+  PARTIAL_MATCH_SHORT: MatchConfidence.HIGH,    // 短字符串部分匹配
+  FUZZY_MATCH_HIGH: 0.75,                       // 高相似度模糊匹配 → 映射到 HIGH
+  FUZZY_MATCH_MEDIUM: 0.70,                     // 中等相似度模糊匹配 → 映射到 HIGH
+  PINYIN_AMBIGUOUS: 0.65,                       // 拼音映射但有歧义 → 映射到 LOW
+  GROUP_AMBIGUOUS: MatchConfidence.LOW,         // 雪场群匹配但需要用户选择
+  FUZZY_MATCH_LOW: MatchConfidence.LOW,         // 低相似度模糊匹配
 } as const;
 
 /**

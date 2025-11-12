@@ -169,75 +169,120 @@ export async function processUserInput(
 }
 
 /**
- * 處理初始輸入
+ * 處理初始輸入（簡化版 - 遵循 Linus 原則）
+ *
+ * "A function should do one thing, do it well, and do it only." - Linus Torvalds
+ *
+ * 將 68 行大函數拆分為 3 個小函數，提高可讀性和可測試性
  */
 async function handleInitialInput(
   input: string,
   context: ConversationContext
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
-  // 檢測詢問雪場列表的問題（使用工具函數消除重複）
-  if (isAskingForResortList(input)) {
-    return {
-      response: {
-        message: `${RESORT_LIST_MESSAGE}\n例如：「二世谷 12月20日 5天」`,
-        nextState: 'AWAITING_RESORT',
-        buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
-      },
-      updatedContext: {
-        ...context,
-        state: 'AWAITING_RESORT',
-      },
-    };
-  }
+  // 1. 檢測雪場列表請求
+  const listResponse = checkAndHandleResortListRequest(input, context, '例如：「二世谷 12月20日 5天」');
+  if (listResponse) return listResponse;
 
-  // 解析意圖
+  // 2. 解析用戶意圖
   const intent = await parseIntent(input);
-
-  const updatedContext = {
+  const contextWithIntent = {
     ...context,
     intent,
     state: 'PROCESSING_INTENT' as ConversationState,
   };
 
-  // 根據意圖類型處理
+  // 3. 分發到具體處理器
+  return dispatchIntentToHandler(intent, contextWithIntent);
+}
+
+/**
+ * 檢測並處理雪場列表請求（提取公共邏輯）
+ */
+function checkAndHandleResortListRequest(
+  input: string,
+  context: ConversationContext,
+  example: string
+): { response: ConversationResponse; updatedContext: ConversationContext } | null {
+  if (!isAskingForResortList(input)) {
+    return null;
+  }
+
+  return {
+    response: {
+      message: `${RESORT_LIST_MESSAGE}\n${example}`,
+      nextState: 'AWAITING_RESORT',
+      buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
+    },
+    updatedContext: {
+      ...context,
+      state: 'AWAITING_RESORT',
+    },
+  };
+}
+
+/**
+ * 根據意圖類型分發到對應處理器
+ */
+function dispatchIntentToHandler(
+  intent: ParsedIntent,
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
   switch (intent.action) {
     case 'CHAT':
-      return handleChatIntent(intent, updatedContext);
+      return handleChatIntent(intent, context);
 
     case 'VIEW_TRIPS':
-      return {
-        response: {
-          message: '正在獲取你的行程列表...',
-          nextState: 'VIEWING_TRIPS',
-        },
-        updatedContext: {
-          ...updatedContext,
-          state: 'VIEWING_TRIPS',
-        },
-      };
+      return createViewTripsResponse(context);
 
     case 'DELETE_TRIP':
-      return handleDeleteTripIntent(intent, updatedContext);
+      return handleDeleteTripIntent(intent, context);
 
     case 'CREATE_TRIP':
-      return handleCreateTripIntent(intent, updatedContext);
+      return handleCreateTripIntent(intent, context);
 
     default:
-      return {
-        response: {
-          message: '我不太確定你想做什麼，可以再說一次嗎？\n或者選擇以下選項：',
-          nextState: 'MAIN_MENU',
-          buttonOptions: [
-            { id: 'create', label: '建立行程', action: 'CREATE_TRIP' },
-            { id: 'view', label: '查看行程', action: 'VIEW_TRIPS' },
-          ],
-        },
-        updatedContext: {
-          ...updatedContext,
-          state: 'MAIN_MENU',
-        },
-      };
+      return createUnknownIntentResponse(context);
   }
+}
+
+/**
+ * 創建查看行程響應
+ */
+function createViewTripsResponse(
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  return {
+    response: {
+      message: '正在獲取你的行程列表...',
+      nextState: 'VIEWING_TRIPS',
+    },
+    updatedContext: {
+      ...context,
+      state: 'VIEWING_TRIPS',
+    },
+  };
+}
+
+/**
+ * 創建未知意圖響應
+ */
+function createUnknownIntentResponse(
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  return {
+    response: {
+      message: '我不太確定你想做什麼，可以再說一次嗎？\n或者選擇以下選項：',
+      nextState: 'MAIN_MENU',
+      buttonOptions: [
+        { id: 'create', label: '建立行程', action: 'CREATE_TRIP' },
+        { id: 'view', label: '查看行程', action: 'VIEW_TRIPS' },
+      ],
+    },
+    updatedContext: {
+      ...context,
+      state: 'MAIN_MENU',
+    },
+  };
 }
 
 /**
@@ -428,87 +473,134 @@ function handleCreateTripIntent(
 }
 
 /**
- * 處理雪場輸入
+ * 處理雪場輸入（簡化版 - 遵循單一職責原則）
+ *
+ * 將 80 行函數拆分為 4 個小函數，每個函數專注於一個特定場景
  */
 async function handleResortInput(
   input: string,
   context: ConversationContext
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
-  // 檢測詢問雪場列表的問題（使用工具函數消除重複）
-  if (isAskingForResortList(input)) {
-    return {
-      response: {
-        message: `${RESORT_LIST_MESSAGE}\n例如：「二世谷」、「白馬」、「苗場」`,
-        nextState: 'AWAITING_RESORT',
-        buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
-      },
-      updatedContext: context,
-    };
-  }
+  // 1. 檢測雪場列表請求
+  const listResponse = checkAndHandleResortListRequest(input, context, '例如：「二世谷」、「白馬」、「苗場」');
+  if (listResponse) return listResponse;
 
+  // 2. 解析雪場信息
   const intent = await parseIntent(`建立行程 ${input}`);
 
-  if (intent.resort) {
-    const updatedContext = {
-      ...context,
-      accumulatedData: {
-        ...context.accumulatedData,
-        resort: intent.resort,
-        // 如果用戶同時提供了日期或天數，也一併更新
-        startDate: intent.startDate || context.accumulatedData.startDate,
-        endDate: intent.endDate || context.accumulatedData.endDate,
-        duration: intent.duration || context.accumulatedData.duration,
-      },
-    };
+  // 3. 根據是否找到雪場分發處理
+  return intent.resort
+    ? handleFoundResort(intent, context)
+    : handleResortNotFound(intent, context);
+}
 
-    // 檢查是否所有資訊都齊全
-    if (intent.startDate && (intent.endDate || intent.duration)) {
-      // 用戶一次提供了雪場、日期和天數/結束日期，直接創建
-      return prepareCreation(updatedContext);
-    }
+/**
+ * 處理找到雪場的情況
+ */
+function handleFoundResort(
+  intent: ParsedIntent,
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  const updatedContext = mergeResortDataToContext(intent, context);
+  const resort = intent.resort!;
 
-    // 有雪場和日期，缺天數
-    if (intent.startDate) {
-      const dateStr = intent.startDate.toLocaleDateString('zh-TW', {
-        month: 'numeric',
-        day: 'numeric',
-      });
-      return {
-        response: {
-          message: `好的，${dateStr} 前往 ${intent.resort.resort.names.zh}！\n打算待幾天呢？\n例如：5天、一週`,
-          nextState: 'AWAITING_DURATION',
-        },
-        updatedContext: {
-          ...updatedContext,
-          state: 'AWAITING_DURATION',
-        },
-      };
-    }
-
-    // 只有雪場，繼續詢問日期
-    return {
-      response: {
-        message: `好的，去 ${intent.resort.resort.names.zh}！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
-        nextState: 'AWAITING_DATE',
-      },
-      updatedContext: {
-        ...updatedContext,
-        state: 'AWAITING_DATE',
-      },
-    };
-  } else {
-    const suggestions = intent.suggestions?.map(s => s.resort.names.zh) || [];
-    return {
-      response: {
-        message: suggestions.length > 0
-          ? `找不到完全匹配的雪場，你是想去這些地方嗎？`
-          : '抱歉，找不到這個雪場。\n可以換個說法試試嗎？\n例如：二世谷、白馬、留壽都',
-        nextState: 'AWAITING_RESORT',
-        suggestions: suggestions.length > 0 ? suggestions : undefined,
-      },
-      updatedContext: context,
-    };
+  // 場景1：完整信息（雪場 + 日期 + 天數），直接創建
+  if (intent.startDate && (intent.endDate || intent.duration)) {
+    return prepareCreation(updatedContext);
   }
+
+  // 場景2：有雪場和日期，缺天數
+  if (intent.startDate) {
+    return createAskDurationResponse(intent.startDate, resort.resort.names.zh, updatedContext);
+  }
+
+  // 場景3：只有雪場，詢問日期
+  return createAskDateResponse(resort.resort.names.zh, updatedContext);
+}
+
+/**
+ * 合併雪場數據到上下文
+ */
+function mergeResortDataToContext(
+  intent: ParsedIntent,
+  context: ConversationContext
+): ConversationContext {
+  return {
+    ...context,
+    accumulatedData: {
+      ...context.accumulatedData,
+      resort: intent.resort,
+      startDate: intent.startDate || context.accumulatedData.startDate,
+      endDate: intent.endDate || context.accumulatedData.endDate,
+      duration: intent.duration || context.accumulatedData.duration,
+    },
+  };
+}
+
+/**
+ * 創建詢問天數的響應
+ */
+function createAskDurationResponse(
+  startDate: Date,
+  resortName: string,
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  const dateStr = startDate.toLocaleDateString('zh-TW', {
+    month: 'numeric',
+    day: 'numeric',
+  });
+
+  return {
+    response: {
+      message: `好的，${dateStr} 前往 ${resortName}！\n打算待幾天呢？\n例如：5天、一週`,
+      nextState: 'AWAITING_DURATION',
+    },
+    updatedContext: {
+      ...context,
+      state: 'AWAITING_DURATION',
+    },
+  };
+}
+
+/**
+ * 創建詢問日期的響應
+ */
+function createAskDateResponse(
+  resortName: string,
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  return {
+    response: {
+      message: `好的，去 ${resortName}！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
+      nextState: 'AWAITING_DATE',
+    },
+    updatedContext: {
+      ...context,
+      state: 'AWAITING_DATE',
+    },
+  };
+}
+
+/**
+ * 處理未找到雪場的情況
+ */
+function handleResortNotFound(
+  intent: ParsedIntent,
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  const suggestions = intent.suggestions?.map(s => s.resort.names.zh) || [];
+  const hasSuggestions = suggestions.length > 0;
+
+  return {
+    response: {
+      message: hasSuggestions
+        ? `找不到完全匹配的雪場，你是想去這些地方嗎？`
+        : '抱歉，找不到這個雪場。\n可以換個說法試試嗎？\n例如：二世谷、白馬、留壽都',
+      nextState: 'AWAITING_RESORT',
+      suggestions: hasSuggestions ? suggestions : undefined,
+    },
+    updatedContext: context,
+  };
 }
 
 /**
