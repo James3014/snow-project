@@ -3,25 +3,20 @@
  * 階段二：完整版本，支援文字輸入和完整流程
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MessageBubble from './MessageBubble';
 import QuickButtons from './QuickButtons';
 import InputBox from './InputBox';
 import SuggestionList from './SuggestionList';
-import { MESSAGES, MAIN_MENU_BUTTONS } from '../constants/messages';
-import type { Message, ButtonOption } from '../types';
+import { MESSAGES } from '../constants/messages';
 import {
-  createInitialContext,
-  processUserInput,
   handleTripCreated,
-  handleError,
   type ConversationContext,
 } from '../utils/conversationEngine';
-import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
-import { calculateSeasonId } from '@/features/trip-planning/utils/seasonUtils';
-import { calculateEndDate } from '../utils/durationParser';
 import { useAppSelector } from '@/store/hooks';
+import { useTripCreation } from '../hooks/useTripCreation';
+import { useConversation } from '../hooks/useConversation';
 
 interface ChatDialogProps {
   onClose: () => void;
@@ -31,21 +26,21 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: MESSAGES.welcome,
-      timestamp: new Date(),
-    },
-  ]);
+  // 使用对话管理 Hook（统一管理 5 个状态）
+  const {
+    messages,
+    buttons,
+    suggestions,
+    isProcessing,
+    addMessage,
+    processInput,
+    handleError: handleConversationError,
+    resetToMenu,
+    updateResponse,
+  } = useConversation();
 
-  const [buttons, setButtons] = useState<ButtonOption[]>(MAIN_MENU_BUTTONS);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [conversationContext, setConversationContext] = useState<ConversationContext>(
-    createInitialContext()
-  );
-  const [isProcessing, setIsProcessing] = useState(false);
+  // 使用行程创建 Hook（提取业务逻辑）
+  const { createTrip } = useTripCreation(user?.user_id);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -54,19 +49,6 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // 添加訊息的輔助函數
-  const addMessage = (role: 'user' | 'assistant', content: string) => {
-    setMessages(prev => [
-      ...prev,
-      {
-        id: Date.now().toString() + Math.random(),
-        role,
-        content,
-        timestamp: new Date(),
-      },
-    ]);
-  };
-
   // 處理用戶輸入（文字或按鈕）
   const handleUserInput = async (input: string) => {
     if (isProcessing) return;
@@ -74,34 +56,14 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     // 添加用戶訊息
     addMessage('user', input);
 
-    // 清空建議
-    setSuggestions([]);
-
-    setIsProcessing(true);
-
     try {
-      // 處理輸入
-      const { response, updatedContext } = await processUserInput(input, conversationContext);
-
-      // 更新上下文
-      setConversationContext(updatedContext);
+      // 使用 hook 处理输入（自动管理状态）
+      const { response, updatedContext } = await processInput(input);
 
       // 添加助手回應
       addMessage('assistant', response.message);
 
-      // 更新按鈕
-      if (response.buttonOptions) {
-        setButtons(response.buttonOptions);
-      } else {
-        setButtons([]);
-      }
-
-      // 更新建議
-      if (response.suggestions) {
-        setSuggestions(response.suggestions);
-      }
-
-      // 處理特殊狀態
+      // 處理特殊狀態（使用更新后的 context）
       if (response.nextState === 'CREATING_TRIP') {
         await handleCreateTrip(updatedContext);
       } else if (response.nextState === 'VIEWING_TRIPS') {
@@ -109,18 +71,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
       }
     } catch (error) {
       console.error('Error processing input:', error);
-      const errorMessage = error instanceof Error ? error.message : '發生未知錯誤';
-      const { response: errorResponse, updatedContext: errorContext } = handleError(
-        conversationContext,
-        errorMessage
-      );
-      setConversationContext(errorContext);
-      addMessage('assistant', errorResponse.message);
-      if (errorResponse.buttonOptions) {
-        setButtons(errorResponse.buttonOptions);
-      }
-    } finally {
-      setIsProcessing(false);
+      handleConversationError(error instanceof Error ? error : new Error('發生未知錯誤'));
     }
   };
 
@@ -131,20 +82,18 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
 
     // 特殊處理一些動作
     if (action === 'MAIN_MENU') {
-      // 重置上下文
-      setConversationContext(createInitialContext());
+      // 重置到主選單（使用 hook 方法）
       addMessage('user', '返回主選單');
       addMessage('assistant', MESSAGES.backToMenu);
-      setButtons(MAIN_MENU_BUTTONS);
+      resetToMenu();
       return;
     }
 
     if (action === 'RESTART') {
       // 重新開始建立行程
-      setConversationContext(createInitialContext());
       addMessage('user', '重新開始');
       addMessage('assistant', '好的！讓我們重新開始。\n請告訴我你想去哪個雪場？\n例如：二世谷、白馬、留壽都');
-      setButtons([]);
+      resetToMenu();
       return;
     }
 
@@ -157,92 +106,35 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     handleUserInput(suggestion);
   };
 
-  // 建立行程
-  const handleCreateTrip = async (context: ConversationContext) => {
-    const { resort, startDate, endDate: providedEndDate, duration: providedDuration } = context.accumulatedData;
+  // 建立行程（使用 Hook 提取的业务逻辑）
+  const handleCreateTrip = async (currentContext: ConversationContext) => {
+    const { resort, startDate, endDate, duration } = currentContext.accumulatedData;
 
-    if (!resort || !startDate || !user) {
+    if (!resort || !startDate) {
       throw new Error('缺少必要資訊');
     }
 
-    // 確保有 endDate 和 duration（至少一個）
-    if (!providedEndDate && !providedDuration) {
-      throw new Error('缺少日期範圍或天數');
-    }
-
     try {
-      // 優先使用提供的 endDate，否則從 duration 計算
-      let endDate: Date;
-      let duration: number;
-
-      if (providedEndDate) {
-        endDate = providedEndDate;
-        // 計算天數（從 startDate 到 endDate）
-        const diffTime = endDate.getTime() - startDate.getTime();
-        duration = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-      } else {
-        // 使用 duration 計算 endDate
-        duration = providedDuration!;
-        endDate = calculateEndDate(startDate, duration);
-      }
-
-      // 計算雪季標識符（如 "2024-2025"）
-      const seasonName = calculateSeasonId(startDate.toISOString().split('T')[0]);
-
-      // 檢查或創建雪季
-      let actualSeasonId: string;
-
-      try {
-        // 獲取用戶的所有雪季
-        const seasons = await tripPlanningApi.getSeasons(user.user_id);
-
-        // 查找匹配的雪季（通過 title）
-        const existingSeason = seasons.find(s => s.title === seasonName);
-
-        if (existingSeason) {
-          // 使用現有雪季的 ID
-          actualSeasonId = existingSeason.season_id;
-        } else {
-          // 創建新雪季
-          const [startYear, endYear] = seasonName.split('-').map(Number);
-          const newSeason = await tripPlanningApi.createSeason(user.user_id, {
-            title: seasonName,
-            description: `${startYear}-${endYear} 滑雪季`,
-            start_date: `${startYear}-11-01`,
-            end_date: `${endYear}-04-30`,
-          });
-          actualSeasonId = newSeason.season_id;
-        }
-      } catch (error) {
-        console.error('處理雪季失敗:', error);
-        throw new Error('無法創建或獲取雪季');
-      }
-
-      // 建立行程（使用實際的 season_id）
-      const response = await tripPlanningApi.createTrip(user.user_id, {
-        season_id: actualSeasonId,
-        resort_id: resort.resort.resort_id,
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0],
-        title: `${resort.resort.names.zh} ${duration}日遊`,
-        trip_status: 'planning',
+      // 使用 useTripCreation hook 处理所有业务逻辑
+      const result = await createTrip({
+        resort,
+        startDate,
+        endDate,
+        duration,
       });
 
       // 處理成功
-      const { response: successResponse, updatedContext } = handleTripCreated(
-        context,
-        response.trip_id
+      const { response: successResponse } = handleTripCreated(
+        currentContext,
+        result.tripId
       );
 
-      setConversationContext(updatedContext);
+      // 使用 hook 方法更新状态
       addMessage('assistant', successResponse.message);
-
-      if (successResponse.buttonOptions) {
-        setButtons(successResponse.buttonOptions);
-      }
+      updateResponse(successResponse);
     } catch (error) {
       console.error('Failed to create trip:', error);
-      throw new Error('建立行程失敗，請稍後再試');
+      throw error; // 让外层 catch 处理
     }
   };
 
