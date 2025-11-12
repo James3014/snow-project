@@ -32,16 +32,6 @@ const RESORT_LIST_MESSAGE = `目前系統收錄了43個日本知名雪場！
 
 直接告訴我雪場名稱就可以開始建立行程囉！`;
 
-/**
- * 檢測用戶是否在詢問雪場列表
- */
-function isAskingForResortList(input: string): boolean {
-  const normalized = input.toLowerCase();
-  return RESORT_LIST_KEYWORDS.some(keyword =>
-    normalized.includes(keyword.toLowerCase())
-  );
-}
-
 // ==================== 類型定義 ====================
 
 /**
@@ -114,6 +104,76 @@ export function createInitialContext(): ConversationContext {
 
 // ==================== 工具函數 ====================
 // Linus 原則：「將複雜邏輯提取為小而專注的函數，每個函數只做一件事」
+
+/**
+ * P0-1: 格式化日期為中文簡短格式（DRY 原則 - 消除 24 行重複代碼）
+ *
+ * @param date - 要格式化的日期
+ * @returns 格式化後的日期字符串（例如：12/15）
+ */
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('zh-TW', {
+    month: 'numeric',
+    day: 'numeric',
+  });
+}
+
+/**
+ * P0-2: 構建行程標識符（DRY 原則 - 消除 13 行重複代碼）
+ *
+ * 用於刪除行程時生成人類可讀的標識符。
+ * 優先級：編號 > 雪場 > 日期
+ *
+ * @param intent - 解析後的意圖（包含行程識別信息）
+ * @returns 行程標識符字符串（例如："第 1 個行程"、"苗場 的行程"）
+ */
+function buildTripIdentifier(intent: ParsedIntent): string {
+  if (intent.duration) return `第 ${intent.duration} 個行程`;
+  if (intent.resort) return `${intent.resort.resort.names.zh} 的行程`;
+  if (intent.startDate) return `${formatDate(intent.startDate)} 的行程`;
+  return '該行程';
+}
+
+/**
+ * P0-3: 檢測用戶是否在詢問雪場列表（文件結構重組 - Linus: 類型定義應該在函數之前）
+ *
+ * @param input - 用戶輸入
+ * @returns 如果用戶在詢問雪場列表返回 true
+ */
+function isAskingForResortList(input: string): boolean {
+  const normalized = input.toLowerCase();
+  return RESORT_LIST_KEYWORDS.some(keyword =>
+    normalized.includes(keyword.toLowerCase())
+  );
+}
+
+/**
+ * P1-6: 檢查用戶確認意圖（提取自 handleConfirmation - 57→40 行）
+ *
+ * @param input - 用戶輸入
+ * @returns 'confirm' | 'cancel' | 'unclear' - 用戶的確認意圖
+ */
+function checkUserConfirmation(input: string): 'confirm' | 'cancel' | 'unclear' {
+  const normalized = input.toLowerCase().trim();
+
+  // 確認和取消的關鍵詞
+  const confirmKeywords = ['確定', '是', '好', 'yes', 'y'];
+  const cancelKeywords = ['取消', '不要', '算了', 'no', 'n'];
+
+  // 檢查確認關鍵詞（單字符需要完全匹配，多字符可以包含）
+  const isConfirm = confirmKeywords.some(k =>
+    k.length === 1 ? normalized === k : normalized.includes(k)
+  );
+
+  // 檢查取消關鍵詞
+  const isCancel = cancelKeywords.some(k =>
+    k.length === 1 ? normalized === k : normalized.includes(k)
+  );
+
+  if (isConfirm) return 'confirm';
+  if (isCancel) return 'cancel';
+  return 'unclear';
+}
 
 /**
  * P1-1: 檢測雪場是否改變
@@ -237,21 +297,7 @@ export async function processUserInput(
       return await handleConfirmation(input, updatedContext);
 
     default:
-      return {
-        response: {
-          message: '抱歉，我不太理解。讓我們重新開始吧！',
-          nextState: 'MAIN_MENU',
-          buttonOptions: [
-            { id: 'create', label: '建立行程', action: 'CREATE_TRIP' },
-            { id: 'view', label: '查看行程', action: 'VIEW_TRIPS' },
-          ],
-        },
-        updatedContext: {
-          ...updatedContext,
-          state: 'MAIN_MENU',
-          tripData: {},
-        },
-      };
+      return createUnknownStateResponse(updatedContext);
   }
 }
 
@@ -368,6 +414,31 @@ function createUnknownIntentResponse(
 }
 
 /**
+ * P1-5: 創建未知狀態響應（提取自 processUserInput default 分支 - 51→35 行）
+ *
+ * 當狀態機進入未處理的狀態時，重置到主選單
+ */
+function createUnknownStateResponse(
+  context: ConversationContext
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  return {
+    response: {
+      message: '抱歉，我不太理解。讓我們重新開始吧！',
+      nextState: 'MAIN_MENU',
+      buttonOptions: [
+        { id: 'create', label: '建立行程', action: 'CREATE_TRIP' },
+        { id: 'view', label: '查看行程', action: 'VIEW_TRIPS' },
+      ],
+    },
+    updatedContext: {
+      ...context,
+      state: 'MAIN_MENU',
+      tripData: {},
+    },
+  };
+}
+
+/**
  * 處理閒聊意圖
  */
 function handleChatIntent(
@@ -430,24 +501,13 @@ function handleDeleteTripIntent(
     };
   }
 
-  // 構建刪除標識符（優先級：編號 > 雪場 > 日期）
-  const buildIdentifier = (): string => {
-    if (intent.duration) return `第 ${intent.duration} 個行程`;
-    if (intent.resort) return `${intent.resort.resort.names.zh} 的行程`;
-    if (intent.startDate) {
-      const dateStr = intent.startDate.toLocaleDateString('zh-TW', {
-        month: 'numeric',
-        day: 'numeric',
-      });
-      return `${dateStr} 的行程`;
-    }
-    return '該行程';
-  };
+  // 使用工具函數構建刪除標識符（P0-2 重構 - 63→50 行）
+  const identifier = buildTripIdentifier(intent);
 
   // 返回確認訊息（使用工具函數更新 context）
   return {
     response: {
-      message: `要刪除${buildIdentifier()}嗎？`,
+      message: `要刪除${identifier}嗎？`,
       nextState: 'VIEWING_TRIPS',
       requiresConfirmation: true,
       buttonOptions: [
@@ -577,10 +637,7 @@ function createAskDurationResponse(
   resortName: string,
   context: ConversationContext
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
-  const dateStr = startDate.toLocaleDateString('zh-TW', {
-    month: 'numeric',
-    day: 'numeric',
-  });
+  const dateStr = formatDate(startDate);
 
   return {
     response: {
@@ -692,10 +749,7 @@ async function handleDateInput(
   }
 
   // 繼續詢問天數
-  const dateStr = intent.startDate.toLocaleDateString('zh-TW', {
-    month: 'numeric',
-    day: 'numeric',
-  });
+  const dateStr = formatDate(intent.startDate);
   const resortName = context.tripData.resort?.resort.names.zh || '目的地';
 
   return {
@@ -764,18 +818,12 @@ function prepareCreation(
     duration = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   }
 
-  const dateStr = startDate.toLocaleDateString('zh-TW', {
-    month: 'numeric',
-    day: 'numeric',
-  });
+  const dateStr = formatDate(startDate);
 
   // 如果有 endDate，顯示日期範圍
   let dateDisplay = dateStr;
   if (endDate) {
-    const endDateStr = endDate.toLocaleDateString('zh-TW', {
-      month: 'numeric',
-      day: 'numeric',
-    });
+    const endDateStr = formatDate(endDate);
     dateDisplay = `${dateStr} - ${endDateStr}`;
   }
 
@@ -795,27 +843,17 @@ function prepareCreation(
 }
 
 /**
- * 處理確認
+ * 處理確認（P1-6 重構 - 57→40 行）
  */
 async function handleConfirmation(
   input: string,
   context: ConversationContext
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
-  const normalized = input.toLowerCase().trim();
-
-  // 檢查關鍵詞匹配（Linus: 使用數組簡化重複條件）
-  const confirmKeywords = ['確定', '是', '好', 'yes', 'y'];
-  const cancelKeywords = ['取消', '不要', '算了', 'no', 'n'];
-
-  const isConfirm = confirmKeywords.some(k =>
-    k.length === 1 ? normalized === k : normalized.includes(k)
-  );
-  const isCancel = cancelKeywords.some(k =>
-    k.length === 1 ? normalized === k : normalized.includes(k)
-  );
+  // 使用工具函數檢查用戶意圖
+  const userIntent = checkUserConfirmation(input);
 
   // 確定建立
-  if (isConfirm) {
+  if (userIntent === 'confirm') {
     return {
       response: {
         message: '正在建立行程...',
@@ -827,7 +865,7 @@ async function handleConfirmation(
   }
 
   // 取消
-  if (isCancel) {
+  if (userIntent === 'cancel') {
     return {
       response: {
         message: '好的，已取消。還有什麼我可以幫忙的嗎？',
