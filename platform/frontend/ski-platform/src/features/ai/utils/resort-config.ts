@@ -29,7 +29,7 @@ export interface ResortGroup {
  */
 export const RESORT_GROUPS: ResortGroup[] = [
   {
-    keywords: ['白馬', 'hakuba'],
+    keywords: ['白馬', '白马', 'hakuba'],
     names: ['白馬Cortina', '白馬八方尾根', '白馬五龍', '白馬岩岳', '白馬栂池', '白馬乗鞍'],
     filter: (r: Resort) => r.names.zh.includes('白馬')
   },
@@ -44,7 +44,7 @@ export const RESORT_GROUPS: ResortGroup[] = [
     filter: (r: Resort) => r.names.zh.includes('妙高') || r.names.zh.includes('赤倉') || r.names.zh.includes('新井')
   },
   {
-    keywords: ['湯澤', 'yuzawa'],
+    keywords: ['湯澤', '汤泽', 'yuzawa'],
     names: ['GALA湯澤', 'NASPA', '苗場', '神樂', '石打丸山', '湯澤中里', '湯澤公園', '神立高原', '舞子高原', '岩原', '上越國際'],
     filter: (r: Resort) =>
       r.names.zh.includes('湯澤') ||
