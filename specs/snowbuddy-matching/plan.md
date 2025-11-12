@@ -59,6 +59,16 @@
   - **`POST /requests` & `PUT /requests/{request_id}`:**
     - 這兩個端點的核心職責是產生對應的行為事件 (`BehaviorEvent`)，並透過 `POST /events` 請求將其發送至 `user-core` 服務。它們本身不處理複雜的狀態管理，以維持服務的無狀態特性。
 
+## 6. 行程驅動的媒合整合 (Trip-driven Matching Integration)
+
+現有的 trip planning 工具與行程模型提供了 rich metadata（`resort_id`、`date range`、`max_buddies`、`visibility`），可作為自然的媒合觸發器。建議採取以下做法：
+
+- **行程→偏好橋接**：每當 `Trip`（或 `CreateMultipleTripsTool`）建立成功後，就將該行程的 `resort_id`、`start_date`/`end_date`、`visibility` 等欄位轉換成 `MatchingPreference`，呼叫 `POST /matching/searches`，取得 `search_id`，並存回 `Trip` 的 metadata/notes（或新增 `trip_matching_id` 欄位）。
+- **TripBuddy 回寫**：`snowbuddy-matching` 對候選人排序後，可自動建立 `TripBuddy` request（預設 pending），並透過 `POST /events` 把 `matching.request.sent` 等事件寫進 `user-core`，使 `Trip` 与 `TripBuddy` 形成有向關聯。
+- **行程結果呈現**：`GET /matching/searches/{search_id}` 的返回資料可直接由 trip view 呼叫，顯示與該行程匹配的 snowbuddies / coaches；若使用者接受某候選人，可再觸發 `PUT /matching/requests/{request_id}` 將狀態更新並寫 `TripBuddy`。
+
+此整合務求保持任何時候都不會干擾現有 trip CRUD API，同時讓行程本身變成媒合的觸發器與 persistable 資料來源，符合「Never break userspace」與可觀察性要求。
+
 ## 6. 快取策略 (Caching Strategy)
 
 - **媒合結果快取:** `GET /matching/searches/{search_id}` 的查詢結果可以被快取一段較短的時間 (例如 5-10 分鐘)，以應對使用者在短時間內的重複查詢。

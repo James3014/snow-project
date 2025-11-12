@@ -321,9 +321,9 @@ user-core (核心)
 
 ## 📊 測試狀態
 
-- **測試檔案總數**: 7 個
-- **測試覆蓋率**: user-core 有完整整合測試
-- **待補強**: resort-services, snowbuddy-matching 的測試
+- **測試檔案總數**: 7 個（後端）+ 1 支 TypeScript 測試腳本
+- **測試覆蓋率**: user-core 有完整整合測試；前端雪場識別 131 個案例、通過率 99.2%（參考 `platform/frontend/ski-platform/test-resort-matching.ts` 與 `platform/frontend/ski-platform/RESORT_MATCHING_TEST_REPORT.md`）
+- **待補強**: resort-services、snowbuddy-matching 的 contract/整合測試；前端部分陸續維運
 
 ---
 
@@ -351,6 +351,8 @@ user-core (核心)
 - ✅ 各模組 spec.md (6/6)
 - ✅ 大部分模組 plan.md (5/6)
 - ✅ 大部分模組 tasks.md (5/6)
+- ✅ `platform/frontend/ski-platform/test-resort-matching.ts` - 雪場識別測試腳本（131 個案例）
+- ✅ `platform/frontend/ski-platform/RESORT_MATCHING_TEST_REPORT.md` - 雪場識別功能測試報告 (99.2% 通過率)
 
 ### 待補充文件
 - ⏳ coach-scheduling/plan.md
