@@ -31,7 +31,6 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     messages,
     buttons,
     suggestions,
-    context,
     isProcessing,
     addMessage,
     processInput,
@@ -59,14 +58,14 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
 
     try {
       // 使用 hook 处理输入（自动管理状态）
-      const response = await processInput(input);
+      const { response, updatedContext } = await processInput(input);
 
       // 添加助手回應
       addMessage('assistant', response.message);
 
-      // 處理特殊狀態
+      // 處理特殊狀態（使用更新后的 context）
       if (response.nextState === 'CREATING_TRIP') {
-        await handleCreateTrip(context);
+        await handleCreateTrip(updatedContext);
       } else if (response.nextState === 'VIEWING_TRIPS') {
         handleViewTrips();
       }

@@ -42,7 +42,10 @@ export interface UseConversationReturn {
 
   // 操作方法
   addMessage: (role: 'user' | 'assistant', content: string) => void;
-  processInput: (input: string) => Promise<ConversationResponse>;
+  processInput: (input: string) => Promise<{
+    response: ConversationResponse;
+    updatedContext: ConversationContext;
+  }>;
   handleError: (error: Error | string) => void;
   reset: () => void;
   resetToMenu: () => void;
@@ -96,7 +99,10 @@ export function useConversation(): UseConversationReturn {
   /**
    * 处理用户输入
    */
-  const processInput = async (input: string): Promise<ConversationResponse> => {
+  const processInput = async (input: string): Promise<{
+    response: ConversationResponse;
+    updatedContext: ConversationContext;
+  }> => {
     // 设置处理中状态
     setState(prev => ({ ...prev, isProcessing: true, suggestions: [] }));
 
@@ -116,7 +122,8 @@ export function useConversation(): UseConversationReturn {
         isProcessing: false,
       }));
 
-      return response;
+      // 返回 response 和 updatedContext（组件需要最新的 context）
+      return { response, updatedContext };
     } catch (error) {
       // 处理错误
       const errorMessage = error instanceof Error ? error.message : '發生未知錯誤';
