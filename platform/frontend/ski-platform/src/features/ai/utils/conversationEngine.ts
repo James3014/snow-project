@@ -66,10 +66,9 @@ export type ConversationState =
  */
 export interface ConversationContext {
   state: ConversationState;
-  intent?: ParsedIntent;
 
-  // 累積的資訊（用於多輪對話）
-  accumulatedData: {
+  // 行程數據（單一數據源 - Linus原則：消除數據重複）
+  tripData: {
     resort?: ResortMatch;
     startDate?: Date;
     endDate?: Date;
@@ -108,8 +107,96 @@ export interface ConversationResponse {
 export function createInitialContext(): ConversationContext {
   return {
     state: 'MAIN_MENU',
-    accumulatedData: {},
+    tripData: {},
     conversationHistory: [],
+  };
+}
+
+// ==================== 工具函數 ====================
+// Linus 原則：「將複雜邏輯提取為小而專注的函數，每個函數只做一件事」
+
+/**
+ * P1-1: 檢測雪場是否改變
+ *
+ * @param intent - 解析後的意圖
+ * @param currentResort - 當前 context 中的雪場
+ * @returns 如果雪場改變返回 true
+ */
+function detectResortChange(
+  intent: ParsedIntent,
+  currentResort: ResortMatch | undefined
+): boolean {
+  if (!intent.resort) return false;
+  if (!currentResort) return false;
+  return intent.resort.resort.resort_id !== currentResort.resort.resort_id;
+}
+
+/**
+ * P1-2: 更新行程數據（Linus: 數據操作應該清晰可見）
+ *
+ * @param context - 當前上下文
+ * @param intent - 解析後的意圖
+ * @returns 更新後的 context
+ */
+function updateTripData(
+  context: ConversationContext,
+  intent: ParsedIntent
+): ConversationContext {
+  return {
+    ...context,
+    tripData: {
+      resort: intent.resort || context.tripData.resort,
+      startDate: intent.startDate || context.tripData.startDate,
+      endDate: intent.endDate || context.tripData.endDate,
+      duration: intent.duration || context.tripData.duration,
+    },
+  };
+}
+
+/**
+ * P1-3: 檢查行程數據是否完整
+ *
+ * @param tripData - 行程數據
+ * @returns 如果所有必要字段都存在返回 true
+ */
+function isTripDataComplete(tripData: ConversationContext['tripData']): boolean {
+  return !!(
+    tripData.resort &&
+    tripData.startDate &&
+    (tripData.endDate || tripData.duration)
+  );
+}
+
+/**
+ * P1-4: 處理雪場變更響應
+ *
+ * @param intent - 包含新雪場的意圖
+ * @param context - 當前上下文
+ * @param nextState - 下一個狀態
+ * @returns 雪場變更的響應和更新後的 context
+ */
+function handleResortChangeResponse(
+  intent: ParsedIntent,
+  context: ConversationContext,
+  nextState: ConversationState = 'AWAITING_DATE'
+): { response: ConversationResponse; updatedContext: ConversationContext } {
+  const newResortName = intent.resort!.resort.names.zh;
+
+  return {
+    response: {
+      message: `檢測到您想更換雪場到 ${newResortName}。\n讓我們重新開始吧！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
+      nextState,
+    },
+    updatedContext: {
+      ...context,
+      tripData: {
+        resort: intent.resort,
+        startDate: intent.startDate,
+        endDate: intent.endDate,
+        duration: intent.duration,
+      },
+      state: nextState,
+    },
   };
 }
 
@@ -162,7 +249,7 @@ export async function processUserInput(
         updatedContext: {
           ...updatedContext,
           state: 'MAIN_MENU',
-          accumulatedData: {},
+          tripData: {},
         },
       };
   }
@@ -185,14 +272,9 @@ async function handleInitialInput(
 
   // 2. 解析用戶意圖
   const intent = await parseIntent(input);
-  const contextWithIntent = {
-    ...context,
-    intent,
-    state: 'PROCESSING_INTENT' as ConversationState,
-  };
 
-  // 3. 分發到具體處理器
-  return dispatchIntentToHandler(intent, contextWithIntent);
+  // 3. 分發到具體處理器（intent 只作為函數參數使用，不持久化到 context）
+  return dispatchIntentToHandler(intent, context);
 }
 
 /**
@@ -330,13 +412,11 @@ function handleDeleteTripIntent(
   intent: ParsedIntent,
   context: ConversationContext
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
-  // 檢查是否有識別資訊
-  const hasResort = !!intent.resort;
-  const hasDate = !!intent.startDate;
-  const hasTripNumber = !!intent.duration; // 複用 duration 欄位儲存編號
+  // 檢查是否有識別資訊（Linus: 簡化條件判斷）
+  const hasIdentifier = !!(intent.resort || intent.startDate || intent.duration);
 
-  // 如果沒有任何識別資訊，請求用戶提供
-  if (!hasResort && !hasDate && !hasTripNumber) {
+  // 如果沒有識別資訊，請求用戶提供
+  if (!hasIdentifier) {
     return {
       response: {
         message: '請告訴我要刪除哪個行程？\n\n你可以說：\n• "刪除苗場行程"\n• "刪除第1個行程"\n• "刪除2月的行程"',
@@ -346,31 +426,28 @@ function handleDeleteTripIntent(
           { id: 'cancel', label: '取消', action: 'CANCEL' },
         ],
       },
-      updatedContext: {
-        ...context,
-        state: 'VIEWING_TRIPS',
-      },
+      updatedContext: { ...context, state: 'VIEWING_TRIPS' },
     };
   }
 
-  // 構建刪除提示訊息
-  let identifier = '';
-  if (hasTripNumber) {
-    identifier = `第 ${intent.duration} 個行程`;
-  } else if (hasResort) {
-    identifier = `${intent.resort!.resort.names.zh} 的行程`;
-  } else if (hasDate) {
-    const dateStr = intent.startDate!.toLocaleDateString('zh-TW', {
-      month: 'numeric',
-      day: 'numeric',
-    });
-    identifier = `${dateStr} 的行程`;
-  }
+  // 構建刪除標識符（優先級：編號 > 雪場 > 日期）
+  const buildIdentifier = (): string => {
+    if (intent.duration) return `第 ${intent.duration} 個行程`;
+    if (intent.resort) return `${intent.resort.resort.names.zh} 的行程`;
+    if (intent.startDate) {
+      const dateStr = intent.startDate.toLocaleDateString('zh-TW', {
+        month: 'numeric',
+        day: 'numeric',
+      });
+      return `${dateStr} 的行程`;
+    }
+    return '該行程';
+  };
 
-  // 返回確認訊息和數據
+  // 返回確認訊息（使用工具函數更新 context）
   return {
     response: {
-      message: `要刪除${identifier}嗎？`,
+      message: `要刪除${buildIdentifier()}嗎？`,
       nextState: 'VIEWING_TRIPS',
       requiresConfirmation: true,
       buttonOptions: [
@@ -386,13 +463,8 @@ function handleDeleteTripIntent(
       },
     },
     updatedContext: {
-      ...context,
+      ...updateTripData(context, intent),
       state: 'VIEWING_TRIPS',
-      intent,
-      accumulatedData: {
-        ...context.accumulatedData,
-        // 保存刪除識別資訊到 context 中，供後續確認使用
-      },
     },
   };
 }
@@ -404,71 +476,35 @@ function handleCreateTripIntent(
   intent: ParsedIntent,
   context: ConversationContext
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
-  // 合併累積的資料
-  const mergedData = {
-    resort: intent.resort || context.accumulatedData.resort,
-    startDate: intent.startDate || context.accumulatedData.startDate,
-    endDate: intent.endDate || context.accumulatedData.endDate,
-    duration: intent.duration || context.accumulatedData.duration,
-  };
+  // 合併數據（使用工具函數）
+  const updatedContext = updateTripData(context, intent);
+  const { resort, startDate, endDate, duration } = updatedContext.tripData;
 
-  const updatedContext = {
-    ...context,
-    accumulatedData: mergedData,
-  };
-
-  // 檢查是否有缺少的資訊
-  if (!mergedData.resort) {
+  // 檢查缺少的字段並返回對應請求
+  if (!resort) {
     const suggestions = intent.suggestions?.map(s => s.resort.names.zh) || [];
-    return {
-      response: {
-        message: intent.suggestions && intent.suggestions.length > 0
-          ? `找不到完全匹配的雪場，你是想去這些地方嗎？\n或者直接告訴我雪場名稱～`
-          : '請告訴我你想去哪個雪場？\n例如：二世谷、白馬、留壽都',
-        nextState: 'AWAITING_RESORT',
-        suggestions: suggestions.length > 0 ? suggestions : undefined,
-        buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
-      },
-      updatedContext: {
-        ...updatedContext,
-        state: 'AWAITING_RESORT',
-      },
-    };
+    const message = suggestions.length > 0
+      ? '找不到完全匹配的雪場，你是想去這些地方嗎？\n或者直接告訴我雪場名稱～'
+      : '請告訴我你想去哪個雪場？\n例如：二世谷、白馬、留壽都';
+
+    return createAskResortResponse(message, suggestions, updatedContext);
   }
 
-  if (!mergedData.startDate) {
-    return {
-      response: {
-        message: `好的，去 ${mergedData.resort.resort.names.zh}！\n\n📍 雪場：${mergedData.resort.resort.names.zh}\n\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
-        nextState: 'AWAITING_DATE',
-        buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
-      },
-      updatedContext: {
-        ...updatedContext,
-        state: 'AWAITING_DATE',
-      },
-    };
+  if (!startDate) {
+    const message = `好的，去 ${resort.resort.names.zh}！\n\n📍 雪場：${resort.resort.names.zh}\n\n什麼時候出發呢？\n例如：12/15、明天、下週一`;
+    return createAskDateResponse(message, updatedContext);
   }
 
-  if (!mergedData.duration && !mergedData.endDate) {
-    const dateStr = mergedData.startDate.toLocaleDateString('zh-TW', {
+  if (!duration && !endDate) {
+    const dateStr = startDate.toLocaleDateString('zh-TW', {
       month: 'numeric',
       day: 'numeric',
     });
-    return {
-      response: {
-        message: `${dateStr} 出發前往 ${mergedData.resort.resort.names.zh}！\n\n📍 雪場：${mergedData.resort.resort.names.zh}\n📅 出發日：${dateStr}\n\n打算待幾天呢？\n例如：5天、一週、26號（結束日期）`,
-        nextState: 'AWAITING_DURATION',
-        buttonOptions: [{ id: 'restart', label: '🔄 重新開始', action: 'RESTART' }],
-      },
-      updatedContext: {
-        ...updatedContext,
-        state: 'AWAITING_DURATION',
-      },
-    };
+    const message = `${dateStr} 出發前往 ${resort.resort.names.zh}！\n\n📍 雪場：${resort.resort.names.zh}\n📅 出發日：${dateStr}\n\n打算待幾天呢？\n例如：5天、一週、26號（結束日期）`;
+    return createAskDurationResponse(startDate, resort.resort.names.zh, updatedContext);
   }
 
-  // 所有資訊都齊全，直接創建行程
+  // 數據完整，創建行程
   return prepareCreation(updatedContext);
 }
 
@@ -527,12 +563,12 @@ function mergeResortDataToContext(
 ): ConversationContext {
   return {
     ...context,
-    accumulatedData: {
-      ...context.accumulatedData,
+    tripData: {
+      ...context.tripData,
       resort: intent.resort,
-      startDate: intent.startDate || context.accumulatedData.startDate,
-      endDate: intent.endDate || context.accumulatedData.endDate,
-      duration: intent.duration || context.accumulatedData.duration,
+      startDate: intent.startDate || context.tripData.startDate,
+      endDate: intent.endDate || context.tripData.endDate,
+      duration: intent.duration || context.tripData.duration,
     },
   };
 }
@@ -612,60 +648,13 @@ async function handleDateInput(
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
   const intent = await parseIntent(input);
 
-  // 檢測用戶是否想重新選擇雪場（意圖改變）
-  if (intent.resort && intent.resort.resort.resort_id !== context.accumulatedData.resort?.resort.resort_id) {
-    // 用戶輸入了新的雪場名稱，重新開始
-    return {
-      response: {
-        message: `檢測到您想更換雪場到 ${intent.resort.resort.names.zh}。\n讓我們重新開始吧！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
-        nextState: 'AWAITING_DATE',
-      },
-      updatedContext: {
-        ...context,
-        accumulatedData: {
-          resort: intent.resort,
-          startDate: intent.startDate,
-          endDate: intent.endDate,
-          duration: intent.duration,
-        },
-        state: 'AWAITING_DATE',
-      },
-    };
+  // 檢測雪場變更（使用工具函數）
+  if (detectResortChange(intent, context.tripData.resort)) {
+    return handleResortChangeResponse(intent, context, 'AWAITING_DATE');
   }
 
-  if (intent.startDate) {
-    const updatedContext = {
-      ...context,
-      accumulatedData: {
-        ...context.accumulatedData,
-        startDate: intent.startDate,
-        endDate: intent.endDate,
-        duration: intent.duration,
-      },
-    };
-
-    // 如果同時有天數或結束日期，直接創建行程
-    if (intent.duration || intent.endDate) {
-      return prepareCreation(updatedContext);
-    }
-
-    // 繼續詢問天數
-    const dateStr = intent.startDate.toLocaleDateString('zh-TW', {
-      month: 'numeric',
-      day: 'numeric',
-    });
-    const resortName = context.accumulatedData.resort?.resort.names.zh || '目的地';
-    return {
-      response: {
-        message: `${dateStr} 出發前往 ${resortName}！\n打算待幾天呢？\n例如：5天、一週、26號`,
-        nextState: 'AWAITING_DURATION',
-      },
-      updatedContext: {
-        ...updatedContext,
-        state: 'AWAITING_DURATION',
-      },
-    };
-  } else {
+  // 驗證日期輸入
+  if (!intent.startDate) {
     return {
       response: {
         message: '抱歉，我沒能理解這個日期。\n可以換個說法試試嗎？\n例如：12/15、明天、下週一',
@@ -674,6 +663,32 @@ async function handleDateInput(
       updatedContext: context,
     };
   }
+
+  // 更新數據（使用工具函數）
+  const updatedContext = updateTripData(context, intent);
+
+  // 如果數據完整，直接創建行程
+  if (isTripDataComplete(updatedContext.tripData)) {
+    return prepareCreation(updatedContext);
+  }
+
+  // 繼續詢問天數
+  const dateStr = intent.startDate.toLocaleDateString('zh-TW', {
+    month: 'numeric',
+    day: 'numeric',
+  });
+  const resortName = context.tripData.resort?.resort.names.zh || '目的地';
+
+  return {
+    response: {
+      message: `${dateStr} 出發前往 ${resortName}！\n打算待幾天呢？\n例如：5天、一週、26號`,
+      nextState: 'AWAITING_DURATION',
+    },
+    updatedContext: {
+      ...updatedContext,
+      state: 'AWAITING_DURATION',
+    },
+  };
 }
 
 /**
@@ -685,61 +700,25 @@ async function handleDurationInput(
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
   const intent = await parseIntent(input);
 
-  // 檢測用戶是否想重新選擇雪場（意圖改變）
-  if (intent.resort && intent.resort.resort.resort_id !== context.accumulatedData.resort?.resort.resort_id) {
-    // 用戶輸入了新的雪場名稱，重新開始
+  // 檢測雪場變更（使用工具函數）
+  if (detectResortChange(intent, context.tripData.resort)) {
+    return handleResortChangeResponse(intent, context, 'AWAITING_DATE');
+  }
+
+  // 驗證輸入：必須有天數或結束日期
+  if (!intent.duration && !intent.endDate) {
     return {
       response: {
-        message: `檢測到您想更換雪場到 ${intent.resort.resort.names.zh}。\n讓我們重新開始吧！\n什麼時候出發呢？\n例如：12/15、明天、下週一`,
-        nextState: 'AWAITING_DATE',
+        message: '抱歉，我沒能理解天數或結束日期。\n可以換個說法試試嗎？\n例如：5天、一週、26號、12月26日',
+        nextState: 'AWAITING_DURATION',
       },
-      updatedContext: {
-        ...context,
-        accumulatedData: {
-          resort: intent.resort,
-          startDate: intent.startDate,
-          endDate: intent.endDate,
-          duration: intent.duration,
-        },
-        state: 'AWAITING_DATE',
-      },
+      updatedContext: context,
     };
   }
 
-  // 情況1：用戶提供了結束日期（如 "26號"、"12-22到26"）
-  if (intent.endDate && context.accumulatedData.startDate) {
-    const updatedContext = {
-      ...context,
-      accumulatedData: {
-        ...context.accumulatedData,
-        endDate: intent.endDate,
-      },
-    };
-
-    return prepareCreation(updatedContext);
-  }
-
-  // 情況2：用戶提供了天數（如 "5天"、"一週"）
-  if (intent.duration) {
-    const updatedContext = {
-      ...context,
-      accumulatedData: {
-        ...context.accumulatedData,
-        duration: intent.duration,
-      },
-    };
-
-    return prepareCreation(updatedContext);
-  }
-
-  // 情況3：無法理解輸入
-  return {
-    response: {
-      message: '抱歉，我沒能理解天數或結束日期。\n可以換個說法試試嗎？\n例如：5天、一週、26號、12月26日',
-      nextState: 'AWAITING_DURATION',
-    },
-    updatedContext: context,
-  };
+  // 更新數據並創建行程（使用工具函數）
+  const updatedContext = updateTripData(context, intent);
+  return prepareCreation(updatedContext);
 }
 
 /**
@@ -748,7 +727,7 @@ async function handleDurationInput(
 function prepareCreation(
   context: ConversationContext
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
-  const { resort, startDate, endDate, duration: providedDuration } = context.accumulatedData;
+  const { resort, startDate, endDate, duration: providedDuration } = context.tripData;
 
   if (!resort || !startDate) {
     throw new Error('Missing required data for creation');
@@ -787,7 +766,7 @@ function prepareCreation(
     response: {
       message,
       nextState: 'CREATING_TRIP',
-      data: context.accumulatedData,
+      data: context.tripData,
     },
     updatedContext: {
       ...context,
@@ -805,35 +784,31 @@ async function handleConfirmation(
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
   const normalized = input.toLowerCase().trim();
 
+  // 檢查關鍵詞匹配（Linus: 使用數組簡化重複條件）
+  const confirmKeywords = ['確定', '是', '好', 'yes', 'y'];
+  const cancelKeywords = ['取消', '不要', '算了', 'no', 'n'];
+
+  const isConfirm = confirmKeywords.some(k =>
+    k.length === 1 ? normalized === k : normalized.includes(k)
+  );
+  const isCancel = cancelKeywords.some(k =>
+    k.length === 1 ? normalized === k : normalized.includes(k)
+  );
+
   // 確定建立
-  if (
-    normalized.includes('確定') ||
-    normalized.includes('是') ||
-    normalized.includes('好') ||
-    normalized.includes('yes') ||
-    normalized === 'y'
-  ) {
+  if (isConfirm) {
     return {
       response: {
         message: '正在建立行程...',
         nextState: 'CREATING_TRIP',
-        data: context.accumulatedData,
+        data: context.tripData,
       },
-      updatedContext: {
-        ...context,
-        state: 'CREATING_TRIP',
-      },
+      updatedContext: { ...context, state: 'CREATING_TRIP' },
     };
   }
 
   // 取消
-  if (
-    normalized.includes('取消') ||
-    normalized.includes('不要') ||
-    normalized.includes('算了') ||
-    normalized.includes('no') ||
-    normalized === 'n'
-  ) {
+  if (isCancel) {
     return {
       response: {
         message: '好的，已取消。還有什麼我可以幫忙的嗎？',
@@ -843,11 +818,7 @@ async function handleConfirmation(
           { id: 'view', label: '查看行程', action: 'VIEW_TRIPS' },
         ],
       },
-      updatedContext: {
-        ...context,
-        state: 'MAIN_MENU',
-        accumulatedData: {},
-      },
+      updatedContext: { ...context, state: 'MAIN_MENU', tripData: {} },
     };
   }
 
@@ -886,7 +857,7 @@ export function handleTripCreated(
     updatedContext: {
       ...context,
       state: 'TRIP_CREATED',
-      accumulatedData: {},
+      tripData: {},
     },
   };
 }
@@ -911,7 +882,7 @@ export function handleError(
       ...context,
       state: 'MAIN_MENU',
       error,
-      accumulatedData: {},
+      tripData: {},
     },
   };
 }
