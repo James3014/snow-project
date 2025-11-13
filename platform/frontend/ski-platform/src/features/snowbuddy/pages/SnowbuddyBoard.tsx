@@ -12,10 +12,15 @@ import Card from '@/shared/components/Card';
 import type { Trip } from '@/features/trip-planning/types';
 import type { Resort } from '@/shared/data/resorts';
 
+// 擴展 Trip 類型以包含申請狀態
+interface TripWithBuddyStatus extends Trip {
+  myBuddyStatus?: 'pending' | 'accepted' | 'declined' | null;
+}
+
 export default function SnowbuddyBoard() {
   const navigate = useNavigate();
   const userId = useAppSelector((state) => state.auth.user?.user_id);
-  const [trips, setTrips] = useState<Trip[]>([]);
+  const [trips, setTrips] = useState<TripWithBuddyStatus[]>([]);
   const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +44,35 @@ export default function SnowbuddyBoard() {
         trip => trip.visibility === 'public'
       );
 
-      setTrips(publicTrips);
+      // 獲取每個行程的申請狀態
+      const tripsWithStatus: TripWithBuddyStatus[] = await Promise.all(
+        publicTrips.map(async (trip) => {
+          try {
+            // 獲取行程的所有雪伴申請
+            const buddies = await tripPlanningApi.getTripBuddies(trip.trip_id);
+            // 查找當前用戶的申請
+            const myRequest = buddies.find(b => b.user_id === userId);
+            return {
+              ...trip,
+              myBuddyStatus: myRequest?.status as any || null
+            };
+          } catch (err) {
+            // 如果獲取失敗，返回原始行程
+            return { ...trip, myBuddyStatus: null };
+          }
+        })
+      );
+
+      // 排序：申請過的行程置頂
+      const sortedTrips = tripsWithStatus.sort((a, b) => {
+        // 有申請狀態的排前面
+        if (a.myBuddyStatus && !b.myBuddyStatus) return -1;
+        if (!a.myBuddyStatus && b.myBuddyStatus) return 1;
+        // 都有申請或都沒申請，按日期排序（最近的在前）
+        return new Date(a.start_date).getTime() - new Date(b.start_date).getTime();
+      });
+
+      setTrips(sortedTrips);
 
       // 載入雪場資料
       try {
@@ -67,7 +100,8 @@ export default function SnowbuddyBoard() {
       setApplyingTripId(tripId);
       await tripPlanningApi.requestToJoinTrip(tripId, userId);
       alert('申請成功！請等待行程主人回應');
-      // 可選：重新載入列表或更新狀態
+      // 重新載入列表以更新申請狀態
+      await loadPublicTrips();
     } catch (err) {
       console.error('申請失敗:', err);
       alert('申請失敗，請稍後再試');
@@ -140,18 +174,61 @@ export default function SnowbuddyBoard() {
 
       {/* Trip Cards Grid */}
       {trips.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips.map(trip => (
-            <TripBoardCard
-              key={trip.trip_id}
-              trip={trip}
-              resort={getResortForTrip(trip)}
-              onApply={handleApply}
-              isApplying={applyingTripId === trip.trip_id}
-              currentUserId={userId}
-            />
-          ))}
-        </div>
+        <>
+          {/* 我申請的行程區塊 */}
+          {trips.some(t => t.myBuddyStatus) && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span>📌 我申請的行程</span>
+                <span className="text-sm font-normal text-gray-600">
+                  ({trips.filter(t => t.myBuddyStatus).length})
+                </span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {trips
+                  .filter(trip => trip.myBuddyStatus)
+                  .map(trip => (
+                    <TripBoardCard
+                      key={trip.trip_id}
+                      trip={trip}
+                      resort={getResortForTrip(trip)}
+                      onApply={handleApply}
+                      isApplying={applyingTripId === trip.trip_id}
+                      currentUserId={userId}
+                      buddyStatus={trip.myBuddyStatus}
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* 其他公開行程區塊 */}
+          {trips.some(t => !t.myBuddyStatus) && (
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span>🏔️ 其他公開行程</span>
+                <span className="text-sm font-normal text-gray-600">
+                  ({trips.filter(t => !t.myBuddyStatus).length})
+                </span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {trips
+                  .filter(trip => !trip.myBuddyStatus)
+                  .map(trip => (
+                    <TripBoardCard
+                      key={trip.trip_id}
+                      trip={trip}
+                      resort={getResortForTrip(trip)}
+                      onApply={handleApply}
+                      isApplying={applyingTripId === trip.trip_id}
+                      currentUserId={userId}
+                      buddyStatus={trip.myBuddyStatus}
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
