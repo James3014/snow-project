@@ -234,6 +234,24 @@ def get_trips(
 
 
 @router.get(
+    "/trips/public",
+    response_model=List[tp_schemas.Trip],
+    summary="Get all public trips for Snowbuddy Board"
+)
+def get_public_trips(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=500),
+    db_session: Session = Depends(db.get_db)
+):
+    """Get all public trips visible on the Snowbuddy Board."""
+    return trip_planning_service.get_public_trips(
+        db=db_session,
+        skip=skip,
+        limit=limit
+    )
+
+
+@router.get(
     "/trips/{trip_id}",
     response_model=tp_schemas.Trip,
     summary="Get a specific trip"

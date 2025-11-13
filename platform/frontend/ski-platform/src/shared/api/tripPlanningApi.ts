@@ -71,6 +71,14 @@ export const tripPlanningApi = {
     return userCoreApi.get<Trip[]>(`/trip-planning/trips?${params}`);
   },
 
+  /** 獲取所有公開行程（用於雪伴公佈欄） */
+  getPublicTrips: (skip: number = 0, limit: number = 100) => {
+    const params = new URLSearchParams();
+    if (skip > 0) params.append('skip', skip.toString());
+    if (limit !== 100) params.append('limit', limit.toString());
+    return userCoreApi.get<Trip[]>(`/trip-planning/trips/public${params.toString() ? '?' + params : ''}`);
+  },
+
   /** 獲取單個行程 */
   getTrip: (tripId: string, userId?: string) => {
     const params = userId ? `?user_id=${userId}` : '';

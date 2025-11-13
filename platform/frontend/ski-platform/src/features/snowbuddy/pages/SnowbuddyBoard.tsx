@@ -35,14 +35,8 @@ export default function SnowbuddyBoard() {
       setLoading(true);
       setError(null);
 
-      // 獲取所有行程（後端需要支持過濾 visibility='public'）
-      // 目前先獲取所有行程，前端過濾
-      const allTrips = await tripPlanningApi.getTrips(userId || '');
-
-      // 過濾出公開的行程（包含自己的，但不能申請加入自己的）
-      const publicTrips = allTrips.filter(
-        trip => trip.visibility === 'public'
-      );
+      // 獲取所有公開的行程（使用後端的 /trips/public API）
+      const publicTrips = await tripPlanningApi.getPublicTrips();
 
       // 獲取每個行程的申請狀態
       const tripsWithStatus: TripWithBuddyStatus[] = await Promise.all(

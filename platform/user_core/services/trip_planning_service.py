@@ -257,6 +257,22 @@ def get_user_trips(
     return query.order_by(desc(Trip.start_date)).offset(skip).limit(limit).all()
 
 
+def get_public_trips(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100
+) -> List[Trip]:
+    """Get all public trips for the Snowbuddy Board."""
+    return (
+        db.query(Trip)
+        .filter(Trip.visibility == 'public')
+        .order_by(desc(Trip.start_date))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+
 def get_trip(
     db: Session,
     trip_id: uuid.UUID,
