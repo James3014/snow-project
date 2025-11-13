@@ -96,9 +96,19 @@ export default function SnowbuddyBoard() {
       alert('申請成功！請等待行程主人回應');
       // 重新載入列表以更新申請狀態
       await loadPublicTrips();
-    } catch (err) {
+    } catch (err: any) {
       console.error('申請失敗:', err);
-      alert('申請失敗，請稍後再試');
+
+      // 檢查是否是重複申請錯誤
+      const errorMessage = err?.response?.data?.detail || err?.message || '';
+
+      if (errorMessage.includes('already have a pending or active request')) {
+        alert('您已經申請過這個行程了\n\n請到「我申請的行程」區查看申請狀態');
+      } else if (err?.response?.status === 400) {
+        alert(`申請失敗：${errorMessage}`);
+      } else {
+        alert('申請失敗，請稍後再試');
+      }
     } finally {
       setApplyingTripId(null);
     }
