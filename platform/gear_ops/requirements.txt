@@ -1,0 +1,11 @@
+alembic==1.17.0
+fastapi==0.119.0
+pydantic==2.10.5
+pydantic-settings==2.11.0
+SQLAlchemy==2.0.44
+psycopg2-binary==2.9.11
+httpx==0.28.1
+redis==5.0.1
+pytest==8.4.2
+uvicorn==0.37.0
+python-dotenv==1.1.1
