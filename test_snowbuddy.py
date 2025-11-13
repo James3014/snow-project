@@ -303,6 +303,15 @@ def main():
     log_success("✓ Bob的申請狀態: accepted")
     log_success("✓ Charlie的申請狀態: declined")
 
+    # 驗證雪伴顯示名字
+    assert bob_request.get('user_display_name') == bob.username, "Bob的名字應該顯示"
+    log_success(f"✓ Bob的顯示名字: {bob_request.get('user_display_name')}")
+
+    # 統計 accepted 的雪伴數量
+    accepted_buddies = [b for b in buddies if b['status'] == 'accepted']
+    assert len(accepted_buddies) == 1, f"應該有1個已加入的雪伴，實際有{len(accepted_buddies)}個"
+    log_success(f"✓ 已加入的雪伴: {len(accepted_buddies)} 人")
+
     # 測試 9: 防止重複申請
     print("\n🚫 測試 9: 防止重複申請")
     print("-" * 60)

@@ -338,6 +338,35 @@ export default function TripDetail() {
               </div>
               <p className="text-sm text-gray-600 mt-2">人</p>
             </div>
+
+            {/* 已加入的雪伴列表 */}
+            {buddies.filter(b => b.status === 'accepted').length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">已加入：</h3>
+                <div className="space-y-2">
+                  {buddies
+                    .filter(b => b.status === 'accepted')
+                    .map(buddy => (
+                      <div key={buddy.buddy_id} className="flex items-center gap-2">
+                        {buddy.user_avatar_url ? (
+                          <img
+                            src={buddy.user_avatar_url}
+                            alt={buddy.user_display_name || '用戶'}
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-sm font-medium">
+                            {(buddy.user_display_name || '?')[0]}
+                          </div>
+                        )}
+                        <span className="text-sm text-gray-900">
+                          {buddy.user_display_name || '匿名用戶'}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </Card>
 
           {/* 雪伴申請列表（只有行程主人可見） */}

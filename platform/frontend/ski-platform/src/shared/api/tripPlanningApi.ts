@@ -127,6 +127,10 @@ export const tripPlanningApi = {
   getTripBuddies: (tripId: string) =>
     userCoreApi.get<BuddyInfo[]>(`/trip-planning/trips/${tripId}/buddies`),
 
+  /** 取消雪伴申請 */
+  cancelBuddyRequest: (tripId: string, buddyId: string, userId: string) =>
+    userCoreApi.delete(`/trip-planning/trips/${tripId}/buddy-requests/${buddyId}?user_id=${userId}`),
+
   // ==================== 探索和推薦 ====================
 
   /** 探索公開行程（待實現完整功能） */

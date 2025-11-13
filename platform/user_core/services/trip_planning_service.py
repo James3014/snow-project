@@ -446,6 +446,31 @@ def respond_to_buddy_request(
     return buddy
 
 
+def cancel_buddy_request(
+    db: Session,
+    trip_id: uuid.UUID,
+    buddy_id: uuid.UUID,
+    user_id: uuid.UUID
+) -> None:
+    """Cancel a buddy request by the requester."""
+    buddy = db.query(TripBuddy).filter(
+        TripBuddy.buddy_id == buddy_id,
+        TripBuddy.trip_id == trip_id,
+        TripBuddy.user_id == user_id
+    ).first()
+
+    if not buddy:
+        raise BuddyRequestError("Buddy request not found")
+
+    # 只能取消 pending 狀態的申請
+    if buddy.status != BuddyStatus.PENDING:
+        raise BuddyRequestError("Can only cancel pending requests")
+
+    # 刪除申請記錄
+    db.delete(buddy)
+    db.commit()
+
+
 def get_trip_buddies(
     db: Session,
     trip_id: uuid.UUID

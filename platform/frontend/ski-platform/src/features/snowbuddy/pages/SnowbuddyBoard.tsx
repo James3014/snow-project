@@ -15,6 +15,7 @@ import type { Resort } from '@/shared/data/resorts';
 // 擴展 Trip 類型以包含申請狀態
 interface TripWithBuddyStatus extends Trip {
   myBuddyStatus?: 'pending' | 'accepted' | 'declined' | null;
+  myBuddyId?: string | null;
 }
 
 export default function SnowbuddyBoard() {
@@ -48,11 +49,12 @@ export default function SnowbuddyBoard() {
             const myRequest = buddies.find(b => b.user_id === userId);
             return {
               ...trip,
-              myBuddyStatus: myRequest?.status as any || null
+              myBuddyStatus: myRequest?.status as any || null,
+              myBuddyId: myRequest?.buddy_id || null
             };
           } catch (err) {
             // 如果獲取失敗，返回原始行程
-            return { ...trip, myBuddyStatus: null };
+            return { ...trip, myBuddyStatus: null, myBuddyId: null };
           }
         })
       );
@@ -109,6 +111,29 @@ export default function SnowbuddyBoard() {
       } else {
         alert('申請失敗，請稍後再試');
       }
+    } finally {
+      setApplyingTripId(null);
+    }
+  };
+
+  const handleCancelApply = async (tripId: string, buddyId: string) => {
+    if (!userId) {
+      return;
+    }
+
+    if (!confirm('確定要取消申請嗎？')) {
+      return;
+    }
+
+    try {
+      setApplyingTripId(tripId);
+      await tripPlanningApi.cancelBuddyRequest(tripId, buddyId, userId);
+      alert('已取消申請');
+      // 重新載入列表以更新申請狀態
+      await loadPublicTrips();
+    } catch (err: any) {
+      console.error('取消申請失敗:', err);
+      alert('取消申請失敗，請稍後再試');
     } finally {
       setApplyingTripId(null);
     }
@@ -197,9 +222,11 @@ export default function SnowbuddyBoard() {
                       trip={trip}
                       resort={getResortForTrip(trip)}
                       onApply={handleApply}
+                      onCancel={handleCancelApply}
                       isApplying={applyingTripId === trip.trip_id}
                       currentUserId={userId}
                       buddyStatus={trip.myBuddyStatus}
+                      buddyId={trip.myBuddyId}
                     />
                   ))}
               </div>
@@ -224,9 +251,11 @@ export default function SnowbuddyBoard() {
                       trip={trip}
                       resort={getResortForTrip(trip)}
                       onApply={handleApply}
+                      onCancel={handleCancelApply}
                       isApplying={applyingTripId === trip.trip_id}
                       currentUserId={userId}
                       buddyStatus={trip.myBuddyStatus}
+                      buddyId={trip.myBuddyId}
                     />
                   ))}
               </div>
