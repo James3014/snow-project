@@ -147,7 +147,7 @@ class BuddyInfo(BaseModel):
     """Basic buddy information."""
     buddy_id: UUID4
     user_id: UUID4
-    user_display_name: str
+    user_display_name: Optional[str] = None
     user_avatar_url: Optional[str] = None
     role: BuddyRole
     status: BuddyStatus
