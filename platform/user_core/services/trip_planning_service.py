@@ -273,6 +273,52 @@ def get_public_trips(
     )
 
 
+def get_public_trips_with_owner_info(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100
+) -> List[dict]:
+    """Get all public trips with owner information for the Snowbuddy Board."""
+    from schemas.trip_planning import TripSummary, UserInfo
+
+    # Query trips with user profile join
+    trips_with_users = (
+        db.query(Trip, UserProfile)
+        .join(UserProfile, Trip.user_id == UserProfile.user_id)
+        .filter(Trip.visibility == 'public')
+        .order_by(desc(Trip.start_date))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+    # Build TripSummary objects
+    result = []
+    for trip, user_profile in trips_with_users:
+        owner_info = UserInfo(
+            user_id=user_profile.user_id,
+            display_name=user_profile.display_name or "匿名用戶",
+            avatar_url=user_profile.avatar_url,
+            experience_level=None  # TODO: 如果需要可以添加經驗等級
+        )
+
+        trip_summary = TripSummary(
+            trip_id=trip.trip_id,
+            resort_id=trip.resort_id,
+            title=trip.title,
+            start_date=trip.start_date,
+            end_date=trip.end_date,
+            flexibility=trip.flexibility,
+            trip_status=trip.trip_status,
+            max_buddies=trip.max_buddies,
+            current_buddies=trip.current_buddies,
+            owner_info=owner_info
+        )
+        result.append(trip_summary)
+
+    return result
+
+
 def get_trip(
     db: Session,
     trip_id: uuid.UUID,

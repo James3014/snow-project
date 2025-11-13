@@ -9,6 +9,7 @@ import type {
   SeasonUpdate,
   SeasonStats,
   Trip,
+  TripSummary,
   TripCreate,
   TripBatchCreate,
   TripUpdate,
@@ -76,7 +77,7 @@ export const tripPlanningApi = {
     const params = new URLSearchParams();
     if (skip > 0) params.append('skip', skip.toString());
     if (limit !== 100) params.append('limit', limit.toString());
-    return userCoreApi.get<Trip[]>(`/trip-planning/trips/public${params.toString() ? '?' + params : ''}`);
+    return userCoreApi.get<TripSummary[]>(`/trip-planning/trips/public${params.toString() ? '?' + params : ''}`);
   },
 
   /** 獲取單個行程 */

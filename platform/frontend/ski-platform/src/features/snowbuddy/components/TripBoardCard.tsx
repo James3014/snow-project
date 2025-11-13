@@ -5,11 +5,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '@/shared/components/Card';
-import type { Trip } from '@/features/trip-planning/types';
+import type { TripSummary } from '@/features/trip-planning/types';
 import type { Resort } from '@/shared/data/resorts';
 
 interface TripBoardCardProps {
-  trip: Trip;
+  trip: TripSummary & { user_id?: string }; // 使用 TripSummary 並添加 user_id
   resort: Resort | null;
   onApply: (tripId: string) => void;
   onCancel?: (tripId: string, buddyId: string) => void;
@@ -63,8 +63,25 @@ export default function TripBoardCard({
             🏔️ {resortName}
           </h3>
           {trip.title && (
-            <p className="text-sm text-gray-600">{trip.title}</p>
+            <p className="text-sm text-gray-600 mb-1">{trip.title}</p>
           )}
+          {/* 行程主人資訊 */}
+          <div className="flex items-center gap-2 mt-2">
+            {trip.owner_info.avatar_url ? (
+              <img
+                src={trip.owner_info.avatar_url}
+                alt={trip.owner_info.display_name}
+                className="w-6 h-6 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-medium">
+                {trip.owner_info.display_name[0]}
+              </div>
+            )}
+            <span className="text-sm text-gray-500">
+              {trip.owner_info.display_name} 開放
+            </span>
+          </div>
         </div>
 
         {/* 日期 */}

@@ -9,13 +9,14 @@ import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { resortApiService } from '@/shared/api/resortApi';
 import TripBoardCard from '../components/TripBoardCard';
 import Card from '@/shared/components/Card';
-import type { Trip } from '@/features/trip-planning/types';
+import type { TripSummary } from '@/features/trip-planning/types';
 import type { Resort } from '@/shared/data/resorts';
 
-// 擴展 Trip 類型以包含申請狀態
-interface TripWithBuddyStatus extends Trip {
+// 擴展 TripSummary 類型以包含申請狀態
+interface TripWithBuddyStatus extends TripSummary {
   myBuddyStatus?: 'pending' | 'accepted' | 'declined' | null;
   myBuddyId?: string | null;
+  user_id?: string; // 添加 user_id 用於判斷是否為行程主人
 }
 
 export default function SnowbuddyBoard() {
@@ -51,12 +52,18 @@ export default function SnowbuddyBoard() {
             const myRequest = buddies.find(b => b.user_id === userId);
             return {
               ...trip,
+              user_id: trip.owner_info.user_id, // 從 owner_info 提取 user_id
               myBuddyStatus: myRequest?.status as any || null,
               myBuddyId: myRequest?.buddy_id || null
             };
           } catch (err) {
             // 如果獲取失敗，返回原始行程
-            return { ...trip, myBuddyStatus: null, myBuddyId: null };
+            return {
+              ...trip,
+              user_id: trip.owner_info.user_id,
+              myBuddyStatus: null,
+              myBuddyId: null
+            };
           }
         })
       );
@@ -141,7 +148,7 @@ export default function SnowbuddyBoard() {
     }
   };
 
-  const getResortForTrip = (trip: Trip): Resort | null => {
+  const getResortForTrip = (trip: TripSummary): Resort | null => {
     return resorts.find(r => r.resort_id === trip.resort_id) || null;
   };
 
