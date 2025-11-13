@@ -34,9 +34,9 @@ export default function SnowbuddyBoard() {
       // 目前先獲取所有行程，前端過濾
       const allTrips = await tripPlanningApi.getTrips(userId || '');
 
-      // 過濾出公開的行程，排除自己的行程
+      // 過濾出公開的行程（包含自己的，但不能申請加入自己的）
       const publicTrips = allTrips.filter(
-        trip => trip.visibility === 'public' && trip.user_id !== userId
+        trip => trip.visibility === 'public'
       );
 
       setTrips(publicTrips);
