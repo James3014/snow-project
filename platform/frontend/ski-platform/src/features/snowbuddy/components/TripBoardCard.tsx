@@ -3,6 +3,7 @@
  * 公佈欄行程卡片組件
  */
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from '@/shared/components/Card';
 import type { Trip } from '@/features/trip-planning/types';
 import type { Resort } from '@/shared/data/resorts';
@@ -11,19 +12,24 @@ interface TripBoardCardProps {
   trip: Trip;
   resort: Resort | null;
   onApply: (tripId: string) => void;
+  onCancel?: (tripId: string, buddyId: string) => void;
   isApplying?: boolean;
   currentUserId?: string;
   buddyStatus?: 'pending' | 'accepted' | 'declined' | null;
+  buddyId?: string | null;
 }
 
 export default function TripBoardCard({
   trip,
   resort,
   onApply,
+  onCancel,
   isApplying = false,
   currentUserId,
-  buddyStatus
+  buddyStatus,
+  buddyId
 }: TripBoardCardProps) {
+  const navigate = useNavigate();
   const [showApplyModal, setShowApplyModal] = useState(false);
 
   const resortName = resort ? `${resort.names.zh} ${resort.names.en}` : trip.resort_id;
@@ -31,7 +37,12 @@ export default function TripBoardCard({
   const isOwner = currentUserId === trip.user_id;
   const isFull = availableSlots <= 0;
 
-  const handleApply = () => {
+  const handleCardClick = () => {
+    navigate(`/trips/${trip.trip_id}`);
+  };
+
+  const handleApply = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 防止觸發卡片點擊
     setShowApplyModal(true);
   };
 
@@ -42,7 +53,10 @@ export default function TripBoardCard({
 
   return (
     <>
-      <Card className="p-6 hover:shadow-lg transition-shadow">
+      <Card
+        className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+        onClick={handleCardClick}
+      >
         {/* 雪場名稱 */}
         <div className="mb-4">
           <h3 className="text-xl font-bold text-gray-900 mb-1">
@@ -77,8 +91,22 @@ export default function TripBoardCard({
 
         {/* 申請狀態或按鈕 */}
         {buddyStatus === 'pending' && (
-          <div className="w-full py-3 px-4 rounded-lg bg-orange-50 text-orange-700 text-center font-medium">
-            ⏳ 已申請，等待回應
+          <div className="space-y-2">
+            <div className="w-full py-3 px-4 rounded-lg bg-orange-50 text-orange-700 text-center font-medium">
+              ⏳ 已申請，等待回應
+            </div>
+            {onCancel && buddyId && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancel(trip.trip_id, buddyId);
+                }}
+                disabled={isApplying}
+                className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                取消申請
+              </button>
+            )}
           </div>
         )}
 
