@@ -117,8 +117,24 @@ export default function TripBoardCard({
         )}
 
         {buddyStatus === 'declined' && (
-          <div className="w-full py-3 px-4 rounded-lg bg-red-50 text-red-700 text-center font-medium">
-            ❌ 申請已被拒絕
+          <div className="space-y-2">
+            <div className="w-full py-3 px-4 rounded-lg bg-red-50 text-red-700 text-center font-medium">
+              ❌ 申請已被拒絕
+            </div>
+            {onCancel && buddyId && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (confirm('移除這個被拒絕的申請記錄？\n移除後可以重新申請。')) {
+                    onCancel(trip.trip_id, buddyId);
+                  }
+                }}
+                disabled={isApplying}
+                className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                我知道了，移除記錄
+              </button>
+            )}
           </div>
         )}
 
