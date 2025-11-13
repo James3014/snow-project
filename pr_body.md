@@ -2,6 +2,9 @@
 
 實現完整的雪伴公佈欄功能，讓用戶可以將行程發布到公開看板，申請加入其他人的行程，並管理雪伴申請。本實現遵循 Linus Torvalds 開發原則，保持簡單、直接、解決實際問題。
 
+**新增功能**：雪伴公佈欄、行程發布、申請管理、狀態顯示
+**修復問題**：聊天機器人雪場識別、日期解析、公開行程顯示
+
 ## ✨ 核心功能
 
 ### 1. 行程發布到公佈欄
@@ -10,7 +13,7 @@
 - 行程列表顯示「📢 已發布」狀態標籤
 
 ### 2. 雪伴公佈欄頁面
-- 顯示所有公開行程（`/snowbuddy` 路由）
+- 顯示**所有用戶**的公開行程（`/snowbuddy` 路由）✨
 - 行程卡片展示：雪場、日期、剩餘名額
 - 申請行程**自動置頂**，分為兩個區塊：
   - 📌 我申請的行程（pending/accepted/declined）
@@ -29,6 +32,36 @@
 - 顯示所有 pending 狀態的申請
 - 一鍵接受 ✅ 或拒絕 ❌ 申請
 - 顯示行程可見性狀態
+
+## 🐛 Bug Fixes
+
+### 1. 聊天機器人 - 豬苗代雪場繁體字識別
+**問題**：用戶輸入「豬苗代12月3到8」時無法識別雪場
+**原因**：`resortAliases.ts` 只有簡體字「猪苗代」
+**修復**：添加繁體字別名「豬苗代」和「豬苗代滑雪場」
+**影響文件**：`src/features/ai/utils/resortAliases.ts`
+
+### 2. 公佈欄 - 無法顯示其他用戶的公開行程
+**問題**：不同帳號發布的公開行程看不到
+**原因**：只有 `GET /trips?user_id={id}` 端點，只能獲取特定用戶的行程
+**修復**：
+- 後端新增 `GET /trips/public` API 端點
+- 前端新增 `getPublicTrips()` 方法
+- 公佈欄頁面改用新 API
+**影響文件**：
+- `platform/user_core/services/trip_planning_service.py`
+- `platform/user_core/api/trip_planning.py`
+- `src/shared/api/tripPlanningApi.ts`
+- `src/features/snowbuddy/pages/SnowbuddyBoard.tsx`
+
+### 3. 聊天機器人 - 結束日期識別
+**問題**：用戶輸入「12/17」或「12月17日」作為結束日期時無法識別
+**原因**：日期解析器把單個日期識別為 startDate（不是 endDate）
+**修復**：在 `handleDurationInput()` 添加智能判斷：
+- 如果用戶輸入的是日期（context 已有開始日期）
+- 並且輸入日期在開始日期之後
+- 則將其視為結束日期
+**影響文件**：`src/features/ai/utils/conversationEngine.ts`
 
 ## 🔧 技術實作
 
