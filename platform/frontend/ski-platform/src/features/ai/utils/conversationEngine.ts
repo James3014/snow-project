@@ -782,6 +782,16 @@ async function handleDurationInput(
     return handleResortChangeResponse(intent, context, 'AWAITING_DATE');
   }
 
+  // 特殊處理：如果用戶輸入的是一個日期（而不是天數）
+  // 並且當前 context 已經有開始日期，那麼把這個日期當作結束日期
+  if (intent.startDate && !intent.endDate && !intent.duration && context.tripData.startDate) {
+    // 檢查輸入的日期是否在開始日期之後
+    if (intent.startDate > context.tripData.startDate) {
+      intent.endDate = intent.startDate;  // 將其視為結束日期
+      intent.startDate = undefined;  // 清除 startDate（避免覆蓋 context 中的）
+    }
+  }
+
   // 驗證輸入：必須有天數或結束日期
   if (!intent.duration && !intent.endDate) {
     return {
