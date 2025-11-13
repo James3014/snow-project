@@ -23,6 +23,9 @@ export default function TripDetail() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [buddies, setBuddies] = useState<any[]>([]);
+  const [loadingBuddies, setLoadingBuddies] = useState(false);
+  const [respondingBuddyId, setRespondingBuddyId] = useState<string | null>(null);
 
   const loadTripData = useCallback(async () => {
     if (!tripId) return;
@@ -53,8 +56,23 @@ export default function TripDetail() {
   useEffect(() => {
     if (tripId) {
       loadTripData();
+      loadTripBuddies();
     }
   }, [tripId, loadTripData]);
+
+  const loadTripBuddies = async () => {
+    if (!tripId) return;
+
+    try {
+      setLoadingBuddies(true);
+      const buddiesData = await tripPlanningApi.getTripBuddies(tripId);
+      setBuddies(buddiesData);
+    } catch (err) {
+      console.error('載入雪伴列表失敗:', err);
+    } finally {
+      setLoadingBuddies(false);
+    }
+  };
 
   const handleUpdateTrip = async (tripId: string, data: TripUpdate) => {
     if (!userId) return;
@@ -78,6 +96,43 @@ export default function TripDetail() {
     } finally {
       setIsDeleting(false);
       setShowDeleteConfirm(false);
+    }
+  };
+
+  const handleToggleVisibility = async () => {
+    if (!userId || !tripId || !trip) return;
+
+    const newVisibility = trip.visibility === 'public' ? 'private' : 'public';
+    const confirmMessage = newVisibility === 'public'
+      ? '確定要將此行程發布到公佈欄嗎？'
+      : '確定要將此行程設為私密嗎？';
+
+    if (!confirm(confirmMessage)) return;
+
+    try {
+      await handleUpdateTrip(tripId, { visibility: newVisibility });
+      alert(newVisibility === 'public' ? '已發布到公佈欄！' : '已設為私密');
+    } catch (err) {
+      console.error('更新可見性失敗:', err);
+      alert('操作失敗，請稍後再試');
+    }
+  };
+
+  const handleRespondToBuddy = async (buddyId: string, status: 'accepted' | 'declined') => {
+    if (!userId || !tripId) return;
+
+    try {
+      setRespondingBuddyId(buddyId);
+      await tripPlanningApi.respondToBuddyRequest(tripId, buddyId, userId, { status });
+      alert(status === 'accepted' ? '已接受申請！' : '已拒絕申請');
+      // 重新載入資料
+      await loadTripData();
+      await loadTripBuddies();
+    } catch (err) {
+      console.error('回應申請失敗:', err);
+      alert('操作失敗，請稍後再試');
+    } finally {
+      setRespondingBuddyId(null);
     }
   };
 
@@ -180,6 +235,16 @@ export default function TripDetail() {
 
           <div className="flex gap-3">
             <button
+              onClick={handleToggleVisibility}
+              className={`px-6 py-3 rounded-lg transition-colors font-medium ${
+                trip.visibility === 'public'
+                  ? 'bg-gray-600 text-white hover:bg-gray-700'
+                  : 'bg-green-600 text-white hover:bg-green-700'
+              }`}
+            >
+              {trip.visibility === 'public' ? '🔒 設為私密' : '📢 發布到公佈欄'}
+            </button>
+            <button
               onClick={() => setShowEditModal(true)}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >
@@ -272,6 +337,73 @@ export default function TripDetail() {
                 {trip.current_buddies}/{trip.max_buddies}
               </div>
               <p className="text-sm text-gray-600 mt-2">人</p>
+            </div>
+          </Card>
+
+          {/* 雪伴申請列表（只有行程主人可見） */}
+          {trip.user_id === userId && buddies.length > 0 && (
+            <Card className="p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">🔔 雪伴申請</h2>
+              {loadingBuddies ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {buddies
+                    .filter(buddy => buddy.status === 'pending')
+                    .map(buddy => (
+                      <div key={buddy.buddy_id} className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {buddy.user_display_name || '匿名用戶'}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {new Date(buddy.requested_at).toLocaleDateString('zh-TW')}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleRespondToBuddy(buddy.buddy_id, 'accepted')}
+                            disabled={respondingBuddyId === buddy.buddy_id}
+                            className="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50"
+                          >
+                            ✅ 接受
+                          </button>
+                          <button
+                            onClick={() => handleRespondToBuddy(buddy.buddy_id, 'declined')}
+                            disabled={respondingBuddyId === buddy.buddy_id}
+                            className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium disabled:opacity-50"
+                          >
+                            ❌ 拒絕
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  {buddies.filter(buddy => buddy.status === 'pending').length === 0 && (
+                    <p className="text-gray-500 text-sm text-center py-2">暫無待處理的申請</p>
+                  )}
+                </div>
+              )}
+            </Card>
+          )}
+
+          {/* 可見性狀態 */}
+          <Card className="p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">可見性</h2>
+            <div className="text-center">
+              <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
+                trip.visibility === 'public'
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-gray-100 text-gray-800'
+              }`}>
+                {trip.visibility === 'public' ? '📢 公開' : '🔒 私密'}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {trip.visibility === 'public' ? '此行程已發布到公佈欄' : '此行程僅自己可見'}
+              </p>
             </div>
           </Card>
 
