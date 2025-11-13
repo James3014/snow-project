@@ -13,6 +13,7 @@ interface TripBoardCardProps {
   onApply: (tripId: string) => void;
   isApplying?: boolean;
   currentUserId?: string;
+  buddyStatus?: 'pending' | 'accepted' | 'declined' | null;
 }
 
 export default function TripBoardCard({
@@ -20,7 +21,8 @@ export default function TripBoardCard({
   resort,
   onApply,
   isApplying = false,
-  currentUserId
+  currentUserId,
+  buddyStatus
 }: TripBoardCardProps) {
   const [showApplyModal, setShowApplyModal] = useState(false);
 
@@ -73,8 +75,32 @@ export default function TripBoardCard({
           </div>
         </div>
 
-        {/* 申請按鈕 */}
-        {!isOwner && (
+        {/* 申請狀態或按鈕 */}
+        {buddyStatus === 'pending' && (
+          <div className="w-full py-3 px-4 rounded-lg bg-orange-50 text-orange-700 text-center font-medium">
+            ⏳ 已申請，等待回應
+          </div>
+        )}
+
+        {buddyStatus === 'accepted' && (
+          <div className="w-full py-3 px-4 rounded-lg bg-green-50 text-green-700 text-center font-medium">
+            ✅ 已加入此行程
+          </div>
+        )}
+
+        {buddyStatus === 'declined' && (
+          <div className="w-full py-3 px-4 rounded-lg bg-red-50 text-red-700 text-center font-medium">
+            ❌ 申請已被拒絕
+          </div>
+        )}
+
+        {!buddyStatus && isOwner && (
+          <div className="bg-purple-50 text-purple-700 py-3 px-4 rounded-lg text-center font-medium">
+            這是你的行程
+          </div>
+        )}
+
+        {!buddyStatus && !isOwner && (
           <button
             onClick={handleApply}
             disabled={isApplying || isFull}
@@ -86,12 +112,6 @@ export default function TripBoardCard({
           >
             {isFull ? '已額滿' : isApplying ? '申請中...' : '申請加入'}
           </button>
-        )}
-
-        {isOwner && (
-          <div className="bg-purple-50 text-purple-700 py-3 px-4 rounded-lg text-center font-medium">
-            這是你的行程
-          </div>
         )}
       </Card>
 
