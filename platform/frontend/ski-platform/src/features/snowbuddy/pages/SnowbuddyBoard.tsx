@@ -2,7 +2,7 @@
  * Snowbuddy Board Page
  * 雪伴公佈欄頁面 - 顯示所有公開的行程
  */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
@@ -35,11 +35,7 @@ export default function SnowbuddyBoard() {
   const [itemsToShow, setItemsToShow] = useState<number>(12); // 每次顯示的卡片數量
   const hasAutoSelectedWeek = useRef(false); // 追蹤是否已自動選擇過週
 
-  useEffect(() => {
-    loadPublicTrips();
-  }, []);
-
-  const loadPublicTrips = async () => {
+  const loadPublicTrips = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -154,7 +150,11 @@ export default function SnowbuddyBoard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]); // 依賴 userId
+
+  useEffect(() => {
+    loadPublicTrips();
+  }, [loadPublicTrips]);
 
   const handleApply = async (tripId: string) => {
     if (!userId) {
