@@ -1,6 +1,6 @@
 /**
  * My Gear Page
- * 我的装备管理页面
+ * 我的裝備管理頁面
  *
  * Linus 原则：简单直接，可以工作就行
  */
@@ -19,7 +19,7 @@ export default function MyGear() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [filter, setFilter] = useState<'all' | 'active' | 'for_sale'>('all');
 
-  // 加载装备列表
+  // 載入裝備列表
   const loadGear = async () => {
     if (!userId) return;
 
@@ -31,8 +31,8 @@ export default function MyGear() {
       const response = await gearApi.getMyGear({ status: statusFilter });
       setGearItems(response.data);
     } catch (err: any) {
-      console.error('加载装备失败:', err);
-      setError(err.response?.data?.detail || '加载装备失败，请稍后重试');
+      console.error('載入裝備失敗:', err);
+      setError(err.response?.data?.detail || '載入裝備失敗，請稍後重試');
     } finally {
       setLoading(false);
     }
@@ -42,32 +42,32 @@ export default function MyGear() {
     loadGear();
   }, [userId, filter]);
 
-  // 创建装备
+  // 建立裝備
   const handleCreate = async (data: GearItemCreate) => {
     try {
       await gearApi.createGearItem(data);
-      await loadGear(); // 重新加载
+      await loadGear(); // 重新載入
       setShowCreateModal(false);
     } catch (err: any) {
-      alert(err.response?.data?.detail || '创建失败');
+      alert(err.response?.data?.detail || '建立失敗');
     }
   };
 
-  // 删除装备
+  // 刪除裝備
   const handleDelete = async (itemId: string) => {
-    if (!confirm('确定要删除这个装备吗？')) return;
+    if (!confirm('確定要刪除这个裝備吗？')) return;
 
     try {
       await gearApi.deleteGearItem(itemId);
-      await loadGear(); // 重新加载
+      await loadGear(); // 重新載入
     } catch (err: any) {
-      alert(err.response?.data?.detail || '删除失败');
+      alert(err.response?.data?.detail || '刪除失敗');
     }
   };
 
-  // 标记为出售
+  // 標記為出售
   const handleMarkForSale = async (itemId: string) => {
-    const price = prompt('请输入售价（TWD）:');
+    const price = prompt('請輸入售價（TWD）:');
     if (!price) return;
 
     try {
@@ -78,14 +78,14 @@ export default function MyGear() {
       });
       await loadGear();
     } catch (err: any) {
-      alert(err.response?.data?.detail || '更新失败');
+      alert(err.response?.data?.detail || '更新失敗');
     }
   };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-gray-500">加载中...</div>
+        <div className="text-gray-500">載入中...</div>
       </div>
     );
   }
@@ -105,14 +105,14 @@ export default function MyGear() {
       {/* 标题和操作栏 */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">我的装备</h1>
-          <p className="text-gray-600 mt-1">管理你的滑雪装备</p>
+          <h1 className="text-3xl font-bold text-gray-900">我的裝備</h1>
+          <p className="text-gray-600 mt-1">管理你的滑雪裝備</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
-          + 添加装备
+          + 添加裝備
         </button>
       </div>
 
@@ -150,19 +150,19 @@ export default function MyGear() {
         </button>
       </div>
 
-      {/* 装备列表 */}
+      {/* 裝備列表 */}
       {gearItems.length === 0 ? (
         <EmptyState
           icon="📦"
-          title="还没有装备"
-          description="开始添加你的滑雪装备吧"
+          title="还没有裝備"
+          description="开始添加你的滑雪裝備吧"
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {gearItems.map((item) => (
             <Card key={item.id} className="hover:shadow-lg transition-shadow">
               <div className="p-6">
-                {/* 装备名称和状态 */}
+                {/* 裝備名称和状态 */}
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
                   <span
@@ -182,11 +182,11 @@ export default function MyGear() {
                   </span>
                 </div>
 
-                {/* 装备信息 */}
+                {/* 裝備信息 */}
                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                   {item.category && (
                     <div>
-                      <span className="font-medium">类别：</span> {item.category}
+                      <span className="font-medium">類別：</span> {item.category}
                     </div>
                   )}
                   {item.brand && (
@@ -196,7 +196,7 @@ export default function MyGear() {
                   )}
                   <div>
                     <span className="font-medium">用途：</span>{' '}
-                    {item.role === 'personal' ? '个人使用' : '教学用'}
+                    {item.role === 'personal' ? '個人使用' : '教學用'}
                   </div>
                   {item.status === 'for_sale' && item.sale_price && (
                     <div className="text-blue-600 font-semibold">
@@ -212,14 +212,14 @@ export default function MyGear() {
                       onClick={() => handleMarkForSale(item.id)}
                       className="flex-1 px-3 py-2 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200"
                     >
-                      标记出售
+                      標記出售
                     </button>
                   )}
                   <button
                     onClick={() => handleDelete(item.id)}
                     className="px-3 py-2 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
                   >
-                    删除
+                    刪除
                   </button>
                 </div>
               </div>
@@ -228,7 +228,7 @@ export default function MyGear() {
         </div>
       )}
 
-      {/* 创建装备 Modal */}
+      {/* 建立裝備 Modal */}
       {showCreateModal && (
         <CreateGearModal
           onClose={() => setShowCreateModal(false)}
@@ -239,7 +239,7 @@ export default function MyGear() {
   );
 }
 
-// 简单的创建装备 Modal
+// 简单的建立裝備 Modal
 function CreateGearModal({
   onClose,
   onCreate,
@@ -257,7 +257,7 @@ function CreateGearModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) {
-      alert('请输入装备名称');
+      alert('请输入裝備名称');
       return;
     }
     onCreate(formData);
@@ -267,11 +267,11 @@ function CreateGearModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <Card className="w-full max-w-md">
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-4">添加装备</h2>
+          <h2 className="text-xl font-bold mb-4">添加裝備</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                装备名称 *
+                裝備名称 *
               </label>
               <input
                 type="text"
@@ -284,19 +284,19 @@ function CreateGearModal({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                类别
+                類別
               </label>
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               >
-                <option value="">请选择</option>
-                <option value="board">单板</option>
+                <option value="">請選擇</option>
+                <option value="board">單板</option>
                 <option value="binding">固定器</option>
                 <option value="boots">雪靴</option>
-                <option value="helmet">头盔</option>
-                <option value="goggles">雪镜</option>
+                <option value="helmet">頭盔</option>
+                <option value="goggles">雪鏡</option>
                 <option value="other">其他</option>
               </select>
             </div>
@@ -325,8 +325,8 @@ function CreateGearModal({
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               >
-                <option value="personal">个人使用</option>
-                <option value="teaching">教学用</option>
+                <option value="personal">個人使用</option>
+                <option value="teaching">教學用</option>
               </select>
             </div>
 
@@ -342,7 +342,7 @@ function CreateGearModal({
                 type="submit"
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
-                创建
+                建立
               </button>
             </div>
           </form>
