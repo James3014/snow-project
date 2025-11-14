@@ -57,8 +57,8 @@ function chineseNumberToInt(str: string): number {
  */
 export function extractDuration(input: string): number | null {
   // 先移除日期部分，避免誤判
-  let text = input.replace(/\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/g, '');
-  text = text.replace(/\d{1,2}[\/\-月]\d{1,2}[日號]?/g, '');
+  let text = input.replace(/\d{4}[/-]\d{1,2}[/-]\d{1,2}/g, '');
+  text = text.replace(/\d{1,2}[/-月]\d{1,2}[日號]?/g, '');
 
   // 格式 1: "5天"、"5日"
   const dayMatch = text.match(/(\d+)[天日]/);

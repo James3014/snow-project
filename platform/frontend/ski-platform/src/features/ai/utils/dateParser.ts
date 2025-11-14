@@ -36,7 +36,7 @@ function getSeasonYear(month: number): number {
  */
 function parseAbsoluteDate(input: string): ParsedDate | null {
   // 格式 1: 完整日期 2024-12-15, 2024/12/15
-  const fullDatePattern = /(\d{4})[\/\-年](\d{1,2})[\/\-月](\d{1,2})[日號]?/;
+  const fullDatePattern = /(\d{4})[/-年](\d{1,2})[/-月](\d{1,2})[日號]?/;
   const fullMatch = input.match(fullDatePattern);
 
   if (fullMatch) {
@@ -50,7 +50,7 @@ function parseAbsoluteDate(input: string): ParsedDate | null {
   }
 
   // 格式 2: 月日 12/15, 12-15, 12月15日
-  const monthDayPattern = /(\d{1,2})[\/\-月](\d{1,2})[日號]?/;
+  const monthDayPattern = /(\d{1,2})[/-月](\d{1,2})[日號]?/;
   const monthDayMatch = input.match(monthDayPattern);
 
   if (monthDayMatch) {
@@ -215,7 +215,7 @@ export function extractDates(input: string): {
   const rangePatterns = [
     // 格式 0: 跨月格式 12-30到1月2號、12/30到1月2日 (最優先，處理跨年情況)
     {
-      regex: /(\d{1,2})[\/\-](\d{1,2})[日號]?[\s]*[到至~－\-─|]\s*(\d{1,2})月(\d{1,2})[日號]?/,
+      regex: /(\d{1,2})[/-](\d{1,2})[日號]?[\s]*[到至~－-─|]\s*(\d{1,2})月(\d{1,2})[日號]?/,
       extract: (m: RegExpMatchArray) => {
         const startMonth = parseInt(m[1]);
         const startDay = parseInt(m[2]);
@@ -238,7 +238,7 @@ export function extractDates(input: string): {
     },
     // 格式 1: 12月11到20日、12月11至20日、12月11~20日 (最常見)
     {
-      regex: /(\d{1,2})月(\d{1,2})[日號]?[\s]*[到至~－\-─|]\s*(\d{1,2})[日號]?/,
+      regex: /(\d{1,2})月(\d{1,2})[日號]?[\s]*[到至~－-─|]\s*(\d{1,2})[日號]?/,
       extract: (m: RegExpMatchArray) => ({
         month: parseInt(m[1]),
         startDay: parseInt(m[2]),
@@ -247,7 +247,7 @@ export function extractDates(input: string): {
     },
     // 格式 2: 12/11-20、12/11到20
     {
-      regex: /(\d{1,2})[\/](\d{1,2})[\s]*[到至~－\-─|]\s*(\d{1,2})[日號]?/,
+      regex: /(\d{1,2})[/](\d{1,2})[\s]*[到至~－-─|]\s*(\d{1,2})[日號]?/,
       extract: (m: RegExpMatchArray) => ({
         month: parseInt(m[1]),
         startDay: parseInt(m[2]),
@@ -265,7 +265,7 @@ export function extractDates(input: string): {
     },
     // 格式 4: 11號到20號 (需要從上下文推斷月份)
     {
-      regex: /(\d{1,2})[號日][\s]*[到至~－\-─|]\s*(\d{1,2})[號日]/,
+      regex: /(\d{1,2})[號日][\s]*[到至~－-─|]\s*(\d{1,2})[號日]/,
       extract: (m: RegExpMatchArray, fullInput: string) => {
         const monthMatch = fullInput.match(/(\d{1,2})月/);
         const month = monthMatch ? parseInt(monthMatch[1]) : new Date().getMonth() + 1;
@@ -303,7 +303,7 @@ export function extractDates(input: string): {
   }
 
   // 先嘗試找兩個絕對日期
-  const fullDatePattern = /(\d{4}[\/\-年]\d{1,2}[\/\-月]\d{1,2}[日號]?|\d{1,2}[\/\-月]\d{1,2}[日號]?)/g;
+  const fullDatePattern = /(\d{4}[/-年]\d{1,2}[/-月]\d{1,2}[日號]?|\d{1,2}[/-月]\d{1,2}[日號]?)/g;
   const matches = [...input.matchAll(fullDatePattern)];
 
   if (matches.length >= 1) {

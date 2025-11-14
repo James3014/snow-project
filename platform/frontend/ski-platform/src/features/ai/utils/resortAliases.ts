@@ -258,7 +258,7 @@ export function extractCoreNames(fullName: string): string[] {
   }
 
   // 分割複合名稱（用空格、&、/等分隔）
-  const parts = withoutSuffix.split(/[\s&\/]+/).filter(p => p.length >= 2);
+  const parts = withoutSuffix.split(/[\s&/]+/).filter(p => p.length >= 2);
   coreNames.push(...parts);
 
   // 提取連續的中文字符（至少2個字）

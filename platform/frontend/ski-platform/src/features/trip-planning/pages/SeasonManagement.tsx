@@ -11,7 +11,7 @@ import Card from '@/shared/components/Card';
 import EmptyState, { ErrorEmptyState } from '@/shared/components/EmptyState';
 import TripCreateModal from '../components/TripCreateModal';
 import { groupTripsBySeasons, formatDateRange, getStatusBadge } from '../utils/seasonUtils';
-import type { TripCreate } from '../types';
+import type { TripCreate, Trip } from '../types';
 import type { Resort } from '@/shared/data/resorts';
 import type { SeasonGroup } from '../utils/seasonUtils';
 
@@ -19,7 +19,7 @@ export default function SeasonManagement() {
   const navigate = useNavigate();
   const userId = useAppSelector((state) => state.auth.user?.user_id);
   const [seasonGroups, setSeasonGroups] = useState<SeasonGroup[]>([]);
-  const [allTrips, setAllTrips] = useState<any[]>([]); // 保存所有行程
+  const [allTrips, setAllTrips] = useState<Trip[]>([]); // 保存所有行程
   const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

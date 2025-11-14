@@ -9,12 +9,12 @@ import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { resortApiService } from '@/shared/api/resortApi';
 import TripBoardCard from '../components/TripBoardCard';
 import Card from '@/shared/components/Card';
-import type { TripSummary } from '@/features/trip-planning/types';
+import type { TripSummary, BuddyStatus } from '@/features/trip-planning/types';
 import type { Resort } from '@/shared/data/resorts';
 
 // 擴展 TripSummary 類型以包含申請狀態
 interface TripWithBuddyStatus extends TripSummary {
-  myBuddyStatus?: 'pending' | 'accepted' | 'declined' | null;
+  myBuddyStatus?: BuddyStatus | null;
   myBuddyId?: string | null;
   user_id?: string; // 添加 user_id 用於判斷是否為行程主人
   pendingRequestCount?: number; // 自己的行程有多少待處理申請
@@ -59,7 +59,7 @@ export default function SnowbuddyBoard() {
               return {
                 ...trip,
                 user_id: trip.owner_info.user_id,
-                myBuddyStatus: myRequest?.status as any || null,
+                myBuddyStatus: (myRequest?.status as BuddyStatus) || null,
                 myBuddyId: myRequest?.buddy_id || null,
                 pendingRequestCount: pendingCount,
                 hasNewRequests: pendingCount > 0
@@ -127,15 +127,16 @@ export default function SnowbuddyBoard() {
       alert('申請成功！請等待行程主人回應');
       // Linus 原則：簡單直接
       window.location.reload();
-    } catch (err: any) {
+    } catch (err) {
       console.error('申請失敗:', err);
 
       // 檢查是否是重複申請錯誤
-      const errorMessage = err?.response?.data?.detail || err?.message || '';
+      const error = err as { response?: { data?: { detail?: string }; status?: number }; message?: string };
+      const errorMessage = error?.response?.data?.detail || error?.message || '';
 
       if (errorMessage.includes('already have a pending or active request')) {
         alert('您已經申請過這個行程了\n\n請到「我申請的行程」區查看申請狀態');
-      } else if (err?.response?.status === 400) {
+      } else if (error?.response?.status === 400) {
         alert(`申請失敗：${errorMessage}`);
       } else {
         alert('申請失敗，請稍後再試');
@@ -160,7 +161,7 @@ export default function SnowbuddyBoard() {
       alert('已取消申請');
       // Linus 原則：簡單直接
       window.location.reload();
-    } catch (err: any) {
+    } catch (err) {
       console.error('取消申請失敗:', err);
       alert('取消申請失敗，請稍後再試');
     } finally {
