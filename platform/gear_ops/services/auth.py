@@ -1,7 +1,7 @@
 """
 Authentication dependencies
 
-简单的 JWT 验证，与 user_core 保持一致
+簡單的 JWT 验证，与 user_core 保持一致
 """
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -18,7 +18,7 @@ def get_current_user_id(
     """
     从 JWT token 中提取 user_id
 
-    简单实用：只验证 token 有效性，不做复杂的权限检查
+    簡單实用：只验证 token 有效性，不做复杂的权限檢查
     """
     token = credentials.credentials
 

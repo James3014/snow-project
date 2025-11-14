@@ -1,7 +1,7 @@
 """
 Pydantic Schemas for Gear Operations
 
-Linus 原则：models 和 schemas 是一对一关系，放在一起避免重复
+Linus 原則：models 和 schemas 是一对一关系，放在一起避免重复
 """
 from pydantic import BaseModel, Field, validator
 from typing import Optional, Dict, Any
@@ -10,7 +10,7 @@ from uuid import UUID
 from decimal import Decimal
 
 
-# Enums as constants (简单直接)
+# Enums as constants (簡單直接)
 GEAR_STATUS_ACTIVE = 'active'
 GEAR_STATUS_RETIRED = 'retired'
 GEAR_STATUS_FOR_SALE = 'for_sale'
@@ -35,8 +35,8 @@ REMINDER_STATUS_CANCELLED = 'cancelled'
 # ===== GearItem Schemas =====
 
 class GearItemCreate(BaseModel):
-    """创建装备"""
-    name: str = Field(..., max_length=100, description="装备名称")
+    """建立裝備"""
+    name: str = Field(..., max_length=100, description="裝備名称")
     category: Optional[str] = Field(None, max_length=50, description="类别：board, binding, boots, etc.")
     brand: Optional[str] = Field(None, max_length=50, description="品牌")
     purchase_date: Optional[date] = None
@@ -50,7 +50,7 @@ class GearItemCreate(BaseModel):
 
 
 class GearItemUpdate(BaseModel):
-    """更新装备"""
+    """更新裝備"""
     name: Optional[str] = Field(None, max_length=100)
     category: Optional[str] = Field(None, max_length=50)
     brand: Optional[str] = Field(None, max_length=50)
@@ -76,7 +76,7 @@ class GearItemUpdate(BaseModel):
 
 
 class GearItemRead(BaseModel):
-    """读取装备"""
+    """读取裝備"""
     id: UUID
     user_id: UUID
     name: str
@@ -97,8 +97,8 @@ class GearItemRead(BaseModel):
 # ===== GearInspection Schemas =====
 
 class GearInspectionCreate(BaseModel):
-    """创建检查记录"""
-    checklist: Dict[str, Any] = Field(..., description="检查清单，例如 {'edge': 'good', 'bindings': 'worn'}")
+    """建立檢查記錄"""
+    checklist: Dict[str, Any] = Field(..., description="檢查清单，例如 {'edge': 'good', 'bindings': 'worn'}")
     overall_status: str = Field(..., description="总体状态：good, needs_attention, unsafe")
     notes: Optional[str] = None
 
@@ -111,7 +111,7 @@ class GearInspectionCreate(BaseModel):
 
 
 class GearInspectionRead(BaseModel):
-    """读取检查记录"""
+    """读取檢查記錄"""
     id: UUID
     gear_item_id: UUID
     inspector_user_id: UUID
@@ -129,7 +129,7 @@ class GearInspectionRead(BaseModel):
 # ===== GearReminder Schemas =====
 
 class GearReminderCreate(BaseModel):
-    """创建提醒"""
+    """建立提醒"""
     gear_item_id: UUID
     reminder_type: str = Field(..., description="提醒类型：inspection, maintenance, general")
     scheduled_at: datetime
@@ -161,7 +161,7 @@ class GearReminderRead(BaseModel):
 # ===== Marketplace Schemas =====
 
 class MarketplaceSearchParams(BaseModel):
-    """搜索二手装备的参数"""
+    """搜索二手裝備的参数"""
     category: Optional[str] = None
     price_min: Optional[Decimal] = None
     price_max: Optional[Decimal] = None

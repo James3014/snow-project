@@ -1,7 +1,7 @@
 """
 Configuration for Gear Operations
 
-使用环境变量配置，简单直接
+使用環境變數配置，簡單直接
 """
 import os
 from pydantic_settings import BaseSettings

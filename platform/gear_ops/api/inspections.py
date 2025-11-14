@@ -1,7 +1,7 @@
 """
 Gear Inspections API
 
-检查记录 API，自动根据检查结果创建提醒
+檢查記錄 API，自动根据檢查结果建立提醒
 """
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -30,7 +30,7 @@ def _create_reminder_for_inspection(
     gear_item_id: UUID,
     next_inspection_date: datetime
 ):
-    """创建检查提醒（内部函数）"""
+    """建立檢查提醒（内部函数）"""
     reminder = GearReminder(
         gear_item_id=gear_item_id,
         reminder_type=REMINDER_TYPE_INSPECTION,
@@ -48,14 +48,14 @@ def create_inspection(
     db: Session = Depends(get_db)
 ):
     """
-    创建检查记录
+    建立檢查記錄
 
     自动逻辑：
     - good → next_inspection_date = +90 days
     - needs_attention → next_inspection_date = +30 days
-    - unsafe → 不设置（需要维修后才能再检查）
+    - unsafe → 不设置（需要维修后才能再檢查）
     """
-    # 验证装备属于当前用户
+    # 验证裝備属于当前用户
     gear_item = db.query(GearItem).filter(
         GearItem.id == item_id,
         GearItem.user_id == current_user_id
@@ -67,7 +67,7 @@ def create_inspection(
             detail="Gear item not found"
         )
 
-    # 计算下一次检查日期
+    # 计算下一次檢查日期
     next_inspection_date = None
     if inspection_data.overall_status == INSPECTION_STATUS_GOOD:
         next_inspection_date = datetime.now() + timedelta(days=90)
@@ -75,7 +75,7 @@ def create_inspection(
         next_inspection_date = datetime.now() + timedelta(days=30)
     # unsafe 不设置
 
-    # 创建检查记录
+    # 建立檢查記錄
     inspection = GearInspection(
         gear_item_id=item_id,
         inspector_user_id=current_user_id,
@@ -86,7 +86,7 @@ def create_inspection(
     )
     db.add(inspection)
 
-    # 如果有 next_inspection_date，自动创建提醒
+    # 如果有 next_inspection_date，自动建立提醒
     if next_inspection_date:
         _create_reminder_for_inspection(db, item_id, next_inspection_date)
 
@@ -101,8 +101,8 @@ def list_inspections_for_item(
     current_user_id: UUID = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """获取该装备的检查历史"""
-    # 验证装备属于当前用户
+    """取得该裝備的檢查歷史"""
+    # 验证裝備属于当前用户
     gear_item = db.query(GearItem).filter(
         GearItem.id == item_id,
         GearItem.user_id == current_user_id
@@ -127,7 +127,7 @@ def get_inspection(
     current_user_id: UUID = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """获取单个检查记录详情"""
+    """取得单个檢查記錄详情"""
     inspection = db.query(GearInspection).filter(
         GearInspection.id == inspection_id
     ).first()
@@ -138,7 +138,7 @@ def get_inspection(
             detail="Inspection not found"
         )
 
-    # 验证装备属于当前用户
+    # 验证裝備属于当前用户
     gear_item = db.query(GearItem).filter(
         GearItem.id == inspection.gear_item_id,
         GearItem.user_id == current_user_id

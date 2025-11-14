@@ -1,7 +1,7 @@
 """
 Gear Reminders API
 
-提醒管理 API：查询、创建、取消
+提醒管理 API：查询、建立、取消
 """
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -27,7 +27,7 @@ def list_my_reminders(
     db: Session = Depends(get_db)
 ):
     """列出我的所有提醒（按scheduled_at排序）"""
-    # 查找属于当前用户的所有装备的提醒
+    # 查找属于当前用户的所有裝備的提醒
     reminders = db.query(GearReminder).join(
         GearItem, GearReminder.gear_item_id == GearItem.id
     ).filter(
@@ -43,8 +43,8 @@ def create_reminder(
     current_user_id: UUID = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """手动创建提醒"""
-    # 验证装备属于当前用户
+    """手动建立提醒"""
+    # 验证裝備属于当前用户
     gear_item = db.query(GearItem).filter(
         GearItem.id == reminder_data.gear_item_id,
         GearItem.user_id == current_user_id

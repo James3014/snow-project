@@ -1,7 +1,7 @@
 """
 Gear Operations FastAPI Application
 
-简单直接的 API 应用，不过度设计
+簡單直接的 API 应用，不過度設計
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,14 +18,14 @@ from config import settings
 
 app = FastAPI(
     title="Gear Operations API",
-    description="装备管理与维护系统",
+    description="裝備管理与維護系統",
     version="0.1.0"
 )
 
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 生产环境应该限制
+    allow_origins=["*"],  # 生產環境應該限制
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

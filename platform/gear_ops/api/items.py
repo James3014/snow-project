@@ -1,7 +1,7 @@
 """
 Gear Items API
 
-Linus 原则：简单的 CRUD，不要过度设计
+Linus 原則：簡單的 CRUD，不要過度設計
 """
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
@@ -26,7 +26,7 @@ def create_gear_item(
     current_user_id: UUID = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """创建装备"""
+    """建立裝備"""
     gear_item = GearItem(
         user_id=current_user_id,
         **item_data.model_dump()
@@ -44,10 +44,10 @@ def list_gear_items(
     current_user_id: UUID = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """列出我的装备"""
+    """列出我的裝備"""
     query = db.query(GearItem).filter(
         GearItem.user_id == current_user_id,
-        GearItem.status != GEAR_STATUS_DELETED  # 不显示已删除的
+        GearItem.status != GEAR_STATUS_DELETED  # 不显示已刪除的
     )
 
     if status_filter:
@@ -66,7 +66,7 @@ def get_gear_item(
     current_user_id: UUID = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """获取单个装备详情"""
+    """取得单个裝備详情"""
     item = db.query(GearItem).filter(
         GearItem.id == item_id,
         GearItem.user_id == current_user_id  # 只能查看自己的
@@ -88,7 +88,7 @@ def update_gear_item(
     current_user_id: UUID = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """更新装备"""
+    """更新裝備"""
     item = db.query(GearItem).filter(
         GearItem.id == item_id,
         GearItem.user_id == current_user_id  # 只能更新自己的
@@ -116,10 +116,10 @@ def delete_gear_item(
     current_user_id: UUID = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """删除装备（软删除）"""
+    """刪除裝備（软刪除）"""
     item = db.query(GearItem).filter(
         GearItem.id == item_id,
-        GearItem.user_id == current_user_id  # 只能删除自己的
+        GearItem.user_id == current_user_id  # 只能刪除自己的
     ).first()
 
     if not item:
@@ -128,7 +128,7 @@ def delete_gear_item(
             detail="Gear item not found"
         )
 
-    # 软删除：更新状态而非物理删除
+    # 软刪除：更新状态而非物理刪除
     item.status = GEAR_STATUS_DELETED
     db.commit()
     return None

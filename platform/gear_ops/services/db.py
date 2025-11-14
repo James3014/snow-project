@@ -1,7 +1,7 @@
 """
 Database connection and session management
 
-简单直接的数据库连接，不过度设计
+簡單直接的数据库连接，不過度設計
 """
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
