@@ -1,6 +1,6 @@
 /**
  * Progress Bar Component
- * 进度条组件
+ * 進度条组件
  */
 interface ProgressBarProps {
   percentage: number;

@@ -1,6 +1,6 @@
 /**
  * Resort List Page
- * 雪场列表首页
+ * 雪場列表首页
  */
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';

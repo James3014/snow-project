@@ -406,7 +406,7 @@ export default function ResortDetail() {
           <div className="space-y-3">
             <ProgressBar
               percentage={progress.completion_percentage}
-              label={`完成进度: ${progress.completed_courses.length} / ${resort.snow_stats.courses_total}`}
+              label={`完成進度: ${progress.completed_courses.length} / ${resort.snow_stats.courses_total}`}
             />
             <div className="grid grid-cols-3 gap-4 text-center text-sm pt-2">
               <div>
@@ -432,7 +432,7 @@ export default function ResortDetail() {
         </Card.Body>
       </Card>
 
-      {/* 按难度分组显示课程 */}
+      {/* 按难度分组顯示课程 */}
       {levelOrder.map((level) => {
         const courses = groupedCourses[level];
         if (!courses || courses.length === 0) return null;

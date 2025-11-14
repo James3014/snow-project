@@ -1,10 +1,10 @@
 /**
  * useTripCreation Hook
  *
- * 提取行程创建业务逻辑，遵循 Linus 原则：
- * - 职责单一：只处理行程创建
- * - 可测试：独立于组件的业务逻辑
- * - 可复用：其他组件也可使用此 hook
+ * 提取行程創建業務邏輯，遵循 Linus 原則：
+ * - 職責單一：只處理行程創建
+ * - 可測試：獨立於組件的業務邏輯
+ * - 可複用：其他組件也可使用此 hook
  */
 
 import { useState } from 'react';
@@ -27,19 +27,19 @@ export interface TripCreationResult {
 }
 
 /**
- * 行程创建 Hook
+ * 行程創建 Hook
  */
 export function useTripCreation(userId: string | undefined) {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * 创建行程
+   * 創建行程
    */
   const createTrip = async (data: TripCreationData): Promise<TripCreationResult> => {
     const { resort, startDate, endDate: providedEndDate, duration: providedDuration } = data;
 
-    // 1. 参数验证
+    // 1. 參數驗證
     if (!userId) {
       throw new Error('用戶未登入');
     }
@@ -56,22 +56,22 @@ export function useTripCreation(userId: string | undefined) {
     setError(null);
 
     try {
-      // 2. 日期和天数计算
+      // 2. 日期和天數計算
       let endDate: Date;
       let duration: number;
 
       if (providedEndDate) {
         endDate = providedEndDate;
-        // 从 startDate 到 endDate 计算天数
+        // 從 startDate 到 endDate 計算天數
         const diffTime = endDate.getTime() - startDate.getTime();
         duration = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
       } else {
-        // 使用 duration 计算 endDate
+        // 使用 duration 計算 endDate
         duration = providedDuration!;
         endDate = calculateEndDate(startDate, duration);
       }
 
-      // 3. 雪季处理（检查或创建）
+      // 3. 雪季處理（檢查或創建）
       const seasonName = calculateSeasonId(startDate.toISOString().split('T')[0]);
       let actualSeasonId: string;
 
@@ -83,7 +83,7 @@ export function useTripCreation(userId: string | undefined) {
           // 使用现有雪季
           actualSeasonId = existingSeason.season_id;
         } else {
-          // 创建新雪季
+          // 創建新雪季
           const [startYear, endYear] = seasonName.split('-').map(Number);
           const newSeason = await tripPlanningApi.createSeason(userId, {
             title: seasonName,
@@ -98,7 +98,7 @@ export function useTripCreation(userId: string | undefined) {
         throw new Error('無法創建或獲取雪季');
       }
 
-      // 4. 创建行程
+      // 4. 創建行程
       const response = await tripPlanningApi.createTrip(userId, {
         season_id: actualSeasonId,
         resort_id: resort.resort.resort_id,

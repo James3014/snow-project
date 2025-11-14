@@ -2,7 +2,7 @@
  * Snowbuddy Board Page
  * 雪伴公佈欄頁面 - 顯示所有公開的行程
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
@@ -33,54 +33,9 @@ export default function SnowbuddyBoard() {
   const [statusFilter, setStatusFilter] = useState<string>('all'); // all, available, applied, joined, full, declined
   const [resortFilter, setResortFilter] = useState<string>('all'); // all or resort_id
   const [itemsToShow, setItemsToShow] = useState<number>(12); // 每次顯示的卡片數量
+  const hasAutoSelectedWeek = useRef(false); // 追蹤是否已自動選擇過週
 
-  useEffect(() => {
-    loadPublicTrips();
-  }, []);
-
-  // 自動選擇有行程的週（首次載入時）
-  useEffect(() => {
-    if (trips.length > 0) {
-      // 檢查當前選擇的週是否有行程
-      const currentWeekStart = new Date();
-      currentWeekStart.setDate(currentWeekStart.getDate() + selectedWeekOffset * 7 - currentWeekStart.getDay());
-      currentWeekStart.setHours(0, 0, 0, 0);
-
-      const currentWeekEnd = new Date(currentWeekStart);
-      currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
-      currentWeekEnd.setHours(23, 59, 59, 999);
-
-      const hasTripsInCurrentWeek = trips.some(trip => {
-        const tripStart = new Date(trip.start_date);
-        return tripStart >= currentWeekStart && tripStart <= currentWeekEnd;
-      });
-
-      // 如果當前週沒有行程，找到第一個有行程的週
-      if (!hasTripsInCurrentWeek) {
-        for (let i = 0; i < 9; i++) {
-          const weekStart = new Date();
-          weekStart.setDate(weekStart.getDate() + i * 7 - weekStart.getDay());
-          weekStart.setHours(0, 0, 0, 0);
-
-          const weekEnd = new Date(weekStart);
-          weekEnd.setDate(weekEnd.getDate() + 6);
-          weekEnd.setHours(23, 59, 59, 999);
-
-          const hasTripsInWeek = trips.some(trip => {
-            const tripStart = new Date(trip.start_date);
-            return tripStart >= weekStart && tripStart <= weekEnd;
-          });
-
-          if (hasTripsInWeek) {
-            setSelectedWeekOffset(i);
-            break;
-          }
-        }
-      }
-    }
-  }, [trips.length]); // 只在 trips 數量改變時執行
-
-  const loadPublicTrips = async () => {
+  const loadPublicTrips = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -141,6 +96,47 @@ export default function SnowbuddyBoard() {
 
       setTrips(sortedTrips);
 
+      // 自動選擇有行程的週（僅首次載入時）
+      if (!hasAutoSelectedWeek.current && sortedTrips.length > 0) {
+        // 檢查本週是否有行程
+        const currentWeekStart = new Date();
+        currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
+        currentWeekStart.setHours(0, 0, 0, 0);
+
+        const currentWeekEnd = new Date(currentWeekStart);
+        currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
+        currentWeekEnd.setHours(23, 59, 59, 999);
+
+        const hasTripsInCurrentWeek = sortedTrips.some(trip => {
+          const tripStart = new Date(trip.start_date);
+          return tripStart >= currentWeekStart && tripStart <= currentWeekEnd;
+        });
+
+        // 如果本週沒有行程，找到第一個有行程的週
+        if (!hasTripsInCurrentWeek) {
+          for (let i = 0; i < 9; i++) {
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() + i * 7 - weekStart.getDay());
+            weekStart.setHours(0, 0, 0, 0);
+
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            weekEnd.setHours(23, 59, 59, 999);
+
+            const hasTripsInWeek = sortedTrips.some(trip => {
+              const tripStart = new Date(trip.start_date);
+              return tripStart >= weekStart && tripStart <= weekEnd;
+            });
+
+            if (hasTripsInWeek) {
+              setSelectedWeekOffset(i);
+              break;
+            }
+          }
+        }
+        hasAutoSelectedWeek.current = true;
+      }
+
       // 載入雪場資料
       try {
         const resortsData = await resortApiService.getAllResorts();
@@ -154,7 +150,11 @@ export default function SnowbuddyBoard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]); // 依賴 userId
+
+  useEffect(() => {
+    loadPublicTrips();
+  }, [loadPublicTrips]);
 
   const handleApply = async (tripId: string) => {
     if (!userId) {

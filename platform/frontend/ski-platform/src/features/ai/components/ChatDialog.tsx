@@ -26,7 +26,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
 
-  // 使用对话管理 Hook（统一管理 5 个状态）
+  // 使用對話管理 Hook（統一管理 5 個狀態）
   const {
     messages,
     buttons,
@@ -39,7 +39,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     updateResponse,
   } = useConversation();
 
-  // 使用行程创建 Hook（提取业务逻辑）
+  // 使用行程創建 Hook（提取業務邏輯）
   const { createTrip } = useTripCreation(user?.user_id);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -57,13 +57,13 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     addMessage('user', input);
 
     try {
-      // 使用 hook 处理输入（自动管理状态）
+      // 使用 hook 處理輸入（自動管理狀態）
       const { response, updatedContext } = await processInput(input);
 
       // 添加助手回應
       addMessage('assistant', response.message);
 
-      // 處理特殊狀態（使用更新后的 context）
+      // 處理特殊狀態（使用更新後的 context）
       if (response.nextState === 'CREATING_TRIP') {
         await handleCreateTrip(updatedContext);
       } else if (response.nextState === 'VIEWING_TRIPS') {
@@ -141,7 +141,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     handleUserInput(suggestion);
   };
 
-  // 建立行程（使用 Hook 提取的业务逻辑）
+  // 建立行程（使用 Hook 提取的業務邏輯）
   const handleCreateTrip = async (currentContext: ConversationContext) => {
     const { resort, startDate, endDate, duration } = currentContext.tripData;
 
@@ -150,7 +150,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
     }
 
     try {
-      // 使用 useTripCreation hook 处理所有业务逻辑
+      // 使用 useTripCreation hook 處理所有業務邏輯
       const result = await createTrip({
         resort,
         startDate,
@@ -164,12 +164,12 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
         result.tripId
       );
 
-      // 使用 hook 方法更新状态
+      // 使用 hook 方法更新狀態
       addMessage('assistant', successResponse.message);
       updateResponse(successResponse);
     } catch (error) {
       console.error('Failed to create trip:', error);
-      throw error; // 让外层 catch 处理
+      throw error; // 讓外層 catch 處理
     }
   };
 

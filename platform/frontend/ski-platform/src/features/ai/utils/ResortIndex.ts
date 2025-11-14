@@ -1,9 +1,9 @@
 /**
- * ResortIndex - 高效的雪场索引系统
+ * ResortIndex - 高效的雪場索引系统
  *
  * 核心改进：
  * - 使用 Map 实现 O(1) 查找（替代 O(n) 线性搜索）
- * - 预构建索引，避免重复计算
+ * - 预构建索引，避免重复計算
  * - 清晰的数据结构设计
  *
  * Linus 原则：
@@ -28,14 +28,14 @@ export interface ResortMatch {
 }
 
 /**
- * 雪场索引类 - 使用 Map 实现高效查找
+ * 雪場索引类 - 使用 Map 实现高效查找
  */
 export class ResortIndex {
   // 核心索引数据结构
   private resortIdMap: Map<string, Resort>;           // resort_id -> Resort
-  private exactMatchMap: Map<string, Resort[]>;       // 小写精确名 -> Resort[]
+  private exactMatchMap: Map<string, Resort[]>;       // 小写精確名 -> Resort[]
   private aliasMap: Map<string, Resort[]>;            // 小写别名 -> Resort[]
-  private groupKeywordMap: Map<string, Resort[]>;     // 雪场群关键词 -> Resort[]
+  private groupKeywordMap: Map<string, Resort[]>;     // 雪場群关键词 -> Resort[]
   private resorts: Resort[];
 
   constructor(resorts: Resort[]) {
@@ -49,7 +49,7 @@ export class ResortIndex {
   }
 
   /**
-   * 构建所有索引（一次性计算，后续 O(1) 查找）
+   * 构建所有索引（一次性計算，后续 O(1) 查找）
    */
   private buildIndexes(): void {
     // 1. 构建 resort_id 索引
@@ -57,7 +57,7 @@ export class ResortIndex {
       this.resortIdMap.set(resort.resort_id, resort);
     }
 
-    // 2. 构建精确匹配索引（中文、英文、日文名）
+    // 2. 构建精確匹配索引（中文、英文、日文名）
     for (const resort of this.resorts) {
       const { zh, en, ja } = resort.names;
 
@@ -79,7 +79,7 @@ export class ResortIndex {
       }
     }
 
-    // 4. 构建雪场群关键词索引
+    // 4. 构建雪場群关键词索引
     for (const group of RESORT_GROUPS) {
       const groupResorts = this.resorts.filter(group.filter);
       for (const keyword of group.keywords) {
@@ -113,7 +113,7 @@ export class ResortIndex {
     const pinyinMatch = this.matchPinyin(trimmed);
     if (pinyinMatch) return pinyinMatch;
 
-    // 【优先级2】精确匹配（中英日文名）
+    // 【优先级2】精確匹配（中英日文名）
     const exactMatch = this.matchExact(normalized);
     if (exactMatch) return exactMatch;
 
@@ -121,7 +121,7 @@ export class ResortIndex {
     const aliasMatch = this.matchAlias(normalized);
     if (aliasMatch) return aliasMatch;
 
-    // 【优先级4】检查雪场群关键词（降低优先级，只在无精确匹配时触发）
+    // 【优先级4】检查雪場群关键词（降低优先级，只在无精確匹配时触发）
     const groupMatch = this.matchGroup(normalized, trimmed);
     if (groupMatch) return groupMatch;
 
@@ -133,7 +133,7 @@ export class ResortIndex {
   }
 
   /**
-   * 获取建议列表
+   * 獲取建議列表
    */
   getSuggestions(input: string, limit: number = 3): ResortMatch[] {
     if (!input || input.trim().length === 0) {
@@ -144,11 +144,11 @@ export class ResortIndex {
     const normalized = trimmed.toLowerCase();
     const matches: ResortMatch[] = [];
 
-    // 1. 检查雪场群 - 返回群内所有雪场
-    // 先尝试精确匹配
+    // 1. 检查雪場群 - 返回群内所有雪場
+    // 先嘗試精確匹配
     let groupResorts = this.groupKeywordMap.get(normalized);
 
-    // 如果精确匹配失败，尝试 .includes() 匹配（处理"建立行程 妙高"等情况）
+    // 如果精確匹配失敗，嘗試 .includes() 匹配（處理"建立行程 妙高"等情況）
     if (!groupResorts) {
       for (const [keyword, resorts] of this.groupKeywordMap) {
         if (normalized.includes(keyword)) {
@@ -214,17 +214,17 @@ export class ResortIndex {
   // ==================== 私有匹配方法 ====================
 
   /**
-   * 匹配雪场群关键词
+   * 匹配雪場群关键词
    *
-   * 优化：只在输入完全等于地区关键词时触发，避免干扰精确匹配
-   * 例如："白马" 触发群组，"白马八方" 不触发（应该走别名匹配）
+   * 优化：只在输入完全等于地区关键词时触发，避免干扰精確匹配
+   * 例如："白马" 触发群組，"白马八方" 不触发（应该走别名匹配）
    */
   private matchGroup(normalized: string, original: string): ResortMatch | null {
     for (const [keyword, resorts] of this.groupKeywordMap) {
-      // 只匹配完全相等的情况，不使用 includes
+      // 只匹配完全相等的情況，不使用 includes
       if (normalized === keyword) {
         if (resorts.length === 1) {
-          // 唯一匹配，精确信心度
+          // 唯一匹配，精確信心度
           return {
             resort: resorts[0],
             confidence: MatchConfidence.EXACT,
@@ -232,7 +232,7 @@ export class ResortIndex {
             matchedValue: original,
           };
         } else if (resorts.length > 1) {
-          // 多个匹配，降低信心度触发建议
+          // 多个匹配，降低信心度触发建議
           return {
             resort: resorts[0],
             confidence: MatchConfidence.LOW,
@@ -280,7 +280,7 @@ export class ResortIndex {
       }
     }
 
-    // 尝试拼音转中文
+    // 嘗試拼音转中文
     const chineseName = pinyinToChinese(original);
     if (chineseName) {
       const match = this.matchExact(chineseName.toLowerCase());
@@ -298,7 +298,7 @@ export class ResortIndex {
   }
 
   /**
-   * 精确匹配（O(1) 查找）
+   * 精確匹配（O(1) 查找）
    */
   private matchExact(normalized: string): ResortMatch | null {
     const resorts = this.exactMatchMap.get(normalized);
@@ -306,7 +306,7 @@ export class ResortIndex {
       return null;
     }
 
-    // 如果有多个精确匹配，选择优先级最高的
+    // 如果有多个精確匹配，選擇优先级最高的
     const sorted = resorts.sort((a, b) =>
       getResortPriority(b.resort_id) - getResortPriority(a.resort_id)
     );
@@ -328,7 +328,7 @@ export class ResortIndex {
       return null;
     }
 
-    // 选择优先级最高的
+    // 選擇优先级最高的
     const sorted = resorts.sort((a, b) =>
       getResortPriority(b.resort_id) - getResortPriority(a.resort_id)
     );
@@ -376,7 +376,7 @@ export class ResortIndex {
   }
 
   /**
-   * 匹配单个雪场的名称和别名
+   * 匹配单个雪場的名称和别名
    */
   private matchResortName(
     input: string,
@@ -389,7 +389,7 @@ export class ResortIndex {
     for (let i = 0; i < aliases.length; i++) {
       const alias = aliases[i].toLowerCase();
 
-      // 精确匹配 - 使用 EXACT
+      // 精確匹配 - 使用 EXACT
       if (input === alias) {
         return {
           confidence: MatchConfidence.EXACT,
@@ -415,7 +415,7 @@ export class ResortIndex {
       }
     }
 
-    // 模糊匹配（Levenshtein 距离）- 使用 HIGH
+    // 模糊匹配（Levenshtein 距離）- 使用 HIGH
     if (!bestMatch) {
       const similarity = calculateSimilarity(input, resort.names.zh.toLowerCase());
       if (similarity >= 0.7) {

@@ -111,7 +111,7 @@ export function createInitialContext(): ConversationContext {
  * P0-1: 格式化日期為中文簡短格式（DRY 原則 - 消除 24 行重複代碼）
  *
  * @param date - 要格式化的日期
- * @returns 格式化後的日期字符串（例如：12/15）
+ * @returns 格式化後的日期字串（例如：12/15）
  */
 function formatDate(date: Date): string {
   return date.toLocaleDateString('zh-TW', {
@@ -127,7 +127,7 @@ function formatDate(date: Date): string {
  * 優先級：編號 > 雪場 > 日期
  *
  * @param intent - 解析後的意圖（包含行程識別信息）
- * @returns 行程標識符字符串（例如："第 1 個行程"、"苗場 的行程"）
+ * @returns 行程標識符字串（例如："第 1 個行程"、"苗場 的行程"）
  */
 function buildTripIdentifier(intent: ParsedIntent): string {
   if (intent.duration) return `第 ${intent.duration} 個行程`;

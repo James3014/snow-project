@@ -93,7 +93,7 @@ export interface CourseRanking {
   popularity_score: number;
 }
 
-// ==================== 进度相关 ====================
+// ==================== 進度相关 ====================
 
 export interface ResortProgress {
   resort_id: string;
@@ -163,7 +163,7 @@ export interface UserRank {
   rank: number | null;
 }
 
-// ==================== UI 状态相关 ====================
+// ==================== UI 狀態相关 ====================
 
 export interface CourseTrackingState {
   visits: CourseVisit[];
