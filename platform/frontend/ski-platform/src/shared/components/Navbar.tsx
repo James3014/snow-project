@@ -5,6 +5,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { logout } from '@/store/slices/authSlice';
+import NotificationDropdown from './NotificationDropdown';
 
 export default function Navbar() {
   const location = useLocation();
@@ -74,6 +75,8 @@ export default function Navbar() {
                     ⚙️ 管理後台
                   </Link>
                 )}
+                {/* 通知下拉選單 */}
+                <NotificationDropdown />
                 <div className="text-sm text-gray-600">
                   <span className="inline-flex items-center">
                     <span className="mr-2">👤</span>
