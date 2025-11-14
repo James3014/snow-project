@@ -1,6 +1,6 @@
 /**
  * Course Tracking Slice
- * 雪道追踪状态管理
+ * 雪道追踪狀態管理
  */
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';

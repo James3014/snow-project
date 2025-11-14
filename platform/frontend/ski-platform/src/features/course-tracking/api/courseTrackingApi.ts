@@ -19,33 +19,33 @@ import type {
 } from '../types';
 
 /**
- * 雪道访问相关 API
+ * 雪道訪問相關 API
  */
 export const courseVisitApi = {
-  // 记录雪道访问
+  // 記錄雪道訪問
   create: (userId: string, data: CourseVisitCreate) =>
     userCoreApi.post<CourseVisit>(`/users/${userId}/course-visits`, data),
 
-  // 获取用户的雪道访问记录
+  // 獲取用戶的雪道訪問記錄
   list: (userId: string, resortId?: string) => {
     const params = resortId ? `?resort_id=${resortId}` : '';
     return userCoreApi.get<CourseVisit[]>(`/users/${userId}/course-visits${params}`);
   },
 
-  // 更新雪道访问记录
+  // 更新雪道訪問記錄
   update: (userId: string, visitId: string, data: Partial<CourseVisitCreate>) =>
     userCoreApi.patch<CourseVisit>(`/users/${userId}/course-visits/${visitId}`, data),
 
-  // 删除雪道访问记录
+  // 刪除雪道訪問記錄
   delete: (userId: string, visitId: string) =>
     userCoreApi.delete(`/users/${userId}/course-visits/${visitId}`),
 };
 
 /**
- * 进度查询 API
+ * 進度查詢 API
  */
 export const progressApi = {
-  // 获取用户在某个雪场的进度
+  // 獲取用戶在某個雪場的進度
   getResortProgress: (userId: string, resortId: string, totalCourses: number) =>
     userCoreApi.get<ResortProgress>(
       `/users/${userId}/resorts/${resortId}/progress?total_courses=${totalCourses}`
@@ -53,27 +53,27 @@ export const progressApi = {
 };
 
 /**
- * 推荐管理 API
+ * 推薦管理 API
  */
 export const recommendationApi = {
-  // 创建推荐
+  // 創建推薦
   create: (userId: string, data: CourseRecommendationCreate) =>
     userCoreApi.post<CourseRecommendation>(`/users/${userId}/recommendations`, data),
 
-  // 获取用户的推荐
+  // 獲取用戶的推薦
   list: (userId: string, resortId?: string) => {
     const params = resortId ? `?resort_id=${resortId}` : '';
     return userCoreApi.get<CourseRecommendation[]>(`/users/${userId}/recommendations${params}`);
   },
 
-  // 更新推荐
+  // 更新推薦
   update: (userId: string, recommendationId: string, data: CourseRecommendationUpdate) =>
     userCoreApi.patch<CourseRecommendation>(
       `/users/${userId}/recommendations/${recommendationId}`,
       data
     ),
 
-  // 删除推荐
+  // 刪除推薦
   delete: (userId: string, recommendationId: string) =>
     userCoreApi.delete(`/users/${userId}/recommendations/${recommendationId}`),
 };
@@ -82,24 +82,24 @@ export const recommendationApi = {
  * 雪道排名 API
  */
 export const rankingApi = {
-  // 获取雪场的雪道排名
+  // 獲取雪場的雪道排名
   getCourseRankings: (resortId: string, limit: number = 50) =>
     userCoreApi.get<CourseRanking[]>(`/users/resorts/${resortId}/courses/rankings?limit=${limit}`),
 };
 
 /**
- * 成就系统 API
+ * 成就系統 API
  */
 export const achievementApi = {
-  // 获取用户的成就
+  // 獲取用戶的成就
   getUserAchievements: (userId: string) =>
     userCoreApi.get<UserAchievementWithDetails[]>(`/users/${userId}/achievements`),
 
-  // 获取用户的成就摘要
+  // 獲取用戶的成就摘要
   getAchievementSummary: (userId: string) =>
     userCoreApi.get<AchievementSummary>(`/users/${userId}/achievements/summary`),
 
-  // 获取所有成就定义
+  // 獲取所有成就定义
   getDefinitions: (includeHidden: boolean = false, category?: string) => {
     const params = new URLSearchParams();
     if (includeHidden) params.append('include_hidden', 'true');
@@ -115,13 +115,13 @@ export const achievementApi = {
  * 排行榜 API
  */
 export const leaderboardApi = {
-  // 获取全球排行榜
+  // 獲取全球排行榜
   getLeaderboard: (skip: number = 0, limit: number = 100) =>
     userCoreApi.get<LeaderboardEntry[]>(
       `/users/achievements/leaderboard?skip=${skip}&limit=${limit}`
     ),
 
-  // 获取用户排名
+  // 獲取用戶排名
   getUserRank: (userId: string) =>
     userCoreApi.get<UserRank>(`/users/${userId}/leaderboard-rank`),
 };

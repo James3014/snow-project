@@ -33,7 +33,7 @@ export function formatRelativeTime(date: string | Date): string {
 }
 
 /**
- * 生成半匿名显示名
+ * 生成半匿名顯示名
  */
 export function generateDisplayName(fullName: string): string {
   if (!fullName || fullName.length < 2) return 'User';
@@ -41,7 +41,7 @@ export function generateDisplayName(fullName: string): string {
 }
 
 /**
- * 根据百分比获取颜色
+ * 根據百分比獲取颜色
  */
 export function getProgressColor(percentage: number): 'red' | 'yellow' | 'green' | 'blue' {
   if (percentage < 25) return 'red';
@@ -59,7 +59,7 @@ export function truncate(text: string, maxLength: number): string {
 }
 
 /**
- * 根据难度获取显示文本
+ * 根據难度獲取顯示文本
  */
 export function getDifficultyLabel(level: 'beginner' | 'intermediate' | 'advanced'): string {
   const labels = {
@@ -71,7 +71,7 @@ export function getDifficultyLabel(level: 'beginner' | 'intermediate' | 'advance
 }
 
 /**
- * 根据难度获取emoji
+ * 根據难度獲取emoji
  */
 export function getDifficultyEmoji(level: 'beginner' | 'intermediate' | 'advanced'): string {
   const emojis = {

@@ -111,7 +111,7 @@ export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; column
 
 /**
  * Resort Card Skeleton
- * 雪场卡片骨架
+ * 雪場卡片骨架
  */
 export function ResortCardSkeleton() {
   return (

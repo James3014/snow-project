@@ -3,7 +3,7 @@
  * 共享的通用类型定义
  */
 
-// ==================== 用户相关 ====================
+// ==================== 用戶相关 ====================
 
 export interface User {
   user_id: string;
@@ -31,7 +31,7 @@ export interface LegalConsent {
   marketing_opt_in?: boolean;
 }
 
-// ==================== 雪场相关 ====================
+// ==================== 雪場相关 ====================
 
 export interface Resort {
   id: string;
@@ -94,7 +94,7 @@ export interface ApiErrorResponse {
   status?: number;
 }
 
-// ==================== UI 状态相关 ====================
+// ==================== UI 狀態相关 ====================
 
 export interface LoadingState {
   isLoading: boolean;

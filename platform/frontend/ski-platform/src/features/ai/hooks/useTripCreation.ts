@@ -83,7 +83,7 @@ export function useTripCreation(userId: string | undefined) {
           // 使用现有雪季
           actualSeasonId = existingSeason.season_id;
         } else {
-          // 创建新雪季
+          // 創建新雪季
           const [startYear, endYear] = seasonName.split('-').map(Number);
           const newSeason = await tripPlanningApi.createSeason(userId, {
             title: seasonName,
@@ -98,7 +98,7 @@ export function useTripCreation(userId: string | undefined) {
         throw new Error('無法創建或獲取雪季');
       }
 
-      // 4. 创建行程
+      // 4. 創建行程
       const response = await tripPlanningApi.createTrip(userId, {
         season_id: actualSeasonId,
         resort_id: resort.resort.resort_id,

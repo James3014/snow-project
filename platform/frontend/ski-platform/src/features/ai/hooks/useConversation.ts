@@ -1,10 +1,10 @@
 /**
  * useConversation Hook
  *
- * 统一管理对话状态，遵循 Linus 原则：
- * - 职责单一：只管理对话状态和流程
+ * 统一管理对话狀態，遵循 Linus 原则：
+ * - 职责单一：只管理对话狀態和流程
  * - 简化组件：从5个 useState 减少到1个 hook
- * - 数据结构优先：统一的状态管理
+ * - 数据结构优先：统一的狀態管理
  */
 
 import { useState } from 'react';
@@ -19,7 +19,7 @@ import {
 } from '../utils/conversationEngine';
 
 /**
- * 对话状态
+ * 对话狀態
  */
 interface ConversationState {
   messages: Message[];
@@ -33,7 +33,7 @@ interface ConversationState {
  * 对话 Hook 返回值
  */
 export interface UseConversationReturn {
-  // 状态
+  // 狀態
   messages: Message[];
   buttons: ButtonOption[];
   suggestions: string[];
@@ -53,7 +53,7 @@ export interface UseConversationReturn {
 }
 
 /**
- * 创建初始状态
+ * 創建初始狀態
  */
 function createInitialState(): ConversationState {
   return {
