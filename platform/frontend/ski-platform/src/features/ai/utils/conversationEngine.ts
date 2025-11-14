@@ -63,6 +63,8 @@ export interface ConversationContext {
     startDate?: Date;
     endDate?: Date;
     duration?: number;
+    visibility?: 'public' | 'private';
+    maxBuddies?: number;
   };
 
   // 對話歷史
@@ -209,6 +211,8 @@ function updateTripData(
       startDate: intent.startDate || context.tripData.startDate,
       endDate: intent.endDate || context.tripData.endDate,
       duration: intent.duration || context.tripData.duration,
+      visibility: intent.visibility || context.tripData.visibility,
+      maxBuddies: intent.maxBuddies || context.tripData.maxBuddies,
     },
   };
 }
@@ -254,6 +258,8 @@ function handleResortChangeResponse(
         startDate: intent.startDate,
         endDate: intent.endDate,
         duration: intent.duration,
+        visibility: intent.visibility,
+        maxBuddies: intent.maxBuddies,
       },
       state: nextState,
     },
@@ -629,6 +635,8 @@ function mergeResortDataToContext(
       startDate: intent.startDate || context.tripData.startDate,
       endDate: intent.endDate || context.tripData.endDate,
       duration: intent.duration || context.tripData.duration,
+      visibility: intent.visibility || context.tripData.visibility,
+      maxBuddies: intent.maxBuddies || context.tripData.maxBuddies,
     },
   };
 }
@@ -814,7 +822,7 @@ async function handleDurationInput(
 function prepareCreation(
   context: ConversationContext
 ): { response: ConversationResponse; updatedContext: ConversationContext } {
-  const { resort, startDate, endDate, duration: providedDuration } = context.tripData;
+  const { resort, startDate, endDate, duration: providedDuration, visibility, maxBuddies } = context.tripData;
 
   if (!resort || !startDate) {
     throw new Error('Missing required data for creation');
@@ -841,7 +849,16 @@ function prepareCreation(
     dateDisplay = `${dateStr} - ${endDateStr}`;
   }
 
-  const message = `好的！正在建立行程：\n\n📍 雪場：${resort.resort.names.zh}\n📅 日期：${dateDisplay}\n⏱️ 天數：${duration} 天`;
+  // 構建基本訊息
+  let message = `好的！正在建立行程：\n\n📍 雪場：${resort.resort.names.zh}\n📅 日期：${dateDisplay}\n⏱️ 天數：${duration} 天`;
+
+  // 添加可見性資訊
+  if (visibility === 'public') {
+    message += '\n👥 公開行程';
+    if (maxBuddies) {
+      message += `（找 ${maxBuddies} 人）`;
+    }
+  }
 
   return {
     response: {

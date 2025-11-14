@@ -30,6 +30,8 @@ export interface ParsedIntent {
   startDate?: Date;
   endDate?: Date;
   duration?: number;
+  visibility?: 'public' | 'private';  // 可見性
+  maxBuddies?: number;  // 最大雪伴人數
 
   // 元數據
   rawInput: string;
@@ -58,6 +60,66 @@ const ACTION_KEYWORDS = {
     '謝謝', '感謝', 'thanks', '幫助', 'help',
   ],
 };
+
+/**
+ * 檢測可見性（公開/私密）
+ */
+function detectVisibility(input: string): 'public' | 'private' | undefined {
+  const normalized = input.toLowerCase();
+
+  // 公開關鍵字
+  const publicKeywords = ['公開', '開放', '找伴', '找雪伴', '徵伴', '揪團', 'public'];
+
+  for (const keyword of publicKeywords) {
+    if (normalized.includes(keyword)) {
+      return 'public';
+    }
+  }
+
+  // 私密關鍵字（較少使用，因為私密是默認值）
+  const privateKeywords = ['私密', '不公開', '私人', 'private'];
+
+  for (const keyword of privateKeywords) {
+    if (normalized.includes(keyword)) {
+      return 'private';
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * 檢測最大雪伴人數
+ */
+function detectMaxBuddies(input: string): number | undefined {
+  const normalized = input.toLowerCase();
+
+  // 匹配模式：
+  // - "找3人"、"找3個人"、"3人"
+  // - "徵3位"、"徵3個雪伴"
+  // - "要3個人一起"
+  const patterns = [
+    /找(\d+)[個位]?人/,
+    /徵(\d+)[個位]?[人雪伴]/,
+    /(\d+)[個位]?人/,
+    /要(\d+)[個位]?人/,
+    /(\d+)人一起/,
+    /最多(\d+)[個位]?人/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+    if (match) {
+      const count = parseInt(match[1]);
+      // 限制在合理範圍內（1-20人）
+      if (count >= 1 && count <= 20) {
+        return count;
+      }
+    }
+  }
+
+  return undefined;
+}
 
 /**
  * 檢測動作意圖
@@ -236,6 +298,10 @@ async function parseCreateTripIntent(
     totalConfidence = (totalConfidence + finalActionConfidence) / 2;
   }
 
+  // 6. 檢測可見性和雪伴人數
+  const visibility = detectVisibility(input);
+  const maxBuddies = detectMaxBuddies(input);
+
   return {
     action: finalAction,
     confidence: Math.max(0, Math.min(1, totalConfidence)),
@@ -245,6 +311,8 @@ async function parseCreateTripIntent(
     startDate,
     endDate,
     duration,
+    visibility,
+    maxBuddies,
     rawInput: input,
     missingFields,
     suggestions,

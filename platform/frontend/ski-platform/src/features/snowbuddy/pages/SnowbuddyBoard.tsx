@@ -9,13 +9,14 @@ import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { resortApiService } from '@/shared/api/resortApi';
 import TripBoardCard from '../components/TripBoardCard';
 import Card from '@/shared/components/Card';
-import type { Trip } from '@/features/trip-planning/types';
+import type { TripSummary } from '@/features/trip-planning/types';
 import type { Resort } from '@/shared/data/resorts';
 
-// 擴展 Trip 類型以包含申請狀態
-interface TripWithBuddyStatus extends Trip {
+// 擴展 TripSummary 類型以包含申請狀態
+interface TripWithBuddyStatus extends TripSummary {
   myBuddyStatus?: 'pending' | 'accepted' | 'declined' | null;
   myBuddyId?: string | null;
+  user_id?: string; // 添加 user_id 用於判斷是否為行程主人
 }
 
 export default function SnowbuddyBoard() {
@@ -26,6 +27,8 @@ export default function SnowbuddyBoard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [applyingTripId, setApplyingTripId] = useState<string | null>(null);
+  const [selectedWeekOffset, setSelectedWeekOffset] = useState<number>(0); // 0=本週, 1=下週, 2=下下週...
+  const [statusFilter, setStatusFilter] = useState<string>('all'); // all, available, applied, joined, full, declined
 
   useEffect(() => {
     loadPublicTrips();
@@ -49,12 +52,18 @@ export default function SnowbuddyBoard() {
             const myRequest = buddies.find(b => b.user_id === userId);
             return {
               ...trip,
+              user_id: trip.owner_info.user_id, // 從 owner_info 提取 user_id
               myBuddyStatus: myRequest?.status as any || null,
               myBuddyId: myRequest?.buddy_id || null
             };
           } catch (err) {
             // 如果獲取失敗，返回原始行程
-            return { ...trip, myBuddyStatus: null, myBuddyId: null };
+            return {
+              ...trip,
+              user_id: trip.owner_info.user_id,
+              myBuddyStatus: null,
+              myBuddyId: null
+            };
           }
         })
       );
@@ -139,8 +148,73 @@ export default function SnowbuddyBoard() {
     }
   };
 
-  const getResortForTrip = (trip: Trip): Resort | null => {
+  const getResortForTrip = (trip: TripSummary): Resort | null => {
     return resorts.find(r => r.resort_id === trip.resort_id) || null;
+  };
+
+  // 計算指定週的日期範圍（週一到週日）
+  const getWeekRange = (weekOffset: number): { start: Date; end: Date } => {
+    const today = new Date();
+    const currentDay = today.getDay(); // 0=週日, 1=週一, ...
+    const daysToMonday = currentDay === 0 ? -6 : 1 - currentDay; // 計算到本週一的天數差
+
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() + daysToMonday + (weekOffset * 7));
+    weekStart.setHours(0, 0, 0, 0);
+
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+
+    return { start: weekStart, end: weekEnd };
+  };
+
+  // 過濾行程：按週和狀態過濾
+  const getFilteredTrips = (): TripWithBuddyStatus[] => {
+    const { start, end } = getWeekRange(selectedWeekOffset);
+
+    return trips.filter(trip => {
+      // 1. 週過濾
+      const tripStart = new Date(trip.start_date);
+      if (tripStart < start || tripStart > end) {
+        return false;
+      }
+
+      // 2. 狀態過濾
+      if (statusFilter === 'all') {
+        return true;
+      }
+
+      const isOwner = trip.user_id === userId;
+      const isFull = trip.current_buddies >= trip.max_buddies;
+      const hasStatus = trip.myBuddyStatus;
+
+      if (statusFilter === 'available') {
+        // 可申請：還有名額、不是自己的、未申請過
+        return !isOwner && !isFull && !hasStatus;
+      } else if (statusFilter === 'applied') {
+        // 申請中：狀態為 pending
+        return trip.myBuddyStatus === 'pending';
+      } else if (statusFilter === 'joined') {
+        // 已加入：狀態為 accepted
+        return trip.myBuddyStatus === 'accepted';
+      } else if (statusFilter === 'full') {
+        // 已額滿：沒有剩餘名額
+        return isFull;
+      } else if (statusFilter === 'declined') {
+        // 已拒絕：狀態為 declined
+        return trip.myBuddyStatus === 'declined';
+      }
+
+      return true;
+    });
+  };
+
+  // 格式化週範圍顯示
+  const formatWeekRange = (weekOffset: number): string => {
+    const { start, end } = getWeekRange(weekOffset);
+    const formatDate = (date: Date) => `${date.getMonth() + 1}/${date.getDate()}`;
+    return `${formatDate(start)} - ${formatDate(end)}`;
   };
 
   if (loading) {
@@ -170,6 +244,15 @@ export default function SnowbuddyBoard() {
     );
   }
 
+  const filteredTrips = getFilteredTrips();
+
+  // 週選項（本週到未來8週）
+  const weekOptions = Array.from({ length: 9 }, (_, i) => ({
+    offset: i,
+    label: i === 0 ? '本週' : i === 1 ? '下週' : `下${i}週`,
+    range: formatWeekRange(i)
+  }));
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
@@ -182,15 +265,72 @@ export default function SnowbuddyBoard() {
         </p>
       </div>
 
+      {/* Filters */}
+      <div className="mb-6 space-y-4">
+        {/* Week Filter */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm font-medium text-gray-700">📅 時間篩選：</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {weekOptions.map(({ offset, label, range }) => (
+              <button
+                key={offset}
+                onClick={() => setSelectedWeekOffset(offset)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  selectedWeekOffset === offset
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <div className="flex flex-col items-center">
+                  <span>{label}</span>
+                  <span className="text-xs opacity-80">{range}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Status Filter */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm font-medium text-gray-700">🎯 狀態篩選：</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { value: 'all', label: '全部', icon: '📋' },
+              { value: 'available', label: '可申請', icon: '✅' },
+              { value: 'applied', label: '申請中', icon: '⏳' },
+              { value: 'joined', label: '已加入', icon: '🎉' },
+              { value: 'full', label: '已額滿', icon: '🈵' },
+              { value: 'declined', label: '已拒絕', icon: '❌' }
+            ].map(({ value, label, icon }) => (
+              <button
+                key={value}
+                onClick={() => setStatusFilter(value)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  statusFilter === value
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {icon} {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Empty State */}
-      {trips.length === 0 && (
+      {filteredTrips.length === 0 && (
         <Card className="p-12 text-center">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-xl font-bold text-gray-900 mb-2">
-            目前沒有公開的行程
+            {trips.length === 0 ? '目前沒有公開的行程' : '這週沒有公開的行程'}
           </h3>
           <p className="text-gray-600 mb-6">
-            成為第一個發布行程的人吧！
+            {trips.length === 0 ? '成為第一個發布行程的人吧！' : '試試選擇其他週或建立新行程'}
           </p>
           <button
             onClick={() => navigate('/trips')}
@@ -202,19 +342,19 @@ export default function SnowbuddyBoard() {
       )}
 
       {/* Trip Cards Grid */}
-      {trips.length > 0 && (
+      {filteredTrips.length > 0 && (
         <>
           {/* 我申請的行程區塊 */}
-          {trips.some(t => t.myBuddyStatus) && (
+          {filteredTrips.some(t => t.myBuddyStatus) && (
             <div className="mb-8">
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span>📌 我申請的行程</span>
                 <span className="text-sm font-normal text-gray-600">
-                  ({trips.filter(t => t.myBuddyStatus).length})
+                  ({filteredTrips.filter(t => t.myBuddyStatus).length})
                 </span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {trips
+                {filteredTrips
                   .filter(trip => trip.myBuddyStatus)
                   .map(trip => (
                     <TripBoardCard
@@ -234,16 +374,16 @@ export default function SnowbuddyBoard() {
           )}
 
           {/* 其他公開行程區塊 */}
-          {trips.some(t => !t.myBuddyStatus) && (
+          {filteredTrips.some(t => !t.myBuddyStatus) && (
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span>🏔️ 其他公開行程</span>
                 <span className="text-sm font-normal text-gray-600">
-                  ({trips.filter(t => !t.myBuddyStatus).length})
+                  ({filteredTrips.filter(t => !t.myBuddyStatus).length})
                 </span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {trips
+                {filteredTrips
                   .filter(trip => !trip.myBuddyStatus)
                   .map(trip => (
                     <TripBoardCard

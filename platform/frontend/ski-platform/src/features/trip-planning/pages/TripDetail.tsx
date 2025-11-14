@@ -208,19 +208,20 @@ export default function TripDetail() {
 
   const statusBadge = getStatusBadge(trip.trip_status);
   const resortName = resort ? `${resort.names.zh} ${resort.names.en}` : trip.resort_id;
+  const isOwner = trip.user_id === userId;
 
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
         <button
-          onClick={() => navigate(`/seasons/${trip.season_id}`)}
+          onClick={() => navigate(isOwner ? `/seasons/${trip.season_id}` : '/snowbuddy')}
           className="text-blue-600 hover:text-blue-700 mb-4 flex items-center"
         >
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          返回雪季
+          {isOwner ? '返回雪季' : '返回公佈欄'}
         </button>
 
         <div className="flex justify-between items-start">
@@ -233,30 +234,33 @@ export default function TripDetail() {
             </span>
           </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={handleToggleVisibility}
-              className={`px-6 py-3 rounded-lg transition-colors font-medium ${
-                trip.visibility === 'public'
-                  ? 'bg-gray-600 text-white hover:bg-gray-700'
-                  : 'bg-green-600 text-white hover:bg-green-700'
-              }`}
-            >
-              {trip.visibility === 'public' ? '🔒 設為私密' : '📢 發布到公佈欄'}
-            </button>
-            <button
-              onClick={() => setShowEditModal(true)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
-              ✏️ 編輯
-            </button>
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-            >
-              🗑️ 刪除
-            </button>
-          </div>
+          {/* 只有行程擁有者可以編輯 */}
+          {isOwner && (
+            <div className="flex gap-3">
+              <button
+                onClick={handleToggleVisibility}
+                className={`px-6 py-3 rounded-lg transition-colors font-medium ${
+                  trip.visibility === 'public'
+                    ? 'bg-gray-600 text-white hover:bg-gray-700'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
+              >
+                {trip.visibility === 'public' ? '🔒 設為私密' : '📢 發布到公佈欄'}
+              </button>
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                ✏️ 編輯
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+              >
+                🗑️ 刪除
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
