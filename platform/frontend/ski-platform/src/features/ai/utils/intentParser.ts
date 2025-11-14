@@ -67,21 +67,21 @@ const ACTION_KEYWORDS = {
 function detectVisibility(input: string): 'public' | 'private' | undefined {
   const normalized = input.toLowerCase();
 
+  // 私密關鍵字（優先檢查，避免"不公開"被誤判為"公開"）
+  const privateKeywords = ['不公開', '私密', '私人', 'private'];
+
+  for (const keyword of privateKeywords) {
+    if (normalized.includes(keyword)) {
+      return 'private';
+    }
+  }
+
   // 公開關鍵字
   const publicKeywords = ['公開', '開放', '找伴', '找雪伴', '徵伴', '揪團', 'public'];
 
   for (const keyword of publicKeywords) {
     if (normalized.includes(keyword)) {
       return 'public';
-    }
-  }
-
-  // 私密關鍵字（較少使用，因為私密是默認值）
-  const privateKeywords = ['私密', '不公開', '私人', 'private'];
-
-  for (const keyword of privateKeywords) {
-    if (normalized.includes(keyword)) {
-      return 'private';
     }
   }
 
@@ -94,17 +94,22 @@ function detectVisibility(input: string): 'public' | 'private' | undefined {
 function detectMaxBuddies(input: string): number | undefined {
   const normalized = input.toLowerCase();
 
-  // 匹配模式：
-  // - "找3人"、"找3個人"、"3人"
-  // - "徵3位"、"徵3個雪伴"
+  // 匹配模式（按优先级排序）：
+  // - "找3個"、"找3位"、"找3個人"
+  // - "徵3個"、"徵3位"、"徵3個雪伴"
   // - "要3個人一起"
+  // - "最多3人"
   const patterns = [
-    /找(\d+)[個位]?人/,
-    /徵(\d+)[個位]?[人雪伴]/,
-    /(\d+)[個位]?人/,
-    /要(\d+)[個位]?人/,
-    /(\d+)人一起/,
-    /最多(\d+)[個位]?人/,
+    /找(\d+)個/,           // 找2個、找3個
+    /找(\d+)位/,           // 找4位
+    /徵(\d+)個/,           // 徵2個
+    /徵(\d+)位/,           // 徵1位、徵3位
+    /找(\d+)人/,           // 找3人
+    /徵(\d+)人/,           // 徵2人
+    /徵(\d+)個?雪伴/,      // 徵3個雪伴
+    /要(\d+)個?人/,        // 要2個人、要3人
+    /(\d+)人一起/,         // 2人一起
+    /最多(\d+)[個位]?人/,  // 最多5人
   ];
 
   for (const pattern of patterns) {
