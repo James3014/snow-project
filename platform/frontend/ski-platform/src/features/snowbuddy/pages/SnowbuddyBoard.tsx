@@ -38,23 +38,47 @@ export default function SnowbuddyBoard() {
     loadPublicTrips();
   }, []);
 
-  // 自動選擇有行程的週（如果當前週沒有行程）
+  // 自動選擇有行程的週（首次載入時）
   useEffect(() => {
-    if (trips.length > 0 && getFilteredTrips().length === 0) {
-      // 嘗試找到第一個有行程的週（未來8週內）
-      for (let i = 0; i < 9; i++) {
-        const { start, end } = getWeekRange(i);
-        const hasTripsInWeek = trips.some(trip => {
-          const tripStart = new Date(trip.start_date);
-          return tripStart >= start && tripStart <= end;
-        });
-        if (hasTripsInWeek) {
-          setSelectedWeekOffset(i);
-          break;
+    if (trips.length > 0) {
+      // 檢查當前選擇的週是否有行程
+      const currentWeekStart = new Date();
+      currentWeekStart.setDate(currentWeekStart.getDate() + selectedWeekOffset * 7 - currentWeekStart.getDay());
+      currentWeekStart.setHours(0, 0, 0, 0);
+
+      const currentWeekEnd = new Date(currentWeekStart);
+      currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
+      currentWeekEnd.setHours(23, 59, 59, 999);
+
+      const hasTripsInCurrentWeek = trips.some(trip => {
+        const tripStart = new Date(trip.start_date);
+        return tripStart >= currentWeekStart && tripStart <= currentWeekEnd;
+      });
+
+      // 如果當前週沒有行程，找到第一個有行程的週
+      if (!hasTripsInCurrentWeek) {
+        for (let i = 0; i < 9; i++) {
+          const weekStart = new Date();
+          weekStart.setDate(weekStart.getDate() + i * 7 - weekStart.getDay());
+          weekStart.setHours(0, 0, 0, 0);
+
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekEnd.getDate() + 6);
+          weekEnd.setHours(23, 59, 59, 999);
+
+          const hasTripsInWeek = trips.some(trip => {
+            const tripStart = new Date(trip.start_date);
+            return tripStart >= weekStart && tripStart <= weekEnd;
+          });
+
+          if (hasTripsInWeek) {
+            setSelectedWeekOffset(i);
+            break;
+          }
         }
       }
     }
-  }, [trips]);
+  }, [trips.length]); // 只在 trips 數量改變時執行
 
   const loadPublicTrips = async () => {
     try {
