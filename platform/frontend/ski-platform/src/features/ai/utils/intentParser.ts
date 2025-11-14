@@ -248,7 +248,7 @@ async function parseCreateTripIntent(
 
   // 2. 日期解析
   const dates = extractDates(input);
-  let startDate = dates.startDate;
+  const startDate = dates.startDate;
   let endDate = dates.endDate;
   let duration: number | undefined;
 

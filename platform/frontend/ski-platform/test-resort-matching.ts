@@ -374,7 +374,6 @@ async function runTests(): Promise<void> {
  */
 function analyzeFailures(failures: TestResult[], resorts: Resort[]): void {
   // 分类问题
-  const missingAliases: TestResult[] = [];
   const wrongMatch: TestResult[] = [];
   const noMatch: TestResult[] = [];
 

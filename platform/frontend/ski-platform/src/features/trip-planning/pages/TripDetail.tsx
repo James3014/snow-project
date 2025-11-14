@@ -9,7 +9,7 @@ import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { resortApiService } from '@/shared/api/resortApi';
 import Card from '@/shared/components/Card';
 import TripEditModal from '../components/TripEditModal';
-import type { Trip, TripUpdate } from '../types';
+import type { Trip, TripUpdate, BuddyInfo } from '../types';
 import type { Resort } from '@/shared/data/resorts';
 
 export default function TripDetail() {
@@ -23,7 +23,7 @@ export default function TripDetail() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [buddies, setBuddies] = useState<any[]>([]);
+  const [buddies, setBuddies] = useState<BuddyInfo[]>([]);
   const [loadingBuddies, setLoadingBuddies] = useState(false);
   const [respondingBuddyId, setRespondingBuddyId] = useState<string | null>(null);
 
