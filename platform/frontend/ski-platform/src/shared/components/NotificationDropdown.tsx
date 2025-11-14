@@ -90,6 +90,18 @@ export default function NotificationDropdown() {
     }
   };
 
+  // 首次載入時獲取待處理申請數量
+  useEffect(() => {
+    fetchPendingRequests();
+
+    // 每 30 秒自動更新一次
+    const interval = setInterval(() => {
+      fetchPendingRequests();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [userId]);
+
   // 點擊外部關閉下拉選單
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
