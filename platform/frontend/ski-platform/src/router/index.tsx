@@ -29,6 +29,7 @@ const SeasonDetail = lazy(() => import('@/features/trip-planning/pages/SeasonDet
 const TripDetail = lazy(() => import('@/features/trip-planning/pages/TripDetail'));
 const TripExplore = lazy(() => import('@/features/trip-planning/pages/TripExplore'));
 const TripRecommendations = lazy(() => import('@/features/trip-planning/pages/TripRecommendations'));
+const MyGear = lazy(() => import('@/features/gear/pages/MyGear'));
 const SnowbuddyBoard = lazy(() => import('@/features/snowbuddy/pages/SnowbuddyBoard'));
 
 export const router = createBrowserRouter([
@@ -119,6 +120,10 @@ export const router = createBrowserRouter([
       {
         path: 'trips/recommendations',
         element: <TripRecommendations />,
+      },
+      {
+        path: 'gear',
+        element: <MyGear />,
       },
       {
         path: 'snowbuddy',
