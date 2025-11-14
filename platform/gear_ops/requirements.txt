@@ -9,3 +9,4 @@ redis==5.0.1
 pytest==8.4.2
 uvicorn==0.37.0
 python-dotenv==1.1.1
+python-jose[cryptography]==3.3.0
