@@ -14,8 +14,10 @@ import type {
   GearReminder,
 } from '@/features/gear/types';
 
-// Gear API 基礎 URL（獨立服務）
-const GEAR_API_BASE = import.meta.env.VITE_GEAR_API_URL || 'http://localhost:8002/api/gear';
+// Gear API 基礎 URL（已整合到 user_core）
+const GEAR_API_BASE = import.meta.env.VITE_USER_CORE_API
+  ? `${import.meta.env.VITE_USER_CORE_API}/api/gear`
+  : 'http://localhost:8000/api/gear';
 
 // 建立 axios 實例
 const gearApiClient = axios.create({
@@ -65,11 +67,11 @@ export const gearApi = {
 
   /** 取得裝備的檢查歷史 */
   getInspections: (itemId: string) =>
-    gearApiClient.get<GearInspection[]>(`/inspections/items/${itemId}/inspections`),
+    gearApiClient.get<GearInspection[]>(`/items/${itemId}/inspections`),
 
   /** 建立檢查記錄 */
   createInspection: (itemId: string, data: GearInspectionCreate) =>
-    gearApiClient.post<GearInspection>(`/inspections/items/${itemId}/inspections`, data),
+    gearApiClient.post<GearInspection>(`/items/${itemId}/inspections`, data),
 
   // ==================== 提醒管理 ====================
 
