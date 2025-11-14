@@ -29,7 +29,7 @@ export default function SnowbuddyBoard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [applyingTripId, setApplyingTripId] = useState<string | null>(null);
-  const [selectedWeekOffset, setSelectedWeekOffset] = useState<number>(0); // 0=本週, 1=下週, 2=下下週...
+  const [selectedMonthOffset, setSelectedMonthOffset] = useState<number>(0); // 0=本月, 1=下月, 2=下下月...
   const [statusFilter, setStatusFilter] = useState<string>('all'); // all, available, applied, joined, full, declined
   const [resortFilter, setResortFilter] = useState<string>('all'); // all or resort_id
   const [itemsToShow, setItemsToShow] = useState<number>(12); // 每次顯示的卡片數量
@@ -172,29 +172,25 @@ export default function SnowbuddyBoard() {
     return resorts.find(r => r.resort_id === trip.resort_id) || null;
   };
 
-  // 計算指定週的日期範圍（週一到週日）
-  const getWeekRange = (weekOffset: number): { start: Date; end: Date } => {
+  // 計算指定月的日期範圍（月初到月底）
+  const getMonthRange = (monthOffset: number): { start: Date; end: Date } => {
     const today = new Date();
-    const currentDay = today.getDay(); // 0=週日, 1=週一, ...
-    const daysToMonday = currentDay === 0 ? -6 : 1 - currentDay; // 計算到本週一的天數差
 
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() + daysToMonday + (weekOffset * 7));
-    weekStart.setHours(0, 0, 0, 0);
+    const monthStart = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+    monthStart.setHours(0, 0, 0, 0);
 
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6);
-    weekEnd.setHours(23, 59, 59, 999);
+    const monthEnd = new Date(today.getFullYear(), today.getMonth() + monthOffset + 1, 0);
+    monthEnd.setHours(23, 59, 59, 999);
 
-    return { start: weekStart, end: weekEnd };
+    return { start: monthStart, end: monthEnd };
   };
 
-  // 過濾行程：按週、雪場和狀態過濾
+  // 過濾行程：按月、雪場和狀態過濾
   const getFilteredTrips = (): TripWithBuddyStatus[] => {
-    const { start, end } = getWeekRange(selectedWeekOffset);
+    const { start, end } = getMonthRange(selectedMonthOffset);
 
     return trips.filter(trip => {
-      // 1. 週過濾
+      // 1. 月過濾
       const tripStart = new Date(trip.start_date);
       if (tripStart < start || tripStart > end) {
         return false;
@@ -235,11 +231,12 @@ export default function SnowbuddyBoard() {
     });
   };
 
-  // 格式化週範圍顯示
-  const formatWeekRange = (weekOffset: number): string => {
-    const { start, end } = getWeekRange(weekOffset);
-    const formatDate = (date: Date) => `${date.getMonth() + 1}/${date.getDate()}`;
-    return `${formatDate(start)} - ${formatDate(end)}`;
+  // 格式化月份顯示
+  const formatMonthLabel = (monthOffset: number): string => {
+    const { start } = getMonthRange(monthOffset);
+    const year = start.getFullYear();
+    const month = start.getMonth() + 1;
+    return `${year}/${month}`;
   };
 
   // 獲取有行程的雪場列表（按行程數量排序）
@@ -299,11 +296,11 @@ export default function SnowbuddyBoard() {
     setItemsToShow(prev => prev + 12);
   };
 
-  // 週選項（本週到未來8週）
-  const weekOptions = Array.from({ length: 9 }, (_, i) => ({
+  // 月份選項（本月到未來5個月，共6個月）
+  const monthOptions = Array.from({ length: 6 }, (_, i) => ({
     offset: i,
-    label: i === 0 ? '本週' : i === 1 ? '下週' : `下${i}週`,
-    range: formatWeekRange(i)
+    label: i === 0 ? '本月' : i === 1 ? '下月' : `${i}個月後`,
+    monthLabel: formatMonthLabel(i)
   }));
 
   return (
@@ -320,25 +317,25 @@ export default function SnowbuddyBoard() {
 
       {/* Filters */}
       <div className="mb-6 space-y-4">
-        {/* Week Filter */}
+        {/* Month Filter */}
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-sm font-medium text-gray-700">📅 時間篩選：</span>
           </div>
           <div className="flex flex-wrap gap-2">
-            {weekOptions.map(({ offset, label, range }) => (
+            {monthOptions.map(({ offset, label, monthLabel }) => (
               <button
                 key={offset}
-                onClick={() => setSelectedWeekOffset(offset)}
+                onClick={() => setSelectedMonthOffset(offset)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedWeekOffset === offset
+                  selectedMonthOffset === offset
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 <div className="flex flex-col items-center">
                   <span>{label}</span>
-                  <span className="text-xs opacity-80">{range}</span>
+                  <span className="text-xs opacity-80">{monthLabel}</span>
                 </div>
               </button>
             ))}
@@ -415,10 +412,10 @@ export default function SnowbuddyBoard() {
         <Card className="p-12 text-center">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-xl font-bold text-gray-900 mb-2">
-            {trips.length === 0 ? '目前沒有公開的行程' : '這週沒有公開的行程'}
+            {trips.length === 0 ? '目前沒有公開的行程' : '這個月沒有公開的行程'}
           </h3>
           <p className="text-gray-600 mb-6">
-            {trips.length === 0 ? '成為第一個發布行程的人吧！' : '試試選擇其他週或建立新行程'}
+            {trips.length === 0 ? '成為第一個發布行程的人吧！' : '試試選擇其他月份或建立新行程'}
           </p>
           <button
             onClick={() => navigate('/trips')}
