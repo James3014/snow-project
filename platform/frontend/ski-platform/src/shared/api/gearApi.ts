@@ -26,7 +26,7 @@ const gearApiClient = axios.create({
 
 // 添加認證攔截器
 gearApiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('auth_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
