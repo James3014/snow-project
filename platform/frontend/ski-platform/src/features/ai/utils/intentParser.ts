@@ -63,25 +63,28 @@ const ACTION_KEYWORDS = {
 
 /**
  * 檢測可見性（公開/私密）
+ *
+ * 使用精確匹配而非順序依賴：
+ * - "不公開" 優先於 "公開"（通過精確檢查否定詞）
+ * - 避免子字符串誤判
  */
 function detectVisibility(input: string): 'public' | 'private' | undefined {
   const normalized = input.toLowerCase();
 
-  // 公開關鍵字
-  const publicKeywords = ['公開', '開放', '找伴', '找雪伴', '徵伴', '揪團', 'public'];
-
-  for (const keyword of publicKeywords) {
-    if (normalized.includes(keyword)) {
-      return 'public';
+  // 精確匹配私密關鍵字（包含否定形式）
+  const privateKeywords = ['不公開', '不公开', '私密', '私人', 'private'];
+  for (const keyword of privateKeywords) {
+    if (input.includes(keyword) || normalized.includes(keyword.toLowerCase())) {
+      return 'private';
     }
   }
 
-  // 私密關鍵字（較少使用，因為私密是默認值）
-  const privateKeywords = ['私密', '不公開', '私人', 'private'];
-
-  for (const keyword of privateKeywords) {
-    if (normalized.includes(keyword)) {
-      return 'private';
+  // 公開關鍵字（排除已被否定的情況）
+  // 由於上面已經檢查過 "不公開"，這裡的 "公開" 不會被誤判
+  const publicKeywords = ['公開', '公开', '開放', '开放', '找伴', '找雪伴', '徵伴', '揪團', '揪团', 'public'];
+  for (const keyword of publicKeywords) {
+    if (input.includes(keyword) || normalized.includes(keyword.toLowerCase())) {
+      return 'public';
     }
   }
 
@@ -90,31 +93,25 @@ function detectVisibility(input: string): 'public' | 'private' | undefined {
 
 /**
  * 檢測最大雪伴人數
+ *
+ * 通用模式：[動詞] + [數字] + [量詞]
+ * 範例：找3個、徵2位、要5人、最多4人、2人一起
  */
 function detectMaxBuddies(input: string): number | undefined {
-  const normalized = input.toLowerCase();
+  // 通用模式：捕獲所有常見表達方式
+  // 格式1: 動詞 + 數字 + 量詞 (找3個、徵2位、要5人)
+  // 格式2: 數字 + 人 + 動詞 (2人一起)
+  // 格式3: 最多 + 數字 + 量詞 (最多4人)
+  const pattern = /(?:找|徵|要|最多)\s*(\d+)\s*(?:個|位|人|雪伴)?|(\d+)\s*人\s*一起/;
 
-  // 匹配模式：
-  // - "找3人"、"找3個人"、"3人"
-  // - "徵3位"、"徵3個雪伴"
-  // - "要3個人一起"
-  const patterns = [
-    /找(\d+)[個位]?人/,
-    /徵(\d+)[個位]?[人雪伴]/,
-    /(\d+)[個位]?人/,
-    /要(\d+)[個位]?人/,
-    /(\d+)人一起/,
-    /最多(\d+)[個位]?人/,
-  ];
+  const match = input.match(pattern);
+  if (match) {
+    // match[1] 是第一個捕獲組，match[2] 是第二個捕獲組
+    const count = parseInt(match[1] || match[2]);
 
-  for (const pattern of patterns) {
-    const match = normalized.match(pattern);
-    if (match) {
-      const count = parseInt(match[1]);
-      // 限制在合理範圍內（1-20人）
-      if (count >= 1 && count <= 20) {
-        return count;
-      }
+    // 限制在合理範圍內（1-20人）
+    if (count >= 1 && count <= 20) {
+      return count;
     }
   }
 
