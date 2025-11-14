@@ -58,10 +58,14 @@ function chineseNumberToInt(str: string): number {
 export function extractDuration(input: string): number | null {
   // 先移除日期部分，避免誤判
   let text = input.replace(/\d{4}[/-]\d{1,2}[/-]\d{1,2}/g, '');
+  // 移除日期範圍格式（如：12月3-12日、12-22到26）
+  text = text.replace(/\d{1,2}月\d{1,2}[日號]?[\s]*[到至~－─|\-]\s*\d{1,2}[日號]?/g, '');
+  text = text.replace(/\d{1,2}[/-]\d{1,2}[日號]?[\s]*[到至~－─|\-]\s*\d{1,2}[日號]?/g, '');
+  // 移除單獨的日期（如：12月3日）
   text = text.replace(/\d{1,2}[/-月]\d{1,2}[日號]?/g, '');
 
-  // 格式 1: "5天"、"5日"
-  const dayMatch = text.match(/(\d+)[天日]/);
+  // 格式 1: "5天"（注意：只匹配"天"，不匹配"日"以避免誤判）
+  const dayMatch = text.match(/(\d+)天/);
   if (dayMatch) {
     return parseInt(dayMatch[1]);
   }

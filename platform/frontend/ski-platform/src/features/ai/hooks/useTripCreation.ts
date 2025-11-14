@@ -18,6 +18,8 @@ export interface TripCreationData {
   startDate: Date;
   endDate?: Date;
   duration?: number;
+  visibility?: 'public' | 'private';
+  maxBuddies?: number;
 }
 
 export interface TripCreationResult {
@@ -37,7 +39,7 @@ export function useTripCreation(userId: string | undefined) {
    * 創建行程
    */
   const createTrip = async (data: TripCreationData): Promise<TripCreationResult> => {
-    const { resort, startDate, endDate: providedEndDate, duration: providedDuration } = data;
+    const { resort, startDate, endDate: providedEndDate, duration: providedDuration, visibility, maxBuddies } = data;
 
     // 1. 參數驗證
     if (!userId) {
@@ -106,6 +108,8 @@ export function useTripCreation(userId: string | undefined) {
         end_date: endDate.toISOString().split('T')[0],
         title: `${resort.resort.names.zh} ${duration}日遊`,
         trip_status: 'planning',
+        visibility: visibility || 'private',
+        max_buddies: maxBuddies || 0,
       });
 
       return {
