@@ -38,6 +38,33 @@ export function useTripCreation(userId: string | undefined) {
   /**
    * 創建行程
    */
+  /**
+   * 計算日期範圍內的天數（包括起始日和結束日）
+   *
+   * @example
+   * calculateDaysInRange(3月4日, 3月9日) => 6天 (4,5,6,7,8,9)
+   * calculateDaysInRange(12月3日, 12月12日) => 10天
+   */
+  const calculateDaysInRange = (start: Date, end: Date): number => {
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
+    const timeDiff = end.getTime() - start.getTime();
+    const daysDiff = Math.round(timeDiff / MS_PER_DAY);
+    // 包括起始日和結束日，所以要 +1
+    // 例如：從4日到9日 = 9-4 = 5天差距，但實際是6天
+    return daysDiff + 1;
+  };
+
+  /**
+   * 格式化日期為本地日期字符串 (YYYY-MM-DD)
+   * 避免使用 toISOString() 造成的時區偏移問題
+   */
+  const formatLocalDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const createTrip = async (data: TripCreationData): Promise<TripCreationResult> => {
     const { resort, startDate, endDate: providedEndDate, duration: providedDuration, visibility, maxBuddies } = data;
 
@@ -64,9 +91,7 @@ export function useTripCreation(userId: string | undefined) {
 
       if (providedEndDate) {
         endDate = providedEndDate;
-        // 從 startDate 到 endDate 計算天數
-        const diffTime = endDate.getTime() - startDate.getTime();
-        duration = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+        duration = calculateDaysInRange(startDate, endDate);
       } else {
         // 使用 duration 計算 endDate
         duration = providedDuration!;
@@ -74,7 +99,7 @@ export function useTripCreation(userId: string | undefined) {
       }
 
       // 3. 雪季處理（檢查或創建）
-      const seasonName = calculateSeasonId(startDate.toISOString().split('T')[0]);
+      const seasonName = calculateSeasonId(formatLocalDate(startDate));
       let actualSeasonId: string;
 
       try {
@@ -104,8 +129,8 @@ export function useTripCreation(userId: string | undefined) {
       const response = await tripPlanningApi.createTrip(userId, {
         season_id: actualSeasonId,
         resort_id: resort.resort.resort_id,
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0],
+        start_date: formatLocalDate(startDate),
+        end_date: formatLocalDate(endDate),
         title: `${resort.resort.names.zh} ${duration}日遊`,
         trip_status: 'planning',
         visibility: visibility || 'private',

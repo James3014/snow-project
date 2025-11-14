@@ -19,6 +19,19 @@ export type IntentAction =
   | 'UNKNOWN';       // 無法識別
 
 /**
+ * 計算日期範圍內的天數（包括起始日和結束日）
+ *
+ * @example
+ * calculateDaysInRange(3月4日, 3月9日) => 6天 (4,5,6,7,8,9)
+ */
+function calculateDaysInRange(start: Date, end: Date): number {
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const timeDiff = end.getTime() - start.getTime();
+  const daysDiff = Math.round(timeDiff / MS_PER_DAY);
+  return daysDiff + 1; // 包括起始日和結束日
+}
+
+/**
  * 解析後的意圖
  */
 export interface ParsedIntent {
@@ -94,15 +107,15 @@ function detectVisibility(input: string): 'public' | 'private' | undefined {
 /**
  * 檢測最大雪伴人數
  *
- * 通用模式：[動詞] + [數字] + [量詞]
- * 範例：找3個、徵2位、要5人、最多4人、2人一起
+ * 通用模式：[動詞] + [可選：雪友/雪伴] + [數字] + [量詞]
+ * 範例：找3個、找雪友2個、徵2位、要5人、最多4人、2人一起
  */
 function detectMaxBuddies(input: string): number | undefined {
   // 通用模式：捕獲所有常見表達方式
-  // 格式1: 動詞 + 數字 + 量詞 (找3個、徵2位、要5人)
+  // 格式1: 動詞 + [雪友/雪伴]? + 數字 + 量詞 (找3個、找雪友2個、徵2位)
   // 格式2: 數字 + 人 + 動詞 (2人一起)
   // 格式3: 最多 + 數字 + 量詞 (最多4人)
-  const pattern = /(?:找|徵|要|最多)\s*(\d+)\s*(?:個|位|人|雪伴)?|(\d+)\s*人\s*一起/;
+  const pattern = /(?:找|徵|要|最多)(?:雪友|雪伴)?\s*(\d+)\s*(?:個|位|人)?|(\d+)\s*人\s*一起/;
 
   const match = input.match(pattern);
   if (match) {
@@ -269,10 +282,9 @@ async function parseCreateTripIntent(
     }
   }
 
-  // 如果有結束日期但沒有天數，計算天數
+  // 如果有結束日期但沒有天數，計算天數（包括起始日和結束日）
   if (startDate && endDate && !duration) {
-    const diffTime = endDate.getTime() - startDate.getTime();
-    duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    duration = calculateDaysInRange(startDate, endDate);
   }
 
   // 4. 決定最終動作
