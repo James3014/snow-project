@@ -5,12 +5,13 @@ from services import db, course_tracking_service
 from models import (
     user_profile, behavior_event, notification_preference,
     course_tracking, social,
-    trip_planning as trip_planning_models
+    trip_planning as trip_planning_models,
+    gear as gear_models
 )
 from api import (
     user_profiles, behavior_events, notification_preferences, auth, admin,
     course_tracking as course_tracking_api, share_cards,
-    social as social_api, ski_map, trip_planning
+    social as social_api, ski_map, trip_planning, gear
 )
 
 # Create all tables (for development only)
@@ -20,6 +21,7 @@ notification_preference.Base.metadata.create_all(bind=db.engine)
 course_tracking.Base.metadata.create_all(bind=db.engine)
 social.Base.metadata.create_all(bind=db.engine)
 trip_planning_models.Base.metadata.create_all(bind=db.engine)
+gear_models.Base.metadata.create_all(bind=db.engine)
 
 app = FastAPI(
     title="SkiDIY User Core Service",
@@ -57,6 +59,8 @@ app.include_router(social_api.router, prefix="/social", tags=["Social Features"]
 app.include_router(ski_map.router, prefix="/ski-map", tags=["Ski Map"])
 # Trip planning
 app.include_router(trip_planning.router, prefix="/trip-planning", tags=["Trip Planning"])
+# Gear operations
+app.include_router(gear.router, prefix="/api", tags=["Gear Operations"])
 
 @app.on_event("startup")
 def startup_event():
