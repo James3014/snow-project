@@ -2,21 +2,20 @@
 Gear Operations ORM Models
 
 Linus 原則：
-1. 只有3个表，覆盖所有核心需求
-2. 用字段状态而非独立表（status='for_sale', overall_status='unsafe'）
-3. JSONB 提供灵活性但不失约束
+1. 只有3個表，覆蓋所有核心需求
+2. 用字段狀態而非獨立表（status='for_sale', overall_status='unsafe'）
+3. JSONB 提供靈活性但不失約束
 """
-from sqlalchemy import Column, String, DateTime, Date, Numeric, Text, ForeignKey, Index
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, DateTime, Date, Numeric, Text, ForeignKey, Index, JSON
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 import uuid
 
-Base = declarative_base()
+from .user_profile import Base
 
 
 class GearItem(Base):
-    """裝備主档"""
+    """裝備主檔"""
     __tablename__ = 'gear_items'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -26,17 +25,17 @@ class GearItem(Base):
     brand = Column(String(50))
     purchase_date = Column(Date)
 
-    # 状态：active, retired, for_sale, deleted
+    # 狀態：active, retired, for_sale, deleted
     status = Column(String(20), nullable=False, default='active', index=True)
 
     # 角色：personal, teaching
     role = Column(String(20), default='personal')
 
-    # 买卖欄位（不需要独立的 GearListing 表）
+    # 買賣欄位（不需要獨立的 GearListing 表）
     sale_price = Column(Numeric(10, 2))
     sale_currency = Column(String(3), default='TWD')
 
-    # 元数据
+    # 元數據
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
@@ -53,11 +52,11 @@ class GearInspection(Base):
     inspector_user_id = Column(UUID(as_uuid=True), nullable=False)
     inspection_date = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
-    # checklist: 灵活的 JSONB，例如 {"edge": "good", "bindings": "worn", "base": "scratched"}
-    checklist = Column(JSONB, nullable=False)
+    # checklist: 靈活的 JSON，例如 {"edge": "good", "bindings": "worn", "base": "scratched"}
+    checklist = Column(JSON, nullable=False)
 
     # overall_status: good, needs_attention, unsafe
-    # unsafe 就是安全标记，不需要独立的 GearSafetyFlag 表
+    # unsafe 就是安全標記，不需要獨立的 GearSafetyFlag 表
     overall_status = Column(String(20), nullable=False)
 
     notes = Column(Text)
@@ -69,7 +68,7 @@ class GearInspection(Base):
         return f"<GearInspection(id={self.id}, gear_item_id={self.gear_item_id}, status={self.overall_status})>"
 
 
-# 建立复合索引
+# 建立複合索引
 Index('idx_gear_inspections_item', GearInspection.gear_item_id)
 Index('idx_gear_inspections_date', GearInspection.inspection_date)
 
@@ -98,5 +97,5 @@ class GearReminder(Base):
         return f"<GearReminder(id={self.id}, gear_item_id={self.gear_item_id}, status={self.status})>"
 
 
-# 建立复合索引用于查询待发送的提醒
+# 建立複合索引用於查詢待發送的提醒
 Index('idx_gear_reminders_schedule', GearReminder.scheduled_at, GearReminder.status)

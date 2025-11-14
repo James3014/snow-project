@@ -20,25 +20,26 @@ export default function MyGear() {
   const [filter, setFilter] = useState<'all' | 'active' | 'for_sale'>('all');
 
   // 載入裝備列表
-  const loadGear = async () => {
+  useEffect(() => {
     if (!userId) return;
 
-    try {
-      setLoading(true);
-      setError(null);
+    const loadGear = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      const statusFilter = filter === 'all' ? undefined : filter;
-      const response = await gearApi.getMyGear({ status: statusFilter });
-      setGearItems(response.data);
-    } catch (err: any) {
-      console.error('載入裝備失敗:', err);
-      setError(err.response?.data?.detail || '載入裝備失敗，請稍後重試');
-    } finally {
-      setLoading(false);
-    }
-  };
+        const statusFilter = filter === 'all' ? undefined : filter;
+        const response = await gearApi.getMyGear({ status: statusFilter });
+        setGearItems(response.data);
+      } catch (err) {
+        console.error('載入裝備失敗:', err);
+        const error = err as { response?: { data?: { detail?: string } } };
+        setError(error.response?.data?.detail || '載入裝備失敗，請稍後重試');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  useEffect(() => {
     loadGear();
   }, [userId, filter]);
 
@@ -46,10 +47,12 @@ export default function MyGear() {
   const handleCreate = async (data: GearItemCreate) => {
     try {
       await gearApi.createGearItem(data);
-      await loadGear(); // 重新載入
+      // 觸發重新載入
+      setFilter((prev) => prev);
       setShowCreateModal(false);
-    } catch (err: any) {
-      alert(err.response?.data?.detail || '建立失敗');
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      alert(error.response?.data?.detail || '建立失敗');
     }
   };
 
@@ -59,9 +62,11 @@ export default function MyGear() {
 
     try {
       await gearApi.deleteGearItem(itemId);
-      await loadGear(); // 重新載入
-    } catch (err: any) {
-      alert(err.response?.data?.detail || '刪除失敗');
+      // 觸發重新載入
+      setFilter((prev) => prev);
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      alert(error.response?.data?.detail || '刪除失敗');
     }
   };
 
@@ -76,9 +81,11 @@ export default function MyGear() {
         sale_price: parseFloat(price),
         sale_currency: 'TWD',
       });
-      await loadGear();
-    } catch (err: any) {
-      alert(err.response?.data?.detail || '更新失敗');
+      // 觸發重新載入
+      setFilter((prev) => prev);
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      alert(error.response?.data?.detail || '更新失敗');
     }
   };
 

@@ -42,7 +42,7 @@ export interface GearInspection {
   gear_item_id: string;
   inspector_user_id: string;
   inspection_date: string;
-  checklist: Record<string, any>;
+  checklist: Record<string, unknown>;
   overall_status: 'good' | 'needs_attention' | 'unsafe';
   notes?: string;
   next_inspection_date?: string;
@@ -50,7 +50,7 @@ export interface GearInspection {
 }
 
 export interface GearInspectionCreate {
-  checklist: Record<string, any>;
+  checklist: Record<string, unknown>;
   overall_status: 'good' | 'needs_attention' | 'unsafe';
   notes?: string;
 }

@@ -29,7 +29,7 @@ export default function SnowbuddyBoard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [applyingTripId, setApplyingTripId] = useState<string | null>(null);
-  const [selectedMonthOffset, setSelectedMonthOffset] = useState<number>(0); // 0=本月, 1=下月, 2=下下月...
+  const [selectedMonthOffset, setSelectedMonthOffset] = useState<number | null>(null); // null=全部, 0=本月, 1=下月...
   const [statusFilter, setStatusFilter] = useState<string>('all'); // all, available, applied, joined, full, declined
   const [resortFilter, setResortFilter] = useState<string>('all'); // all or resort_id
   const [itemsToShow, setItemsToShow] = useState<number>(12); // 每次顯示的卡片數量
@@ -187,13 +187,24 @@ export default function SnowbuddyBoard() {
 
   // 過濾行程：按月、雪場和狀態過濾
   const getFilteredTrips = (): TripWithBuddyStatus[] => {
-    const { start, end } = getMonthRange(selectedMonthOffset);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     return trips.filter(trip => {
-      // 1. 月過濾
+      // 1. 月過濾（null = 全部未來行程）
       const tripStart = new Date(trip.start_date);
-      if (tripStart < start || tripStart > end) {
-        return false;
+
+      if (selectedMonthOffset === null) {
+        // 全部：顯示所有未來的行程
+        if (tripStart < today) {
+          return false;
+        }
+      } else {
+        // 特定月份
+        const { start, end } = getMonthRange(selectedMonthOffset);
+        if (tripStart < start || tripStart > end) {
+          return false;
+        }
       }
 
       // 2. 雪場過濾
@@ -296,12 +307,15 @@ export default function SnowbuddyBoard() {
     setItemsToShow(prev => prev + 12);
   };
 
-  // 月份選項（本月到未來5個月，共6個月）
-  const monthOptions = Array.from({ length: 6 }, (_, i) => ({
-    offset: i,
-    label: i === 0 ? '本月' : i === 1 ? '下月' : `${i}個月後`,
-    monthLabel: formatMonthLabel(i)
-  }));
+  // 月份選項（全部 + 本月到未來5個月）
+  const monthOptions = [
+    { offset: null as number | null, label: '全部', monthLabel: '所有未來行程' },
+    ...Array.from({ length: 6 }, (_, i) => ({
+      offset: i,
+      label: i === 0 ? '本月' : i === 1 ? '下月' : `${i}個月後`,
+      monthLabel: formatMonthLabel(i)
+    }))
+  ];
 
   return (
     <div className="container mx-auto px-4 py-8">
