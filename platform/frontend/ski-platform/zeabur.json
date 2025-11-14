@@ -12,6 +12,9 @@
     "VITE_RESORT_API": {
       "default": "https://resort-api.zeabur.app"
     },
+    "VITE_GEAR_API_URL": {
+      "default": "https://gear-api.zeabur.app"
+    },
     "VITE_ENV": {
       "default": "production"
     }

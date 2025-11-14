@@ -2,7 +2,7 @@
  * Snowbuddy Board Page
  * 雪伴公佈欄頁面 - 顯示所有公開的行程
  */
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
@@ -33,128 +33,86 @@ export default function SnowbuddyBoard() {
   const [statusFilter, setStatusFilter] = useState<string>('all'); // all, available, applied, joined, full, declined
   const [resortFilter, setResortFilter] = useState<string>('all'); // all or resort_id
   const [itemsToShow, setItemsToShow] = useState<number>(12); // 每次顯示的卡片數量
-  const hasAutoSelectedWeek = useRef(false); // 追蹤是否已自動選擇過週
 
-  const loadPublicTrips = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // Linus 原則：簡單直接，只執行一次
+  useEffect(() => {
+    let cancelled = false;
 
-      // 獲取所有公開的行程（使用後端的 /trips/public API）
-      const publicTrips = await tripPlanningApi.getPublicTrips();
+    async function load() {
+      try {
+        setLoading(true);
+        setError(null);
 
-      // 獲取每個行程的申請狀態
-      const tripsWithStatus: TripWithBuddyStatus[] = await Promise.all(
-        publicTrips.map(async (trip) => {
-          try {
-            // 獲取行程的所有雪伴申請
-            const buddies = await tripPlanningApi.getTripBuddies(trip.trip_id);
-            // 查找當前用戶的申請
-            const myRequest = buddies.find(b => b.user_id === userId);
+        // 獲取所有公開的行程
+        const publicTrips = await tripPlanningApi.getPublicTrips();
+        if (cancelled) return;
 
-            // 如果是自己的行程，計算待處理申請數量
-            const isMyTrip = trip.owner_info.user_id === userId;
-            const pendingCount = isMyTrip
-              ? buddies.filter(b => b.status === 'pending').length
-              : 0;
+        // 獲取每個行程的申請狀態
+        const tripsWithStatus: TripWithBuddyStatus[] = await Promise.all(
+          publicTrips.map(async (trip) => {
+            try {
+              const buddies = await tripPlanningApi.getTripBuddies(trip.trip_id);
+              const myRequest = buddies.find(b => b.user_id === userId);
+              const isMyTrip = trip.owner_info.user_id === userId;
+              const pendingCount = isMyTrip ? buddies.filter(b => b.status === 'pending').length : 0;
 
-            return {
-              ...trip,
-              user_id: trip.owner_info.user_id, // 從 owner_info 提取 user_id
-              myBuddyStatus: myRequest?.status as any || null,
-              myBuddyId: myRequest?.buddy_id || null,
-              pendingRequestCount: pendingCount,
-              hasNewRequests: pendingCount > 0
-            };
-          } catch (err) {
-            // 如果獲取失敗，返回原始行程
-            return {
-              ...trip,
-              user_id: trip.owner_info.user_id,
-              myBuddyStatus: null,
-              myBuddyId: null,
-              pendingRequestCount: 0,
-              hasNewRequests: false
-            };
-          }
-        })
-      );
+              return {
+                ...trip,
+                user_id: trip.owner_info.user_id,
+                myBuddyStatus: myRequest?.status as any || null,
+                myBuddyId: myRequest?.buddy_id || null,
+                pendingRequestCount: pendingCount,
+                hasNewRequests: pendingCount > 0
+              };
+            } catch {
+              return {
+                ...trip,
+                user_id: trip.owner_info.user_id,
+                myBuddyStatus: null,
+                myBuddyId: null,
+                pendingRequestCount: 0,
+                hasNewRequests: false
+              };
+            }
+          })
+        );
 
-      // 排序：申請過的行程和有待處理申請的自己行程置頂
-      const sortedTrips = tripsWithStatus.sort((a, b) => {
-        // 1. 我申請過的行程排最前面
-        if (a.myBuddyStatus && !b.myBuddyStatus) return -1;
-        if (!a.myBuddyStatus && b.myBuddyStatus) return 1;
+        if (cancelled) return;
 
-        // 2. 我的行程（有待處理申請）排第二
-        if (a.hasNewRequests && !b.hasNewRequests) return -1;
-        if (!a.hasNewRequests && b.hasNewRequests) return 1;
-
-        // 3. 都有申請或都沒申請，按日期排序（最近的在前）
-        return new Date(a.start_date).getTime() - new Date(b.start_date).getTime();
-      });
-
-      setTrips(sortedTrips);
-
-      // 自動選擇有行程的週（僅首次載入時）
-      if (!hasAutoSelectedWeek.current && sortedTrips.length > 0) {
-        // 檢查本週是否有行程
-        const currentWeekStart = new Date();
-        currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
-        currentWeekStart.setHours(0, 0, 0, 0);
-
-        const currentWeekEnd = new Date(currentWeekStart);
-        currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
-        currentWeekEnd.setHours(23, 59, 59, 999);
-
-        const hasTripsInCurrentWeek = sortedTrips.some(trip => {
-          const tripStart = new Date(trip.start_date);
-          return tripStart >= currentWeekStart && tripStart <= currentWeekEnd;
+        // 排序：我申請的 > 我的（有申請） > 其他
+        const sortedTrips = tripsWithStatus.sort((a, b) => {
+          if (a.myBuddyStatus && !b.myBuddyStatus) return -1;
+          if (!a.myBuddyStatus && b.myBuddyStatus) return 1;
+          if (a.hasNewRequests && !b.hasNewRequests) return -1;
+          if (!a.hasNewRequests && b.hasNewRequests) return 1;
+          return new Date(a.start_date).getTime() - new Date(b.start_date).getTime();
         });
 
-        // 如果本週沒有行程，找到第一個有行程的週
-        if (!hasTripsInCurrentWeek) {
-          for (let i = 0; i < 9; i++) {
-            const weekStart = new Date();
-            weekStart.setDate(weekStart.getDate() + i * 7 - weekStart.getDay());
-            weekStart.setHours(0, 0, 0, 0);
+        setTrips(sortedTrips);
 
-            const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekEnd.getDate() + 6);
-            weekEnd.setHours(23, 59, 59, 999);
-
-            const hasTripsInWeek = sortedTrips.some(trip => {
-              const tripStart = new Date(trip.start_date);
-              return tripStart >= weekStart && tripStart <= weekEnd;
-            });
-
-            if (hasTripsInWeek) {
-              setSelectedWeekOffset(i);
-              break;
-            }
-          }
+        // 載入雪場資料
+        try {
+          const resortsData = await resortApiService.getAllResorts();
+          if (!cancelled) setResorts(resortsData.items);
+        } catch (err) {
+          console.error('載入雪場資料失敗:', err);
         }
-        hasAutoSelectedWeek.current = true;
-      }
-
-      // 載入雪場資料
-      try {
-        const resortsData = await resortApiService.getAllResorts();
-        setResorts(resortsData.items);
       } catch (err) {
-        console.error('載入雪場資料失敗:', err);
+        if (!cancelled) {
+          console.error('載入公開行程失敗:', err);
+          setError('載入公開行程失敗，請稍後再試');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    } catch (err) {
-      console.error('載入公開行程失敗:', err);
-      setError('載入公開行程失敗，請稍後再試');
-    } finally {
-      setLoading(false);
     }
-  }, [userId]); // 依賴 userId
 
-  useEffect(() => {
-    loadPublicTrips();
-  }, [loadPublicTrips]);
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []); // 只執行一次
 
   const handleApply = async (tripId: string) => {
     if (!userId) {
@@ -167,8 +125,8 @@ export default function SnowbuddyBoard() {
       setApplyingTripId(tripId);
       await tripPlanningApi.requestToJoinTrip(tripId, userId);
       alert('申請成功！請等待行程主人回應');
-      // 重新載入列表以更新申請狀態
-      await loadPublicTrips();
+      // Linus 原則：簡單直接
+      window.location.reload();
     } catch (err: any) {
       console.error('申請失敗:', err);
 
@@ -200,8 +158,8 @@ export default function SnowbuddyBoard() {
       setApplyingTripId(tripId);
       await tripPlanningApi.cancelBuddyRequest(tripId, buddyId, userId);
       alert('已取消申請');
-      // 重新載入列表以更新申請狀態
-      await loadPublicTrips();
+      // Linus 原則：簡單直接
+      window.location.reload();
     } catch (err: any) {
       console.error('取消申請失敗:', err);
       alert('取消申請失敗，請稍後再試');
@@ -321,7 +279,7 @@ export default function SnowbuddyBoard() {
         <Card className="p-12 text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <button
-            onClick={loadPublicTrips}
+            onClick={() => window.location.reload()}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             重試
