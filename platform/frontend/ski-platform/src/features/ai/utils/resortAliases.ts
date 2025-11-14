@@ -192,7 +192,7 @@ export const RESORT_ALIASES: ResortAliases[] = [
   // === 其他地區 ===
   {
     resort_id: 'fukushima_inawashiro',
-    aliases: ['猪苗代滑雪場', '猪苗代', 'inawashiro'],
+    aliases: ['猪苗代滑雪場', '猪苗代', '豬苗代滑雪場', '豬苗代', 'inawashiro'],
     priority: 6,
   },
   {

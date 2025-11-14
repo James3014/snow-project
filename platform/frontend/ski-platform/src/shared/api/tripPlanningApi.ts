@@ -9,6 +9,7 @@ import type {
   SeasonUpdate,
   SeasonStats,
   Trip,
+  TripSummary,
   TripCreate,
   TripBatchCreate,
   TripUpdate,
@@ -71,6 +72,14 @@ export const tripPlanningApi = {
     return userCoreApi.get<Trip[]>(`/trip-planning/trips?${params}`);
   },
 
+  /** 獲取所有公開行程（用於雪伴公佈欄） */
+  getPublicTrips: (skip: number = 0, limit: number = 100) => {
+    const params = new URLSearchParams();
+    if (skip > 0) params.append('skip', skip.toString());
+    if (limit !== 100) params.append('limit', limit.toString());
+    return userCoreApi.get<TripSummary[]>(`/trip-planning/trips/public${params.toString() ? '?' + params : ''}`);
+  },
+
   /** 獲取單個行程 */
   getTrip: (tripId: string, userId?: string) => {
     const params = userId ? `?user_id=${userId}` : '';
@@ -118,6 +127,10 @@ export const tripPlanningApi = {
   /** 獲取行程的所有雪伴 */
   getTripBuddies: (tripId: string) =>
     userCoreApi.get<BuddyInfo[]>(`/trip-planning/trips/${tripId}/buddies`),
+
+  /** 取消雪伴申請 */
+  cancelBuddyRequest: (tripId: string, buddyId: string, userId: string) =>
+    userCoreApi.delete(`/trip-planning/trips/${tripId}/buddy-requests/${buddyId}?user_id=${userId}`),
 
   // ==================== 探索和推薦 ====================
 

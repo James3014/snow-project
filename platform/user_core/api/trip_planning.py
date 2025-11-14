@@ -234,6 +234,24 @@ def get_trips(
 
 
 @router.get(
+    "/trips/public",
+    response_model=List[tp_schemas.TripSummary],
+    summary="Get all public trips for Snowbuddy Board"
+)
+def get_public_trips(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=500),
+    db_session: Session = Depends(db.get_db)
+):
+    """Get all public trips visible on the Snowbuddy Board."""
+    return trip_planning_service.get_public_trips_with_owner_info(
+        db=db_session,
+        skip=skip,
+        limit=limit
+    )
+
+
+@router.get(
     "/trips/{trip_id}",
     response_model=tp_schemas.Trip,
     summary="Get a specific trip"
@@ -397,11 +415,57 @@ def get_trip_buddies(
     trip_id: uuid.UUID,
     db_session: Session = Depends(db.get_db)
 ):
-    """Get all buddies for a trip."""
-    return trip_planning_service.get_trip_buddies(
+    """Get all buddies for a trip with user information."""
+    from models.user_profile import UserProfile
+
+    buddies = trip_planning_service.get_trip_buddies(
         db=db_session,
         trip_id=trip_id
     )
+
+    # 填充每個 buddy 的用戶顯示名稱
+    result = []
+    for buddy in buddies:
+        user = db_session.query(UserProfile).filter(
+            UserProfile.user_id == buddy.user_id
+        ).first()
+
+        buddy_info = tp_schemas.BuddyInfo(
+            buddy_id=buddy.buddy_id,
+            user_id=buddy.user_id,
+            user_display_name=user.display_name if user else None,
+            user_avatar_url=user.avatar_url if user else None,
+            role=buddy.role,
+            status=buddy.status,
+            requested_at=buddy.requested_at,
+            joined_at=buddy.joined_at
+        )
+        result.append(buddy_info)
+
+    return result
+
+
+@router.delete(
+    "/trips/{trip_id}/buddy-requests/{buddy_id}",
+    summary="Cancel a buddy request",
+    status_code=204
+)
+def cancel_buddy_request(
+    trip_id: uuid.UUID,
+    buddy_id: uuid.UUID,
+    user_id: uuid.UUID = Query(..., description="User ID of the requester"),
+    db_session: Session = Depends(db.get_db)
+):
+    """Cancel a pending buddy request."""
+    try:
+        trip_planning_service.cancel_buddy_request(
+            db=db_session,
+            trip_id=trip_id,
+            buddy_id=buddy_id,
+            user_id=user_id
+        )
+    except trip_planning_service.BuddyRequestError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # ==================== Share Endpoints ====================

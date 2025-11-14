@@ -463,6 +463,11 @@ function ResortGroupedTripsView({
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusBadge.class}`}>
                             {statusBadge.text}
                           </span>
+                          {trip.visibility === 'public' && (
+                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              📢 已發布
+                            </span>
+                          )}
                           {trip.title && (
                             <span className="text-sm text-gray-600">{trip.title}</span>
                           )}
