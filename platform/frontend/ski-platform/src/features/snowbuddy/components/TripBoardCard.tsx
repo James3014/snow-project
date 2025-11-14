@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '@/shared/components/Card';
-import type { TripSummary } from '@/features/trip-planning/types';
+import type { TripSummary, BuddyStatus } from '@/features/trip-planning/types';
 import type { Resort } from '@/shared/data/resorts';
 
 interface TripBoardCardProps {
@@ -15,7 +15,7 @@ interface TripBoardCardProps {
   onCancel?: (tripId: string, buddyId: string) => void;
   isApplying?: boolean;
   currentUserId?: string;
-  buddyStatus?: 'pending' | 'accepted' | 'declined' | null;
+  buddyStatus?: BuddyStatus | null;
   buddyId?: string | null;
 }
 
