@@ -299,11 +299,6 @@ export default function SnowbuddyBoard() {
     setItemsToShow(prev => prev + 12);
   };
 
-  // 當過濾條件改變時，重置分頁
-  useEffect(() => {
-    setItemsToShow(12);
-  }, [selectedWeekOffset, statusFilter, resortFilter]);
-
   // 週選項（本週到未來8週）
   const weekOptions = Array.from({ length: 9 }, (_, i) => ({
     offset: i,

@@ -1,7 +1,7 @@
 """
 Send Gear Reminders Job
 
-Linus 原则：用最简单的方式实现定时提醒
+Linus 原則：用最簡單的方式实现定时提醒
 
 用法：
     python jobs/send_reminders.py
@@ -38,7 +38,7 @@ def send_pending_reminders(use_stub: bool = True):
     1. 查询所有 status='pending' AND scheduled_at <= NOW()
     2. 对每个提醒发送通知
     3. 更新 sent_at 和 status='sent'
-    4. 失败的记录日志但不重试太多次
+    4. 失败的記錄日志但不重试太多次
     """
     with get_db_context() as db:
         # 查询待发送的提醒
@@ -57,7 +57,7 @@ def send_pending_reminders(use_stub: bool = True):
 
         for reminder in pending_reminders:
             try:
-                # 获取装备信息以找到 user_id
+                # 取得裝備信息以找到 user_id
                 gear_item = db.query(GearItem).filter(
                     GearItem.id == reminder.gear_item_id
                 ).first()
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     """
     直接运行此脚本来发送提醒
 
-    可以通过环境变量控制是否使用 stub：
+    可以通过環境變數控制是否使用 stub：
     USE_NOTIFICATION_STUB=false python jobs/send_reminders.py
     """
     use_stub = os.environ.get('USE_NOTIFICATION_STUB', 'true').lower() == 'true'

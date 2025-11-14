@@ -2,8 +2,8 @@
 Gear Marketplace API
 
 最简可行方案：
-- 搜索待售装备
-- 联系卖家（发站内信或 email）
+- 搜索待售裝備
+- 聯繫卖家（发站内信或 email）
 - 不做复杂的交易流程、支付、状态机
 """
 from fastapi import APIRouter, Depends, HTTPException, status, Query
@@ -35,10 +35,10 @@ def search_marketplace(
     db: Session = Depends(get_db)
 ):
     """
-    搜索待售装备（不需要登录）
+    搜索待售裝備（不需要登录）
 
-    简单实用：
-    - 只显示 status='for_sale' 的装备
+    簡單实用：
+    - 只显示 status='for_sale' 的裝備
     - 支持基本过滤：类别、价格范围
     - 不暴露卖家敏感信息
     """
@@ -70,11 +70,11 @@ def contact_seller(
     db: Session = Depends(get_db)
 ):
     """
-    联系卖家
+    聯繫卖家
 
     实用主义：
-    - 先用简单的方式：返回卖家联系方式或发站内信
-    - 不做复杂的聊天系统
+    - 先用簡單的方式：返回卖家聯繫方式或发站内信
+    - 不做复杂的聊天系統
     - 让买卖双方自己沟通（微信、站内信）
     """
     item = db.query(GearItem).filter(
@@ -94,11 +94,11 @@ def contact_seller(
             detail="Cannot contact yourself"
         )
 
-    # TODO: 实现站内信系统或 email 通知
+    # TODO: 实现站内信系統或 email 通知
     # 现在先返回成功，实际的消息发送可以后续实现
     return {
         "status": "success",
         "message": "Contact request sent to seller",
         "seller_id": str(item.user_id),
-        # 生产环境中，这里应该触发站内信或 email
+        # 生產環境中，这里應該触发站内信或 email
     }

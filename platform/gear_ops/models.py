@@ -1,7 +1,7 @@
 """
 Gear Operations ORM Models
 
-Linus 原则：
+Linus 原則：
 1. 只有3个表，覆盖所有核心需求
 2. 用字段状态而非独立表（status='for_sale', overall_status='unsafe'）
 3. JSONB 提供灵活性但不失约束
@@ -16,7 +16,7 @@ Base = declarative_base()
 
 
 class GearItem(Base):
-    """装备主档"""
+    """裝備主档"""
     __tablename__ = 'gear_items'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -45,7 +45,7 @@ class GearItem(Base):
 
 
 class GearInspection(Base):
-    """装备检查记录"""
+    """裝備檢查記錄"""
     __tablename__ = 'gear_inspections'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -69,13 +69,13 @@ class GearInspection(Base):
         return f"<GearInspection(id={self.id}, gear_item_id={self.gear_item_id}, status={self.overall_status})>"
 
 
-# 创建复合索引
+# 建立复合索引
 Index('idx_gear_inspections_item', GearInspection.gear_item_id)
 Index('idx_gear_inspections_date', GearInspection.inspection_date)
 
 
 class GearReminder(Base):
-    """装备提醒"""
+    """裝備提醒"""
     __tablename__ = 'gear_reminders'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -98,5 +98,5 @@ class GearReminder(Base):
         return f"<GearReminder(id={self.id}, gear_item_id={self.gear_item_id}, status={self.status})>"
 
 
-# 创建复合索引用于查询待发送的提醒
+# 建立复合索引用于查询待发送的提醒
 Index('idx_gear_reminders_schedule', GearReminder.scheduled_at, GearReminder.status)

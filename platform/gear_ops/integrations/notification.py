@@ -1,7 +1,7 @@
 """
 Notification System Integration
 
-简单实用：调用通知 API，失败重试
+簡單实用：调用通知 API，失败重试
 """
 import httpx
 import logging
@@ -28,8 +28,8 @@ def send_notification(
     发送通知
 
     实用主义：
-    - 如果通知系统不可用，记录日志但不崩溃
-    - 简单的指数退避重试
+    - 如果通知系統不可用，記錄日志但不崩溃
+    - 簡單的指数退避重试
     """
     url = f"{settings.notification_gateway_url}/notifications"
 
@@ -65,7 +65,7 @@ def send_notification(
 
 def send_notification_stub(user_id: UUID, message: str) -> bool:
     """
-    Stub 实现：如果通知系统不存在，先打印到 console
+    Stub 实现：如果通知系統不存在，先打印到 console
 
     这样不会阻塞开发
     """
