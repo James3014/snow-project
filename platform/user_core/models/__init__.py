@@ -6,6 +6,7 @@ from .notification_preference import NotificationPreference
 from .course_tracking import CourseVisit, CourseRecommendation, UserAchievement, AchievementDefinition
 from .social import UserFollow, ActivityFeedItem, ActivityLike, ActivityComment
 from .trip_planning import Season, Trip, TripBuddy, TripShare
+from .gear import GearItem, GearInspection, GearReminder
 from .enums import (
     UserStatus, NotificationStatus, LocaleVerificationStatus, NotificationFrequency,
     TripFlexibility, FlightStatus, AccommodationStatus, TripStatus,
@@ -31,6 +32,9 @@ __all__ = [
     'Trip',
     'TripBuddy',
     'TripShare',
+    'GearItem',
+    'GearInspection',
+    'GearReminder',
     'UserStatus',
     'NotificationStatus',
     'LocaleVerificationStatus',
