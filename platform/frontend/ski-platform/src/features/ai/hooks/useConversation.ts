@@ -97,23 +97,23 @@ export function useConversation(): UseConversationReturn {
   };
 
   /**
-   * 处理用户输入
+   * 處理用戶輸入
    */
   const processInput = async (input: string): Promise<{
     response: ConversationResponse;
     updatedContext: ConversationContext;
   }> => {
-    // 设置处理中状态
+    // 設置處理中狀態
     setState(prev => ({ ...prev, isProcessing: true, suggestions: [] }));
 
     try {
-      // 调用对话引擎
+      // 調用對話引擎
       const { response, updatedContext } = await processUserInputEngine(
         input,
         state.context
       );
 
-      // 更新状态
+      // 更新狀態
       setState(prev => ({
         ...prev,
         context: updatedContext,
@@ -122,10 +122,10 @@ export function useConversation(): UseConversationReturn {
         isProcessing: false,
       }));
 
-      // 返回 response 和 updatedContext（组件需要最新的 context）
+      // 返回 response 和 updatedContext（組件需要最新的 context）
       return { response, updatedContext };
     } catch (error) {
-      // 处理错误
+      // 處理錯誤
       const errorMessage = error instanceof Error ? error.message : '發生未知錯誤';
       const { response: errorResponse, updatedContext: errorContext } =
         handleError(state.context, errorMessage);
@@ -143,7 +143,7 @@ export function useConversation(): UseConversationReturn {
   };
 
   /**
-   * 处理错误（手动）
+   * 處理錯誤（手動）
    */
   const handleErrorManual = (error: Error | string) => {
     const errorMessage = error instanceof Error ? error.message : error;
@@ -162,7 +162,7 @@ export function useConversation(): UseConversationReturn {
   };
 
   /**
-   * 更新响应（用于特殊情况，如创建行程成功后）
+   * 更新響應（用於特殊情況，如創建行程成功後）
    */
   const updateResponse = (response: ConversationResponse) => {
     setState(prev => ({
@@ -173,14 +173,14 @@ export function useConversation(): UseConversationReturn {
   };
 
   /**
-   * 重置到初始状态
+   * 重置到初始狀態
    */
   const reset = () => {
     setState(createInitialState());
   };
 
   /**
-   * 重置到主菜单
+   * 重置到主選單
    */
   const resetToMenu = () => {
     setState(prev => ({
@@ -192,7 +192,7 @@ export function useConversation(): UseConversationReturn {
   };
 
   return {
-    // 状态
+    // 狀態
     messages: state.messages,
     buttons: state.buttons,
     suggestions: state.suggestions,
