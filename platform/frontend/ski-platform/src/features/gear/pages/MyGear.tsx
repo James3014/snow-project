@@ -2,7 +2,7 @@
  * My Gear Page
  * 我的裝備管理頁面
  *
- * Linus 原则：简单直接，可以工作就行
+ * Linus 原則：簡單直接，可以工作就行
  */
 import { useState, useEffect } from 'react';
 import { useAppSelector } from '@/store/hooks';
@@ -58,7 +58,7 @@ export default function MyGear() {
 
   // 刪除裝備
   const handleDelete = async (itemId: string) => {
-    if (!confirm('確定要刪除这个裝備吗？')) return;
+    if (!confirm('確定要刪除這個裝備嗎？')) return;
 
     try {
       await gearApi.deleteGearItem(itemId);
@@ -109,7 +109,7 @@ export default function MyGear() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* 标题和操作栏 */}
+      {/* 標題和操作欄 */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">我的裝備</h1>
@@ -123,7 +123,7 @@ export default function MyGear() {
         </button>
       </div>
 
-      {/* 过滤器 */}
+      {/* 過濾器 */}
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setFilter('all')}
@@ -161,15 +161,15 @@ export default function MyGear() {
       {gearItems.length === 0 ? (
         <EmptyState
           icon="📦"
-          title="还没有裝備"
-          description="开始添加你的滑雪裝備吧"
+          title="還沒有裝備"
+          description="開始添加你的滑雪裝備吧"
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {gearItems.map((item) => (
             <Card key={item.id} className="hover:shadow-lg transition-shadow">
               <div className="p-6">
-                {/* 裝備名称和状态 */}
+                {/* 裝備名稱和狀態 */}
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
                   <span
@@ -189,7 +189,7 @@ export default function MyGear() {
                   </span>
                 </div>
 
-                {/* 裝備信息 */}
+                {/* 裝備資訊 */}
                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                   {item.category && (
                     <div>
@@ -207,12 +207,12 @@ export default function MyGear() {
                   </div>
                   {item.status === 'for_sale' && item.sale_price && (
                     <div className="text-blue-600 font-semibold">
-                      售价：{item.sale_currency} ${item.sale_price}
+                      售價：{item.sale_currency} ${item.sale_price}
                     </div>
                   )}
                 </div>
 
-                {/* 操作按钮 */}
+                {/* 操作按鈕 */}
                 <div className="flex gap-2">
                   {item.status === 'active' && (
                     <button
@@ -246,7 +246,7 @@ export default function MyGear() {
   );
 }
 
-// 简单的建立裝備 Modal
+// 簡單的建立裝備 Modal
 function CreateGearModal({
   onClose,
   onCreate,
@@ -264,7 +264,7 @@ function CreateGearModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) {
-      alert('请输入裝備名称');
+      alert('請輸入裝備名稱');
       return;
     }
     onCreate(formData);
@@ -278,7 +278,7 @@ function CreateGearModal({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                裝備名称 *
+                裝備名稱 *
               </label>
               <input
                 type="text"

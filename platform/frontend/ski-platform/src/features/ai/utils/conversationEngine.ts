@@ -126,7 +126,7 @@ function formatDate(date: Date): string {
  * 用於刪除行程時生成人類可讀的標識符。
  * 優先級：編號 > 雪場 > 日期
  *
- * @param intent - 解析後的意圖（包含行程識別信息）
+ * @param intent - 解析後的意圖（包含行程識別資訊）
  * @returns 行程標識符字串（例如："第 1 個行程"、"苗場 的行程"）
  */
 function buildTripIdentifier(intent: ParsedIntent): string {
@@ -582,7 +582,7 @@ async function handleResortInput(
   const listResponse = checkAndHandleResortListRequest(input, context, '例如：「二世谷」、「白馬」、「苗場」');
   if (listResponse) return listResponse;
 
-  // 2. 解析雪場信息
+  // 2. 解析雪場資訊
   const intent = await parseIntent(`建立行程 ${input}`);
 
   // 3. 根據是否找到雪場分發處理
@@ -605,7 +605,7 @@ function handleFoundResort(
   // 用戶可能在第一次輸入時已提供日期（如"3月20-25去妙高"）
   const { startDate, endDate, duration } = updatedContext.tripData;
 
-  // 場景1：完整信息（雪場 + 日期 + 天數），直接創建
+  // 場景1：完整資訊（雪場 + 日期 + 天數），直接創建
   if (startDate && (endDate || duration)) {
     return prepareCreation(updatedContext);
   }

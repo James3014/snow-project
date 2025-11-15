@@ -1,6 +1,6 @@
 /**
  * Button Component
- * 按钮组件
+ * 按鈕組件
  */
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
