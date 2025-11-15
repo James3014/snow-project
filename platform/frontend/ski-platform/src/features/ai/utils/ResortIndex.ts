@@ -1,12 +1,12 @@
 /**
- * ResortIndex - 高效的雪場索引系统
+ * ResortIndex - 高效的雪場索引系統
  *
- * 核心改进：
- * - 使用 Map 实现 O(1) 查找（替代 O(n) 线性搜索）
- * - 预构建索引，避免重复計算
- * - 清晰的数据结构设计
+ * 核心改進：
+ * - 使用 Map 實現 O(1) 查找（替代 O(n) 線性搜索）
+ * - 預構建索引，避免重複計算
+ * - 清晰的數據結構設計
  *
- * Linus 原则：
+ * Linus 原則：
  * "Bad programmers worry about the code. Good programmers worry about data structures."
  */
 
@@ -28,14 +28,14 @@ export interface ResortMatch {
 }
 
 /**
- * 雪場索引类 - 使用 Map 实现高效查找
+ * 雪場索引類 - 使用 Map 實現高效查找
  */
 export class ResortIndex {
-  // 核心索引数据结构
+  // 核心索引數據結構
   private resortIdMap: Map<string, Resort>;           // resort_id -> Resort
-  private exactMatchMap: Map<string, Resort[]>;       // 小写精確名 -> Resort[]
-  private aliasMap: Map<string, Resort[]>;            // 小写别名 -> Resort[]
-  private groupKeywordMap: Map<string, Resort[]>;     // 雪場群关键词 -> Resort[]
+  private exactMatchMap: Map<string, Resort[]>;       // 小寫精確名 -> Resort[]
+  private aliasMap: Map<string, Resort[]>;            // 小寫別名 -> Resort[]
+  private groupKeywordMap: Map<string, Resort[]>;     // 雪場群關鍵詞 -> Resort[]
   private resorts: Resort[];
 
   constructor(resorts: Resort[]) {

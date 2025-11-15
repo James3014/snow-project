@@ -99,7 +99,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, onLike, onComment }) => {
 
   return (
     <div className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4 mb-4">
-      {/* 用戶信息 */}
+      {/* 用戶資訊 */}
       <div className="flex items-center mb-3">
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
           {item.user?.display_name?.[0] || '?'}

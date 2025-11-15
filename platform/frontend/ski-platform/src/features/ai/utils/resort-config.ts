@@ -1,31 +1,31 @@
 /**
  * 雪場配置文件
- * 集中管理所有雪場相关的配置常量
+ * 集中管理所有雪場相關的配置常量
  *
- * 遵循 DRY 原则 - 单一数据源
+ * 遵循 DRY 原則 - 單一數據源
  */
 
 import type { Resort } from '@/shared/data/resorts';
 
 /**
  * 雪場群配置
- * 用於處理一个地区有多个雪場的情況（如白马、二世谷等）
+ * 用於處理一個地區有多個雪場的情況（如白馬、二世谷等）
  */
 export interface ResortGroup {
-  /** 触发该群組的关键词 */
+  /** 觸發該群組的關鍵詞 */
   keywords: string[];
-  /** 群組内雪場的名称列表（用於顯示建議）*/
+  /** 群組內雪場的名稱列表（用於顯示建議）*/
   names: string[];
-  /** 过滤函数，判断一个雪場是否属于该群組 */
+  /** 過濾函數，判斷一個雪場是否屬於該群組 */
   filter: (resort: Resort) => boolean;
 }
 
 /**
  * 雪場群配置列表
  *
- * 当用戶输入群組关键词时：
- * - 如果群組只有1个雪場 → 直接返回（高信心度）
- * - 如果群組有多个雪場 → 返回第一个但降低信心度，触发建議系统
+ * 當用戶輸入群組關鍵詞時：
+ * - 如果群組只有1個雪場 → 直接返回（高信心度）
+ * - 如果群組有多個雪場 → 返回第一個但降低信心度，觸發建議系統
  */
 export const RESORT_GROUPS: ResortGroup[] = [
   {
@@ -60,22 +60,22 @@ export const RESORT_GROUPS: ResortGroup[] = [
 ];
 
 /**
- * 匹配信心度枚举
+ * 匹配信心度枚舉
  *
- * 简化版信心度系统（遵循 Linus 建議）：
+ * 簡化版信心度系統（遵循 Linus 建議）：
  * - EXACT: 精確匹配，直接使用
  * - HIGH: 高置信度，可能需要確認但通常可用
  * - LOW: 需要用戶選擇確認
  *
- * 设计原则：
+ * 設計原則：
  * "Perfection is achieved not when there is nothing more to add,
  *  but when there is nothing left to take away." - Antoine de Saint-Exupéry
  */
 export const MatchConfidence = {
-  /** 精確匹配（1.0）- 直接使用，无需確認 */
+  /** 精確匹配（1.0）- 直接使用，無需確認 */
   EXACT: 1.0,
 
-  /** 高置信度（0.8）- 通常可用，某些场景需要確認 */
+  /** 高置信度（0.8）- 通常可用，某些場景需要確認 */
   HIGH: 0.8,
 
   /** 低置信度（0.5）- 需要用戶選擇確認 */
