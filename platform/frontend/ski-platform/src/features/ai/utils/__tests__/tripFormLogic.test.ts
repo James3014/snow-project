@@ -11,10 +11,6 @@ import {
   updateFormFromInput,
   getCurrentState,
   generateResponse,
-  type TripForm,
-  type FormField,
-  type ResortMatch,
-  type ConversationState,
 } from '../tripFormLogic';
 
 // ==================== 測試套件 ====================
@@ -725,7 +721,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
 
         form = await updateFormFromInput(form, '野澤 3月20日 5天');
         expect(form.duration.status).toBe('filled');
-        expect(form.duration.value).toBe(5);
+        if (form.duration.status === 'filled') {
+          expect(form.duration.value).toBe(5);
+        }
 
         // 改變天數
         form = await updateFormFromInput(form, '改成7天');

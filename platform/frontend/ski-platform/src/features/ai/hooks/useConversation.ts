@@ -16,7 +16,7 @@ import {
   handleError,
   type ConversationContext,
   type ConversationResponse,
-} from '../utils/conversationEngine';
+} from '../utils/conversationEngineV2';
 
 /**
  * 對話狀態
@@ -128,7 +128,7 @@ export function useConversation(): UseConversationReturn {
       // 處理錯誤
       const errorMessage = error instanceof Error ? error.message : '發生未知錯誤';
       const { response: errorResponse, updatedContext: errorContext } =
-        handleError(state.context, errorMessage);
+        handleError(errorMessage, state.context);
 
       setState(prev => ({
         ...prev,
@@ -148,7 +148,7 @@ export function useConversation(): UseConversationReturn {
   const handleErrorManual = (error: Error | string) => {
     const errorMessage = error instanceof Error ? error.message : error;
     const { response: errorResponse, updatedContext: errorContext } =
-      handleError(state.context, errorMessage);
+      handleError(errorMessage, state.context);
 
     setState(prev => ({
       ...prev,

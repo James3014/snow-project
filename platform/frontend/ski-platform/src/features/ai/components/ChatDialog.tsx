@@ -13,7 +13,7 @@ import { MESSAGES } from '../constants/messages';
 import {
   handleTripCreated,
   type ConversationContext,
-} from '../utils/conversationEngine';
+} from '../utils/conversationEngineV2';
 import { useAppSelector } from '@/store/hooks';
 import { useTripCreation } from '../hooks/useTripCreation';
 import { useConversation } from '../hooks/useConversation';
@@ -161,10 +161,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
       });
 
       // 處理成功
-      const { response: successResponse } = handleTripCreated(
-        currentContext,
-        result.tripId
-      );
+      const { response: successResponse } = handleTripCreated(currentContext);
 
       // 使用 hook 方法更新狀態
       addMessage('assistant', successResponse.message);
