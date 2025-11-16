@@ -6,47 +6,16 @@
  * 這些測試定義了新數據結構和邏輯的預期行為
  */
 import { describe, it, expect } from 'vitest';
-
-// ==================== 類型定義 ====================
-// 這些類型將在實作階段創建
-
-type FormFieldStatus = 'empty' | 'filled' | 'invalid';
-
-type FormField<T> =
-  | { status: 'empty' }
-  | { status: 'filled'; value: T }
-  | { status: 'invalid'; error: string };
-
-interface ResortMatch {
-  id: string;
-  name: string;
-  prefecture: string;
-}
-
-interface TripForm {
-  resort: FormField<ResortMatch>;
-  startDate: FormField<Date>;
-  endDate: FormField<Date>;
-  duration: FormField<number>;
-  visibility: FormField<'public' | 'private'>;
-  maxBuddies: FormField<number>;
-}
-
-// 簡化的對話狀態
-type ConversationState =
-  | 'AWAITING_INPUT'
-  | 'AWAITING_RESORT'
-  | 'AWAITING_DATE'
-  | 'AWAITING_DURATION'
-  | 'CONFIRMING_TRIP';
-
-// ==================== 核心函數聲明 ====================
-// 這些函數將在實作階段創建
-
-declare function updateFormFromInput(form: TripForm, input: string): TripForm;
-declare function getCurrentState(form: TripForm): ConversationState;
-declare function generateResponse(form: TripForm): string;
-declare function createEmptyForm(): TripForm;
+import {
+  createEmptyForm,
+  updateFormFromInput,
+  getCurrentState,
+  generateResponse,
+  type TripForm,
+  type FormField,
+  type ResortMatch,
+  type ConversationState,
+} from '../tripFormLogic';
 
 // ==================== 測試套件 ====================
 
@@ -55,9 +24,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   // ==================== Suite 1: 基本輸入解析 ====================
   describe('Suite 1: 基本輸入解析 (Basic Input Parsing)', () => {
 
-    it('應該正確解析完整的行程輸入：「3月4-9日野澤公開找雪友2個」', () => {
+    it('應該正確解析完整的行程輸入：「3月4-9日野澤公開找雪友2個」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '3月4-9日野澤公開找雪友2個');
+      const result = await await updateFormFromInput(form, '3月4-9日野澤公開找雪友2個');
 
       // 雪場識別
       expect(result.resort.status).toBe('filled');
@@ -97,9 +66,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該正確解析簡單輸入：「去二世谷」', () => {
+    it('應該正確解析簡單輸入：「去二世谷」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '去二世谷');
+      const result = await updateFormFromInput(form, '去二世谷');
 
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
@@ -112,9 +81,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       expect(result.duration.status).toBe('empty');
     });
 
-    it('應該正確解析帶日期範圍的輸入：「二世谷 12月20-25日」', () => {
+    it('應該正確解析帶日期範圍的輸入：「二世谷 12月20-25日」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 12月20-25日');
+      const result = await updateFormFromInput(form, '二世谷 12月20-25日');
 
       expect(result.resort.status).toBe('filled');
       expect(result.startDate.status).toBe('filled');
@@ -127,9 +96,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該正確解析帶天數的輸入：「二世谷 12月20日 5天」', () => {
+    it('應該正確解析帶天數的輸入：「二世谷 12月20日 5天」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 12月20日 5天');
+      const result = await updateFormFromInput(form, '二世谷 12月20日 5天');
 
       expect(result.resort.status).toBe('filled');
       expect(result.startDate.status).toBe('filled');
@@ -150,9 +119,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   // ==================== Suite 2: 雪場名稱格式 ====================
   describe('Suite 2: 雪場名稱格式 (Resort Name Formats)', () => {
 
-    it('應該識別中文雪場名：「二世谷」', () => {
+    it('應該識別中文雪場名：「二世谷」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷');
+      const result = await updateFormFromInput(form, '二世谷');
 
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
@@ -160,9 +129,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別英文雪場名：「Niseko」', () => {
+    it('應該識別英文雪場名：「Niseko」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, 'Niseko');
+      const result = await updateFormFromInput(form, 'Niseko');
 
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
@@ -172,9 +141,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別別名：「新雪谷」（二世谷的別名）', () => {
+    it('應該識別別名：「新雪谷」（二世谷的別名）', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '新雪谷');
+      const result = await updateFormFromInput(form, '新雪谷');
 
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
@@ -184,9 +153,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該拒絕無效雪場名並標記為 invalid', () => {
+    it('應該拒絕無效雪場名並標記為 invalid', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '不存在的雪場XYZABC');
+      const result = await updateFormFromInput(form, '不存在的雪場XYZABC');
 
       // 如果完全識別不出來，應該標記為 invalid 或保持 empty
       if (result.resort.status === 'invalid') {
@@ -200,9 +169,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   // ==================== Suite 3: 日期格式處理 ====================
   describe('Suite 3: 日期格式處理 (Date Format Handling)', () => {
 
-    it('應該解析短格式日期：「3/20-25」', () => {
+    it('應該解析短格式日期：「3/20-25」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '野澤 3/20-25');
+      const result = await updateFormFromInput(form, '野澤 3/20-25');
 
       expect(result.startDate.status).toBe('filled');
       expect(result.endDate.status).toBe('filled');
@@ -214,9 +183,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該解析中文日期：「3月20-25日」', () => {
+    it('應該解析中文日期：「3月20-25日」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '野澤 3月20-25日');
+      const result = await updateFormFromInput(form, '野澤 3月20-25日');
 
       expect(result.startDate.status).toBe('filled');
       expect(result.endDate.status).toBe('filled');
@@ -228,9 +197,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該解析完整日期：「2025/3/20-2025/3/25」', () => {
+    it('應該解析完整日期：「2025/3/20-2025/3/25」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '野澤 2025/3/20-2025/3/25');
+      const result = await updateFormFromInput(form, '野澤 2025/3/20-2025/3/25');
 
       expect(result.startDate.status).toBe('filled');
       expect(result.endDate.status).toBe('filled');
@@ -242,9 +211,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該拒絕無效日期順序：結束日期早於開始日期', () => {
+    it('應該拒絕無效日期順序：結束日期早於開始日期', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '野澤 3/25-20');
+      const result = await updateFormFromInput(form, '野澤 3/25-20');
 
       // 日期欄位應該標記為 invalid
       if (result.startDate.status === 'invalid' || result.endDate.status === 'invalid') {
@@ -259,9 +228,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   // ==================== Suite 4: 天數計算 ====================
   describe('Suite 4: 天數計算 (Duration Calculation)', () => {
 
-    it('應該正確計算天數（包含首尾）：3/20-3/25 = 6天', () => {
+    it('應該正確計算天數（包含首尾）：3/20-3/25 = 6天', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '野澤 3/20-25');
+      const result = await updateFormFromInput(form, '野澤 3/20-25');
 
       expect(result.duration.status).toBe('filled');
       if (result.duration.status === 'filled') {
@@ -269,9 +238,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該根據日期範圍自動計算天數', () => {
+    it('應該根據日期範圍自動計算天數', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '野澤 12月1-5日');
+      const result = await updateFormFromInput(form, '野澤 12月1-5日');
 
       expect(result.duration.status).toBe('filled');
       if (result.duration.status === 'filled') {
@@ -279,10 +248,10 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該在天數和日期範圍衝突時，以日期範圍為準', () => {
+    it('應該在天數和日期範圍衝突時，以日期範圍為準', async () => {
       const form = createEmptyForm();
       // 用戶說「3天」但日期是 3/20-25（實際6天）
-      const result = updateFormFromInput(form, '野澤 3/20-25 3天');
+      const result = await updateFormFromInput(form, '野澤 3/20-25 3天');
 
       expect(result.duration.status).toBe('filled');
       if (result.duration.status === 'filled') {
@@ -295,35 +264,35 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   // ==================== Suite 5: 多輪對話 ====================
   describe('Suite 5: 多輪對話 (Multi-turn Conversations)', () => {
 
-    it('應該支援逐步填寫表單', () => {
+    it('應該支援逐步填寫表單', async () => {
       let form = createEmptyForm();
 
       // 第一輪：只說雪場
-      form = updateFormFromInput(form, '二世谷');
+      form = await updateFormFromInput(form, '二世谷');
       expect(form.resort.status).toBe('filled');
       expect(form.startDate.status).toBe('empty');
 
       // 第二輪：補充日期
-      form = updateFormFromInput(form, '3月20-25日');
+      form = await updateFormFromInput(form, '3月20-25日');
       expect(form.resort.status).toBe('filled');
       expect(form.startDate.status).toBe('filled');
       expect(form.endDate.status).toBe('filled');
 
       // 第三輪：設定可見性
-      form = updateFormFromInput(form, '公開找2個人');
+      form = await updateFormFromInput(form, '公開找2個人');
       expect(form.visibility.status).toBe('filled');
       expect(form.maxBuddies.status).toBe('filled');
     });
 
-    it('應該支援覆蓋已填寫的欄位', () => {
+    it('應該支援覆蓋已填寫的欄位', async () => {
       let form = createEmptyForm();
 
       // 第一輪
-      form = updateFormFromInput(form, '二世谷 3月20-25日');
+      form = await updateFormFromInput(form, '二世谷 3月20-25日');
       const firstResort = form.resort.status === 'filled' ? form.resort.value.name : '';
 
       // 第二輪：改變雪場
-      form = updateFormFromInput(form, '改去野澤');
+      form = await updateFormFromInput(form, '改去野澤');
       expect(form.resort.status).toBe('filled');
       if (form.resort.status === 'filled') {
         expect(form.resort.value.name).not.toBe(firstResort);
@@ -334,9 +303,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       expect(form.startDate.status).toBe('filled');
     });
 
-    it('應該識別表單完成狀態', () => {
+    it('應該識別表單完成狀態', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 公開找2個人');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 公開找2個人');
 
       // 所有必要欄位都已填寫
       expect(result.resort.status).toBe('filled');
@@ -351,26 +320,26 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       expect(state).toBe('CONFIRMING_TRIP');
     });
 
-    it('應該保留已填寫欄位當輸入不包含新資訊', () => {
+    it('應該保留已填寫欄位當輸入不包含新資訊', async () => {
       let form = createEmptyForm();
-      form = updateFormFromInput(form, '二世谷 3月20-25日');
+      form = await updateFormFromInput(form, '二世谷 3月20-25日');
 
       const originalResort = form.resort;
       const originalDate = form.startDate;
 
       // 用戶只說了一些無關的話
-      form = updateFormFromInput(form, '好的');
+      form = await updateFormFromInput(form, '好的');
 
       // 應該保留原有資訊
       expect(form.resort).toEqual(originalResort);
       expect(form.startDate).toEqual(originalDate);
     });
 
-    it('應該在部分欄位無效時保留有效欄位', () => {
+    it('應該在部分欄位無效時保留有效欄位', async () => {
       let form = createEmptyForm();
 
       // 有效的雪場 + 無效的日期
-      form = updateFormFromInput(form, '二世谷 99月99日');
+      form = await updateFormFromInput(form, '二世谷 99月99日');
 
       expect(form.resort.status).toBe('filled');
       // 無效日期應該標記為 invalid 或 empty
@@ -381,30 +350,30 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   // ==================== Suite 6: 狀態推導 ====================
   describe('Suite 6: 狀態推導 (State Derivation)', () => {
 
-    it('空表單應該返回 AWAITING_INPUT', () => {
+    it('空表單應該返回 AWAITING_INPUT', async () => {
       const form = createEmptyForm();
       const state = getCurrentState(form);
       expect(state).toBe('AWAITING_INPUT');
     });
 
-    it('缺少雪場時應該返回 AWAITING_RESORT', () => {
+    it('缺少雪場時應該返回 AWAITING_RESORT', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '3月20-25日');
+      const result = await updateFormFromInput(form, '3月20-25日');
       const state = getCurrentState(result);
       expect(state).toBe('AWAITING_RESORT');
     });
 
-    it('缺少日期時應該返回 AWAITING_DATE', () => {
+    it('缺少日期時應該返回 AWAITING_DATE', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷');
+      const result = await updateFormFromInput(form, '二世谷');
       const state = getCurrentState(result);
       expect(state).toBe('AWAITING_DATE');
     });
 
-    it('有雪場和日期但缺少天數時應該返回 AWAITING_DURATION', () => {
+    it('有雪場和日期但缺少天數時應該返回 AWAITING_DURATION', async () => {
       let form = createEmptyForm();
       // 只給開始日期，沒有範圍也沒有天數
-      form = updateFormFromInput(form, '二世谷 3月20日');
+      form = await updateFormFromInput(form, '二世谷 3月20日');
 
       const state = getCurrentState(form);
       if (form.duration.status === 'empty') {
@@ -412,9 +381,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('所有必要欄位都填寫後應該返回 CONFIRMING_TRIP', () => {
+    it('所有必要欄位都填寫後應該返回 CONFIRMING_TRIP', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日');
       const state = getCurrentState(result);
       expect(state).toBe('CONFIRMING_TRIP');
     });
@@ -423,41 +392,41 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   // ==================== Suite 7: 回應生成 ====================
   describe('Suite 7: 回應生成 (Response Generation)', () => {
 
-    it('空表單應該生成歡迎訊息', () => {
+    it('空表單應該生成歡迎訊息', async () => {
       const form = createEmptyForm();
       const response = generateResponse(form);
       expect(response).toBeTruthy();
       expect(typeof response).toBe('string');
     });
 
-    it('缺少雪場時應該提示輸入雪場', () => {
+    it('缺少雪場時應該提示輸入雪場', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '3月20-25日');
+      const result = await updateFormFromInput(form, '3月20-25日');
       const response = generateResponse(result);
 
       expect(response).toContain('雪場');
     });
 
-    it('缺少日期時應該提示輸入日期', () => {
+    it('缺少日期時應該提示輸入日期', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷');
+      const result = await updateFormFromInput(form, '二世谷');
       const response = generateResponse(result);
 
       expect(response.includes('日期') || response.includes('時間')).toBe(true);
     });
 
-    it('完整表單應該生成確認訊息', () => {
+    it('完整表單應該生成確認訊息', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日');
       const response = generateResponse(result);
 
       // 確認訊息應該包含關鍵資訊
       expect(response.includes('二世谷') || response.includes('Niseko')).toBe(true);
     });
 
-    it('回應應該包含當前表單的上下文', () => {
+    it('回應應該包含當前表單的上下文', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷');
+      const result = await updateFormFromInput(form, '二世谷');
       const response = generateResponse(result);
 
       // 已經有雪場資訊，回應中應該提及
@@ -468,9 +437,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   // ==================== Suite 8: 可見性關鍵字 ====================
   describe('Suite 8: 可見性關鍵字 (Visibility Keywords)', () => {
 
-    it('應該識別「公開」關鍵字', () => {
+    it('應該識別「公開」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 公開');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 公開');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -478,9 +447,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別「開放」關鍵字', () => {
+    it('應該識別「開放」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 開放');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 開放');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -488,9 +457,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別「找人」關鍵字', () => {
+    it('應該識別「找人」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 找人');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 找人');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -498,9 +467,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別「找伴」關鍵字', () => {
+    it('應該識別「找伴」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 找伴');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 找伴');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -508,9 +477,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別「徵人」關鍵字', () => {
+    it('應該識別「徵人」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 徵人');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 徵人');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -518,9 +487,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別「徵伴」關鍵字', () => {
+    it('應該識別「徵伴」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 徵伴');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 徵伴');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -528,9 +497,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別「找雪友」關鍵字', () => {
+    it('應該識別「找雪友」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 找雪友');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 找雪友');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -538,9 +507,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別「一起」關鍵字', () => {
+    it('應該識別「一起」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 一起去');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 一起去');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -548,9 +517,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別「揪團」關鍵字', () => {
+    it('應該識別「揪團」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 揪團');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 揪團');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -558,9 +527,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別「組團」關鍵字', () => {
+    it('應該識別「組團」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 組團');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 組團');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -568,9 +537,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該識別英文「public」關鍵字', () => {
+    it('應該識別英文「public」關鍵字', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, 'Niseko 3/20-25 public');
+      const result = await updateFormFromInput(form, 'Niseko 3/20-25 public');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -578,9 +547,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('沒有關鍵字時應該預設為 private', () => {
+    it('沒有關鍵字時應該預設為 private', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日');
 
       // 預設為 private
       expect(result.visibility.status).toBe('filled');
@@ -589,9 +558,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該正確解析帶數字的公開關鍵字：「找2個人」', () => {
+    it('應該正確解析帶數字的公開關鍵字：「找2個人」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 找2個人');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 找2個人');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -604,9 +573,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該正確解析帶數字的公開關鍵字：「徵3個雪友」', () => {
+    it('應該正確解析帶數字的公開關鍵字：「徵3個雪友」', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 徵3個雪友');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 徵3個雪友');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -619,10 +588,10 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('公開關鍵字應該優先於預設的 private', () => {
+    it('公開關鍵字應該優先於預設的 private', async () => {
       const form = createEmptyForm();
       // 即使句子中有其他詞，「找人」應該觸發 public
-      const result = updateFormFromInput(form, '二世谷 3月20-25日 自己去但也找人');
+      const result = await updateFormFromInput(form, '二世谷 3月20-25日 自己去但也找人');
 
       expect(result.visibility.status).toBe('filled');
       if (result.visibility.status === 'filled') {
@@ -635,26 +604,26 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   // ==================== Suite 9: 邊界情況和錯誤處理 ====================
   describe('Suite 9: 邊界情況和錯誤處理 (Edge Cases)', () => {
 
-    it('應該處理空字串輸入', () => {
+    it('應該處理空字串輸入', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '');
+      const result = await updateFormFromInput(form, '');
 
       // 所有欄位應該保持空白
       expect(result.resort.status).toBe('empty');
       expect(result.startDate.status).toBe('empty');
     });
 
-    it('應該處理只有空格的輸入', () => {
+    it('應該處理只有空格的輸入', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '   ');
+      const result = await updateFormFromInput(form, '   ');
 
       expect(result.resort.status).toBe('empty');
       expect(result.startDate.status).toBe('empty');
     });
 
-    it('應該處理模糊的雪場名稱', () => {
+    it('應該處理模糊的雪場名稱', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '苗場'); // 常見雪場
+      const result = await updateFormFromInput(form, '苗場'); // 常見雪場
 
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
@@ -662,10 +631,10 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該處理過去的日期', () => {
+    it('應該處理過去的日期', async () => {
       const form = createEmptyForm();
       // 假設當前是 2025-11-16，輸入 1月的日期
-      const result = updateFormFromInput(form, '二世谷 1月5-10日');
+      const result = await updateFormFromInput(form, '二世谷 1月5-10日');
 
       // 應該解釋為未來的 2026/1/5-10
       expect(result.startDate.status).toBe('filled');
@@ -675,9 +644,9 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
 
-    it('應該處理超長天數', () => {
+    it('應該處理超長天數', async () => {
       const form = createEmptyForm();
-      const result = updateFormFromInput(form, '二世谷 3月1日 90天');
+      const result = await updateFormFromInput(form, '二世谷 3月1日 90天');
 
       expect(result.duration.status).toBe('filled');
       if (result.duration.status === 'filled') {
