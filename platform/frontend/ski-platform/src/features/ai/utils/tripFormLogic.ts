@@ -141,7 +141,27 @@ export async function updateFormFromInput(form: TripForm, input: string): Promis
         startDate.setFullYear(explicitYear);
       }
 
-      newForm.startDate = { status: 'filled', value: startDate };
+      // 檢查日期是否在過去（只有在沒有明確年份時才檢查）
+      if (!explicitYear) {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // 重置到當天的開始
+        const dateToCheck = new Date(startDate);
+        dateToCheck.setHours(0, 0, 0, 0);
+
+        if (dateToCheck < now) {
+          // 日期在過去，需要用戶確認或提供完整年份
+          const nextYear = startDate.getFullYear() + 1;
+          const monthDay = `${startDate.getMonth() + 1}月${startDate.getDate()}日`;
+          newForm.startDate = {
+            status: 'invalid',
+            error: `您輸入的日期（${monthDay}）已經過去了。如果是指明年，請輸入「${nextYear}年${monthDay}」。`
+          };
+        } else {
+          newForm.startDate = { status: 'filled', value: startDate };
+        }
+      } else {
+        newForm.startDate = { status: 'filled', value: startDate };
+      }
     }
   }
 

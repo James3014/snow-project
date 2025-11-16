@@ -896,24 +896,38 @@ describe('TripFormLogic - 行程表單邏輯', () => {
   describe('Suite 8: Chaos Scenarios - 混亂場景（驗證現況）', () => {
 
     describe('日期在過去的行為', () => {
-      it('應該記錄當前對過去日期的處理方式', async () => {
+      it('應該拒絕過去的日期並提示用戶輸入完整年份', async () => {
         const form = createEmptyForm();
-        
-        // 假設今天是 3月20日，輸入 3月15日
-        const pastDateInput = '3月15日去苗場';
+
+        // 今天是 11月16日，輸入 11月15日（昨天，已過去）
+        const pastDateInput = '11月15日去苗場';
         const result = await updateFormFromInput(form, pastDateInput);
 
-        // 記錄現況：系統現在怎麼處理？
-        console.log('過去日期測試 - startDate status:', result.startDate.status);
-        if (result.startDate.status === 'filled') {
-          console.log('過去日期測試 - 日期值:', result.startDate.value);
-        }
-        if (result.startDate.status === 'error') {
-          console.log('過去日期測試 - 錯誤訊息:', result.startDate.error);
+        // 期望：檢測到過去日期，設為 invalid
+        expect(result.startDate.status).toBe('invalid');
+
+        if (result.startDate.status === 'invalid') {
+          // 錯誤訊息應該提示用戶輸入完整年份
+          expect(result.startDate.error).toContain('已經過去');
+          expect(result.startDate.error).toMatch(/\d{4}年/); // 應包含明年的年份
         }
 
-        // 先不做斷言，只記錄行為
-        expect(result.startDate.status).toBeDefined();
+        // 雪場應該正確解析
+        expect(result.resort.status).toBe('filled');
+      });
+
+      it('應該接受明確年份的過去日期（如回顧去年行程）', async () => {
+        const form = createEmptyForm();
+
+        // 輸入明確年份（2024年）的日期
+        const explicitYearInput = '2024年3月15日去苗場';
+        const result = await updateFormFromInput(form, explicitYearInput);
+
+        // 期望：有明確年份時，即使是過去也接受
+        expect(result.startDate.status).toBe('filled');
+        if (result.startDate.status === 'filled') {
+          expect(result.startDate.value.getFullYear()).toBe(2024);
+        }
       });
     });
 
