@@ -151,7 +151,7 @@ export default function ChatDialog({ onClose }: ChatDialogProps) {
 
     try {
       // 使用 useTripCreation hook 處理所有業務邏輯
-      const result = await createTrip({
+      await createTrip({
         resort,
         startDate,
         endDate,
