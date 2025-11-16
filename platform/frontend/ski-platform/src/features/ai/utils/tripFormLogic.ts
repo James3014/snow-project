@@ -86,16 +86,31 @@ export async function updateFormFromInput(form: TripForm, input: string): Promis
     newForm.duration = { status: 'filled', value: parsed.duration };
   }
 
-  // 如果有開始和結束日期，自動計算天數（包含首尾）
-  if (newForm.startDate.status === 'filled' && newForm.endDate.status === 'filled') {
+  // 如果有開始和結束日期，但沒有明確指定天數，則自動計算天數（包含首尾）
+  if (
+    newForm.startDate.status === 'filled' &&
+    newForm.endDate.status === 'filled' &&
+    !parsed.duration // 只有在用戶沒有明確指定天數時才自動計算
+  ) {
     const start = newForm.startDate.value;
     const end = newForm.endDate.value;
     const days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     newForm.duration = { status: 'filled', value: days };
   }
 
-  // 如果只有開始日期和天數，計算結束日期
+  // 如果有開始日期和明確指定的天數，根據天數計算結束日期
+  // （優先使用用戶明確指定的天數，而不是 parseIntent 推測的 endDate）
   if (
+    newForm.startDate.status === 'filled' &&
+    parsed.duration // 用戶明確指定了天數
+  ) {
+    const start = newForm.startDate.value;
+    const end = new Date(start);
+    end.setDate(end.getDate() + parsed.duration - 1);
+    newForm.endDate = { status: 'filled', value: end };
+  }
+  // 如果只有開始日期和天數，但沒有明確指定（從日期範圍推導的），計算結束日期
+  else if (
     newForm.startDate.status === 'filled' &&
     newForm.duration.status === 'filled' &&
     newForm.endDate.status === 'empty'
