@@ -891,3 +891,199 @@ describe('TripFormLogic - 行程表單邏輯', () => {
     });
   });
 });
+
+  // ==================== Suite 8: Chaos Scenarios - 混亂場景測試 ====================
+  describe('Suite 8: Chaos Scenarios - 混亂場景（驗證現況）', () => {
+
+    describe('日期在過去的行為', () => {
+      it('應該拒絕過去的日期並提示用戶輸入完整年份', async () => {
+        const form = createEmptyForm();
+
+        // 今天是 11月16日，輸入 11月15日（昨天，已過去）
+        const pastDateInput = '11月15日去苗場';
+        const result = await updateFormFromInput(form, pastDateInput);
+
+        // 期望：檢測到過去日期，設為 invalid
+        expect(result.startDate.status).toBe('invalid');
+
+        if (result.startDate.status === 'invalid') {
+          // 錯誤訊息應該提示用戶輸入完整年份
+          expect(result.startDate.error).toContain('已經過去');
+          expect(result.startDate.error).toMatch(/\d{4}年/); // 應包含明年的年份
+        }
+
+        // 雪場應該正確解析
+        expect(result.resort.status).toBe('filled');
+      });
+
+      it('應該接受明確年份的過去日期（如回顧去年行程）', async () => {
+        const form = createEmptyForm();
+
+        // 輸入明確年份（2024年）的日期
+        const explicitYearInput = '2024年3月15日去苗場';
+        const result = await updateFormFromInput(form, explicitYearInput);
+
+        // 期望：有明確年份時，即使是過去也接受
+        expect(result.startDate.status).toBe('filled');
+        if (result.startDate.status === 'filled') {
+          expect(result.startDate.value.getFullYear()).toBe(2024);
+        }
+      });
+    });
+
+    describe('中途改日期/改天數', () => {
+      it('應該能中途修改日期', async () => {
+        let form = createEmptyForm();
+
+        // Round 1: 設定初始日期
+        form = await updateFormFromInput(form, '去苗場');
+        form = await updateFormFromInput(form, '3月20日');
+        
+        const firstDate = form.startDate.status === 'filled' 
+          ? form.startDate.value 
+          : null;
+
+        // Round 2: 修改日期
+        form = await updateFormFromInput(form, '改成3月22日');
+
+        // 驗證：日期應該更新
+        expect(form.startDate.status).toBe('filled');
+        if (form.startDate.status === 'filled') {
+          expect(form.startDate.value.getDate()).toBe(22);
+          // 日期應該已經改變
+          if (firstDate) {
+            expect(form.startDate.value.getTime()).not.toBe(firstDate.getTime());
+          }
+        }
+      });
+
+      it('應該能中途修改天數', async () => {
+        let form = createEmptyForm();
+
+        // Round 1: 設定初始天數
+        form = await updateFormFromInput(form, '野澤 3月20日 5天');
+        expect(form.duration.status).toBe('filled');
+        if (form.duration.status === 'filled') {
+          expect(form.duration.value).toBe(5);
+        }
+
+        // Round 2: 修改天數
+        form = await updateFormFromInput(form, '改成3天');
+
+        // 驗證：天數應該更新
+        expect(form.duration.status).toBe('filled');
+        if (form.duration.status === 'filled') {
+          expect(form.duration.value).toBe(3);
+        }
+      });
+    });
+
+    describe('取消/重來關鍵字', () => {
+      it('應該記錄對「算了」的處理方式', async () => {
+        let form = createEmptyForm();
+        form = await updateFormFromInput(form, '去苗場');
+        
+        // 說「算了」
+        form = await updateFormFromInput(form, '算了');
+
+        // 記錄現況
+        console.log('取消測試 - resort status:', form.resort.status);
+        console.log('取消測試 - 當前狀態:', getCurrentState(form));
+
+        // 先不做斷言，只記錄
+        expect(form).toBeDefined();
+      });
+
+      it('應該記錄對「重來」的處理方式', async () => {
+        let form = createEmptyForm();
+        form = await updateFormFromInput(form, '去苗場 3月20日');
+        
+        // 說「重來」
+        form = await updateFormFromInput(form, '重來');
+
+        // 記錄現況
+        console.log('重來測試 - resort status:', form.resort.status);
+        console.log('重來測試 - startDate status:', form.startDate.status);
+
+        // 先不做斷言，只記錄
+        expect(form).toBeDefined();
+      });
+    });
+
+    describe('無效輸入', () => {
+      it('應該優雅處理空白輸入', async () => {
+        const form = createEmptyForm();
+        
+        // 空白輸入
+        const result = await updateFormFromInput(form, '   ');
+
+        // 系統不應該 crash
+        expect(result).toBeDefined();
+        console.log('空白輸入 - 結果:', getCurrentState(result));
+      });
+
+      it('應該優雅處理亂碼輸入', async () => {
+        const form = createEmptyForm();
+        
+        // 亂碼輸入
+        const result = await updateFormFromInput(form, 'asdfghjkl');
+
+        // 系統不應該 crash
+        expect(result).toBeDefined();
+        console.log('亂碼輸入 - 結果:', getCurrentState(result));
+      });
+
+      it('應該優雅處理超長輸入', async () => {
+        const form = createEmptyForm();
+        
+        // 超長輸入（500+ 字）
+        const longInput = '去苗場'.repeat(200);
+        const result = await updateFormFromInput(form, longInput);
+
+        // 系統不應該 crash
+        expect(result).toBeDefined();
+        console.log('超長輸入 - 結果:', getCurrentState(result));
+      });
+    });
+
+    describe('跨年判斷', () => {
+      it('應該記錄12月說1月的處理方式', async () => {
+        const form = createEmptyForm();
+        
+        // 12月28日說"1月5日"
+        // 注意：這個測試可能會因為當前日期而有不同結果
+        const result = await updateFormFromInput(form, '1月5日去苗場');
+
+        if (result.startDate.status === 'filled') {
+          console.log('跨年測試 - 解析的年份:', result.startDate.value.getFullYear());
+          console.log('跨年測試 - 當前年份:', new Date().getFullYear());
+        }
+
+        expect(result.startDate.status).toBeDefined();
+      });
+    });
+
+    describe('重複輸入', () => {
+      it('應該記錄重複輸入雪場的處理方式', async () => {
+        let form = createEmptyForm();
+
+        // Round 1: 第一次說苗場
+        form = await updateFormFromInput(form, '苗場');
+        const firstResortId = form.resort.status === 'filled' 
+          ? form.resort.value.resort.resort_id 
+          : null;
+
+        // Round 2: 又說一次苗場
+        form = await updateFormFromInput(form, '苗場');
+        const secondResortId = form.resort.status === 'filled' 
+          ? form.resort.value.resort.resort_id 
+          : null;
+
+        // 記錄：重複輸入後，resort_id 是否相同？
+        console.log('重複輸入 - 第一次 ID:', firstResortId);
+        console.log('重複輸入 - 第二次 ID:', secondResortId);
+        
+        expect(form.resort.status).toBe('filled');
+      });
+    });
+  });
