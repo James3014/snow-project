@@ -26,7 +26,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
 
     it('應該正確解析完整的行程輸入：「3月4-9日野澤公開找雪友2個」', async () => {
       const form = createEmptyForm();
-      const result = await await updateFormFromInput(form, '3月4-9日野澤公開找雪友2個');
+      const result = await updateFormFromInput(form, '3月4-9日野澤公開找雪友2個');
 
       // 雪場識別
       expect(result.resort.status).toBe('filled');

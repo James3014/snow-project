@@ -130,12 +130,15 @@ export async function updateFormFromInput(form: TripForm, input: string): Promis
     newForm.maxBuddies = { status: 'filled', value: parsed.maxBuddies };
   }
 
-  // 從輸入中提取數字（找N個人）
-  const buddyMatch = input.match(/找|徵|找雪友.*?(\d+)\s*個|(\d+)\s*個.*?找|徵/);
-  if (buddyMatch && !parsed.maxBuddies) {
-    const count = parseInt(buddyMatch[1] || buddyMatch[2]);
-    if (!isNaN(count)) {
-      newForm.maxBuddies = { status: 'filled', value: count };
+  // 從輸入中提取數字（找N個人、徵N個雪友等）
+  if (!parsed.maxBuddies && newForm.maxBuddies.status === 'empty') {
+    const buddyPattern = /(?:找|徵|要|最多)(?:雪友|雪伴|人)?\s*(\d+)\s*(?:個|位|人)?/;
+    const buddyMatch = input.match(buddyPattern);
+    if (buddyMatch) {
+      const count = parseInt(buddyMatch[1]);
+      if (!isNaN(count) && count >= 1 && count <= 20) {
+        newForm.maxBuddies = { status: 'filled', value: count };
+      }
     }
   }
 
@@ -147,6 +150,12 @@ export async function updateFormFromInput(form: TripForm, input: string): Promis
  * Linus: 狀態是數據的函數，不需要單獨存儲
  */
 export function getCurrentState(form: TripForm): ConversationState {
+  // 檢查是否所有欄位都是空的（初始狀態）
+  const allEmpty = Object.values(form).every(field => field.status === 'empty');
+  if (allEmpty) {
+    return 'AWAITING_INPUT';
+  }
+
   // 檢查欄位順序：resort -> date -> duration
   if (form.resort.status === 'empty') {
     return 'AWAITING_RESORT';
