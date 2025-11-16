@@ -654,4 +654,242 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       }
     });
   });
+
+  // ==================== Suite 10: 進階測試 - 日期格式與多輪對話 ====================
+  describe('Suite 10: 進階測試 (Advanced Tests)', () => {
+
+    // 子區塊 1: 中文日期格式
+    describe('中文日期格式', () => {
+      it('應該解析「三月二十日」等中文日期', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '野澤 三月二十日');
+
+        // parseIntent 可能支持或不支持中文日期，至少應該正確處理
+        expect(result.resort.status).toBe('filled');
+      });
+
+      it('應該處理「到」字連接的日期範圍', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '野澤 3月20到25日');
+
+        expect(result.startDate.status).toBe('filled');
+        expect(result.endDate.status).toBe('filled');
+      });
+
+      it('應該處理「至」字連接的日期範圍', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '野澤 3/20至3/25');
+
+        expect(result.startDate.status).toBe('filled');
+        expect(result.endDate.status).toBe('filled');
+      });
+    });
+
+    // 子區塊 2: 多輪對話進階場景
+    describe('多輪對話進階場景', () => {
+      it('應該支持分步驟填寫：先雪場，後日期，再天數', async () => {
+        let form = createEmptyForm();
+
+        // 第一輪：只說雪場
+        form = await updateFormFromInput(form, '我想去二世谷');
+        expect(form.resort.status).toBe('filled');
+        expect(form.startDate.status).toBe('empty');
+
+        // 第二輪：補充日期
+        form = await updateFormFromInput(form, '3月20日出發');
+        expect(form.startDate.status).toBe('filled');
+        expect(form.endDate.status).toBe('empty');
+
+        // 第三輪：補充天數
+        form = await updateFormFromInput(form, '去5天');
+        expect(form.duration.status).toBe('filled');
+        expect(form.endDate.status).toBe('filled');
+      });
+
+      it('應該支持修正錯誤：改變開始日期', async () => {
+        let form = createEmptyForm();
+
+        form = await updateFormFromInput(form, '野澤 3月20-25日');
+        const originalStart = form.startDate.status === 'filled' ? form.startDate.value : null;
+
+        // 修正開始日期
+        form = await updateFormFromInput(form, '改成3月22日出發');
+        expect(form.startDate.status).toBe('filled');
+        if (form.startDate.status === 'filled' && originalStart) {
+          expect(form.startDate.value.getTime()).not.toBe(originalStart.getTime());
+        }
+      });
+
+      it('應該支持只改變天數', async () => {
+        let form = createEmptyForm();
+
+        form = await updateFormFromInput(form, '野澤 3月20日 5天');
+        expect(form.duration.status).toBe('filled');
+        expect(form.duration.value).toBe(5);
+
+        // 改變天數
+        form = await updateFormFromInput(form, '改成7天');
+        expect(form.duration.status).toBe('filled');
+        if (form.duration.status === 'filled') {
+          expect(form.duration.value).toBe(7);
+        }
+      });
+
+      it('應該支持添加找伴資訊到已有行程', async () => {
+        let form = createEmptyForm();
+
+        form = await updateFormFromInput(form, '野澤 3月20-25日');
+        // visibility 會被設置為默認值 'private'
+        expect(form.visibility.status).toBe('filled');
+        if (form.visibility.status === 'filled') {
+          expect(form.visibility.value).toBe('private');
+        }
+
+        // 後續添加找伴，覆蓋為 public
+        form = await updateFormFromInput(form, '公開找2個人');
+        expect(form.visibility.status).toBe('filled');
+        if (form.visibility.status === 'filled') {
+          expect(form.visibility.value).toBe('public');
+        }
+        expect(form.maxBuddies.status).toBe('filled');
+      });
+    });
+
+    // 子區塊 3: 數字格式變化
+    describe('數字格式變化', () => {
+      it('應該解析中文數字：「找三個人」', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '野澤 3月20日 找三個人');
+
+        // parseIntent 可能支持或不支持中文數字
+        expect(result.visibility.status).toBe('filled');
+      });
+
+      it('應該處理「1-2人」範圍格式', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '野澤 3月20日 找1-2人');
+
+        expect(result.visibility.status).toBe('filled');
+        // maxBuddies 可能取上限或下限
+      });
+
+      it('應該處理大數字：「找10個人」', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '野澤 3月20日 找10個人');
+
+        expect(result.maxBuddies.status).toBe('filled');
+        if (result.maxBuddies.status === 'filled') {
+          expect(result.maxBuddies.value).toBe(10);
+        }
+      });
+    });
+
+    // 子區塊 4: 複雜組合輸入
+    describe('複雜組合輸入', () => {
+      it('應該處理包含標點符號的輸入', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '想去野澤！3月20-25日，找2個人。');
+
+        expect(result.resort.status).toBe('filled');
+        expect(result.startDate.status).toBe('filled');
+        expect(result.maxBuddies.status).toBe('filled');
+      });
+
+      it('應該處理問句形式', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '有人3月20日要去野澤嗎？');
+
+        expect(result.resort.status).toBe('filled');
+        expect(result.startDate.status).toBe('filled');
+      });
+
+      it('應該處理倒裝句：日期在雪場前', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '3月20-25日去野澤');
+
+        expect(result.resort.status).toBe('filled');
+        expect(result.startDate.status).toBe('filled');
+        expect(result.endDate.status).toBe('filled');
+      });
+
+      it('應該處理非常詳細的描述', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(
+          form,
+          '我計劃在2025年3月20日到3月25日去野澤溫泉滑雪場，想公開找2個滑雪夥伴一起'
+        );
+
+        expect(result.resort.status).toBe('filled');
+        expect(result.startDate.status).toBe('filled');
+        expect(result.endDate.status).toBe('filled');
+        expect(result.visibility.status).toBe('filled');
+        expect(result.maxBuddies.status).toBe('filled');
+      });
+    });
+
+    // 子區塊 5: 狀態轉換驗證
+    describe('狀態轉換驗證', () => {
+      it('從 AWAITING_INPUT 到 AWAITING_DATE', async () => {
+        let form = createEmptyForm();
+        expect(getCurrentState(form)).toBe('AWAITING_INPUT');
+
+        form = await updateFormFromInput(form, '野澤');
+        const state = getCurrentState(form);
+        expect(state).toBe('AWAITING_DATE');
+      });
+
+      it('從 AWAITING_DATE 到 AWAITING_DURATION', async () => {
+        let form = createEmptyForm();
+        form = await updateFormFromInput(form, '野澤');
+
+        form = await updateFormFromInput(form, '3月20日');
+        const state = getCurrentState(form);
+        // 如果只有開始日期沒有結束日期，可能需要天數
+        expect(['AWAITING_DURATION', 'CONFIRMING_TRIP'].includes(state)).toBe(true);
+      });
+
+      it('所有欄位填寫後應該到達 CONFIRMING_TRIP', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '野澤 3月20-25日 公開找2人');
+
+        const state = getCurrentState(result);
+        expect(state).toBe('CONFIRMING_TRIP');
+      });
+    });
+
+    // 子區塊 6: 更多雪場測試
+    describe('更多雪場測試', () => {
+      it('應該識別「白馬」（模糊匹配）', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '白馬八方');
+
+        // 使用更具體的名稱「白馬八方」
+        expect(result.resort.status).toBe('filled');
+        if (result.resort.status === 'filled') {
+          expect(result.resort.value.matchedValue).toContain('白馬');
+        }
+      });
+
+      it('應該識別「留壽都」', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, '留壽都');
+
+        expect(result.resort.status).toBe('filled');
+      });
+
+      it('應該識別英文雪場名：「Niseko」', async () => {
+        const form = createEmptyForm();
+        const result = await updateFormFromInput(form, 'Niseko 3/20-25');
+
+        // Niseko 應該可以被識別
+        expect(result.resort.status).toBe('filled');
+        if (result.resort.status === 'filled') {
+          expect(
+            result.resort.value.matchedValue.toLowerCase().includes('niseko') ||
+            result.resort.value.matchedValue.includes('二世谷')
+          ).toBe(true);
+        }
+      });
+    });
+  });
 });

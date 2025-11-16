@@ -95,6 +95,35 @@ export async function updateFormFromInput(form: TripForm, input: string): Promis
     }
   }
 
+  // 處理簡化日期範圍（如 3/20至3/25, 3/20到25）
+  const simpleDateRangeMatch = input.match(/(\d{1,2})\/(\d{1,2})[至到](\d{1,2})\/(\d{1,2})/);
+  if (simpleDateRangeMatch && parsed.startDate && parsed.endDate) {
+    // 提取結束日期的月和日
+    const endMonth = parseInt(simpleDateRangeMatch[3]) - 1; // JS months are 0-indexed
+    const endDay = parseInt(simpleDateRangeMatch[4]);
+
+    // 使用 startDate 的年份
+    const year = parsed.startDate.getFullYear();
+    const correctedEndDate = new Date(year, endMonth, endDay);
+
+    if (!isNaN(correctedEndDate.getTime())) {
+      parsed.endDate = correctedEndDate;
+    }
+  }
+
+  // 處理同月日期範圍（如 3月20到25日, 3月20日到3月25日）
+  const sameMonthRangeMatch = input.match(/(\d{1,2})月(\d{1,2})[日號]?[到至](?:\d{1,2}月)?(\d{1,2})[日號]/);
+  if (sameMonthRangeMatch && parsed.startDate && parsed.endDate) {
+    const month = parseInt(sameMonthRangeMatch[1]) - 1;
+    const endDay = parseInt(sameMonthRangeMatch[3]);
+    const year = explicitYear || parsed.startDate.getFullYear();
+
+    const correctedEndDate = new Date(year, month, endDay);
+    if (!isNaN(correctedEndDate.getTime())) {
+      parsed.endDate = correctedEndDate;
+    }
+  }
+
   // 更新日期
   if (parsed.startDate) {
     // 檢查日期是否有效
