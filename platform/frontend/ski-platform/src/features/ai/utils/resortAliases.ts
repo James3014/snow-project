@@ -17,7 +17,7 @@ export const RESORT_ALIASES: ResortAliases[] = [
   // === 北海道 ===
   {
     resort_id: 'hokkaido_niseko_moiwa',
-    aliases: ['二世谷Moiwa滑雪場', '二世谷Moiwa', '二世谷moiwa', 'niseko moiwa', 'niseko', '二世谷'],
+    aliases: ['二世谷Moiwa滑雪場', '二世谷Moiwa', '二世谷moiwa', 'niseko moiwa', 'niseko', '二世谷', '新雪谷'],
     priority: 9,
   },
   {

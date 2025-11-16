@@ -9,6 +9,7 @@
  */
 
 import { parseIntent } from './intentParser';
+import type { ResortMatch } from './resortMatcher';
 
 // ==================== 類型定義 ====================
 
@@ -17,11 +18,8 @@ export type FormField<T> =
   | { status: 'filled'; value: T }
   | { status: 'invalid'; error: string };
 
-export interface ResortMatch {
-  id: string;
-  name: string;
-  prefecture: string;
-}
+// 導出 ResortMatch 以便測試使用
+export type { ResortMatch };
 
 export interface TripForm {
   resort: FormField<ResortMatch>;
@@ -72,53 +70,151 @@ export async function updateFormFromInput(form: TripForm, input: string): Promis
     newForm.resort = { status: 'filled', value: parsed.resort };
   }
 
+  // 檢查輸入中是否包含無效的月份或日期（如 99月、99日）
+  const invalidMonthMatch = input.match(/(\d{2,})月/);
+  const invalidDayMatch = input.match(/(\d{2,})日/);
+  const hasInvalidMonth = invalidMonthMatch && parseInt(invalidMonthMatch[1]) > 12;
+  const hasInvalidDay = invalidDayMatch && parseInt(invalidDayMatch[1]) > 31;
+
+  // 檢查輸入中是否包含明確的年份（如 2025/3/20）
+  const explicitYearMatch = input.match(/(\d{4})[\/\-年]/);
+  const explicitYear = explicitYearMatch ? parseInt(explicitYearMatch[1]) : null;
+
+  // 檢查是否包含完整的日期範圍格式（如 2025/3/20-2025/3/25）
+  const fullDateRangeMatch = input.match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})[-到至](\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
+  if (fullDateRangeMatch && parsed.endDate) {
+    // 解析結束日期的年月日
+    const endYear = parseInt(fullDateRangeMatch[4]);
+    const endMonth = parseInt(fullDateRangeMatch[5]) - 1; // JS months are 0-indexed
+    const endDay = parseInt(fullDateRangeMatch[6]);
+
+    // 覆蓋 parseIntent 的結果
+    const correctedEndDate = new Date(endYear, endMonth, endDay);
+    if (!isNaN(correctedEndDate.getTime())) {
+      parsed.endDate = correctedEndDate;
+    }
+  }
+
   // 更新日期
   if (parsed.startDate) {
-    newForm.startDate = { status: 'filled', value: parsed.startDate };
+    // 檢查日期是否有效
+    if (isNaN(parsed.startDate.getTime())) {
+      newForm.startDate = { status: 'invalid', error: '無效的開始日期' };
+    } else if (hasInvalidMonth || hasInvalidDay) {
+      // 輸入包含無效的月份或日期數字
+      newForm.startDate = { status: 'invalid', error: '無效的日期格式' };
+    } else {
+      let startDate = parsed.startDate;
+
+      // 如果輸入包含明確年份，且與解析結果不符，以用戶輸入為準
+      if (explicitYear && startDate.getFullYear() !== explicitYear) {
+        startDate = new Date(startDate);
+        startDate.setFullYear(explicitYear);
+      }
+
+      newForm.startDate = { status: 'filled', value: startDate };
+    }
   }
 
   if (parsed.endDate) {
-    newForm.endDate = { status: 'filled', value: parsed.endDate };
+    // 檢查日期是否有效
+    if (isNaN(parsed.endDate.getTime())) {
+      newForm.endDate = { status: 'invalid', error: '無效的結束日期' };
+    } else if (hasInvalidMonth || hasInvalidDay) {
+      // 輸入包含無效的月份或日期數字
+      newForm.endDate = { status: 'invalid', error: '無效的日期格式' };
+    } else {
+      let endDate = parsed.endDate;
+
+      // 如果輸入包含明確年份，且與解析結果不符，以用戶輸入為準
+      if (explicitYear && endDate.getFullYear() !== explicitYear) {
+        endDate = new Date(endDate);
+        endDate.setFullYear(explicitYear);
+      }
+
+      newForm.endDate = { status: 'filled', value: endDate };
+    }
   }
 
-  // 更新或計算天數
-  if (parsed.duration) {
-    newForm.duration = { status: 'filled', value: parsed.duration };
-  }
-
-  // 如果有開始和結束日期，但沒有明確指定天數，則自動計算天數（包含首尾）
+  // 驗證日期順序：結束日期必須 >= 開始日期
   if (
     newForm.startDate.status === 'filled' &&
+    newForm.endDate.status === 'filled'
+  ) {
+    const start = newForm.startDate.value;
+    const end = newForm.endDate.value;
+
+    if (end < start) {
+      // 日期順序錯誤
+      newForm.endDate = { status: 'invalid', error: '結束日期不能早於開始日期' };
+    }
+  }
+
+  // 日期和天數計算邏輯
+  // 優先級：當衝突時，判斷用戶是明確給了日期範圍還是明確給了天數
+
+  // 檢查輸入是否包含日期範圍格式（如"20-25"、"3/20-25"）
+  const hasDateRange = /\d+[-到至]\d+/.test(input);
+
+  // 判斷是否有真正的衝突
+  if (
+    parsed.startDate &&
+    parsed.endDate &&
+    parsed.duration &&
+    newForm.startDate.status === 'filled' &&
+    newForm.endDate.status === 'filled'
+  ) {
+    // 從日期範圍計算天數
+    const start = newForm.startDate.value;
+    const end = newForm.endDate.value;
+    const daysFromRange = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+    // 如果日期範圍計算的天數 != 用戶指定的天數，存在衝突
+    const hasConflict = daysFromRange !== parsed.duration;
+
+    if (hasConflict) {
+      // 如果用戶明確給了日期範圍（輸入包含"20-25"格式），以日期範圍為準
+      // 否則以明確指定的天數為準
+      if (hasDateRange) {
+        newForm.duration = { status: 'filled', value: daysFromRange };
+      } else {
+        // 用戶只給了開始日期和天數，endDate是parseIntent推測的，以天數為準
+        newForm.duration = { status: 'filled', value: parsed.duration };
+        const newEnd = new Date(start);
+        newEnd.setDate(newEnd.getDate() + parsed.duration - 1);
+        newForm.endDate = { status: 'filled', value: newEnd };
+      }
+    } else {
+      // 沒有衝突，使用用戶指定的天數
+      newForm.duration = { status: 'filled', value: parsed.duration };
+    }
+  }
+  // 有開始日期和天數，沒有結束日期 - 用天數計算
+  else if (
+    newForm.startDate.status === 'filled' &&
+    parsed.duration &&
+    !parsed.endDate
+  ) {
+    newForm.duration = { status: 'filled', value: parsed.duration };
+    const start = newForm.startDate.value;
+    const end = new Date(start);
+    end.setDate(end.getDate() + parsed.duration - 1);
+    newForm.endDate = { status: 'filled', value: end };
+  }
+  // 有日期範圍但沒有天數 - 從日期範圍計算
+  else if (
+    newForm.startDate.status === 'filled' &&
     newForm.endDate.status === 'filled' &&
-    !parsed.duration // 只有在用戶沒有明確指定天數時才自動計算
+    !parsed.duration
   ) {
     const start = newForm.startDate.value;
     const end = newForm.endDate.value;
     const days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     newForm.duration = { status: 'filled', value: days };
   }
-
-  // 如果有開始日期和明確指定的天數，根據天數計算結束日期
-  // （優先使用用戶明確指定的天數，而不是 parseIntent 推測的 endDate）
-  if (
-    newForm.startDate.status === 'filled' &&
-    parsed.duration // 用戶明確指定了天數
-  ) {
-    const start = newForm.startDate.value;
-    const end = new Date(start);
-    end.setDate(end.getDate() + parsed.duration - 1);
-    newForm.endDate = { status: 'filled', value: end };
-  }
-  // 如果只有開始日期和天數，但沒有明確指定（從日期範圍推導的），計算結束日期
-  else if (
-    newForm.startDate.status === 'filled' &&
-    newForm.duration.status === 'filled' &&
-    newForm.endDate.status === 'empty'
-  ) {
-    const start = newForm.startDate.value;
-    const end = new Date(start);
-    end.setDate(end.getDate() + newForm.duration.value - 1);
-    newForm.endDate = { status: 'filled', value: end };
+  // 只有天數
+  else if (parsed.duration) {
+    newForm.duration = { status: 'filled', value: parsed.duration };
   }
 
   // 更新可見性
@@ -216,14 +312,16 @@ export function generateResponse(form: TripForm): string {
 
     case 'AWAITING_DATE':
       if (form.resort.status === 'filled') {
-        return `好的，想去${form.resort.value.name}！請問什麼時候出發？（例如：3月20-25日）`;
+        const resortName = form.resort.value.matchedValue || form.resort.value.resort.names.zh;
+        return `好的，想去${resortName}！請問出發日期是？（例如：3月20-25日）`;
       }
-      return '請問什麼時候出發？';
+      return '請問出發日期是？';
 
     case 'AWAITING_DURATION':
       if (form.resort.status === 'filled' && form.startDate.status === 'filled') {
+        const resortName = form.resort.value.matchedValue || form.resort.value.resort.names.zh;
         const dateStr = formatDate(form.startDate.value);
-        return `了解！${form.resort.value.name}，${dateStr}出發。請問要去幾天？`;
+        return `了解！${resortName}，${dateStr}出發。請問要去幾天？`;
       }
       return '請問要去幾天？';
 
@@ -247,7 +345,8 @@ function generateConfirmationMessage(form: TripForm): string {
   const parts: string[] = [];
 
   if (form.resort.status === 'filled') {
-    parts.push(`雪場：${form.resort.value.name}`);
+    const resortName = form.resort.value.matchedValue || form.resort.value.resort.names.zh;
+    parts.push(`雪場：${resortName}`);
   }
 
   if (form.startDate.status === 'filled' && form.endDate.status === 'filled') {

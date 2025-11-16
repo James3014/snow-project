@@ -31,7 +31,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       // 雪場識別
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
-        expect(result.resort.value.name).toContain('野澤');
+        expect(result.resort.value.matchedValue).toContain('野澤');
       }
 
       // 日期解析
@@ -72,7 +72,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
 
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
-        expect(result.resort.value.name).toContain('二世谷');
+        expect(result.resort.value.matchedValue).toContain('二世谷');
       }
 
       // 其他欄位保持空白
@@ -125,7 +125,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
 
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
-        expect(result.resort.value.name).toContain('二世谷');
+        expect(result.resort.value.matchedValue).toContain('二世谷');
       }
     });
 
@@ -136,7 +136,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
         expect(['二世谷', 'Niseko', 'ニセコ'].some(name =>
-          result.resort.status === 'filled' && result.resort.value.name.includes(name)
+          result.resort.status === 'filled' && result.resort.value.matchedValue.includes(name)
         )).toBe(true);
       }
     });
@@ -148,7 +148,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
         expect(['二世谷', 'Niseko', 'ニセコ'].some(name =>
-          result.resort.status === 'filled' && result.resort.value.name.includes(name)
+          result.resort.status === 'filled' && result.resort.value.matchedValue.includes(name)
         )).toBe(true);
       }
     });
@@ -289,14 +289,14 @@ describe('TripFormLogic - 行程表單邏輯', () => {
 
       // 第一輪
       form = await updateFormFromInput(form, '二世谷 3月20-25日');
-      const firstResort = form.resort.status === 'filled' ? form.resort.value.name : '';
+      const firstResort = form.resort.status === 'filled' ? form.resort.value.matchedValue : '';
 
       // 第二輪：改變雪場
       form = await updateFormFromInput(form, '改去野澤');
       expect(form.resort.status).toBe('filled');
       if (form.resort.status === 'filled') {
-        expect(form.resort.value.name).not.toBe(firstResort);
-        expect(form.resort.value.name).toContain('野澤');
+        expect(form.resort.value.matchedValue).not.toBe(firstResort);
+        expect(form.resort.value.matchedValue).toContain('野澤');
       }
 
       // 日期應該保留
@@ -627,7 +627,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
 
       expect(result.resort.status).toBe('filled');
       if (result.resort.status === 'filled') {
-        expect(result.resort.value.name).toContain('苗場');
+        expect(result.resort.value.matchedValue).toContain('苗場');
       }
     });
 
