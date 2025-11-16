@@ -107,14 +107,18 @@ export async function updateFormFromInput(form: TripForm, input: string): Promis
   }
 
   // 更新可見性
-  // 檢查公開關鍵字
+  // 檢查公開關鍵字（使用更靈活的匹配）
   const publicKeywords = [
     '公開', '開放', 'public',
-    '找人', '找伴', '徵人', '徵伴', '找雪友',
     '一起', '揪團', '組團'
   ];
 
-  const hasPublicKeyword = publicKeywords.some(keyword => input.includes(keyword));
+  // 檢查動作關鍵字（找/徵/邀等）+ 人/伴/雪友等
+  const hasActionKeyword = /找|徵|邀/.test(input);
+  const hasTargetKeyword = /人|伴|雪友/.test(input);
+
+  const hasPublicKeyword = publicKeywords.some(keyword => input.includes(keyword)) ||
+    (hasActionKeyword && hasTargetKeyword);
 
   if (hasPublicKeyword) {
     newForm.visibility = { status: 'filled', value: 'public' };
