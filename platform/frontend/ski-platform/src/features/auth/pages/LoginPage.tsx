@@ -1,6 +1,8 @@
 /**
- * Login Page
- * 登入頁面
+ * Login Page - Glacial Futurism Design
+ * 登入頁面 - 冰川未來主義設計
+ *
+ * Mobile-First | Immersive | Glassmorphism
  */
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,16 +19,16 @@ export default function LoginPage() {
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   useEffect(() => {
-    // Clear any previous errors when component mounts
     dispatch(clearError());
+    // Trigger entrance animation
+    setTimeout(() => setIsFormVisible(true), 100);
   }, [dispatch]);
 
   useEffect(() => {
-    // Redirect to home if already authenticated
     if (isAuthenticated) {
-      // 可以在這裡添加成功訊息，但因為會立即跳轉，暫時不添加
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
@@ -44,40 +46,77 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <div className="flex justify-center">
-            <span className="text-6xl">🎿</span>
+    <div className="min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Animated Mountain Background */}
+      <div className="fixed inset-0 z-0">
+        {/* Mountain silhouettes with parallax */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-1/2 opacity-20"
+          style={{
+            background: 'linear-gradient(to top, var(--ice-primary), transparent)',
+            clipPath: 'polygon(0% 100%, 0% 60%, 10% 55%, 20% 65%, 30% 50%, 40% 60%, 50% 45%, 60% 55%, 70% 40%, 80% 50%, 90% 55%, 100% 60%, 100% 100%)'
+          }}
+        />
+        <div
+          className="absolute bottom-0 left-0 right-0 h-1/3 opacity-30"
+          style={{
+            background: 'linear-gradient(to top, var(--neon-purple), transparent)',
+            clipPath: 'polygon(0% 100%, 0% 70%, 15% 65%, 25% 75%, 35% 60%, 45% 70%, 55% 55%, 65% 65%, 75% 50%, 85% 60%, 95% 65%, 100% 70%, 100% 100%)'
+          }}
+        />
+
+        {/* Floating snow particles */}
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="snow-particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDuration: `${8 + Math.random() * 12}s`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Login Container */}
+      <div
+        className={`relative z-10 w-full max-w-md transition-all duration-1000 ${
+          isFormVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}
+      >
+        {/* Logo & Title */}
+        <div className="text-center mb-8 animate-slide-up stagger-1">
+          <div className="inline-flex items-center justify-center w-20 h-20 mb-6 glass-card pulse-glow">
+            <span className="text-5xl">🎿</span>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            登入 SkiDIY
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            還沒有帳號？{' '}
-            <Link
-              to="/register"
-              className="font-medium text-primary-600 hover:text-primary-500"
-            >
-              立即註冊
-            </Link>
+          <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-3">
+            SKIDIY
+          </h1>
+          <p className="text-crystal-blue text-sm md:text-base font-light tracking-wide">
+            GLACIAL ADVENTURE AWAITS
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        {/* Login Form Card */}
+        <div className="glass-card p-6 md:p-8 mb-6 animate-slide-up stagger-2">
+          <h2 className="text-2xl font-bold text-frost-white mb-6 text-center">
+            登入您的帳戶
+          </h2>
+
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="flex">
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">{error}</h3>
-                </div>
+            <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 backdrop-blur-sm animate-slide-up">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">⚠️</span>
+                <p className="text-red-300 text-sm font-medium">{error}</p>
               </div>
             </div>
           )}
 
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {/* Email Input */}
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-crystal-blue">
                 電子郵件
               </label>
               <input
@@ -88,13 +127,14 @@ export default function LoginPage() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                className="input-glacier"
                 placeholder="your@email.com"
               />
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            {/* Password Input */}
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-semibold text-crystal-blue">
                 密碼
               </label>
               <div className="relative">
@@ -106,20 +146,21 @@ export default function LoginPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                  placeholder="請輸入密碼"
+                  className="input-glacier pr-12"
+                  placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-crystal-blue/60 hover:text-ice-primary transition-colors"
+                  aria-label={showPassword ? '隱藏密碼' : '顯示密碼'}
                 >
                   {showPassword ? (
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                     </svg>
                   ) : (
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
@@ -127,27 +168,56 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-          </div>
 
-          <div>
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn-neon mt-6 ski-trail"
             >
-              {isLoading ? '登入中...' : '登入'}
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  登入中...
+                </span>
+              ) : (
+                '登入'
+              )}
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
 
-        <div className="text-center">
+        {/* Register Link */}
+        <div className="text-center space-y-4 animate-slide-up stagger-3">
+          <p className="text-crystal-blue/80 text-sm">
+            還沒有帳號？{' '}
+            <Link
+              to="/register"
+              className="text-ice-primary hover:text-neon-cyan font-semibold transition-colors underline decoration-ice-primary/30 hover:decoration-neon-cyan underline-offset-4"
+            >
+              立即註冊
+            </Link>
+          </p>
+
           <Link
             to="/"
-            className="text-sm text-gray-600 hover:text-primary-600"
+            className="inline-flex items-center gap-2 text-crystal-blue/60 hover:text-frost-white text-sm transition-colors group"
           >
-            ← 返回首頁
+            <svg
+              className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            返回首頁
           </Link>
         </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-ice-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-neon-purple/5 rounded-full blur-3xl pointer-events-none" />
       </div>
     </div>
   );

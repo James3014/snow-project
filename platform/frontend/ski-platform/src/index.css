@@ -1,122 +1,484 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* ==========================================
+   GLACIAL FUTURISM DESIGN SYSTEM
+   冰川未來主義設計系統
+
+   哲學：極地冰川的純淨 × 科技未來的銳利
+   適用：Mobile-First 滑雪平台
+   ========================================== */
+
 :root {
-  --background: #09090b;
-  --foreground: #ededed;
+  /* === Color Palette: 冰川深空 === */
+  --bg-deep-space: #0a0e27;
+  --bg-ice-dark: #0f1629;
+  --bg-glacier: #1a1f3a;
+  --bg-card: rgba(26, 31, 58, 0.6);
+  --bg-card-hover: rgba(36, 43, 74, 0.8);
 
-  /* 字體：Alpine Velocity 美學 */
-  --font-display: 'Bebas Neue', 'Impact', sans-serif;
-  --font-body: 'Space Mono', 'Courier New', monospace;
+  /* Glacial Blues */
+  --ice-primary: #00d4ff;
+  --ice-secondary: #0066ff;
+  --ice-accent: #00ffaa;
+  --frost-white: #f0f9ff;
+  --crystal-blue: #cfe9ff;
 
-  /* 主題色：山岳藍綠配色 */
-  --btn-primary-bg: #0891b2;
-  --btn-primary-text: #ffffff;
-  --accent: #06b6d4;
-  --card-bg: #27272a;
-  --card-border: #3f3f46;
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
+  /* Neon Accents */
+  --neon-cyan: #00f0ff;
+  --neon-pink: #ff006e;
+  --neon-purple: #7b2cbf;
 
-  /* 漸層：山脈與冰川 */
-  --gradient-primary: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  --gradient-text: linear-gradient(135deg, #ffffff 0%, #e5e5e5 50%, #ffffff 100%);
+  /* Gradients */
+  --gradient-glacier: linear-gradient(135deg, #00d4ff 0%, #0066ff 50%, #7b2cbf 100%);
+  --gradient-ice: linear-gradient(180deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 102, 255, 0.05) 100%);
+  --gradient-aurora: linear-gradient(90deg, #00d4ff, #00ffaa, #7b2cbf, #ff006e);
+  --gradient-card: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(123, 44, 191, 0.05) 100%);
+
+  /* Typography */
+  --font-display: 'Orbitron', 'Bebas Neue', sans-serif;
+  --font-body: 'Outfit', -apple-system, sans-serif;
+
+  /* Spacing (Mobile-First) */
+  --space-xs: 0.5rem;    /* 8px */
+  --space-sm: 0.75rem;   /* 12px */
+  --space-md: 1rem;      /* 16px */
+  --space-lg: 1.5rem;    /* 24px */
+  --space-xl: 2rem;      /* 32px */
+  --space-2xl: 3rem;     /* 48px */
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows: Glacial Depth */
+  --shadow-ice: 0 4px 24px rgba(0, 212, 255, 0.1), 0 2px 8px rgba(0, 102, 255, 0.05);
+  --shadow-glacier: 0 8px 32px rgba(0, 212, 255, 0.15), 0 4px 16px rgba(0, 102, 255, 0.1);
+  --shadow-aurora: 0 12px 48px rgba(0, 212, 255, 0.2), 0 6px 24px rgba(123, 44, 191, 0.15);
+  --shadow-neon: 0 0 20px rgba(0, 240, 255, 0.4), 0 0 40px rgba(0, 212, 255, 0.2);
+
+  /* Glass morphism */
+  --glass-bg: rgba(26, 31, 58, 0.4);
+  --glass-border: rgba(0, 212, 255, 0.15);
+  --glass-blur: blur(20px);
+}
+
+/* === Base Styles === */
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-deep-space);
+  color: var(--frost-white);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-.text-balance {
-  text-wrap: balance;
+/* Animated Background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(123, 44, 191, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg-deep-space) 0%, var(--bg-ice-dark) 100%);
+  z-index: -1;
+  animation: aurora-shift 20s ease-in-out infinite;
 }
 
-/* Alpine Velocity 動畫 */
-@keyframes slide-in {
-  from {
-    transform: translateX(100%);
+@keyframes aurora-shift {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* === Typography === */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.text-gradient-glacier {
+  background: var(--gradient-glacier);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradient-flow 8s ease infinite;
+}
+
+@keyframes gradient-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* === Glassmorphism Cards === */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-ice);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.glass-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--ice-primary);
+  box-shadow: var(--shadow-aurora);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.glass-card:active {
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* === Neon Button === */
+.btn-neon {
+  position: relative;
+  padding: var(--space-md) var(--space-xl);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--bg-deep-space);
+  background: var(--gradient-glacier);
+  background-size: 200% 200%;
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-glacier);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-neon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-neon:hover {
+  box-shadow: var(--shadow-neon);
+  transform: translateY(-2px);
+  background-position: 100% 50%;
+}
+
+.btn-neon:hover::before {
+  left: 100%;
+}
+
+.btn-neon:active {
+  transform: translateY(0);
+}
+
+.btn-neon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* === Input Fields === */
+.input-glacier {
+  width: 100%;
+  padding: var(--space-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--frost-white);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-glacier::placeholder {
+  color: rgba(207, 233, 255, 0.5);
+}
+
+.input-glacier:focus {
+  border-color: var(--ice-primary);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1), var(--shadow-ice);
+  background: rgba(26, 31, 58, 0.6);
+}
+
+/* === Filter Pills === */
+.filter-pill {
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--crystal-blue);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+}
+
+.filter-pill:hover {
+  border-color: var(--ice-primary);
+  background: rgba(0, 212, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.filter-pill.active {
+  color: var(--bg-deep-space);
+  background: var(--gradient-glacier);
+  background-size: 200% 200%;
+  border-color: transparent;
+  box-shadow: var(--shadow-ice);
+  animation: gradient-flow 6s ease infinite;
+}
+
+.filter-pill:active {
+  transform: scale(0.95);
+}
+
+/* === Ski Trail Animation === */
+@keyframes ski-trail {
+  0% {
+    transform: translateX(-100%) rotate(-20deg);
     opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-in-diagonal {
-  from {
-    opacity: 0;
-    transform: translate(-20px, 30px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(0, 0);
-  }
-}
-
-@keyframes velocity-shine {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(200%);
-  }
-}
-
-@keyframes mountain-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
   }
   50% {
-    box-shadow: 0 0 20px 4px rgba(6, 182, 212, 0.15);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(200%) rotate(-20deg);
+    opacity: 0;
   }
 }
 
-.animate-slide-in {
-  animation: slide-in 0.3s ease-out;
-}
-
-.animate-slide-in-diagonal {
-  animation: slide-in-diagonal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.velocity-shine {
+.ski-trail {
   position: relative;
   overflow: hidden;
 }
 
-.velocity-shine::after {
+.ski-trail::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--ice-primary), transparent);
+  opacity: 0;
+  animation: ski-trail 3s ease-in-out infinite;
+  pointer-events: none;
 }
 
-.velocity-shine:active::after {
-  animation: velocity-shine 0.6s ease-out;
+/* === Snowflake Particles === */
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10px) translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(20px);
+    opacity: 0;
+  }
 }
 
-.resort-card-pulse {
-  animation: mountain-pulse 3s ease-in-out infinite;
+.snow-particle {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background: var(--frost-white);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: snowfall linear infinite;
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* 卡片標題樣式 */
-.resort-card-title {
-  text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(6, 182, 212, 0.1);
+/* === Loading Spinner === */
+@keyframes spin-glacier {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-/* 文字漸層 */
-.text-gradient-velocity {
-  background: var(--gradient-text);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.spinner-glacier {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--glass-border);
+  border-top-color: var(--ice-primary);
+  border-radius: 50%;
+  animation: spin-glacier 1s linear infinite;
+}
+
+/* === Pulse Glow === */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(0, 212, 255, 0);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* === Slide In Animations === */
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-right {
+  animation: slide-in-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger delays for cascading animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* === Scroll Snap (Mobile) === */
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-snap-item {
+  scroll-snap-align: start;
+}
+
+/* === Custom Scrollbar === */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-ice-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ice-primary);
+}
+
+/* === Utility Classes === */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-ice {
+  color: var(--ice-primary);
+}
+
+.text-crystal {
+  color: var(--crystal-blue);
+}
+
+.bg-gradient-card {
+  background: var(--gradient-card);
+}
+
+.border-glacier {
+  border: 1px solid var(--glass-border);
+}
+
+/* === Mobile Touch Optimizations === */
+@media (max-width: 768px) {
+  :root {
+    --space-md: 0.875rem;
+    --space-lg: 1.25rem;
+    --space-xl: 1.75rem;
+  }
+
+  .glass-card {
+    border-radius: var(--radius-md);
+  }
+
+  /* Prevent overscroll bounce on iOS */
+  body {
+    overscroll-behavior-y: none;
+  }
+
+  /* Larger tap targets */
+  button, a, input, select {
+    min-height: 44px;
+  }
+}
+
+/* === Dark Mode Support === */
+@media (prefers-color-scheme: light) {
+  /* Glacial Futurism works best in dark mode,
+     but we can provide a lighter variant if needed */
+}
+
+/* === Accessibility === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--ice-primary);
+  outline-offset: 2px;
 }
