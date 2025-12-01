@@ -2,7 +2,6 @@
  * Resort List Page - Alpine Velocity Style
  * 雪場列表首页 - Mountain Ice 風格
  */
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { resortApiService } from '@/shared/api/resortApi';
@@ -11,7 +10,6 @@ import { ErrorEmptyState, NoDataEmptyState } from '@/shared/components/EmptyStat
 import ResortCard from '../components/ResortCard';
 
 export default function ResortList() {
-  const navigate = useNavigate();
   const progress = useAppSelector((state) => state.courseTracking.progress);
   const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
