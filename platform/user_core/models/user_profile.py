@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    create_engine, Column, Integer, String, DateTime, JSON, Enum as SQLAlchemyEnum, ForeignKey
+    create_engine, Column, Integer, String, DateTime, JSON, Enum as SQLAlchemyEnum, ForeignKey, Index
 )
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.dialects.postgresql import UUID
@@ -26,6 +26,7 @@ class UserProfile(Base):
 
     preferred_language = Column(String(10))
     experience_level = Column(String(50))
+    skill_level = Column(String(20), nullable=True, default='beginner')  # Skill level for buddy matching
     roles = Column(JSON) # Consider a dedicated roles table in a real app
     coach_cert_level = Column(String(100), nullable=True)
     bio = Column(String, nullable=True)
@@ -38,6 +39,10 @@ class UserProfile(Base):
     status = Column(SQLAlchemyEnum(UserStatus, native_enum=False), default=UserStatus.active, nullable=False)
 
     locale_profiles = relationship("UserLocaleProfile", cascade="all, delete-orphan", back_populates="user")
+
+    __table_args__ = (
+        Index('idx_users_skill_level', 'skill_level'),
+    )
 
     def __repr__(self):
         return f"<UserProfile(user_id={self.user_id}, status={self.status})>"

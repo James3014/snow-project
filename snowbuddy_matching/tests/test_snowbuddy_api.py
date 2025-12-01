@@ -4,19 +4,22 @@ from unittest.mock import AsyncMock
 import sys
 import types
 
+
+class FakeRedisClient:
+    def set(self, *args, **kwargs):
+        return None
+    def get(self, *args, **kwargs):
+        return None
+
+
+# Mock redis before importing app
 if "redis" not in sys.modules:
-    class _FakeRedisClient:
-        def set(self, *args, **kwargs):  # pragma: no cover - stub
-            return None
-
-        def get(self, *args, **kwargs):  # pragma: no cover - stub
-            return None
-
-    sys.modules["redis"] = types.SimpleNamespace(from_url=lambda *_args, **_kwargs: _FakeRedisClient())
+    sys.modules["redis"] = types.SimpleNamespace(from_url=lambda *_args, **_kwargs: FakeRedisClient())
 
 from snowbuddy_matching.app.main import app
 
 client = TestClient(app)
+AUTH_HEADERS = {"X-User-Id": "test-user-123"}
 
 
 @pytest.fixture
@@ -24,7 +27,6 @@ def mock_clients(mocker):
     post_event = mocker.patch("snowbuddy_matching.app.clients.user_core_client.post_event", new_callable=AsyncMock)
     mocker.patch("snowbuddy_matching.app.clients.user_core_client.get_users", new_callable=AsyncMock, return_value=[])
     mocker.patch("snowbuddy_matching.app.clients.resort_services_client.get_resorts", new_callable=AsyncMock, return_value=[])
-    mocker.patch("snowbuddy_matching.app.main.redis_client")
     return {"post_event": post_event}
 
 
@@ -33,7 +35,7 @@ def anyio_backend():
     return "asyncio"
 
 
-def test_health_check(mock_clients):
+def test_health_check():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
@@ -43,7 +45,7 @@ def test_health_check(mock_clients):
 async def test_send_match_request_emits_event(mock_clients):
     mock_clients["post_event"].return_value = True
 
-    response = client.post("/requests", json={"target_user_id": "user-123"})
+    response = client.post("/requests", json={"target_user_id": "user-123"}, headers=AUTH_HEADERS)
 
     assert response.status_code == 202
     payload = mock_clients["post_event"].await_args.args[0]
@@ -57,7 +59,7 @@ async def test_send_match_request_emits_event(mock_clients):
 async def test_respond_to_match_request_emits_event(mock_clients):
     mock_clients["post_event"].return_value = True
 
-    response = client.put("/requests/req-1", json={"action": "accept"})
+    response = client.put("/requests/req-1", json={"action": "accept"}, headers=AUTH_HEADERS)
 
     assert response.status_code == 200
     payload = mock_clients["post_event"].await_args.args[0]

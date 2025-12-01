@@ -23,6 +23,7 @@ from models.user_profile import Base
 from models.behavior_event import Base
 from models.notification_preference import Base
 from models.change_feed import Base
+from models.buddy_matching import Base
 
 # Get the database URL from the environment variable
 config.set_main_option('sqlalchemy.url', os.environ.get('DB_URL'))

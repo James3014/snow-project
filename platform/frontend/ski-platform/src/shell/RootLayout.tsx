@@ -22,7 +22,7 @@ export default function RootLayout() {
   }, [dispatch, token, isAuthenticated]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-zinc-950">
       {/* 导航栏 */}
       <Navbar />
 
@@ -31,7 +31,7 @@ export default function RootLayout() {
         <Suspense
           fallback={
             <div className="flex items-center justify-center h-64">
-              <div className="text-gray-500">載入中...</div>
+              <div className="text-zinc-400">載入中...</div>
             </div>
           }
         >

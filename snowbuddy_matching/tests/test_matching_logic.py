@@ -5,18 +5,18 @@ import sys
 from pathlib import Path
 from datetime import date
 
-# Add app to path
-app_path = Path(__file__).resolve().parents[1] / "app"
-sys.path.insert(0, str(app_path))
+# Add parent to path for proper imports
+parent_path = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(parent_path))
 
-from core.matching_logic import (
+from app.core.scorers import (
     calculate_skill_score,
     calculate_location_score,
     calculate_availability_score,
     calculate_role_score,
-    calculate_total_match_score
 )
-from models.matching import MatchingPreference, CandidateProfile
+from app.core.matching_logic import calculate_total_match_score
+from app.models.matching import MatchingPreference, CandidateProfile
 
 
 def test_skill_score_exact_match():

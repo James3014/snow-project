@@ -16,20 +16,20 @@
   - [x] **T2.1.2:** 實作一個函式，用於呼叫 `user-core` 的 `POST /events` 端點，以提交行為事件。
 - [x] **T2.2:** 建立 `app/clients/resort_services_client.py` 模組。
   - [x] **T2.2.1:** 實作一個函式，用於呼叫 `resort-services` 的 `GET /resorts` 端點。
-- [ ] **T2.3 (New):** 建立 `app/clients/knowledge_engagement_client.py` 模組。
-  - [ ] **T2.3.1:** 實作一個函式，用於呼叫 `knowledge-engagement` 的 `GET /users/{user_id}/skill-profile` 端點。
+- [x] **T2.3 (New):** 建立 `app/clients/knowledge_engagement_client.py` 模組。
+  - [x] **T2.3.1:** 實作一個函式，用於呼叫 `knowledge-engagement` 的 `GET /users/{user_id}/skill-profile` 端點。
 
 ## Epic 3: 核心媒合引擎開發 (Matching Engine)
 
-- [x] **T3.1:** 在 `app/models/` 中，使用 Pydantic 定義媒合偏好 (`MatchingPreference`) 與候選人資料 (`CandidateProfile`) 的資料模型。 **(目前尚未加入 `include_knowledge_score: bool` 欄位)**
+- [x] **T3.1:** 在 `app/models/` 中，使用 Pydantic 定義媒合偏好 (`MatchingPreference`) 與候選人資料 (`CandidateProfile`) 的資料模型。 **(已加入 `include_knowledge_score: bool` 欄位)**
 - [x] **T3.2:** 建立 `app/core/matching_logic.py` 模組。
-- [ ] **T3.3:** 實作候選人過濾邏輯 (Phase 1)，根據基本條件向 `user-core` 發起初步查詢。
+- [x] **T3.3:** 實作候選人過濾邏輯 (Phase 1)，根據基本條件向 `user-core` 發起初步查詢。
 - [x] **T3.4:** 實作多維度計分函式 (Phase 2)，包含：
   - [x] **T3.4.1:** `calculate_skill_score()`
   - [x] **T3.4.2:** `calculate_location_score()` （已整合 `resort-services` 回傳的地點資料）
   - [x] **T3.4.3:** `calculate_availability_score()`
   - [x] **T3.4.4:** `calculate_role_score()`
-  - [ ] **T3.4.5 (New):** `calculate_knowledge_score()`（暫未串接 `knowledge-engagement`）
+  - [x] **T3.4.5 (New):** `calculate_knowledge_score()`（已串接 `knowledge-engagement`）
 - [x] **T3.5:** 實作最終的排序與結果格式化邏輯 (Phase 3)，將候選人資料轉換為匿名的摘要格式。
 
 ## Epic 4: API 端點實作 (API Endpoints)
@@ -66,5 +66,12 @@
 - [ ] **T7.4:** 在 `run_matching_process` 中加入 `filter_candidates_by_trip(trip_info, candidates)` 邏輯，使得 scoring 只作用於與該 trip 地點/時間相符的使用者。
 ## 目前差距與調整建議
 
-- **候選人過濾尚未實作 (T3.3):** `snowbuddy_matching/app/main.py` 中的 `run_matching_process` 目前直接用 `user_core_client.get_users()` 取得全量使用者後再計分，尚未依搜尋者的 `seeker_prefs` 事先過濾候選人。請依 `plan.md` 第 4 段 Phase 1 所述的 "候選人過濾" 與篩選條件加入額外的查詢/過濾邏輯。
-- **知識分數尚未建立 (T3.4.5/T2.3):** 目前未建立 `app/clients/knowledge_engagement_client.py`，`app/models/matching.py` 也不含 `knowledge_score` 欄位；建議在整合 `knowledge-engagement` 前先在模型與計分流程中預留接點（例如 `include_knowledge_score`、`calculate_knowledge_score`），再撰寫對應 client。
+- **✓ 候選人過濾已實作 (T3.3):** 已在 `matching_logic.py` 中實作 `filter_candidates()` 函式，根據技能等級、地點偏好等條件預先過濾候選人，並在 `main.py` 的 `run_matching_process` 中使用，大幅提升效能。
+- **✓ 知識分數已建立 (T3.4.5/T2.3):** 已建立 `app/clients/knowledge_engagement_client.py`，實作 `calculate_knowledge_score()` 函式，並在 `MatchingPreference` 模型中加入 `include_knowledge_score` 欄位。當啟用時，系統會從 `knowledge-engagement` 服務獲取技能檔案並計算相似度分數。
+- **權重已調整:** 為了納入知識分數，計分權重已重新分配：
+  - WEIGHT_SKILL: 0.3 (原 0.4)
+  - WEIGHT_LOCATION: 0.25 (原 0.3)
+  - WEIGHT_AVAILABILITY: 0.2 (維持)
+  - WEIGHT_ROLE: 0.15 (原 0.1)
+  - WEIGHT_KNOWLEDGE: 0.1 (新增)
+- **行程媒合整合待實作 (Epic 7):** 需要與 Trip 模型和 trip planning service 整合，目前暫時無法完成，需要等待相關服務就緒。

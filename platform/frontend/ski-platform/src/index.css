@@ -1,15 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
+:root {
+  --background: #09090b;
+  --foreground: #ededed;
+
+  /* 字體：Alpine Velocity 美學 */
+  --font-display: 'Bebas Neue', 'Impact', sans-serif;
+  --font-body: 'Space Mono', 'Courier New', monospace;
+
+  /* 主題色：山岳藍綠配色 */
+  --btn-primary-bg: #0891b2;
+  --btn-primary-text: #ffffff;
+  --accent: #06b6d4;
+  --card-bg: #27272a;
+  --card-border: #3f3f46;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+
+  /* 漸層：山脈與冰川 */
+  --gradient-primary: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  --gradient-text: linear-gradient(135deg, #ffffff 0%, #e5e5e5 50%, #ffffff 100%);
+}
+
 body {
-  background-color: rgb(249 250 251);
-  color: rgb(17 24 39);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .text-balance {
   text-wrap: balance;
 }
 
-/* 动画 */
+/* Alpine Velocity 動畫 */
 @keyframes slide-in {
   from {
     transform: translateX(100%);
@@ -21,6 +45,78 @@ body {
   }
 }
 
+@keyframes slide-in-diagonal {
+  from {
+    opacity: 0;
+    transform: translate(-20px, 30px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes velocity-shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes mountain-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(6, 182, 212, 0.15);
+  }
+}
+
 .animate-slide-in {
   animation: slide-in 0.3s ease-out;
+}
+
+.animate-slide-in-diagonal {
+  animation: slide-in-diagonal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.velocity-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.velocity-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: translateX(-100%);
+}
+
+.velocity-shine:active::after {
+  animation: velocity-shine 0.6s ease-out;
+}
+
+.resort-card-pulse {
+  animation: mountain-pulse 3s ease-in-out infinite;
+}
+
+/* 卡片標題樣式 */
+.resort-card-title {
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(6, 182, 212, 0.1);
+}
+
+/* 文字漸層 */
+.text-gradient-velocity {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

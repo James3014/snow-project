@@ -7,7 +7,6 @@ import { calculateSimilarity } from './levenshtein';
 import { pinyinToChinese, pinyinToResortId, isPossiblyPinyin, getAllMatchingResortIds } from './pinyinMapper';
 import type { Resort } from '@/shared/data/resorts';
 import { resortApiService } from '@/shared/api/resortApi';
-import { getLocalResorts } from '@/shared/data/local-resorts';
 import { getResortAliases, getResortPriority } from './resortAliases';
 import { ResortIndex } from './ResortIndex';
 
@@ -38,20 +37,11 @@ async function getResorts(): Promise<Resort[]> {
     const response = await resortApiService.getAllResorts();
     resortsCache = response.items || [];
     lastFetchTime = now;
-
-    // 如果 API 返回空數據，使用本地資料
-    if (resortsCache.length === 0) {
-      console.warn('API returned empty resorts list, falling back to local data');
-      resortsCache = getLocalResorts();
-    }
-
     return resortsCache;
   } catch (error) {
-    console.error('Failed to fetch resorts from API, using local fallback data:', error);
-    // 如果 API 失敗，使用本地備份數據
-    resortsCache = getLocalResorts();
-    lastFetchTime = now;
-    return resortsCache;
+    console.error('Failed to fetch resorts from API:', error);
+    // 返回緩存（如果有）或空陣列
+    return resortsCache || [];
   }
 }
 
@@ -73,37 +63,23 @@ function matchResortName(
   const normalized = input.toLowerCase().trim();
   const { names } = resort;
 
-  // 獲取雪場的所有別名（按優先級排序：從完整名到通用名）
+  // 獲取雪場的所有別名
   const aliases = getResortAliases(resort.resort_id, names.zh);
 
   let bestMatch: { confidence: number; field: 'zh' | 'en' | 'ja'; value: string } | null = null;
 
-  // 遍歷所有別名進行匹配
   for (let i = 0; i < aliases.length; i++) {
     const alias = aliases[i].toLowerCase();
 
-    // 1. 精確匹配（最高優先級）
+    // 1. 精確匹配
     if (normalized === alias) {
-      const confidence = i === 0 ? 1.0 : 0.98;  // 第一個別名（完整名）信心度最高
+      const confidence = i === 0 ? 1.0 : 0.98;
       return { confidence, field: 'zh', value: names.zh };
     }
 
-    // 2. 輸入包含別名（用戶提到了這個雪場）
+    // 2. 輸入包含別名
     if (normalized.includes(alias) && alias.length >= 2) {
-      // 信心度根據別名的具體程度：
-      // - 越具體的別名（如"白馬八方"）信心度越高
-      // - 越通用的別名（如"白馬"）信心度越低
-      let confidence = 0.85;
-
-      if (alias.length >= 4) {
-        confidence = 0.90;  // 長別名（4+字）更具體
-      } else if (alias.length === 3) {
-        confidence = 0.87;  // 中等長度（3字）
-      } else {
-        confidence = 0.80;  // 短別名（2字）需要更謹慎
-      }
-
-      // 如果是排在前面的別名（更準確），提升信心度
+      let confidence = alias.length >= 4 ? 0.90 : alias.length === 3 ? 0.87 : 0.80;
       if (i === 0) confidence += 0.05;
 
       if (!bestMatch || confidence > bestMatch.confidence) {
@@ -111,7 +87,7 @@ function matchResortName(
       }
     }
 
-    // 3. 別名包含輸入（可能是縮寫）
+    // 3. 別名包含輸入
     if (alias.includes(normalized) && normalized.length >= 2) {
       const confidence = 0.75;
       if (!bestMatch || confidence > bestMatch.confidence) {
@@ -120,7 +96,7 @@ function matchResortName(
     }
   }
 
-  // 如果沒有匹配，嘗試模糊匹配（作為後備）
+  // 模糊匹配後備
   const zhSimilarity = calculateSimilarity(normalized, names.zh.toLowerCase());
   if (zhSimilarity >= 0.7) {
     return { confidence: zhSimilarity * 0.7, field: 'zh', value: names.zh };
@@ -130,7 +106,7 @@ function matchResortName(
 }
 
 /**
- * 匹配單個雪場（增強版：支持中文、多個匹配時返回建議）
+ * 匹配單個雪場
  */
 export async function matchResort(input: string): Promise<ResortMatch | null> {
   if (!input || input.trim().length === 0) {
@@ -146,131 +122,61 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
   const trimmedInput = input.trim();
   const normalizedInput = trimmedInput.toLowerCase();
 
-  // 檢測雪場群關鍵詞（需要用戶進一步選擇）
+  // 檢測雪場群關鍵詞
   const resortGroups = [
-    {
-      keywords: ['白馬', 'hakuba'],
-      names: ['白馬Cortina', '白馬八方尾根', '白馬五龍', '白馬岩岳', '白馬栂池', '白馬乗鞍'],
-      filter: (r: Resort) => r.names.zh.includes('白馬')
-    },
-    {
-      keywords: ['二世谷', 'niseko', 'ニセコ'],
-      names: ['二世谷'],
-      filter: (r: Resort) => r.names.zh.includes('二世谷') || r.names.en.toLowerCase().includes('niseko')
-    },
-    {
-      keywords: ['妙高', 'myoko'],
-      names: ['妙高杉之原', '妙高池之平', '赤倉溫泉', '赤倉觀光', '樂天新井'],
-      filter: (r: Resort) => r.names.zh.includes('妙高') || r.names.zh.includes('赤倉') || r.names.zh.includes('新井')
-    },
-    {
-      keywords: ['湯澤', 'yuzawa'],
-      names: ['GALA湯澤', 'NASPA', '苗場', '神樂', '石打丸山', '湯澤中里', '湯澤公園', '神立高原', '舞子高原', '岩原', '上越國際'],
-      filter: (r: Resort) => r.names.zh.includes('湯澤') || r.resort_id.includes('yuzawa_') ||
-                           r.names.zh.includes('苗場') || r.names.zh.includes('神樂') ||
-                           r.names.zh.includes('石打') || r.names.zh.includes('神立') ||
-                           r.names.zh.includes('舞子') || r.names.zh.includes('岩原') ||
-                           r.names.zh.includes('上越國際')
-    },
+    { keywords: ['白馬', 'hakuba'], filter: (r: Resort) => r.names.zh.includes('白馬') },
+    { keywords: ['二世谷', 'niseko', 'ニセコ'], filter: (r: Resort) => r.names.zh.includes('二世谷') || r.names.en.toLowerCase().includes('niseko') },
+    { keywords: ['妙高', 'myoko'], filter: (r: Resort) => r.names.zh.includes('妙高') || r.names.zh.includes('赤倉') || r.names.zh.includes('新井') },
+    { keywords: ['湯澤', 'yuzawa'], filter: (r: Resort) => r.names.zh.includes('湯澤') || r.resort_id.includes('yuzawa_') || r.names.zh.includes('苗場') || r.names.zh.includes('神樂') || r.names.zh.includes('石打') || r.names.zh.includes('神立') || r.names.zh.includes('舞子') || r.names.zh.includes('岩原') || r.names.zh.includes('上越國際') },
   ];
 
   for (const group of resortGroups) {
     if (group.keywords.some(k => normalizedInput === k || normalizedInput.includes(k))) {
-      // 找到所有相關雪場
       const groupResorts = resorts.filter(group.filter);
-
       if (groupResorts.length > 1) {
-        // 返回第一個，但降低信心度，讓系統提供選擇
-        return {
-          resort: groupResorts[0],
-          matchedField: 'zh',
-          matchedValue: trimmedInput,
-          confidence: 0.5, // 低信心度，觸發建議
-        };
+        return { resort: groupResorts[0], matchedField: 'zh', matchedValue: trimmedInput, confidence: 0.5 };
       } else if (groupResorts.length === 1) {
-        // 只有一個匹配，直接返回
-        return {
-          resort: groupResorts[0],
-          matchedField: 'zh',
-          matchedValue: trimmedInput,
-          confidence: 0.95,
-        };
+        return { resort: groupResorts[0], matchedField: 'zh', matchedValue: trimmedInput, confidence: 0.95 };
       }
     }
   }
 
-  // 1. 先嘗試拼音映射（支持中文和英文）
-  // 檢查是否有歧義（多個雪場匹配同一個輸入）
+  // 1. 拼音映射
   const allMatchingIds = getAllMatchingResortIds(trimmedInput);
-
   if (allMatchingIds.length === 1) {
-    // 唯一匹配，高信心度
     const resort = resorts.find(r => r.resort_id === allMatchingIds[0]);
-    if (resort) {
-      return {
-        resort,
-        matchedField: 'pinyin',
-        matchedValue: trimmedInput,
-        confidence: 0.95,
-      };
-    }
+    if (resort) return { resort, matchedField: 'pinyin', matchedValue: trimmedInput, confidence: 0.95 };
   } else if (allMatchingIds.length > 1) {
-    // 多個匹配，返回第一個但降低信心度（會觸發建議系統）
     const resort = resorts.find(r => r.resort_id === allMatchingIds[0]);
-    if (resort) {
-      return {
-        resort,
-        matchedField: 'pinyin',
-        matchedValue: trimmedInput,
-        confidence: 0.65, // 降低信心度，讓 intentParser 提供建議
-      };
-    }
+    if (resort) return { resort, matchedField: 'pinyin', matchedValue: trimmedInput, confidence: 0.65 };
   }
 
-  // 2. 如果是拼音（純英文），嘗試轉換為中文
+  // 2. 拼音轉中文
   if (isPossiblyPinyin(trimmedInput)) {
     const chineseName = pinyinToChinese(trimmedInput);
     if (chineseName) {
-      const match = await matchResortByName(chineseName, resorts);
-      if (match) {
-        return {
-          ...match,
-          matchedField: 'pinyin',
-          matchedValue: trimmedInput,
-          confidence: Math.min(match.confidence, 0.90),
-        };
-      }
+      const match = matchResortByName(chineseName, resorts);
+      if (match) return { ...match, matchedField: 'pinyin', matchedValue: trimmedInput, confidence: Math.min(match.confidence, 0.90) };
     }
   }
 
   // 3. 直接名稱匹配
   const directMatch = matchResortByName(trimmedInput, resorts);
-  if (directMatch) {
-    return directMatch;
-  }
+  if (directMatch) return directMatch;
 
-  // 4. 如果直接匹配失敗，檢查是否有多個部分匹配（返回信心度最高的）
+  // 4. 部分匹配
   const partialMatches: ResortMatch[] = [];
   for (const resort of resorts) {
     const match = matchResortName(trimmedInput, resort);
     if (match && match.confidence >= 0.5) {
-      partialMatches.push({
-        resort,
-        confidence: match.confidence,
-        matchedField: match.field,
-        matchedValue: match.value,
-      });
+      partialMatches.push({ resort, confidence: match.confidence, matchedField: match.field, matchedValue: match.value });
     }
   }
 
   if (partialMatches.length > 0) {
-    // 按信心度排序，信心度相同時按優先級排序
     partialMatches.sort((a, b) => {
-      const confidenceDiff = b.confidence - a.confidence;
-      if (Math.abs(confidenceDiff) < 0.01) {  // 信心度相差<1%視為相同
-        return getResortPriority(b.resort.resort_id) - getResortPriority(a.resort.resort_id);
-      }
-      return confidenceDiff;
+      const diff = b.confidence - a.confidence;
+      return Math.abs(diff) < 0.01 ? getResortPriority(b.resort.resort_id) - getResortPriority(a.resort.resort_id) : diff;
     });
     return partialMatches[0];
   }
@@ -278,221 +184,112 @@ export async function matchResort(input: string): Promise<ResortMatch | null> {
   return null;
 }
 
-/**
- * 根據名稱匹配雪場
- */
-function matchResortByName(
-  input: string,
-  resorts: Resort[]
-): ResortMatch | null {
+function matchResortByName(input: string, resorts: Resort[]): ResortMatch | null {
   let bestMatch: ResortMatch | null = null;
-
   for (const resort of resorts) {
     const match = matchResortName(input, resort);
-    if (match) {
-      if (!bestMatch || match.confidence > bestMatch.confidence) {
-        bestMatch = {
-          resort,
-          confidence: match.confidence,
-          matchedField: match.field,
-          matchedValue: match.value,
-        };
-      }
+    if (match && (!bestMatch || match.confidence > bestMatch.confidence)) {
+      bestMatch = { resort, confidence: match.confidence, matchedField: match.field, matchedValue: match.value };
     }
   }
-
   return bestMatch;
 }
 
 /**
- * 獲取建議列表（前3個最相似的）
+ * 獲取建議列表
  */
-export async function getSuggestions(
-  input: string,
-  limit: number = 3
-): Promise<ResortMatch[]> {
-  if (!input || input.trim().length === 0) {
-    return [];
-  }
+export async function getSuggestions(input: string, limit: number = 3): Promise<ResortMatch[]> {
+  if (!input || input.trim().length === 0) return [];
 
   const resorts = await getResorts();
-  if (resorts.length === 0) {
-    return [];
-  }
+  if (resorts.length === 0) return [];
 
   const trimmedInput = input.trim();
   const normalizedInput = trimmedInput.toLowerCase();
-  const matches: ResortMatch[] = [];
 
-  // 檢測雪場群 - 如果匹配到雪場群，返回該群所有雪場
+  // 檢測雪場群
   const resortGroups = [
-    {
-      keywords: ['白馬', 'hakuba'],
-      filter: (r: Resort) => r.names.zh.includes('白馬')
-    },
-    {
-      keywords: ['二世谷', 'niseko', 'ニセコ'],
-      filter: (r: Resort) => r.names.zh.includes('二世谷') || r.names.en.toLowerCase().includes('niseko')
-    },
-    {
-      keywords: ['妙高', 'myoko'],
-      filter: (r: Resort) => r.names.zh.includes('妙高') || r.names.zh.includes('赤倉') || r.names.zh.includes('新井')
-    },
-    {
-      keywords: ['湯澤', 'yuzawa'],
-      filter: (r: Resort) => r.names.zh.includes('湯澤') || r.resort_id.includes('yuzawa_') ||
-                           r.names.zh.includes('苗場') || r.names.zh.includes('神樂') ||
-                           r.names.zh.includes('石打') || r.names.zh.includes('神立') ||
-                           r.names.zh.includes('舞子') || r.names.zh.includes('岩原') ||
-                           r.names.zh.includes('上越國際')
-    },
+    { keywords: ['白馬', 'hakuba'], filter: (r: Resort) => r.names.zh.includes('白馬') },
+    { keywords: ['二世谷', 'niseko', 'ニセコ'], filter: (r: Resort) => r.names.zh.includes('二世谷') || r.names.en.toLowerCase().includes('niseko') },
+    { keywords: ['妙高', 'myoko'], filter: (r: Resort) => r.names.zh.includes('妙高') || r.names.zh.includes('赤倉') || r.names.zh.includes('新井') },
+    { keywords: ['湯澤', 'yuzawa'], filter: (r: Resort) => r.names.zh.includes('湯澤') || r.resort_id.includes('yuzawa_') || r.names.zh.includes('苗場') || r.names.zh.includes('神樂') || r.names.zh.includes('石打') || r.names.zh.includes('神立') || r.names.zh.includes('舞子') || r.names.zh.includes('岩原') || r.names.zh.includes('上越國際') },
   ];
 
   for (const group of resortGroups) {
     if (group.keywords.some(k => normalizedInput === k || normalizedInput.includes(k))) {
       const groupResorts = resorts.filter(group.filter);
       if (groupResorts.length > 0) {
-        return groupResorts.map(r => ({
-          resort: r,
-          confidence: 0.9,
-          matchedField: 'zh' as const,
-          matchedValue: trimmedInput,
-        }));
+        return groupResorts.map(r => ({ resort: r, confidence: 0.9, matchedField: 'zh' as const, matchedValue: trimmedInput }));
       }
     }
   }
 
-  // 如果是拼音，先嘗試直接匹配 resort ID
+  // 拼音直接匹配
   if (isPossiblyPinyin(trimmedInput)) {
     const resortId = pinyinToResortId(trimmedInput);
     if (resortId) {
       const resort = resorts.find(r => r.resort_id === resortId);
-      if (resort) {
-        return [{
-          resort,
-          confidence: 0.95,
-          matchedField: 'pinyin',
-          matchedValue: trimmedInput,
-        }];
-      }
+      if (resort) return [{ resort, confidence: 0.95, matchedField: 'pinyin', matchedValue: trimmedInput }];
     }
   }
 
-  // 如果是拼音且沒有直接匹配，嘗試轉換為中文
+  // 拼音轉中文
   let searchInput = trimmedInput;
   if (isPossiblyPinyin(trimmedInput)) {
     const chineseName = pinyinToChinese(trimmedInput);
-    if (chineseName) {
-      searchInput = chineseName;
-    }
+    if (chineseName) searchInput = chineseName;
   }
 
-  // 收集所有匹配
+  // 收集匹配
+  const matches: ResortMatch[] = [];
   for (const resort of resorts) {
     const match = matchResortName(searchInput, resort);
-    if (match) {
-      matches.push({
-        resort,
-        confidence: match.confidence,
-        matchedField: match.field,
-        matchedValue: match.value,
-      });
-    }
+    if (match) matches.push({ resort, confidence: match.confidence, matchedField: match.field, matchedValue: match.value });
   }
 
-  // 按信心度排序並返回前N個
-  return matches
-    .sort((a, b) => b.confidence - a.confidence)
-    .slice(0, limit);
+  return matches.sort((a, b) => b.confidence - a.confidence).slice(0, limit);
 }
 
-/**
- * 批量匹配多個雪場名稱
- */
-export async function matchResorts(
-  inputs: string[]
-): Promise<(ResortMatch | null)[]> {
-  const results: (ResortMatch | null)[] = [];
-
-  for (const input of inputs) {
-    const match = await matchResort(input);
-    results.push(match);
-  }
-
-  return results;
+export async function matchResorts(inputs: string[]): Promise<(ResortMatch | null)[]> {
+  return Promise.all(inputs.map(input => matchResort(input)));
 }
 
-/**
- * 檢查雪場是否存在
- */
-export async function resortExists(
-  resortId: string
-): Promise<boolean> {
+export async function resortExists(resortId: string): Promise<boolean> {
   const resorts = await getResorts();
   return resorts.some(r => r.resort_id === resortId);
 }
 
-/**
- * 根據 ID 獲取雪場
- */
-export async function getResortById(
-  resortId: string
-): Promise<Resort | null> {
+export async function getResortById(resortId: string): Promise<Resort | null> {
   const resorts = await getResorts();
   return resorts.find(r => r.resort_id === resortId) || null;
 }
 
 // ==================== V2 方法（使用 ResortIndex）====================
 
-// ResortIndex 緩存
 let resortIndexCache: ResortIndex | null = null;
 let indexLastBuildTime = 0;
 
-/**
- * 獲取或創建 ResortIndex 實例（帶緩存）
- */
 async function getResortIndex(): Promise<ResortIndex> {
   const now = Date.now();
-
-  // 如果緩存有效，直接返回
   if (resortIndexCache && now - indexLastBuildTime < CACHE_DURATION) {
     return resortIndexCache;
   }
-
-  // 獲取雪場列表並創建索引
   const resorts = await getResorts();
   resortIndexCache = new ResortIndex(resorts);
   indexLastBuildTime = now;
-
   return resortIndexCache;
 }
 
-/**
- * V2: 匹配單個雪場（使用 ResortIndex，性能優化版本）
- *
- * 與 matchResort 功能相同，但使用 Map 索引實現 O(1) 查找
- */
 export async function matchResortV2(input: string): Promise<ResortMatch | null> {
   const index = await getResortIndex();
   return index.match(input);
 }
 
-/**
- * V2: 獲取建議列表（使用 ResortIndex，性能優化版本）
- *
- * 與 getSuggestions 功能相同，但使用 Map 索引實現更快的查找
- */
-export async function getSuggestionsV2(
-  input: string,
-  limit: number = 3
-): Promise<ResortMatch[]> {
+export async function getSuggestionsV2(input: string, limit: number = 3): Promise<ResortMatch[]> {
   const index = await getResortIndex();
   return index.getSuggestions(input, limit);
 }
 
-/**
- * 清空 ResortIndex 緩存（用於測試或強制刷新）
- */
 export function clearResortIndexCache(): void {
   resortIndexCache = null;
   indexLastBuildTime = 0;

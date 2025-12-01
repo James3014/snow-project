@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #09090b;
+  --foreground: #ededed;
+
+  /* 字體：Alpine Velocity 美學 */
+  --font-display: 'Bebas Neue', 'Impact', sans-serif;  /* 滑雪場標誌風格 */
+  --font-body: 'Space Mono', 'Courier New', monospace; /* 技術感等寬字體 */
+
+  /* 主題色：山岳藍綠配色 */
+  --btn-primary-bg: #0891b2;      /* cyan-600 山岳冰川 */
+  --btn-primary-text: #ffffff;
+  --btn-success-bg: #059669;      /* emerald-600 森林綠 */
+  --btn-success-text: #ffffff;
+  --accent: #06b6d4;              /* cyan-500 冰藍 */
+  --card-bg: #27272a;             /* zinc-800 */
+  --card-border: #3f3f46;         /* zinc-700 */
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;      /* zinc-400 */
+
+  /* 漸層：山脈與冰川 */
+  --gradient-primary: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  --gradient-border: linear-gradient(165deg, #06b6d4 0%, #0ea5e9 100%);
+  --gradient-text: linear-gradient(135deg, #ffffff 0%, #e5e5e5 50%, #ffffff 100%);
+  --gradient-mountain: linear-gradient(to bottom, #0c4a6e 0%, #0891b2 50%, #06b6d4 100%);
+}
+
+/* Snow Mode：強光高對比主題 */
+[data-theme="snow"] {
+  --background: #000000;
+  --foreground: #ffffff;
+  --btn-primary-bg: #0ea5e9;      /* sky-500 */
+  --btn-primary-text: #000000;
+  --btn-success-bg: #10b981;      /* emerald-500 */
+  --btn-success-text: #000000;
+  --accent: #0ea5e9;
+  --card-bg: #171717;
+  --card-border: #0ea5e9;
+  --text-primary: #ffffff;
+  --text-secondary: #e0f2fe;      /* sky-100 */
+
+  --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #0ea5e9 100%);
+  --gradient-border: linear-gradient(165deg, #0ea5e9 0%, #38bdf8 100%);
+  --gradient-text: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #e0f2fe 100%);
+}
+
+[data-theme="snow"] body {
+  background: #000000 !important;
+}
+
+[data-theme="snow"] .bg-zinc-900,
+[data-theme="snow"] .bg-zinc-950 {
+  background-color: #000000 !important;
+}
+
+[data-theme="snow"] .bg-zinc-800 {
+  background-color: #171717 !important;
+  border-color: #0ea5e9 !important;
+}
+
+[data-theme="snow"] .text-zinc-300,
+[data-theme="snow"] .text-zinc-400 {
+  color: #e0f2fe !important;
+}
+
+[data-theme="snow"] .text-cyan-400 {
+  color: #0ea5e9 !important;
+}
+
+[data-theme="snow"] .bg-cyan-700,
+[data-theme="snow"] .bg-cyan-600 {
+  background-color: #0ea5e9 !important;
+  color: #000000 !important;
+}
+
+[data-theme="snow"] .border-zinc-700 {
+  border-color: #0ea5e9 !important;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-zinc-900/80 backdrop-blur-md border border-white/10 shadow-xl;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400;
+  }
+
+  .text-gradient-velocity {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Alpine Velocity 動畫 */
+@keyframes slide-in-diagonal {
+  from {
+    opacity: 0;
+    transform: translate(-20px, 30px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes velocity-shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes mountain-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(6, 182, 212, 0.15);
+  }
+}
+
+.animate-slide-in-diagonal {
+  animation: slide-in-diagonal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.velocity-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.velocity-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: translateX(-100%);
+}
+
+.velocity-shine:active::after {
+  animation: velocity-shine 0.6s ease-out;
+}
+
+/* Resort Card Styling */
+.resort-card-title {
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(6, 182, 212, 0.1);
+}
+
+[data-theme="snow"] .resort-card-title {
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(14, 165, 233, 0.15);
+}
+
+.resort-card-pulse {
+  animation: mountain-pulse 3s ease-in-out infinite;
+}
+
+/* Snow Mode 環境光暈 */
+[data-theme="snow"] body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(14, 165, 233, 0.03) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="snow"] main {
+  position: relative;
+  z-index: 1;
+}
+
+/* 省電模式：減少動畫 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

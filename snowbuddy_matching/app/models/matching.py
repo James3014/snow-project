@@ -10,6 +10,7 @@ class MatchingPreference(BaseModel):
     preferred_regions: Optional[List[str]] = []
     availability: Optional[List[date]] = []
     seeking_role: Literal['buddy', 'student', 'coach'] = 'buddy'
+    include_knowledge_score: bool = Field(False, description="Whether to include knowledge engagement score in matching")
 
 # Represents the public-facing profile of a potential match (candidate)
 class CandidateProfile(BaseModel):

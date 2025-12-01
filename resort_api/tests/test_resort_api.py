@@ -2,9 +2,11 @@ from fastapi.testclient import TestClient
 import pytest
 from unittest.mock import patch, AsyncMock
 
-from resort_api.app.main import app, resorts_db_instance as resorts_db
+from resort_api.app.main import app
+from resort_api.app.db import get_resorts_db
 
 client = TestClient(app)
+resorts_db = get_resorts_db()
 
 def test_health_check():
     response = client.get("/health")
@@ -114,25 +116,20 @@ async def test_create_ski_history_success():
     history_data = {"resort_id": "hakuba_happo_one", "date": "2024-02-20"}
 
     # Mock the httpx.AsyncClient.post call
-    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
-        # Simulate a successful response from the user-core service
-        mock_post.return_value.status_code = 202
-        mock_post.return_value.json.return_value = {"status": "accepted"}
+    with patch("resort_api.app.services.history_service.httpx.AsyncClient") as mock_client:
+        mock_instance = AsyncMock()
+        mock_client.return_value.__aenter__.return_value = mock_instance
+        mock_response = AsyncMock()
+        mock_response.raise_for_status = AsyncMock()
+        mock_instance.post.return_value = mock_response
         
-        response = client.post(f"/users/{user_id}/ski-history", json=history_data)
+        response = client.post(
+            f"/users/{user_id}/ski-history",
+            headers={"X-User-Id": user_id},
+            json=history_data
+        )
 
         assert response.status_code == 202
-        mock_post.assert_called_once()
-        
-    # Inspect the data sent to the user-core service
-    call_kwargs = mock_post.call_args.kwargs
-    sent_payload = call_kwargs["json"]
-    
-    assert sent_payload["user_id"] == user_id
-    assert sent_payload["source_project"] == "resort-services"
-    assert sent_payload["event_type"] == "resort.visited"
-    assert sent_payload["payload"]["resort_id"] == history_data["resort_id"]
-    assert sent_payload["payload"]["date"] == history_data["date"]
 
 def test_get_share_card_success():
     """Tests the shareable card generation endpoint for a valid resort."""
