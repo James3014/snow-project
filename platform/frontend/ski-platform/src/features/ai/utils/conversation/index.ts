@@ -8,7 +8,7 @@ export { createInitialContext } from './utils';
 export { createTripCreatedResponse, createErrorResponse } from './responses';
 
 import type { ConversationContext, HandlerResult } from './types';
-import { createUnknownStateResponse } from './responses';
+import { createUnknownStateResponse, createTripCreatedResponse, createErrorResponse } from './responses';
 import {
   handleInitialInput,
   handleResortInput,
@@ -50,11 +50,9 @@ export async function processUserInput(
 
 // 向後兼容導出
 export function handleTripCreated(context: ConversationContext, tripId: string): HandlerResult {
-  const { createTripCreatedResponse } = require('./responses');
   return createTripCreatedResponse(context, tripId);
 }
 
 export function handleError(context: ConversationContext, error: string): HandlerResult {
-  const { createErrorResponse } = require('./responses');
   return createErrorResponse(context, error);
 }

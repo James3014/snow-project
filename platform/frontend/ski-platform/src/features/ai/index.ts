@@ -3,10 +3,12 @@
  */
 
 // Components
-export * from './components/ChatInterface';
-
-// Hooks
-export * from './hooks/useConversation';
+export * from './components/ChatDialog';
+export * from './components/FloatingAIButton';
+export * from './components/InputBox';
+export * from './components/MessageBubble';
+export * from './components/QuickButtons';
+export * from './components/SuggestionList';
 
 // Utils
 export * from './utils/conversationEngine';

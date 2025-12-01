@@ -2,7 +2,7 @@
  * 對話響應生成器
  */
 
-import type { ConversationContext, ConversationState, HandlerResult } from './types';
+import type { ConversationContext, HandlerResult } from './types';
 import { RESORT_LIST_MESSAGE } from './constants';
 import { formatDate } from './utils';
 

@@ -92,7 +92,7 @@ export default function CourseHistoryFilters({
           </div>
 
           {hasActiveFilters && (
-            <Button variant="ghost" size="sm" onClick={onClearFilters}>
+            <Button variant="outline" size="sm" onClick={onClearFilters}>
               清除所有篩選
             </Button>
           )}

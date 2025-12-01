@@ -33,7 +33,7 @@ export default function CourseVisitCard({ visit, onEdit, onDelete }: CourseVisit
               <Badge variant="info">{visit.snow_condition}</Badge>
             )}
             {visit.weather && (
-              <Badge variant="secondary">{visit.weather}</Badge>
+              <Badge variant="default">{visit.weather}</Badge>
             )}
           </div>
 
@@ -45,10 +45,10 @@ export default function CourseVisitCard({ visit, onEdit, onDelete }: CourseVisit
 
         {/* Actions */}
         <div className="flex gap-2 ml-4">
-          <Button variant="ghost" size="sm" onClick={() => onEdit(visit)}>
+          <Button variant="outline" size="sm" onClick={() => onEdit(visit)}>
             ✏️
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => onDelete(visit.id)}>
+          <Button variant="outline" size="sm" onClick={() => onDelete(visit.id)}>
             🗑️
           </Button>
         </div>
