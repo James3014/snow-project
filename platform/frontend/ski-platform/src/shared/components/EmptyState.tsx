@@ -35,11 +35,11 @@ export default function EmptyState({
       </div>
 
       {/* Title */}
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+      <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
 
       {/* Description */}
       {description && (
-        <p className="text-gray-600 mb-6 max-w-md mx-auto">{description}</p>
+        <p className="text-zinc-400 mb-6 max-w-md mx-auto">{description}</p>
       )}
 
       {/* Action Button */}

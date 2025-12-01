@@ -37,13 +37,13 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50 backdrop-blur-md">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-2xl">🎿</span>
-            <span className="text-xl font-bold text-primary-600">SkiDIY</span>
+            <span className="text-xl font-bold text-gradient-velocity" style={{ fontFamily: 'var(--font-display)' }}>SkiDIY</span>
           </Link>
 
           {/* Navigation Links */}
@@ -54,8 +54,8 @@ export default function Navbar() {
                 to={item.path}
                 className={`text-sm font-medium transition-colors ${
                   isActive(item.path)
-                    ? 'text-primary-600'
-                    : 'text-gray-600 hover:text-primary-600'
+                    ? 'text-cyan-400'
+                    : 'text-zinc-400 hover:text-cyan-400'
                 }`}
               >
                 {item.label}
@@ -70,14 +70,14 @@ export default function Navbar() {
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+                    className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
                   >
                     ⚙️ 管理後台
                   </Link>
                 )}
                 {/* 通知下拉選單 */}
                 <NotificationDropdown />
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-zinc-300">
                   <span className="inline-flex items-center">
                     <span className="mr-2">👤</span>
                     <span>{user.display_name}</span>
@@ -85,7 +85,7 @@ export default function Navbar() {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                  className="text-sm text-zinc-400 hover:text-cyan-400 transition-colors"
                 >
                   登出
                 </button>
@@ -93,7 +93,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+                className="text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
               >
                 登入
               </Link>
@@ -110,8 +110,8 @@ export default function Navbar() {
                 to={item.path}
                 className={`text-sm font-medium transition-colors ${
                   isActive(item.path)
-                    ? 'text-primary-600'
-                    : 'text-gray-600'
+                    ? 'text-cyan-400'
+                    : 'text-zinc-400'
                 }`}
               >
                 {item.label}

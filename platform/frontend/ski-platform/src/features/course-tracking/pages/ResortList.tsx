@@ -1,15 +1,14 @@
 /**
- * Resort List Page
- * 雪場列表首页
+ * Resort List Page - Alpine Velocity Style
+ * 雪場列表首页 - Mountain Ice 風格
  */
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
-import Card from '@/shared/components/Card';
-import ProgressBar from '@/shared/components/ProgressBar';
 import { resortApiService } from '@/shared/api/resortApi';
 import type { Resort } from '@/shared/data/resorts';
 import { ErrorEmptyState, NoDataEmptyState } from '@/shared/components/EmptyState';
+import ResortCard from '../components/ResortCard';
 
 export default function ResortList() {
   const navigate = useNavigate();
@@ -121,7 +120,7 @@ export default function ResortList() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="text-4xl mb-2">⛷️</div>
-          <p className="text-gray-600">載入中...</p>
+          <p className="text-zinc-400">載入中...</p>
         </div>
       </div>
     );
@@ -141,83 +140,84 @@ export default function ResortList() {
     <div className="space-y-6">
       {/* 頁面標題 */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900">雪場列表</h1>
-        <p className="mt-2 text-gray-600">選擇一個雪場開始記錄你的滑雪旅程</p>
+        <h1 className="text-3xl font-bold text-gradient-velocity" style={{ fontFamily: 'var(--font-display)' }}>
+          雪場列表
+        </h1>
+        <p className="mt-2 text-zinc-400">選擇一個雪場開始記錄你的滑雪旅程</p>
       </div>
 
       {/* 搜尋和過濾 */}
-      <Card>
-        <Card.Body>
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* 搜尋框 */}
-            <div className="flex-1">
-              <input
-                type="text"
-                placeholder="搜尋雪場名稱或地區..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-            </div>
-            {/* 地區過濾 */}
-            <div className="w-full md:w-48">
-              <select
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="all">全部地區</option>
-                {regions.map((region) => (
-                  <option key={region} value={region}>
-                    {getRegionName(region)}
-                  </option>
-                ))}
-              </select>
+      <div className="bg-zinc-800 border-2 border-zinc-700 rounded-xl p-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* 搜尋框 */}
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              placeholder="搜尋雪場名稱或地區..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 pl-11 bg-zinc-900 border-2 border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+            />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xl">
+              🔍
             </div>
           </div>
-          <div className="mt-3 text-sm text-gray-600">
-            找到 {filteredResorts.length} 個雪場
+          {/* 地區過濾 */}
+          <div className="w-full md:w-48">
+            <select
+              value={selectedRegion}
+              onChange={(e) => setSelectedRegion(e.target.value)}
+              className="w-full px-4 py-3 bg-zinc-900 border-2 border-zinc-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+            >
+              <option value="all">全部地區</option>
+              {regions.map((region) => (
+                <option key={region} value={region}>
+                  {getRegionName(region)}
+                </option>
+              ))}
+            </select>
           </div>
-        </Card.Body>
-      </Card>
+        </div>
+        <div className="mt-3 text-sm text-cyan-400">
+          找到 {filteredResorts.length} 個雪場
+        </div>
+      </div>
 
       {/* 統計資料 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary-600">{stats.visitedResorts}</div>
-            <div className="text-sm text-gray-600 mt-1">已訪問雪場</div>
+        <div className="bg-zinc-800 border-2 border-zinc-700 rounded-xl p-4 text-center">
+          <div className="text-3xl font-bold text-cyan-400" style={{ fontFamily: 'var(--font-display)' }}>
+            {stats.visitedResorts}
           </div>
-        </Card>
-        <Card className="p-4">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary-600">{stats.completedCourses}</div>
-            <div className="text-sm text-gray-600 mt-1">完成雪道</div>
+          <div className="text-sm text-zinc-400 mt-1">已訪問雪場</div>
+        </div>
+        <div className="bg-zinc-800 border-2 border-zinc-700 rounded-xl p-4 text-center">
+          <div className="text-3xl font-bold text-cyan-400" style={{ fontFamily: 'var(--font-display)' }}>
+            {stats.completedCourses}
           </div>
-        </Card>
-        <Card className="p-4">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-green-600">{stats.totalResorts}</div>
-            <div className="text-sm text-gray-600 mt-1">總雪場數</div>
+          <div className="text-sm text-zinc-400 mt-1">完成雪道</div>
+        </div>
+        <div className="bg-zinc-800 border-2 border-zinc-700 rounded-xl p-4 text-center">
+          <div className="text-3xl font-bold text-emerald-400" style={{ fontFamily: 'var(--font-display)' }}>
+            {stats.totalResorts}
           </div>
-        </Card>
-        <Card className="p-4">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-green-600">{stats.totalCourses}</div>
-            <div className="text-sm text-gray-600 mt-1">總雪道數</div>
+          <div className="text-sm text-zinc-400 mt-1">總雪場數</div>
+        </div>
+        <div className="bg-zinc-800 border-2 border-zinc-700 rounded-xl p-4 text-center">
+          <div className="text-3xl font-bold text-emerald-400" style={{ fontFamily: 'var(--font-display)' }}>
+            {stats.totalCourses}
           </div>
-        </Card>
+          <div className="text-sm text-zinc-400 mt-1">總雪道數</div>
+        </div>
       </div>
 
       {/* 雪場列表 */}
       {filteredResorts.length === 0 ? (
-        <Card>
-          <Card.Body className="text-center py-12">
-            <div className="text-gray-400 text-5xl mb-4">🔍</div>
-            <p className="text-gray-600">找不到符合條件的雪場</p>
-            <p className="text-sm text-gray-500 mt-2">試試調整搜尋條件</p>
-          </Card.Body>
-        </Card>
+        <div className="bg-zinc-800 border-2 border-zinc-700 rounded-xl text-center py-12">
+          <div className="text-zinc-400 text-5xl mb-4">🔍</div>
+          <p className="text-zinc-300">找不到符合條件的雪場</p>
+          <p className="text-sm text-zinc-500 mt-2">試試調整搜尋條件</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredResorts.map((resort) => {
@@ -226,79 +226,15 @@ export default function ResortList() {
             const totalCourses = resort.snow_stats?.courses_total || 0;
 
             return (
-            <Card
-              key={resort.resort_id}
-              hover
-              onClick={() => navigate(`/resorts/${resort.resort_id}`)}
-            >
-              <Card.Body className="space-y-4">
-                {/* Logo 圖片 */}
-                <div className="flex justify-center items-center h-24">
-                  <img
-                    src={getResortLogoUrl(resort.resort_id)}
-                    alt={`${resort.names.zh} Logo`}
-                    className="max-h-20 max-w-full object-contain rounded-lg"
-                    onError={(e) => {
-                      // 如果圖片載入失敗，顯示預設 emoji
-                      e.currentTarget.style.display = 'none';
-                      const parent = e.currentTarget.parentElement;
-                      if (parent && !parent.querySelector('.fallback-emoji')) {
-                        const emoji = document.createElement('div');
-                        emoji.className = 'fallback-emoji text-6xl';
-                        emoji.textContent = '🏔️';
-                        parent.appendChild(emoji);
-                      }
-                    }}
-                  />
-                </div>
-
-                {/* 雪場名稱 */}
-                <div className="text-center">
-                  <h3 className="text-lg font-bold text-gray-900">{resort.names.zh}</h3>
-                  <p className="text-sm text-gray-600">{resort.names.en}</p>
-                  <p className="text-xs text-gray-500 mt-1">📍 {getRegionName(resort.region)}</p>
-                </div>
-
-                {/* 雪場亮點 */}
-                {resort.description && resort.description.highlights && (
-                  <div className="flex flex-wrap gap-1 justify-center">
-                    {resort.description.highlights.slice(0, 2).map((highlight, idx) => (
-                      <span
-                        key={idx}
-                        className="text-xs bg-primary-50 text-primary-600 px-2 py-1 rounded"
-                      >
-                        {highlight}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* 進度 */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">完成進度</span>
-                    <span className="font-semibold">
-                      {completed} / {totalCourses}
-                    </span>
-                  </div>
-                  <ProgressBar
-                    percentage={progressPercent}
-                    showLabel={false}
-                    color={progressPercent === 100 ? 'green' : 'blue'}
-                  />
-                </div>
-
-                {/* 快速操作 */}
-                <div className="flex justify-between text-xs text-gray-500 pt-2 border-t">
-                  <span>🎿 {totalCourses} 條雪道</span>
-                  {progressPercent > 0 && (
-                    <span className="text-primary-600 font-medium">
-                      {progressPercent.toFixed(0)}% 完成
-                    </span>
-                  )}
-                </div>
-              </Card.Body>
-            </Card>
+              <ResortCard
+                key={resort.resort_id}
+                resort={resort}
+                progressPercent={progressPercent}
+                completed={completed}
+                totalCourses={totalCourses}
+                getResortLogoUrl={getResortLogoUrl}
+                getRegionName={getRegionName}
+              />
             );
           })}
         </div>
