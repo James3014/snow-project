@@ -1,15 +1,16 @@
-"""Trip service - business logic for trips."""
+"""Trip management service."""
 from datetime import datetime, UTC
 from typing import List, Optional, Tuple
 import uuid
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
-from models.trip_planning import Season, Trip
+
+from models.trip_planning import Trip, Season
 from models.course_tracking import CourseVisit
+from models.user_profile import UserProfile
 from models.enums import TripStatus, TripVisibility
-from schemas.trip_planning import TripCreate, TripUpdate, TripBase
-from .season_service import get_season, SeasonNotFoundError
+from schemas.trip_planning import TripCreate, TripUpdate, TripBase, TripSummary, UserInfo
 
 
 class TripNotFoundError(Exception):
@@ -24,13 +25,23 @@ class UnauthorizedError(Exception):
 
 def create_trip(db: Session, user_id: uuid.UUID, trip_data: TripCreate) -> Trip:
     """Create a new trip."""
-    get_season(db, trip_data.season_id, user_id)  # Verify season exists
+    from services.season_service import get_season
+    get_season(db, trip_data.season_id, user_id)
+    
     trip = Trip(
-        season_id=trip_data.season_id, user_id=user_id, resort_id=trip_data.resort_id,
-        title=trip_data.title, start_date=trip_data.start_date, end_date=trip_data.end_date,
-        flexibility=trip_data.flexibility, flight_status=trip_data.flight_status,
-        accommodation_status=trip_data.accommodation_status, trip_status=TripStatus.PLANNING,
-        visibility=trip_data.visibility, max_buddies=trip_data.max_buddies, notes=trip_data.notes
+        season_id=trip_data.season_id,
+        user_id=user_id,
+        resort_id=trip_data.resort_id,
+        title=trip_data.title,
+        start_date=trip_data.start_date,
+        end_date=trip_data.end_date,
+        flexibility=trip_data.flexibility,
+        flight_status=trip_data.flight_status,
+        accommodation_status=trip_data.accommodation_status,
+        trip_status=TripStatus.PLANNING,
+        visibility=trip_data.visibility,
+        max_buddies=trip_data.max_buddies,
+        notes=trip_data.notes
     )
     db.add(trip)
     db.commit()
@@ -38,19 +49,35 @@ def create_trip(db: Session, user_id: uuid.UUID, trip_data: TripCreate) -> Trip:
     return trip
 
 
-def create_trips_batch(db: Session, user_id: uuid.UUID, season_id: uuid.UUID, trips_data: List[TripBase]) -> List[Trip]:
+def create_trips_batch(
+    db: Session,
+    user_id: uuid.UUID,
+    season_id: uuid.UUID,
+    trips_data: List[TripBase]
+) -> List[Trip]:
     """Create multiple trips at once."""
+    from services.season_service import get_season
     get_season(db, season_id, user_id)
+    
     trips = []
     for trip_data in trips_data:
         trip = Trip(
-            season_id=season_id, user_id=user_id, resort_id=trip_data.resort_id,
-            title=trip_data.title, start_date=trip_data.start_date, end_date=trip_data.end_date,
-            flexibility=trip_data.flexibility, flight_status=trip_data.flight_status,
-            accommodation_status=trip_data.accommodation_status, trip_status=TripStatus.PLANNING,
-            visibility=trip_data.visibility, max_buddies=trip_data.max_buddies, notes=trip_data.notes
+            season_id=season_id,
+            user_id=user_id,
+            resort_id=trip_data.resort_id,
+            title=trip_data.title,
+            start_date=trip_data.start_date,
+            end_date=trip_data.end_date,
+            flexibility=trip_data.flexibility,
+            flight_status=trip_data.flight_status,
+            accommodation_status=trip_data.accommodation_status,
+            trip_status=TripStatus.PLANNING,
+            visibility=trip_data.visibility,
+            max_buddies=trip_data.max_buddies,
+            notes=trip_data.notes
         )
         trips.append(trip)
+    
     db.add_all(trips)
     db.commit()
     for trip in trips:
@@ -58,8 +85,14 @@ def create_trips_batch(db: Session, user_id: uuid.UUID, season_id: uuid.UUID, tr
     return trips
 
 
-def get_user_trips(db: Session, user_id: uuid.UUID, season_id: Optional[uuid.UUID] = None,
-                   status: Optional[TripStatus] = None, skip: int = 0, limit: int = 100) -> List[Trip]:
+def get_user_trips(
+    db: Session,
+    user_id: uuid.UUID,
+    season_id: Optional[uuid.UUID] = None,
+    status: Optional[TripStatus] = None,
+    skip: int = 0,
+    limit: int = 100
+) -> List[Trip]:
     """Get all trips for a user."""
     query = db.query(Trip).filter(Trip.user_id == user_id)
     if season_id:
@@ -67,6 +100,58 @@ def get_user_trips(db: Session, user_id: uuid.UUID, season_id: Optional[uuid.UUI
     if status:
         query = query.filter(Trip.trip_status == status)
     return query.order_by(desc(Trip.start_date)).offset(skip).limit(limit).all()
+
+
+def get_public_trips(db: Session, skip: int = 0, limit: int = 100) -> List[Trip]:
+    """Get all public trips for the Snowbuddy Board."""
+    return (
+        db.query(Trip)
+        .filter(Trip.visibility == 'public')
+        .order_by(desc(Trip.start_date))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+
+def get_public_trips_with_owner_info(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100
+) -> List[dict]:
+    """Get all public trips with owner information for the Snowbuddy Board."""
+    trips_with_users = (
+        db.query(Trip, UserProfile)
+        .join(UserProfile, Trip.user_id == UserProfile.user_id)
+        .filter(Trip.visibility == 'public')
+        .order_by(desc(Trip.start_date))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    
+    result = []
+    for trip, user_profile in trips_with_users:
+        owner_info = UserInfo(
+            user_id=user_profile.user_id,
+            display_name=user_profile.display_name or "匿名用戶",
+            avatar_url=user_profile.avatar_url,
+            experience_level=None
+        )
+        trip_summary = TripSummary(
+            trip_id=trip.trip_id,
+            resort_id=trip.resort_id,
+            title=trip.title,
+            start_date=trip.start_date,
+            end_date=trip.end_date,
+            flexibility=trip.flexibility,
+            trip_status=trip.trip_status,
+            max_buddies=trip.max_buddies,
+            current_buddies=trip.current_buddies,
+            owner_info=owner_info
+        )
+        result.append(trip_summary)
+    return result
 
 
 def get_trip(db: Session, trip_id: uuid.UUID, user_id: Optional[uuid.UUID] = None) -> Trip:
@@ -79,7 +164,12 @@ def get_trip(db: Session, trip_id: uuid.UUID, user_id: Optional[uuid.UUID] = Non
     return trip
 
 
-def update_trip(db: Session, trip_id: uuid.UUID, user_id: uuid.UUID, updates: TripUpdate) -> Trip:
+def update_trip(
+    db: Session,
+    trip_id: uuid.UUID,
+    user_id: uuid.UUID,
+    updates: TripUpdate
+) -> Trip:
     """Update a trip."""
     trip = get_trip(db, trip_id)
     if trip.user_id != user_id:
@@ -102,24 +192,33 @@ def delete_trip(db: Session, trip_id: uuid.UUID, user_id: uuid.UUID) -> bool:
     return True
 
 
-def complete_trip(db: Session, trip_id: uuid.UUID, user_id: uuid.UUID,
-                  create_course_visit: bool = True) -> Tuple[Trip, Optional[CourseVisit]]:
-    """Mark a trip as completed."""
+def complete_trip(
+    db: Session,
+    trip_id: uuid.UUID,
+    user_id: uuid.UUID,
+    create_course_visit: bool = True
+) -> Tuple[Trip, Optional[CourseVisit]]:
+    """Mark a trip as completed and optionally create CourseVisit."""
     trip = get_trip(db, trip_id)
     if trip.user_id != user_id:
         raise UnauthorizedError("You don't have permission to complete this trip")
+    
     trip.trip_status = TripStatus.COMPLETED
     trip.completed_at = datetime.now(UTC)
-
+    
     course_visit = None
     if create_course_visit:
         course_visit = CourseVisit(
-            user_id=user_id, resort_id=trip.resort_id, course_name="整體體驗",
-            visited_date=trip.end_date, notes=f"自動從行程轉換: {trip.title or trip.resort_id}"
+            user_id=user_id,
+            resort_id=trip.resort_id,
+            course_name="整體體驗",
+            visited_date=trip.end_date,
+            notes=f"自動從行程轉換: {trip.title or trip.resort_id}"
         )
         db.add(course_visit)
         db.flush()
         trip.course_visit_id = course_visit.id
+    
     db.commit()
     db.refresh(trip)
     if course_visit:
