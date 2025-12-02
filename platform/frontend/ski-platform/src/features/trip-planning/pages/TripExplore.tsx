@@ -8,12 +8,12 @@ import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { resortApiService } from '@/shared/api/resortApi';
 import Card from '@/shared/components/Card';
 import Button from '@/shared/components/Button';
-import type { Trip } from '../types';
+import type { TripSummary } from '../types';
 import type { Resort } from '@/shared/data/resorts';
 
 export default function TripExplore() {
   const navigate = useNavigate();
-  const [trips, setTrips] = useState<Trip[]>([]);
+  const [trips, setTrips] = useState<TripSummary[]>([]);
   const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({

@@ -397,11 +397,6 @@ export default function ResortDetail() {
   );
 
   const levelOrder: Array<'beginner' | 'intermediate' | 'advanced'> = ['beginner', 'intermediate', 'advanced'];
-  const levelColors = {
-    beginner: 'success',
-    intermediate: 'info',
-    advanced: 'danger',
-  } as const;
 
   return (
     <div className="min-h-screen pb-20">
@@ -497,11 +492,6 @@ export default function ResortDetail() {
           const courses = groupedCourses[level];
           if (!courses || courses.length === 0) return null;
 
-          const difficultyColors = {
-            beginner: { badge: 'text-green-400', text: '初級雪道' },
-            intermediate: { badge: 'text-ice-primary', text: '中級雪道' },
-            advanced: { badge: 'text-neon-pink', text: '高級雪道' },
-          };
 
           return (
             <div key={level} className={`animate-slide-up`} style={{ animationDelay: `${(sectionIndex + 4) * 0.1}s` }}>

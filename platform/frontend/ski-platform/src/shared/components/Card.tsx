@@ -10,9 +10,10 @@ interface CardProps {
   onClick?: () => void;
   hover?: boolean;
   variant?: 'traditional' | 'glass';
+  style?: React.CSSProperties;
 }
 
-export default function Card({ children, className = '', onClick, hover = false, variant = 'traditional' }: CardProps) {
+export default function Card({ children, className = '', onClick, hover = false, variant = 'traditional', style }: CardProps) {
   const baseClasses = variant === 'glass'
     ? 'glass-card rounded-xl overflow-hidden'
     : 'bg-white rounded-lg shadow-md';
@@ -27,6 +28,7 @@ export default function Card({ children, className = '', onClick, hover = false,
     <div
       className={`${baseClasses} ${hoverClasses} ${className}`}
       onClick={onClick}
+      style={style}
     >
       {variant === 'glass' && <div className="absolute inset-0 bg-gradient-to-br from-ice-primary/5 via-transparent to-neon-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />}
       <div className={variant === 'glass' ? 'relative z-10' : ''}>

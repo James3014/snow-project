@@ -90,10 +90,10 @@ export default function Recommendations() {
                     </div>
 
                     <Badge
-                      variant={rec.status === 'approved' ? 'ice' : rec.status === 'pending' ? 'accent' : 'pink'}
+                      variant={rec.status === 'approved' ? 'ice' : rec.status === 'pending_review' ? 'accent' : 'pink'}
                       size="sm"
                     >
-                      {rec.status === 'approved' ? '✅ 已通過' : rec.status === 'pending' ? '⏳ 審核中' : '❌ 未通過'}
+                      {rec.status === 'approved' ? '✅ 已通過' : rec.status === 'pending_review' ? '⏳ 審核中' : '❌ 未通過'}
                     </Badge>
                   </div>
                 </Card.Body>
