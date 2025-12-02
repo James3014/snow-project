@@ -5,7 +5,6 @@
  * Mobile-First | Request Management | Glassmorphism
  */
 import { useState, useEffect } from 'react';
-import { useAppSelector } from '@/store/hooks';
 import MatchRequestCard from '../components/MatchRequestCard';
 import type { MatchRequest } from '@/shared/api/snowbuddyApi';
 
