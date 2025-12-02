@@ -1,6 +1,8 @@
 /**
- * Matching Preference Form - 智慧媒合偏好設定表單
- * Glacial Futurism Design
+ * Matching Preference Form - Glacial Futurism Design
+ * 智慧媒合偏好設定表單 - 冰川未來主義設計
+ *
+ * Mobile-First | Multi-Step Form | Glassmorphism
  */
 import { useState, useEffect } from 'react';
 import { resortApiService } from '@/shared/api/resortApi';
@@ -50,10 +52,10 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 p-6 bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-cyan-500/20">
+    <form onSubmit={handleSubmit} className="glass-card p-6 space-y-6">
       {/* 雪場選擇 */}
       <div>
-        <label className="block text-sm font-medium text-cyan-400 mb-3">
+        <label className="block text-sm font-medium text-ice-accent mb-3">
           偏好雪場 *
         </label>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -65,8 +67,8 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
               className={`
                 px-4 py-2 rounded-lg text-sm font-medium transition-all
                 ${selectedResorts.includes(resort.resort_id)
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/50'
-                  : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-700/50 border border-zinc-700'
+                  ? 'bg-gradient-glacier text-frost-white shadow-lg shadow-ice-primary/30'
+                  : 'glass-card text-crystal-blue hover:text-ice-primary hover:border-ice-primary/50'
                 }
               `}
             >
@@ -79,26 +81,26 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
       {/* 日期範圍 */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-cyan-400 mb-2">
+          <label className="block text-sm font-medium text-ice-accent mb-2">
             開始日期 *
           </label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+            className="input-glacier"
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-cyan-400 mb-2">
+          <label className="block text-sm font-medium text-ice-accent mb-2">
             結束日期 *
           </label>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+            className="input-glacier"
             required
           />
         </div>
@@ -106,8 +108,8 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
 
       {/* 技能等級範圍 */}
       <div>
-        <label className="block text-sm font-medium text-cyan-400 mb-3">
-          技能等級範圍: {skillMin} - {skillMax}
+        <label className="block text-sm font-medium text-ice-accent mb-3">
+          技能等級範圍: <span className="text-ice-primary font-bold">{skillMin} - {skillMax}</span>
         </label>
         <div className="space-y-2">
           <input
@@ -116,7 +118,7 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
             max="10"
             value={skillMin}
             onChange={(e) => setSkillMin(Math.min(Number(e.target.value), skillMax))}
-            className="w-full accent-cyan-500"
+            className="w-full accent-ice-primary"
           />
           <input
             type="range"
@@ -124,10 +126,10 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
             max="10"
             value={skillMax}
             onChange={(e) => setSkillMax(Math.max(Number(e.target.value), skillMin))}
-            className="w-full accent-blue-500"
+            className="w-full accent-ice-secondary"
           />
         </div>
-        <div className="flex justify-between text-xs text-zinc-500 mt-2">
+        <div className="flex justify-between text-xs text-crystal-blue mt-2">
           <span>初級 (1-3)</span>
           <span>中級 (4-6)</span>
           <span>高級 (7-9)</span>
@@ -137,7 +139,7 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
 
       {/* 角色選擇 */}
       <div>
-        <label className="block text-sm font-medium text-cyan-400 mb-3">
+        <label className="block text-sm font-medium text-ice-accent mb-3">
           尋找角色
         </label>
         <div className="grid grid-cols-3 gap-2">
@@ -149,8 +151,8 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
               className={`
                 px-4 py-2 rounded-lg text-sm font-medium transition-all
                 ${role === r
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/50'
-                  : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-700/50 border border-zinc-700'
+                  ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-frost-white shadow-lg shadow-neon-purple/30'
+                  : 'glass-card text-crystal-blue hover:text-ice-primary hover:border-ice-primary/50'
                 }
               `}
             >
@@ -164,7 +166,7 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white font-bold rounded-xl hover:shadow-2xl hover:shadow-cyan-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="btn-neon w-full py-3 ski-trail disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? '搜尋中...' : '🔍 開始智慧媒合'}
       </button>
