@@ -21,7 +21,6 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
   const [endDate, setEndDate] = useState('');
   const [skillMin, setSkillMin] = useState(1);
   const [skillMax, setSkillMax] = useState(10);
-  const [role, setRole] = useState<'buddy' | 'student' | 'coach'>('buddy');
 
   useEffect(() => {
     resortApiService.getAllResorts().then(data => setResorts(data.items));
@@ -39,7 +38,7 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
       preferred_resorts: selectedResorts,
       date_range: { start: startDate, end: endDate },
       skill_level_range: [skillMin, skillMax],
-      preferred_role: role,
+      preferred_role: 'buddy',
     });
   };
 
@@ -134,31 +133,6 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
           <span>中級 (4-6)</span>
           <span>高級 (7-9)</span>
           <span>專家 (10)</span>
-        </div>
-      </div>
-
-      {/* 角色選擇 */}
-      <div>
-        <label className="block text-sm font-medium text-ice-accent mb-3">
-          尋找角色
-        </label>
-        <div className="grid grid-cols-3 gap-2">
-          {(['buddy', 'student', 'coach'] as const).map(r => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => setRole(r)}
-              className={`
-                px-4 py-2 rounded-lg text-sm font-medium transition-all
-                ${role === r
-                  ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-frost-white shadow-lg shadow-neon-purple/30'
-                  : 'glass-card text-crystal-blue hover:text-ice-primary hover:border-ice-primary/50'
-                }
-              `}
-            >
-              {r === 'buddy' ? '雪伴' : r === 'student' ? '學生' : '教練'}
-            </button>
-          ))}
         </div>
       </div>
 
