@@ -241,14 +241,14 @@ def test_custom_behavior_event_with_schema_url(db_session):
             "source_project": "gear-ops",
             "event_type": "gear.boot-fitting.completed",
             "version": 2,
-            "schema_url": "https://schemas.skidiy.dev/gear/boot-fitting/2",
+            "schema_url": "https://schemas.snowtrace.dev/gear/boot-fitting/2",
             "payload": {"boot_size": "26.5"},
             "occurred_at": "2025-01-12T09:30:00Z",
         },
     )
     assert response.status_code == 200
     payload = response.json()
-    assert payload["schema_url"] == "https://schemas.skidiy.dev/gear/boot-fitting/2"
+    assert payload["schema_url"] == "https://schemas.snowtrace.dev/gear/boot-fitting/2"
 
 
 def test_notification_preference_flow(db_session):

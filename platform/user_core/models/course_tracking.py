@@ -24,7 +24,7 @@ class CourseVisit(Base):
     visited_date = Column(Date, nullable=False)
     notes = Column(Text, nullable=True)
 
-    # 新增：增強記錄體驗欄位
+    # 新增：增強紀錄體驗欄位
     snow_condition = Column(String(50), nullable=True)  # 粉雪/壓雪/冰面/融雪
     weather = Column(String(50), nullable=True)  # 晴天/陰天/下雪/暴風雪
     difficulty_feeling = Column(String(50), nullable=True)  # 比預期簡單/適中/困難

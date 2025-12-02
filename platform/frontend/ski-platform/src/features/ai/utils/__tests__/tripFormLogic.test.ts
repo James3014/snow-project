@@ -979,33 +979,33 @@ describe('TripFormLogic - 行程表單邏輯', () => {
     });
 
     describe('取消/重來關鍵字', () => {
-      it('應該記錄對「算了」的處理方式', async () => {
+      it('應該紀錄對「算了」的處理方式', async () => {
         let form = createEmptyForm();
         form = await updateFormFromInput(form, '去苗場');
         
         // 說「算了」
         form = await updateFormFromInput(form, '算了');
 
-        // 記錄現況
+        // 紀錄現況
         console.log('取消測試 - resort status:', form.resort.status);
         console.log('取消測試 - 當前狀態:', getCurrentState(form));
 
-        // 先不做斷言，只記錄
+        // 先不做斷言，只紀錄
         expect(form).toBeDefined();
       });
 
-      it('應該記錄對「重來」的處理方式', async () => {
+      it('應該紀錄對「重來」的處理方式', async () => {
         let form = createEmptyForm();
         form = await updateFormFromInput(form, '去苗場 3月20日');
         
         // 說「重來」
         form = await updateFormFromInput(form, '重來');
 
-        // 記錄現況
+        // 紀錄現況
         console.log('重來測試 - resort status:', form.resort.status);
         console.log('重來測試 - startDate status:', form.startDate.status);
 
-        // 先不做斷言，只記錄
+        // 先不做斷言，只紀錄
         expect(form).toBeDefined();
       });
     });
@@ -1047,7 +1047,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
     });
 
     describe('跨年判斷', () => {
-      it('應該記錄12月說1月的處理方式', async () => {
+      it('應該紀錄12月說1月的處理方式', async () => {
         const form = createEmptyForm();
         
         // 12月28日說"1月5日"
@@ -1064,7 +1064,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
     });
 
     describe('重複輸入', () => {
-      it('應該記錄重複輸入雪場的處理方式', async () => {
+      it('應該紀錄重複輸入雪場的處理方式', async () => {
         let form = createEmptyForm();
 
         // Round 1: 第一次說苗場
@@ -1079,7 +1079,7 @@ describe('TripFormLogic - 行程表單邏輯', () => {
           ? form.resort.value.resort.resort_id 
           : null;
 
-        // 記錄：重複輸入後，resort_id 是否相同？
+        // 紀錄：重複輸入後，resort_id 是否相同？
         console.log('重複輸入 - 第一次 ID:', firstResortId);
         console.log('重複輸入 - 第二次 ID:', secondResortId);
         

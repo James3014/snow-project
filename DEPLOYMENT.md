@@ -28,7 +28,7 @@ npm run dev
 ```bash
 cd platform/user_core
 
-# 创建虚拟环境
+# 建立虚拟环境
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
@@ -97,7 +97,7 @@ curl http://localhost:3000/health
 
 ### 1. 环境变量配置
 
-创建 `.env.production` 文件：
+建立 `.env.production` 文件：
 
 ```bash
 # 前端环境变量
@@ -191,7 +191,7 @@ server {
 # 安装 certbot
 sudo apt install certbot python3-certbot-nginx
 
-# 获取证书
+# 取得证书
 sudo certbot --nginx -d yourdomain.com
 
 # 自动续期
@@ -204,17 +204,17 @@ sudo certbot renew --dry-run
 
 - ✅ 启用 HTTP/2
 - ✅ 启用 Gzip/Brotli 压缩
-- ✅ 设置缓存头
+- ✅ 設定缓存头
 - ✅ CDN 加速 (可选)
 - ✅ 图片懒加载
 - ✅ 代码分割
 
 #### 后端优化
 
-- ✅ 数据库连接池
+- ✅ 資料库连接池
 - ✅ Redis 缓存
 - ✅ API 速率限制
-- ✅ 数据库索引优化
+- ✅ 資料库索引优化
 - ✅ 异步任务队列
 
 ### 6. 监控和日志
@@ -235,7 +235,7 @@ tail -f /var/log/nginx/error.log
 
 - 前端: `GET /health` → 返回 200 "healthy"
 - 后端: `GET /docs` → Swagger UI
-- 数据库: `SELECT 1` 查询
+- 資料库: `SELECT 1` 查詢
 
 #### 推荐监控工具
 
@@ -264,7 +264,7 @@ GitHub Actions 工作流已配置在 `.github/workflows/frontend-ci.yml`
 
 ### 配置 Secrets
 
-在 GitHub 仓库设置中添加：
+在 GitHub 仓库設定中添加：
 
 ```
 DOCKERHUB_USERNAME=your_username
@@ -304,7 +304,7 @@ server {
 }
 ```
 
-### 数据库集群
+### 資料库集群
 
 - 主从复制
 - 读写分离
@@ -335,15 +335,15 @@ curl http://localhost:8000/docs
 # 检查环境变量
 docker exec frontend env | grep VITE
 
-# 检查网络连接
+# 检查網路连接
 docker network ls
 docker network inspect snow-project-network
 ```
 
-#### 3. 数据库连接问题
+#### 3. 資料库连接问题
 
 ```bash
-# 测试数据库连接
+# 测试資料库连接
 psql -h localhost -U skiuser -d ski_platform
 
 # 检查迁移状态
@@ -365,7 +365,7 @@ docker-compose down
 docker-compose up -d frontend:previous_tag
 ```
 
-### 数据库回滚
+### 資料库回滚
 
 ```bash
 # Alembic 降级
@@ -378,19 +378,19 @@ alembic downgrade <revision_id>
 ## 安全最佳实践
 
 - ✅ 使用 HTTPS
-- ✅ 设置安全头 (CSP, HSTS, X-Frame-Options)
+- ✅ 設定安全头 (CSP, HSTS, X-Frame-Options)
 - ✅ 定期更新依赖
-- ✅ 使用环境变量存储敏感信息
+- ✅ 使用环境变量存储敏感資訊
 - ✅ 实施 API 速率限制
 - ✅ 定期安全审计
 - ✅ 最小权限原则
 
 ## 备份策略
 
-### 数据库备份
+### 資料库备份
 
 ```bash
-# 创建备份
+# 建立备份
 pg_dump -h localhost -U skiuser ski_platform > backup_$(date +%Y%m%d).sql
 
 # 恢复备份

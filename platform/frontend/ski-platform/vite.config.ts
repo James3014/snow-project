@@ -50,9 +50,9 @@ export default defineConfig({
     },
     // 启用CSS代码分割
     cssCodeSplit: true,
-    // 设置chunk大小警告限制
+    // 設定chunk大小警告限制
     chunkSizeWarningLimit: 1000,
-    // 生成sourcemap（生产环境可选择false以减小体积）
+    // 生成sourcemap（生产环境可選擇false以减小体积）
     sourcemap: false,
   },
   // 性能优化

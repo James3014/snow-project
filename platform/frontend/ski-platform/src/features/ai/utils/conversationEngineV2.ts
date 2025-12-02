@@ -87,7 +87,7 @@ export interface ConversationResponse {
  * 雪場列表詢問關鍵詞
  */
 const RESORT_LIST_KEYWORDS = [
-  '哪些雪場', '有哪些雪場', '可以記錄哪些', '支持哪些雪場', '支援哪些雪場',
+  '哪些雪場', '有哪些雪場', '可以紀錄哪些', '支持哪些雪場', '支援哪些雪場',
   '有什麼雪場', '都有哪些', '雪場列表', '所有雪場',
 ] as const;
 

@@ -2,7 +2,7 @@
 
 ## 概述
 
-本設計文檔描述了 SkiDIY 平台雪伴匹配功能的增強方案。系統將整合行程規劃、使用者技能資料和學習系統，提供智能的雪伴推薦服務。
+本設計文檔描述了 SnowTrace 平台雪伴匹配功能的增強方案。系統將整合行程規劃、使用者技能資料和學習系統，提供智能的雪伴推薦服務。
 
 ### 設計目標
 
@@ -300,7 +300,7 @@ CREATE INDEX idx_match_cache_expires ON match_search_cache(expires_at);
 *For any* 雪伴請求被接受，TripBuddy 狀態應更新為「已接受」且行程的 current_buddies 應增加 1。
 **Validates: Requirements 5.2**
 
-### Property 9: 事件記錄完整性
+### Property 9: 事件紀錄完整性
 *For any* 雪伴請求的創建、接受或拒絕，系統應向 user-core 發送對應的行為事件。
 **Validates: Requirements 4.3, 5.4**
 
@@ -320,7 +320,7 @@ CREATE INDEX idx_match_cache_expires ON match_search_cache(expires_at);
 *For any* 兩個使用者，技能等級差距越小，技能相容性分數應越高。
 **Validates: Requirements 9.3, 9.4**
 
-### Property 14: CASI 技能記錄
+### Property 14: CASI 技能紀錄
 *For any* 使用者完成單板教學課程的練習，系統應更新該使用者的 CASI 技能掌握度。
 **Validates: Requirements 10.1**
 
@@ -376,7 +376,7 @@ class DuplicateRequestError(BuddyRequestError):
 2. **資源不存在**：回傳 404 Not Found
 3. **權限錯誤**：回傳 403 Forbidden
 4. **業務邏輯錯誤**：回傳 400 Bad Request 並附上業務規則說明
-5. **系統錯誤**：記錄詳細日誌，回傳 500 Internal Server Error
+5. **系統錯誤**：紀錄詳細日誌，回傳 500 Internal Server Error
 
 ## 測試策略
 
@@ -594,7 +594,7 @@ MATCHING_ENABLE_LEARNING_FOCUS=true
 4. **候選人過濾率**：過濾掉的候選人比例
 5. **雪伴請求成功率**：請求被接受的比例
 
-### 日誌記錄
+### 日誌紀錄
 
 ```python
 import logging

@@ -147,9 +147,9 @@ ChangeFeed ─── references ──> (UserProfile | NotificationPreference)
 ## 4. Migration Strategy Outline
 
 1. **Identify Unique Key**: 先以 `_id`（CSV）或 email/phone 做初始映射，若缺失則生成新 UUID。  
-2. **Populate UserProfile**: 將 `members-utf8.csv` 等主要資料匯入到 `UserProfile`，記錄 `legacy_ids` 與 `LegacyMapping`。  
+2. **Populate UserProfile**: 將 `members-utf8.csv` 等主要資料匯入到 `UserProfile`，紀錄 `legacy_ids` 與 `LegacyMapping`。  
 3. **Backfill Events**: 針對已存在的課程、媒合、裝備紀錄，建立對應事件（必要時建立批次腳本）。  
-4. **Import Preferences**: 若尚無偏好資料，依 `NotificationPreferenceTemplate` 建立預設（預設 `opt-out`），並在 `consent_source` 記錄 `import_default`。  
+4. **Import Preferences**: 若尚無偏好資料，依 `NotificationPreferenceTemplate` 建立預設（預設 `opt-out`），並在 `consent_source` 紀錄 `import_default`。  
 5. **Dual Write Phase**: 調整既有腳本在寫入舊資料的同時呼叫 user-core API，保持同步直到正式切換。  
 6. **Cutover & Validation**: 在回報無誤後停用舊流程；保留 LegacyMapping 以便稽核。
 

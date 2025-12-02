@@ -1,6 +1,6 @@
 /**
  * Course History Page - Glacial Futurism Design
- * 雪道記錄歷史 - 冰川未來主義設計
+ * 雪道紀錄歷史 - 冰川未來主義設計
  *
  * Mobile-First | Timeline View | Stats Dashboard
  */
@@ -37,7 +37,7 @@ export default function CourseHistory() {
       const data = await courseTrackingApi.visits.list(userId);
       dispatch(setVisits(data));
     } catch {
-      dispatch(addToast({ type: 'error', message: '載入記錄失敗' }));
+      dispatch(addToast({ type: 'error', message: '載入紀錄失敗' }));
     } finally {
       setLoading(false);
     }
@@ -59,23 +59,23 @@ export default function CourseHistory() {
 
     try {
       await courseTrackingApi.visits.update(userId, editingVisit.id, data);
-      dispatch(addToast({ type: 'success', message: '✓ 記錄已更新' }));
+      dispatch(addToast({ type: 'success', message: '✓ 紀錄已更新' }));
       setIsEditModalOpen(false);
       setEditingVisit(null);
       loadVisits();
     } catch (err: unknown) {
-      console.error('編輯記錄錯誤:', err);
+      console.error('編輯紀錄錯誤:', err);
       dispatch(addToast({ type: 'error', message: '更新失敗，請稍後再試' }));
     }
   };
 
   const handleDelete = async (visitId: string) => {
     if (!userId) return;
-    if (!confirm('確定要刪除這筆記錄嗎？\n\n⚠️ 此操作無法復原，記錄的評分、雪況等資訊將永久刪除。')) return;
+    if (!confirm('確定要刪除這筆紀錄嗎？\n\n⚠️ 此操作無法復原，紀錄的評分、雪況等資訊將永久刪除。')) return;
 
     try {
       await courseTrackingApi.visits.delete(userId, visitId);
-      dispatch(addToast({ type: 'success', message: '✓ 記錄已刪除' }));
+      dispatch(addToast({ type: 'success', message: '✓ 紀錄已刪除' }));
       loadVisits();
     } catch {
       dispatch(addToast({ type: 'error', message: '刪除失敗，請稍後再試' }));
@@ -161,7 +161,7 @@ export default function CourseHistory() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="spinner-glacier mb-4" />
-          <p className="text-crystal-blue">載入記錄中...</p>
+          <p className="text-crystal-blue">載入紀錄中...</p>
         </div>
       </div>
     );
@@ -199,12 +199,12 @@ export default function CourseHistory() {
           </div>
 
           <h1 className="text-3xl md:text-4xl font-bold text-gradient-glacier mb-4">
-            記錄歷史
+            紀錄歷史
           </h1>
           <p className="text-crystal-blue mb-8 text-balance">
-            登入後即可查看您的滑雪記錄、統計數據和評分排行
+            登入後即可查看您的滑雪紀錄、統計數據和評分排行
             <br />
-            每一次征服雪道都值得被記錄
+            每一次征服雪道都值得被紀錄
           </p>
 
           <button onClick={() => navigate('/login')} className="btn-neon ski-trail w-full">
@@ -224,10 +224,10 @@ export default function CourseHistory() {
           <div className="absolute inset-0 bg-gradient-to-b from-ice-primary/10 to-transparent opacity-50" />
           <div className="relative z-10 max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-4 animate-slide-up">
-              記錄歷史
+              紀錄歷史
             </h1>
             <p className="text-crystal-blue text-sm md:text-base animate-slide-up stagger-1">
-              開始記錄您的滑雪征程
+              開始紀錄您的滑雪征程
             </p>
           </div>
         </div>
@@ -236,10 +236,10 @@ export default function CourseHistory() {
           <div className="glass-card p-12 text-center animate-slide-up">
             <div className="text-6xl mb-6">📝</div>
             <h3 className="text-2xl font-bold text-frost-white mb-4">
-              還沒有記錄
+              還沒有紀錄
             </h3>
             <p className="text-crystal-blue mb-8 text-balance">
-              開始記錄您的滑雪體驗，追蹤每一次進步
+              開始紀錄您的滑雪體驗，追蹤每一次進步
             </p>
             <button onClick={() => navigate('/resorts')} className="btn-neon ski-trail w-full">
               前往雪場列表
@@ -259,10 +259,10 @@ export default function CourseHistory() {
         <div className="absolute inset-0 bg-gradient-to-b from-ice-primary/10 to-transparent opacity-50" />
         <div className="relative z-10 max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-4 animate-slide-up">
-            記錄歷史
+            紀錄歷史
           </h1>
           <p className="text-crystal-blue text-sm md:text-base animate-slide-up stagger-1">
-            {totalVisits > 0 ? `共 ${totalVisits} 筆記錄 • 持續追蹤您的成長軌跡` : '開始記錄您的滑雪征程'}
+            {totalVisits > 0 ? `共 ${totalVisits} 筆紀錄 • 持續追蹤您的成長軌跡` : '開始紀錄您的滑雪征程'}
           </p>
         </div>
       </div>
@@ -356,7 +356,7 @@ export default function CourseHistory() {
             <div className="mt-4 flex items-center gap-2 text-sm">
               <div className="w-2 h-2 rounded-full bg-ice-accent pulse-glow" />
               <span className="text-ice-accent font-semibold">
-                找到 {filteredVisits.length} 筆記錄
+                找到 {filteredVisits.length} 筆紀錄
               </span>
               <button
                 onClick={() => {
@@ -459,7 +459,7 @@ export default function CourseHistory() {
         {sortedDates.length === 0 ? (
           <div className="glass-card p-12 text-center animate-slide-up">
             <div className="text-6xl mb-6">🔍</div>
-            <h3 className="text-2xl font-bold text-frost-white mb-4">沒有符合的記錄</h3>
+            <h3 className="text-2xl font-bold text-frost-white mb-4">沒有符合的紀錄</h3>
             <p className="text-crystal-blue mb-8">試試調整搜尋或篩選條件</p>
             <button
               onClick={() => {
@@ -550,7 +550,7 @@ export default function CourseHistory() {
 
                           {/* Timestamp */}
                           <p className="text-xs text-crystal-blue/50 mt-3">
-                            記錄於 {formatDate(visit.created_at)}
+                            紀錄於 {formatDate(visit.created_at)}
                           </p>
                         </div>
 

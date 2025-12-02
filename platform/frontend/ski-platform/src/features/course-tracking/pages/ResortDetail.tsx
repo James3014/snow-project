@@ -82,7 +82,7 @@ export default function ResortDetail() {
           console.error('錯誤訊息:', axiosErr.response?.data);
         }
 
-        // 無論什麼錯誤，都不阻擋用戶，只在控制台記錄
+        // 無論什麼錯誤，都不阻擋用戶，只在控制台紀錄
         // 暫時不設置錯誤，讓頁面繼續載入
         setResortError(null);
 
@@ -143,7 +143,7 @@ export default function ResortDetail() {
       dispatch(setProgress({ resortId, progress: initialProgress }));
       dispatch(setVisits([]));
 
-      // 僅在控制台記錄警告，不中斷用戶體驗
+      // 僅在控制台紀錄警告，不中斷用戶體驗
       console.warn('使用初始進度資料，進度追蹤功能可能暫時無法使用');
     } finally {
       setLoading(false);
@@ -160,7 +160,7 @@ export default function ResortDetail() {
     if (!userId || !resortId) return;
 
     if (isCompleted) {
-      // TODO: 刪除記錄
+      // TODO: 刪除紀錄
       return;
     }
 
@@ -180,7 +180,7 @@ export default function ResortDetail() {
       });
       dispatch(addVisit(visit));
 
-      // 保存最後完成的記錄，用於分享
+      // 保存最後完成的紀錄，用於分享
       setLastCompletedVisit({
         visitId: visit.id,
         courseName: selectedCourseName,
@@ -201,7 +201,7 @@ export default function ResortDetail() {
         }
       }, 500);
     } catch {
-      dispatch(addToast({ type: 'error', message: '記錄失敗，請稍後再試' }));
+      dispatch(addToast({ type: 'error', message: '紀錄失敗，請稍後再試' }));
     }
   };
 
@@ -338,7 +338,7 @@ export default function ResortDetail() {
           <div className="glass-card p-12 text-center max-w-md mx-auto animate-slide-up stagger-3">
             <div className="text-6xl mb-6">🔐</div>
             <h2 className="text-2xl font-bold text-gradient-glacier mb-4">登入以追蹤進度</h2>
-            <p className="text-crystal-blue mb-8">登入後即可記錄完成的雪道、查看個人進度、獲得成就！</p>
+            <p className="text-crystal-blue mb-8">登入後即可紀錄完成的雪道、查看個人進度、獲得成就！</p>
             <Button variant="neon" onClick={() => navigate('/login')} className="w-full">
               前往登入
             </Button>

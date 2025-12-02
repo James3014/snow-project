@@ -99,10 +99,10 @@ def test_follow_features():
 
 
 def test_course_visit_with_feed():
-    """測試記錄課程訪問（自動生成動態）"""
-    print_section("⛷️ 步驟 3: 記錄滑雪活動（自動生成動態）")
+    """測試紀錄課程訪問（自動生成動態）"""
+    print_section("⛷️ 步驟 3: 紀錄滑雪活動（自動生成動態）")
 
-    # 用戶 B 記錄滑雪活動
+    # 用戶 B 紀錄滑雪活動
     response = requests.post(
         f"{BASE_URL}/users/{USER_B_ID}/course-visits",
         headers={"X-User-Id": USER_B_ID},
@@ -116,7 +116,7 @@ def test_course_visit_with_feed():
             "notes": "完美的粉雪日！"
         }
     )
-    print_result("記錄滑雪活動", response)
+    print_result("紀錄滑雪活動", response)
 
 
 def test_feed_retrieval():

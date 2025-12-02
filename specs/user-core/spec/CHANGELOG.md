@@ -4,7 +4,7 @@
 
 ### 落地成果
 - 行為事件 API 支援 `schema_url`、強制排序與來源過濾，並導入版本化 schema registry。
-- `/events` 寫入與查詢新增 SLA 記錄，未達門檻會輸出 WARN。
+- `/events` 寫入與查詢新增 SLA 紀錄，未達門檻會輸出 WARN。
 - 新增 `/users/{user_id}/merge` 端點與服務層合併流程：角色、 legacy ID、變更事件一次處理。
 - 所有 User Profile／Notification Preference 變更都會寫入帶 diff 的 change_feed.payload，並透過 webhook 發佈。
 - API 接受 `X-Actor-Id`，落地審計與 diff 的操作者欄位。

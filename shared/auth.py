@@ -1,5 +1,5 @@
 """
-Shared authentication utilities for all SkiDIY services.
+Shared authentication utilities for all SnowTrace services.
 
 This module provides a unified authentication mechanism using JWT tokens
 that are validated against the user-core service.

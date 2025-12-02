@@ -42,7 +42,7 @@ class LearningFocusTracker:
     ) -> LearningFocus:
         """獲取使用者最近的學習焦點
         
-        分析最近 N 天的練習記錄和收藏，推斷使用者當前的學習焦點。
+        分析最近 N 天的練習紀錄和收藏，推斷使用者當前的學習焦點。
         
         Args:
             db: Database session
@@ -58,7 +58,7 @@ class LearningFocusTracker:
         # 如果在不同的數據庫（如 Supabase），需要通過 API 調用獲取
         # 目前先實現邏輯，實際部署時可能需要調整數據源
         
-        # 獲取最近的練習記錄
+        # 獲取最近的練習紀錄
         # 由於 practice_logs 可能在外部系統（Supabase），這裡使用佔位符邏輯
         recent_lessons = self._get_recent_practice_lessons(db, user_id, cutoff_date)
         
@@ -214,12 +214,12 @@ class LearningFocusTracker:
     ) -> Dict[str, str]:
         """分析技能趨勢
         
-        基於練習記錄中的評分變化，判斷各技能的發展趨勢。
+        基於練習紀錄中的評分變化，判斷各技能的發展趨勢。
         
         Returns:
             Dict mapping skill name to trend ("improving", "stable", "declining")
         """
-        # TODO: 實際實現需要分析練習記錄中的評分數據
+        # TODO: 實際實現需要分析練習紀錄中的評分數據
         # 目前返回佔位符數據
         return {skill: "stable" for skill in self.CASI_SKILLS}
     

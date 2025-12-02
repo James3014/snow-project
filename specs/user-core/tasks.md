@@ -39,7 +39,7 @@
 **Goal**: 提供 user profile CRUD 與合併流程，確保單一 `User ID` 生效。  
 **Independent Test**: 使用 API 建立/更新/合併使用者，驗證資料庫與 change feed 皆正確。
 
-- [x] UC-T301 [US1] 在 `platform/user_core/services/user_profile_service.py` 實作建立/更新/停用/合併邏輯，含審計記錄與 diff。
+- [x] UC-T301 [US1] 在 `platform/user_core/services/user_profile_service.py` 實作建立/更新/停用/合併邏輯，含審計紀錄與 diff。
 - [x] UC-T302 [US1] 在 `platform/user_core/api/user_profiles.py` 暴露 `/users`, `/users/{id}`, `/users/{id}/merge` 路由，串接 service。
 - [ ] UC-T303 [US1] 實作 `legacy_mapping_service.py`，在建立/合併時管理 `LegacyMapping` 與 `legacy_ids`。（目前整合於 user_profile_service，待決定是否拆分模組）
 - [x] UC-T304 [US1] 於 `platform/user_core/audit/publisher.py` 實做 webhook 發送，對接 change feed 契約。
@@ -51,7 +51,7 @@
 
 ---
 
-## Phase 4: User Story 2 - 統一行為事件記錄 (Priority: P2)
+## Phase 4: User Story 2 - 統一行為事件紀錄 (Priority: P2)
 
 **Goal**: 提供事件寫入與查詢，支援跨專案監控與分析。  
 **Independent Test**: 模擬其他專案寫入事件並查詢，確認 schema 驗證與版本處理。
@@ -93,7 +93,7 @@
 - [ ] UC-T604 [Polish] 與安全團隊確認 API key 或 OAuth 流程，更新 `contracts/api-openapi.yaml` 安全性段落。
 - [ ] UC-T605 [Polish] 進行負載測試腳本（`tests/perf/user_core/load_events.py`），確保事件寫入成功率符合 SC-002。
 - [ ] UC-T606 [Polish] 更新 `PROJECTS.md` 的 Shared Infrastructure，描述 user-core API 與 change feed 接入方式。
-- [ ] UC-T607 [Polish] 完成發佈前 Checklist：遷移演練、回滾測試、監控告警驗證，記錄於 `docs/user-core/release-checklist.md`。
+- [ ] UC-T607 [Polish] 完成發佈前 Checklist：遷移演練、回滾測試、監控告警驗證，紀錄於 `docs/user-core/release-checklist.md`。
 - [ ] UC-T608 [Polish] 評估 change feed 從 webhook 升級至 Kafka/SNS 的門檻與計畫，產出升級提案文件。
 
 ---

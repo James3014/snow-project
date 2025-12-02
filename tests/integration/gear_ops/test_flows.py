@@ -30,8 +30,8 @@ from sqlalchemy.orm import Session
 
 @pytest.fixture(scope="function")
 def db_session():
-    """为每个测试创建独立的数据库 session"""
-    # 使用内存数据库进行测试
+    """为每个测试建立独立的資料库 session"""
+    # 使用内存資料库进行测试
     test_engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(test_engine)
 
@@ -59,7 +59,7 @@ class TestCompleteGearLifecycle:
         """
         user_id = uuid4()
 
-        # Step 1: 创建装备
+        # Step 1: 建立装备
         gear_item = GearItem(
             user_id=user_id,
             name="Burton Custom 158",
@@ -76,7 +76,7 @@ class TestCompleteGearLifecycle:
         assert gear_item.id is not None
         assert gear_item.status == GEAR_STATUS_ACTIVE
 
-        # Step 2: 创建检查记录
+        # Step 2: 建立检查记录
         inspection = GearInspection(
             gear_item_id=gear_item.id,
             inspector_user_id=user_id,
@@ -93,7 +93,7 @@ class TestCompleteGearLifecycle:
         assert inspection.overall_status == INSPECTION_STATUS_GOOD
         assert inspection.next_inspection_date is not None
 
-        # Step 3: 创建提醒
+        # Step 3: 建立提醒
         reminder = GearReminder(
             gear_item_id=gear_item.id,
             reminder_type=REMINDER_TYPE_INSPECTION,
@@ -108,7 +108,7 @@ class TestCompleteGearLifecycle:
         assert reminder.id is not None
         assert reminder.status == REMINDER_STATUS_PENDING
 
-        # Step 4: 模拟发送提醒
+        # Step 4: 模拟傳送提醒
         reminder.status = REMINDER_STATUS_SENT
         reminder.sent_at = datetime.now()
         db_session.commit()
@@ -137,7 +137,7 @@ class TestUnsafeGearScenario:
         """
         user_id = uuid4()
 
-        # Step 1: 创建装备
+        # Step 1: 建立装备
         gear_item = GearItem(
             user_id=user_id,
             name="Old Bindings",
@@ -148,14 +148,14 @@ class TestUnsafeGearScenario:
         db_session.commit()
         db_session.refresh(gear_item)
 
-        # Step 2: 创建 unsafe 检查记录
+        # Step 2: 建立 unsafe 检查记录
         inspection = GearInspection(
             gear_item_id=gear_item.id,
             inspector_user_id=user_id,
             checklist={"bindings": "broken", "screws": "loose"},
             overall_status=INSPECTION_STATUS_UNSAFE,
             notes="DO NOT USE - bindings broken",
-            next_inspection_date=None  # unsafe 不设置下一次检查
+            next_inspection_date=None  # unsafe 不設定下一次检查
         )
         db_session.add(inspection)
         db_session.commit()
@@ -164,7 +164,7 @@ class TestUnsafeGearScenario:
         assert inspection.overall_status == INSPECTION_STATUS_UNSAFE
         assert inspection.next_inspection_date is None
 
-        # Step 3: 模拟维修后，创建新的检查
+        # Step 3: 模拟维修后，建立新的检查
         repair_inspection = GearInspection(
             gear_item_id=gear_item.id,
             inspector_user_id=user_id,
@@ -210,21 +210,21 @@ class TestMultiUserIsolation:
 
         db_session.commit()
 
-        # 验证：用户A只能查询到自己的装备
+        # 验证：用户A只能查詢到自己的装备
         user_a_items = db_session.query(GearItem).filter(
             GearItem.user_id == user_a_id
         ).all()
         assert len(user_a_items) == 1
         assert user_a_items[0].name == "User A's Board"
 
-        # 验证：用户B只能查询到自己的装备
+        # 验证：用户B只能查詢到自己的装备
         user_b_items = db_session.query(GearItem).filter(
             GearItem.user_id == user_b_id
         ).all()
         assert len(user_b_items) == 1
         assert user_b_items[0].name == "User B's Board"
 
-        # 验证：用户A不能通过user_id查询到用户B的装备
+        # 验证：用户A不能通过user_id查詢到用户B的装备
         cross_query = db_session.query(GearItem).filter(
             GearItem.id == gear_b.id,
             GearItem.user_id == user_a_id  # 错误的 user_id
@@ -241,7 +241,7 @@ class TestMarketplaceFlow:
         """测试搜索待售装备"""
         user_id = uuid4()
 
-        # 创建待售装备
+        # 建立待售装备
         for_sale_item = GearItem(
             user_id=user_id,
             name="Burton Custom For Sale",
@@ -252,7 +252,7 @@ class TestMarketplaceFlow:
         )
         db_session.add(for_sale_item)
 
-        # 创建非待售装备
+        # 建立非待售装备
         not_for_sale = GearItem(
             user_id=user_id,
             name="My Personal Board",

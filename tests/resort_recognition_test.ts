@@ -274,7 +274,7 @@ function printSummary(result: TestResult) {
 function main() {
   console.log('雪场识别全面测试');
   console.log('========================================\n');
-  console.log(`数据源: ${resortsData.resorts.length} 个雪场\n`);
+  console.log(`資料源: ${resortsData.resorts.length} 个雪场\n`);
 
   const result = runTests();
   printSummary(result);

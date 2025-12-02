@@ -84,7 +84,7 @@
   - _Requirements: 10.1, 10.2_
 
 - [x] 3.1 撰寫 CASI 技能分析器的屬性測試
-  - **Property 14: CASI 技能記錄**
+  - **Property 14: CASI 技能紀錄**
   - **Validates: Requirements 10.1**
   - 測試從事件推斷技能掌握度
   - 測試技能值始終在 0-1 範圍內
@@ -97,7 +97,7 @@
 
 - [x] 4. 整合學習焦點追蹤器與 User Core
   - 更新 LearningFocusTracker 使用 UserCoreClient
-  - 實作 _get_recent_practice_lessons() 從 API 獲取練習記錄
+  - 實作 _get_recent_practice_lessons() 從 API 獲取練習紀錄
   - 實作 _get_favorite_lessons() 從 API 獲取收藏
   - 實作 _analyze_skill_trend() 從評分趨勢分析技能發展
   - 實作課程到技能的映射
@@ -244,7 +244,7 @@
 - [ ] 13. 實作請求回應邏輯
   - 擴展 respond_to_buddy_request() 方法
   - 實作接受邏輯（更新狀態、增加計數）
-  - 實作拒絕邏輯（更新狀態、記錄訊息）
+  - 實作拒絕邏輯（更新狀態、紀錄訊息）
   - 發送行為事件和通知
   - _Requirements: 5.2, 5.3, 5.4, 5.5_
 
@@ -253,8 +253,8 @@
   - **Validates: Requirements 5.2**
   - 測試接受請求後狀態和計數正確更新
 
-- [ ] 13.2 撰寫事件記錄的屬性測試
-  - **Property 9: 事件記錄完整性**
+- [ ] 13.2 撰寫事件紀錄的屬性測試
+  - **Property 9: 事件紀錄完整性**
   - **Validates: Requirements 4.3, 5.4**
   - 測試所有請求操作都發送事件
 
@@ -342,7 +342,7 @@
   - 新增平均匹配時間指標
   - 新增快取命中率指標
   - 新增 user-core API 調用次數和延遲指標
-  - 新增詳細的日誌記錄（搜尋、過濾、計分、API 調用）
+  - 新增詳細的日誌紀錄（搜尋、過濾、計分、API 調用）
   - 設定告警閾值（匹配時間 > 10 秒）
   - _Requirements: 7.1, 7.2_
 

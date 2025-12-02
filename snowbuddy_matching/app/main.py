@@ -7,7 +7,7 @@ from .exceptions import register_exception_handlers
 from .routers import search_router, requests_router, health_router
 
 app = FastAPI(
-    title="SkiDIY Snowbuddy Matching Service",
+    title="SnowTrace Snowbuddy Matching Service",
     version="0.1.0",
     description="Provides an intelligent matching engine to find snowbuddies."
 )

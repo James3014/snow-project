@@ -6,7 +6,7 @@
 
 ## Overview
 
-Successfully completed implementation and testing for all three core services of the SkiDIY platform:
+Successfully completed implementation and testing for all three core services of the SnowTrace platform:
 
 1. ✅ **user-core** - User identity and behavior tracking (85% → 95%)
 2. ✅ **resort-services** - Ski resort information API (70% → 100%)

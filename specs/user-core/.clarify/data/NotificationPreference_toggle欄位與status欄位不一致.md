@@ -26,7 +26,7 @@ ERM：Entity `NotificationPreference` 的屬性 `status` vs 規格 `toggle`
 High
 
 ---
-# 解決記錄
+# 解決紀錄
 
 - **回答**：A - 完全統一為 `status`（`opt-in`/`opt-out`/`paused`）
 - **更新的規格檔**：spec/spec.md（Key Entities）

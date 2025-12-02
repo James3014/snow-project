@@ -241,7 +241,7 @@ open http://localhost:5173/snowbuddy
 - [x] 導航入口已添加
 - [x] 代碼符合 TypeScript 規範
 - [x] 極地冰川設計風格一致
-- [x] 文檔完整記錄
+- [x] 文檔完整紀錄
 
 ---
 

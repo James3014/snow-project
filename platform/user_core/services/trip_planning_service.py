@@ -512,7 +512,7 @@ def cancel_buddy_request(
     if buddy.status != BuddyStatus.PENDING:
         raise BuddyRequestError("Can only cancel pending requests")
 
-    # 刪除申請記錄
+    # 刪除申請紀錄
     db.delete(buddy)
     db.commit()
 

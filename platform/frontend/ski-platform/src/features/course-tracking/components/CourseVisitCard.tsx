@@ -1,5 +1,5 @@
 /**
- * Course Visit Card - 單筆雪道記錄卡片
+ * Course Visit Card - 單筆雪道紀錄卡片
  */
 import Card from '@/shared/components/Card';
 import Button from '@/shared/components/Button';

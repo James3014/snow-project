@@ -141,10 +141,10 @@ GearTrade ──> Payment / SafetyFlag (if disputed)
 
 ## 4. Reminder Scheduling Outline
 
-1. 建立 GearReminder 記錄（頻率或指定日期）。  
+1. 建立 GearReminder 紀錄（頻率或指定日期）。  
 2. Celery/Apscheduler 每小時掃描 `next_trigger_at <= now`。  
 3. 呼叫 NotificationPreference 查詢授權；若允許，發送通知並更新 `last_triggered_at`, `next_trigger_at`。  
-4. 記錄 `gear.reminder.sent` 事件；若未授權，記錄 `skipped` 狀態。  
+4. 紀錄 `gear.reminder.sent` 事件；若未授權，紀錄 `skipped` 狀態。  
 5. 危險裝備（overall_result=fail）立即觸發高優先級通知與 GearSafetyFlag。
 
 ## 5. Migration Strategy Outline

@@ -12,7 +12,7 @@ Make sure both Docker and Docker Compose are installed on your system before pro
 ## Running the Application
 
 1.  **Navigate to the Project Root:**
-    Open your terminal and change to the root directory of this project (`skidiy/project`).
+    Open your terminal and change to the root directory of this project (`snowtrace/project`).
 
 2.  **Build and Run with Docker Compose:**
     Execute the following command:

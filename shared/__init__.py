@@ -1,1 +1,1 @@
-# Shared utilities for SkiDIY services
+# Shared utilities for SnowTrace services

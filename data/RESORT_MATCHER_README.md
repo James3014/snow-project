@@ -210,7 +210,7 @@ python3 scripts/export_resorts_for_matcher.py
 
 ## 📌 注意事項
 
-1. **通行證信息（pass）**：目前所有雪場的 `pass` 欄位都是空陣列 `[]`，需要手動補充
+1. **通行證資訊（pass）**：目前所有雪場的 `pass` 欄位都是空陣列 `[]`，需要手動補充
 2. **教學語言（lessons_languages）**：目前所有雪場的 `lessons_languages` 欄位都是空陣列 `[]`，需要手動補充
 3. 其他欄位都已自動從原始數據轉換和估算
 

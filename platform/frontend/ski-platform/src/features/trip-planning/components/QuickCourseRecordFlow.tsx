@@ -1,6 +1,6 @@
 /**
  * Quick Course Record Flow
- * 快速記錄雪道流程組件
+ * 快速紀錄雪道流程組件
  */
 import { useState, useEffect, useCallback } from 'react';
 import { resortApiService } from '@/shared/api/resortApi';
@@ -71,7 +71,7 @@ export default function QuickCourseRecordFlow({
     const currentCourseName = coursesArray[currentRecordingIndex];
 
     try {
-      // 創建雪道訪問記錄
+      // 創建雪道訪問紀錄
       await courseTrackingApi.visits.create(userId, {
         resort_id: resortId,
         course_name: currentCourseName,
@@ -79,7 +79,7 @@ export default function QuickCourseRecordFlow({
         ...data,
       });
 
-      // 標記為已記錄
+      // 標記為已紀錄
       setRecordedCourses(prev => new Set([...prev, currentCourseName]));
 
       // 移動到下一條
@@ -87,12 +87,12 @@ export default function QuickCourseRecordFlow({
         setCurrentRecordingIndex(currentRecordingIndex + 1);
       } else {
         // 全部完成
-        alert(`✅ 完成！已記錄 ${coursesArray.length} 條雪道`);
+        alert(`✅ 完成！已紀錄 ${coursesArray.length} 條雪道`);
         onComplete();
       }
     } catch (error) {
-      console.error('記錄雪道失敗:', error);
-      alert('記錄失敗，請稍後重試');
+      console.error('紀錄雪道失敗:', error);
+      alert('紀錄失敗，請稍後重試');
     }
   };
 
@@ -103,7 +103,7 @@ export default function QuickCourseRecordFlow({
     } else {
       const recordedCount = recordedCourses.size;
       if (recordedCount > 0) {
-        alert(`✅ 已記錄 ${recordedCount} 條雪道`);
+        alert(`✅ 已紀錄 ${recordedCount} 條雪道`);
       }
       onComplete();
     }
@@ -141,7 +141,7 @@ export default function QuickCourseRecordFlow({
   const coursesArray = Array.from(selectedCourses);
   const currentCourseName = currentRecordingIndex >= 0 ? coursesArray[currentRecordingIndex] : '';
 
-  // 如果正在記錄中，顯示記錄彈窗
+  // 如果正在紀錄中，顯示紀錄彈窗
   if (currentRecordingIndex >= 0) {
     return (
       <EnhancedCourseRecordModal
@@ -174,7 +174,7 @@ export default function QuickCourseRecordFlow({
       <div className="bg-white rounded-lg max-w-4xl w-full my-8">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-t-lg">
-          <h2 className="text-2xl font-bold mb-2">🎿 記錄滑雪雪道</h2>
+          <h2 className="text-2xl font-bold mb-2">🎿 紀錄滑雪雪道</h2>
           <p className="text-blue-100">
             {resort.names.zh} · {tripDates.start}
           </p>
@@ -261,7 +261,7 @@ export default function QuickCourseRecordFlow({
             className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
             {selectedCourses.size > 0
-              ? `下一步：記錄 ${selectedCourses.size} 條雪道`
+              ? `下一步：紀錄 ${selectedCourses.size} 條雪道`
               : '請先選擇雪道'}
           </button>
         </div>

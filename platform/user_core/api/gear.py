@@ -2,7 +2,7 @@
 Gear Operations API
 
 Linus 原則：簡單的 CRUD，不要過度設計
-整合所有裝備相關功能：裝備管理、檢查記錄、提醒、二手市場
+整合所有裝備相關功能：裝備管理、檢查紀錄、提醒、二手市場
 """
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
@@ -142,7 +142,7 @@ def delete_gear_item(
     return None
 
 
-# ==================== 檢查記錄 API ====================
+# ==================== 檢查紀錄 API ====================
 
 def _create_reminder_for_inspection(
     db_session: Session,
@@ -167,7 +167,7 @@ def create_inspection(
     db_session: Session = Depends(db.get_db)
 ):
     """
-    建立檢查記錄
+    建立檢查紀錄
 
     自動邏輯：
     - good → next_inspection_date = +90 days
@@ -194,7 +194,7 @@ def create_inspection(
         next_inspection_date = datetime.now() + timedelta(days=30)
     # unsafe 不設置
 
-    # 建立檢查記錄
+    # 建立檢查紀錄
     inspection = GearInspection(
         gear_item_id=item_id,
         inspector_user_id=current_user_id,
@@ -246,7 +246,7 @@ def get_inspection(
     current_user_id: UUID = Depends(get_current_user_id),
     db_session: Session = Depends(db.get_db)
 ):
-    """取得單個檢查記錄詳情"""
+    """取得單個檢查紀錄詳情"""
     inspection = db_session.query(GearInspection).filter(
         GearInspection.id == inspection_id
     ).first()

@@ -62,6 +62,6 @@
 - [ ] KE-T601 建立 `Makefile` / `scripts/dev/setup_knowledge.sh`。  
 - [ ] KE-T602 整合 OpenTelemetry 指標（測驗成功率、任務完成率）。  
 - [ ] KE-T603 建立 `tests/perf/knowledge/test_quiz_throughput.py`。  
-- [ ] KE-T604 更新 `PROJECTS.md` Shared Infrastructure，記錄 knowledge API 與事件。  
+- [ ] KE-T604 更新 `PROJECTS.md` Shared Infrastructure，紀錄 knowledge API 與事件。  
 - [ ] KE-T605 撰寫 `docs/knowledge/changefeed-upgrade.md`（webhook → Kafka）。  
 - [ ] KE-T606 完成發佈 Checklist：題庫審核、通知 SLA、資料備援、帳號合併驗證。  

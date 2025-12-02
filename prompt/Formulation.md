@@ -15,7 +15,7 @@
 - B. 萃取實體的「屬性 (Attribute)」
 - C. 標註「跨屬性不變條件」
 - D. 識別實體之間的「關係 (Relationship)」
-- E. 記錄實體的整體說明
+- E. 紀錄實體的整體說明
 
 ### 2. 從規格中萃取功能階層：Feature > Rule > Example
 依照 [`formulation-rules.md`](./formulation-rules.md) 中的「功能模型萃取規則」執行：

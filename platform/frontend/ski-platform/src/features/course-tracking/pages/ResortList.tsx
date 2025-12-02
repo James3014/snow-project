@@ -150,7 +150,7 @@ export default function ResortList() {
             探索雪場
           </h1>
           <p className="text-crystal-blue text-base md:text-lg max-w-2xl mx-auto animate-slide-up stagger-1">
-            選擇一個雪場開始記錄你的滑雪征程
+            選擇一個雪場開始紀錄你的滑雪征程
             <br className="hidden md:block" />
             每條雪道都是你成長的見證
           </p>

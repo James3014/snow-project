@@ -126,7 +126,7 @@ DELETE /api/gear/items/:id      # 刪除裝備
 **實作要求**：
 - 用 FastAPI dependency 驗證 `user_id`（從 JWT token）
 - 所有查詢必須加 `WHERE user_id = current_user` 防止越權
-- DELETE 是軟刪除（更新 status = 'deleted'），保留審計記錄
+- DELETE 是軟刪除（更新 status = 'deleted'），保留審計紀錄
 
 **驗收標準**：
 - [ ] 10個 API 測試覆蓋正常流程
@@ -137,12 +137,12 @@ DELETE /api/gear/items/:id      # 刪除裝備
 
 ---
 
-### GO-T202 [P][API] 檢查記錄 API
+### GO-T202 [P][API] 檢查紀錄 API
 
 **輸出**: `platform/gear_ops/api/inspections.py`
 
 ```python
-POST   /api/gear/items/:id/inspections     # 建立檢查記錄
+POST   /api/gear/items/:id/inspections     # 建立檢查紀錄
 GET    /api/gear/items/:id/inspections     # 該裝備的檢查歷史
 GET    /api/gear/inspections/:id           # 單一檢查詳情
 ```
@@ -157,7 +157,7 @@ GET    /api/gear/inspections/:id           # 單一檢查詳情
 **驗收標準**：
 - [ ] 建立檢查時自動產生提醒
 - [ ] 測試 checklist JSONB 可以存任意結構
-- [ ] 查詢性能：1000筆記錄 < 100ms
+- [ ] 查詢性能：1000筆紀錄 < 100ms
 
 **時間估計**: 1天
 
@@ -178,7 +178,7 @@ PATCH  /api/gear/reminders/:id/cancel   # 取消提醒
 - 提供取消功能讓用戶有掌控感
 
 **驗收標準**：
-- [ ] 取消提醒不會刪除記錄，只更新 status
+- [ ] 取消提醒不會刪除紀錄，只更新 status
 - [ ] 提醒列表按 scheduled_at 排序
 
 **時間估計**: 0.5天
@@ -203,7 +203,7 @@ def send_pending_reminders():
     2. 對每個提醒：
        - 調用通知 API（HTTP POST）
        - 更新 sent_at, status='sent'
-    3. 記錄失敗的提醒（但不要重試超過3次）
+    3. 紀錄失敗的提醒（但不要重試超過3次）
     """
     pass
 ```
@@ -216,7 +216,7 @@ def send_pending_reminders():
 **驗收標準**：
 - [ ] 模擬1000個待發送提醒，執行時間 < 5秒
 - [ ] 通知 API 失敗時不會崩潰
-- [ ] 有日誌記錄發送成功/失敗
+- [ ] 有日誌紀錄發送成功/失敗
 
 **時間估計**: 0.5天
 

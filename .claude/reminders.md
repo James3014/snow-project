@@ -31,10 +31,10 @@ https://github.com/James3014/snow-project/pull/new/claude/fix-gear-api-auth-017C
 
 ### 2025-11-14
 - `9d71b8a` - feat: 新增通知下拉選單顯示雪伴申請
-- `7fc8cb4` - fix: 修复AI行程创建的3个关键bug
+- `7fc8cb4` - fix: 修复AI行程建立的3个关键bug
 - `045222a` - refactor: 按Linus原则重构AI意图解析器
 - `5edf73d` - fix: 完善AI聊天机器人意图解析功能
-- `293b44a` - fix: 修复AI聊天机器人创建行程的3个问題
+- `293b44a` - fix: 修复AI聊天机器人建立行程的3个问題
 
 **當前分支：** `claude/fix-gear-api-auth-017CVQHoHpDTgFDN2iXze4ab`
 

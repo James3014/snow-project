@@ -5,7 +5,7 @@ Redis 緩存服務
 主要用於：
 - 關注列表緩存
 - 熱門動態緩存
-- 用戶信息緩存
+- 用戶資訊緩存
 """
 import redis
 import json
@@ -206,5 +206,5 @@ class CacheKeys:
 
     @staticmethod
     def user_info(user_id: str) -> str:
-        """用戶信息"""
+        """用戶資訊"""
         return f"user:{user_id}:info"

@@ -114,7 +114,7 @@ export default function RegisterPage() {
             <div className="text-7xl animate-slide-up pulse-glow">🎿</div>
           </div>
           <h2 className="text-4xl font-bold text-gradient-glacier mb-4 animate-slide-up stagger-1">
-            註冊 SkiDIY 帳號
+            註冊 SnowTrace 帳號
           </h2>
           <p className="text-crystal-blue text-sm animate-slide-up stagger-2">
             已經有帳號了？{' '}

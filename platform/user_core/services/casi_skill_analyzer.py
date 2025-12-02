@@ -433,7 +433,7 @@ def update_casi_profile_task(user_id: uuid.UUID) -> None:
     """後台任務：更新用戶的 CASI 技能檔案
     
     這個函數會在後台異步執行，不阻塞主流程。
-    如果發生錯誤，只記錄日誌，不影響事件寫入。
+    如果發生錯誤，只紀錄日誌，不影響事件寫入。
     
     Args:
         user_id: User ID to update CASI profile for

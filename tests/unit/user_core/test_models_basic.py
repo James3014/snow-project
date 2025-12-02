@@ -367,12 +367,12 @@ class TestBehaviorEvent:
             source_project="custom-service",
             event_type="custom.event",
             payload={"data": "test"},
-            schema_url="https://schemas.skidiy.com/custom-event-v1.json"
+            schema_url="https://schemas.snowtrace.com/custom-event-v1.json"
         )
         db_session.add(event)
         db_session.commit()
 
-        assert event.schema_url == "https://schemas.skidiy.com/custom-event-v1.json"
+        assert event.schema_url == "https://schemas.snowtrace.com/custom-event-v1.json"
 
     def test_behavior_event_relationship(self, db_session):
         """Test relationship between BehaviorEvent and UserProfile."""

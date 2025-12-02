@@ -543,7 +543,7 @@ def calculate_match_score(trip_a: Trip, trip_b: Trip,
 ```python
 def calculate_user_level(user: User) -> int:
     """
-    從用戶的滑雪記錄分析經驗等級
+    從用戶的滑雪紀錄分析經驗等級
 
     Returns:
         1-5 (1=新手, 5=專家)
@@ -601,7 +601,7 @@ async def complete_trip(
 ):
     """
     標記 trip 為已完成
-    自動創建 CourseVisit 記錄（可修改）
+    自動創建 CourseVisit 紀錄（可修改）
     """
     trip = get_trip(trip_id, db)
 
@@ -644,7 +644,7 @@ async def complete_trip(
     return {
         "trip": trip,
         "course_visit_id": course_visit.id,
-        "message": "行程已完成，已自動創建雪道記錄（可編輯補充詳情）"
+        "message": "行程已完成，已自動創建雪道紀錄（可編輯補充詳情）"
     }
 ```
 

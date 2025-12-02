@@ -1,8 +1,8 @@
-# SkiDIY 統一認證架構
+# SnowTrace 統一認證架構
 
 ## 概述
 
-所有 SkiDIY 服務使用統一的認證機制，以 **user-core** 作為認證中心。
+所有 SnowTrace 服務使用統一的認證機制，以 **user-core** 作為認證中心。
 
 ## 認證流程
 
@@ -87,7 +87,7 @@ async def create_ski_history(
     history_item: SkiHistoryCreate,
     authenticated_user_id: str = Depends(get_current_user_id)
 ):
-    # 驗證用戶只能為自己添加記錄
+    # 驗證用戶只能為自己添加紀錄
     if user_id != authenticated_user_id:
         raise HTTPException(403, "Forbidden")
 
@@ -173,7 +173,7 @@ ENVIRONMENT=development  # or 'production'
 - [x] snowbuddy-matching 認證工具 (`auth_utils.py`)
 - [x] 認證架構文檔
 - [x] 在 resort-services 所有需要認證的端點中應用
-  - `POST /users/{user_id}/ski-history` - 必須認證，只能為自己創建記錄
+  - `POST /users/{user_id}/ski-history` - 必須認證，只能為自己創建紀錄
   - `GET /resorts/{resort_id}/share-card` - 可選認證
 - [x] 在 snowbuddy-matching 所有需要認證的端點中應用
   - `POST /matching/searches` - 必須認證
@@ -222,7 +222,7 @@ ENVIRONMENT=development  # or 'production'
 
 ## 示例場景
 
-### 場景 1: 用戶記錄滑雪歷史
+### 場景 1: 用戶紀錄滑雪歷史
 
 ```python
 # Client

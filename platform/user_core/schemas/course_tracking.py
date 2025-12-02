@@ -31,7 +31,7 @@ class CourseVisitBase(BaseModel):
     visited_date: date
     notes: Optional[str] = Field(None, max_length=200, description="心得筆記（最多200字）")
 
-    # 新增：增強記錄體驗欄位
+    # 新增：增強紀錄體驗欄位
     snow_condition: Optional[str] = Field(None, max_length=50, description="雪況（粉雪/壓雪/冰面/融雪）")
     weather: Optional[str] = Field(None, max_length=50, description="天氣（晴天/陰天/下雪/暴風雪）")
     difficulty_feeling: Optional[str] = Field(None, max_length=50, description="難度感受（比預期簡單/適中/困難）")
@@ -46,7 +46,7 @@ class CourseVisitCreate(BaseModel):
     visited_date: Optional[date] = None
     notes: Optional[str] = Field(None, max_length=200, description="心得筆記（最多200字）")
 
-    # 新增：增強記錄體驗欄位（創建時都是選填）
+    # 新增：增強紀錄體驗欄位（創建時都是選填）
     snow_condition: Optional[str] = Field(None, max_length=50)
     weather: Optional[str] = Field(None, max_length=50)
     difficulty_feeling: Optional[str] = Field(None, max_length=50)

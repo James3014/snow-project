@@ -22,21 +22,21 @@ import type {
  * 雪道訪問相關 API
  */
 export const courseVisitApi = {
-  // 記錄雪道訪問
+  // 紀錄雪道訪問
   create: (userId: string, data: CourseVisitCreate) =>
     userCoreApi.post<CourseVisit>(`/users/${userId}/course-visits`, data),
 
-  // 獲取用戶的雪道訪問記錄
+  // 獲取用戶的雪道訪問紀錄
   list: (userId: string, resortId?: string) => {
     const params = resortId ? `?resort_id=${resortId}` : '';
     return userCoreApi.get<CourseVisit[]>(`/users/${userId}/course-visits${params}`);
   },
 
-  // 更新雪道訪問記錄
+  // 更新雪道訪問紀錄
   update: (userId: string, visitId: string, data: Partial<CourseVisitCreate>) =>
     userCoreApi.patch<CourseVisit>(`/users/${userId}/course-visits/${visitId}`, data),
 
-  // 刪除雪道訪問記錄
+  // 刪除雪道訪問紀錄
   delete: (userId: string, visitId: string) =>
     userCoreApi.delete(`/users/${userId}/course-visits/${visitId}`),
 };

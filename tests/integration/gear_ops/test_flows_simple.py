@@ -11,7 +11,7 @@ from decimal import Decimal
 
 
 class TestGearOperationsLogic:
-    """测试业务逻辑（不依赖数据库）"""
+    """测试业务逻辑（不依赖資料库）"""
 
     def test_inspection_date_calculation(self):
         """测试检查日期计算逻辑"""
@@ -34,11 +34,11 @@ class TestGearOperationsLogic:
         user_a_id = uuid4()
         user_b_id = uuid4()
 
-        # 模拟装备数据
+        # 模拟装备資料
         gear_a = {"id": uuid4(), "user_id": user_a_id, "name": "A's board"}
         gear_b = {"id": uuid4(), "user_id": user_b_id, "name": "B's board"}
 
-        # 验证：查询时必须加 user_id 过滤
+        # 验证：查詢时必须加 user_id 过滤
         def can_access(gear, current_user_id):
             return gear["user_id"] == current_user_id
 
@@ -54,7 +54,7 @@ class TestGearOperationsLogic:
         status = "pending"
         assert status == "pending"
 
-        # 发送后
+        # 傳送后
         status = "sent"
         sent_at = datetime.now()
         assert status == "sent"

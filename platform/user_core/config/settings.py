@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     """Application configuration from environment variables."""
     
     # App
-    app_name: str = "SkiDIY User Core Service"
+    app_name: str = "SnowTrace User Core Service"
     app_version: str = "1.0.0"
     debug: bool = False
     

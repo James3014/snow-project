@@ -44,7 +44,7 @@ class GearItem(Base):
 
 
 class GearInspection(Base):
-    """裝備檢查記錄"""
+    """裝備檢查紀錄"""
     __tablename__ = 'gear_inspections'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)

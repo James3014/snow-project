@@ -68,12 +68,12 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
       season_id: seasonId,
     };
 
-    // 如果狀態是「已完成」且用戶選擇立即記錄
+    // 如果狀態是「已完成」且用戶選擇立即紀錄
     const shouldRecordCourses = formData.trip_status === 'completed' && shouldRecordAfterSave;
 
     onCreate([tripWithSeason]);
 
-    // 如果需要記錄雪道，顯示快速記錄界面
+    // 如果需要紀錄雪道，顯示快速紀錄界面
     if (shouldRecordCourses && userId) {
       setShowQuickRecord(true);
     } else {
@@ -207,7 +207,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                   <div className="flex-1">
                     <p className="font-medium text-blue-900 mb-1">行程已完成！</p>
                     <p className="text-sm text-blue-700 mb-3">
-                      儲存後可以記錄這次滑過的雪道、評分和心得
+                      儲存後可以紀錄這次滑過的雪道、評分和心得
                     </p>
                     <div className="flex gap-2">
                       <button
@@ -230,7 +230,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                       >
-                        💪 儲存後立即記錄
+                        💪 儲存後立即紀錄
                       </button>
                     </div>
                   </div>
@@ -369,7 +369,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
         />
       )}
 
-      {/* 快速記錄雪道 */}
+      {/* 快速紀錄雪道 */}
       {showQuickRecord && userId && formData.resort_id && formData.start_date && formData.end_date && (
         <QuickCourseRecordFlow
           resortId={formData.resort_id}

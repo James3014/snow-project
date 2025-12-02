@@ -15,7 +15,7 @@ export default function Navbar() {
 
   const navItems = [
     { path: '/resorts', label: '雪場' },
-    { path: '/history', label: '記錄' },
+    { path: '/history', label: '紀錄' },
     { path: '/gear', label: '裝備' },
     { path: '/trips', label: '行程' },
     { path: '/snowbuddy', label: '雪伴' },
@@ -43,7 +43,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-2xl">🎿</span>
-            <span className="text-xl font-bold text-gradient-velocity" style={{ fontFamily: 'var(--font-display)' }}>SkiDIY</span>
+            <span className="text-xl font-bold text-gradient-velocity" style={{ fontFamily: 'var(--font-display)' }}>SnowTrace</span>
           </Link>
 
           {/* Navigation Links */}

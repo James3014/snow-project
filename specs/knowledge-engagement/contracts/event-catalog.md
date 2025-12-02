@@ -102,5 +102,5 @@
 ## Outstanding Items
 
 - 是否需要 `knowledge.quiz.started` 事件以追蹤未完成的測驗。  
-- 是否需要記錄 `knowledge.assignment.reminder` 以顯示提醒狀況。  
+- 是否需要紀錄 `knowledge.assignment.reminder` 以顯示提醒狀況。  
 - 決定成就多語名稱與圖像存放策略。

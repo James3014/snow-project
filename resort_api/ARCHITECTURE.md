@@ -21,11 +21,11 @@ resort_api/
 │   ├── services/            # 業務邏輯層
 │   │   ├── __init__.py
 │   │   ├── resort_service.py# 雪場查詢邏輯
-│   │   └── history_service.py# 歷史記錄邏輯
+│   │   └── history_service.py# 歷史紀錄邏輯
 │   └── models/              # 資料模型
 │       ├── __init__.py
 │       ├── resort.py        # 雪場相關模型
-│       └── history.py       # 歷史記錄模型
+│       └── history.py       # 歷史紀錄模型
 └── tests/
 ```
 
@@ -83,7 +83,7 @@ resort_api/
 | GET | /resorts | 雪場列表（支援過濾、搜尋、分頁）|
 | GET | /resorts/{id} | 雪場詳情 |
 | GET | /resorts/{id}/share-card | 分享卡片圖片 |
-| POST | /users/{id}/ski-history | 記錄滑雪歷史 |
+| POST | /users/{id}/ski-history | 紀錄滑雪歷史 |
 | GET | /health | 健康檢查 |
 
 ## 設計原則

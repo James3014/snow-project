@@ -155,7 +155,7 @@ npm run dev
    - likes_count, comments_count（預計算）
    - 索引：user_id, created_at, visibility
 
-3. **activity_likes** - 點讚記錄
+3. **activity_likes** - 點讚紀錄
    - activity_id, user_id
    - 唯一約束：(activity_id, user_id)
 

@@ -252,7 +252,7 @@ scenarios.forEach(scenario => {
 console.log('\n\n=== 測試執行指南 ===\n');
 console.log('1. 複製此測試文件到測試環境');
 console.log('2. 實現測試執行邏輯（調用 matchResort 和 getSuggestions）');
-console.log('3. 記錄所有失敗的測試案例');
+console.log('3. 紀錄所有失敗的測試案例');
 console.log('4. 根據失敗案例改進 resortMatcher.ts');
 console.log('5. 重新測試直到全部通過');
 console.log('\n建議的測試腳本：');

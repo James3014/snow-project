@@ -11,20 +11,20 @@ source .venv/bin/activate
 pip install -r requirements-gear.txt  # FastAPI, SQLAlchemy, Pydantic, Celery/APS, redis, httpx, pytest, schemathesis
 
 # PostgreSQL
-docker run -d --name skidiy-gear-pg \
+docker run -d --name snowtrace-gear-pg \
   -e POSTGRES_PASSWORD=secret \
-  -e POSTGRES_DB=skidiy_gear \
+  -e POSTGRES_DB=snowtrace_gear \
   -p 5434:5432 postgres:15
 
 # Redis（若採用 Celery）
-docker run -d --name skidiy-gear-redis -p 6380:6379 redis:7
+docker run -d --name snowtrace-gear-redis -p 6380:6379 redis:7
 ```
 
 ## 2. Environment Variables
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `GEAR_DB_URL` | PostgreSQL 連線字串 | `postgresql+psycopg://postgres:secret@localhost:5434/skidiy_gear` |
+| `GEAR_DB_URL` | PostgreSQL 連線字串 | `postgresql+psycopg://postgres:secret@localhost:5434/snowtrace_gear` |
 | `GEAR_REDIS_URL` | 任務排程 backend | `redis://localhost:6380/0` |
 | `USER_CORE_BASE_URL` | user-core API | `http://localhost:8000` |
 | `NOTIFICATION_GATEWAY_URL` | 通知服務 | `https://notify.local/send` |
@@ -99,7 +99,7 @@ python scripts/tools/run_gear_reminder_simulation.py \
 ## 8. Observability & Safety
 
 - 建立 OpenTelemetry 指標：檢查完成率、提醒成功率、交易成功率。  
-- 設定 `logs/gear-safety.log`，記錄危險裝備與糾紛事件。  
+- 設定 `logs/gear-safety.log`，紀錄危險裝備與糾紛事件。  
 - 變更 feed（webhook）需具備重試與死信佇列。  
 - 建立告警：`gear.flag` 開啟後 1 小時未處理、提醒失敗連續 3 次等。
 
@@ -108,5 +108,5 @@ python scripts/tools/run_gear_reminder_simulation.py \
 1. 與 user-core/snowbuddy/resort-services 的 API 整合測試完成。  
 2. 匯入遺留裝備資料並確認無重複/遺失。  
 3. 通知偏好與提醒 SLA 演練（含危險裝備即時通知）。  
-4. 交易流程（若含金流）需於 sandbox 測試並記錄稅務資訊。  
+4. 交易流程（若含金流）需於 sandbox 測試並紀錄稅務資訊。  
 5. 撰寫回滾策略：資料備份、提醒停用、交易暫停流程。  

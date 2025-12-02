@@ -47,7 +47,7 @@ const FeedList: React.FC<FeedListProps> = ({
       <div className="bg-white rounded-lg shadow p-8 text-center">
         <div className="text-4xl mb-4">📭</div>
         <p className="text-gray-600">還沒有動態</p>
-        <p className="text-sm text-gray-500 mt-2">記錄你的滑雪活動，分享給雪友吧！</p>
+        <p className="text-sm text-gray-500 mt-2">紀錄你的滑雪活動，分享給雪友吧！</p>
       </div>
     );
   }

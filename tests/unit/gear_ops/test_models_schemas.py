@@ -1,7 +1,7 @@
 """
 Unit tests for Gear Operations models and schemas
 
-测试数据结构的完整性和约束
+测试資料结构的完整性和约束
 """
 import pytest
 from datetime import datetime, date, timedelta
@@ -29,7 +29,7 @@ class TestGearItemSchemas:
     """测试 GearItem 相关 schemas"""
 
     def test_gear_item_create_valid(self):
-        """测试创建装备的有效数据"""
+        """测试建立装备的有效資料"""
         data = {
             'name': 'Burton Custom 158',
             'category': 'board',
@@ -47,7 +47,7 @@ class TestGearItemSchemas:
         data = {'name': 'My Snowboard'}
         item = GearItemCreate(**data)
         assert item.name == 'My Snowboard'
-        assert item.role == GEAR_ROLE_PERSONAL  # 默认值
+        assert item.role == GEAR_ROLE_PERSONAL  # 預設值
 
     def test_gear_item_create_invalid_role(self):
         """测试无效的 role"""
@@ -75,7 +75,7 @@ class TestGearInspectionSchemas:
     """测试 GearInspection 相关 schemas"""
 
     def test_inspection_create_valid(self):
-        """测试创建检查记录"""
+        """测试建立检查记录"""
         data = {
             'checklist': {'edge': 'good', 'bindings': 'worn', 'base': 'scratched'},
             'overall_status': INSPECTION_STATUS_GOOD,
@@ -86,7 +86,7 @@ class TestGearInspectionSchemas:
         assert inspection.overall_status == INSPECTION_STATUS_GOOD
 
     def test_inspection_create_unsafe(self):
-        """测试创建不安全装备的检查"""
+        """测试建立不安全装备的检查"""
         data = {
             'checklist': {'edge': 'damaged', 'bindings': 'broken'},
             'overall_status': INSPECTION_STATUS_UNSAFE,
@@ -125,7 +125,7 @@ class TestGearReminderSchemas:
     """测试 GearReminder 相关 schemas"""
 
     def test_reminder_create_valid(self):
-        """测试创建提醒"""
+        """测试建立提醒"""
         gear_id = uuid4()
         scheduled = datetime.now() + timedelta(days=7)
         data = {

@@ -80,7 +80,7 @@ export default function Rankings() {
           <div className="glass-card p-12 text-center max-w-md mx-auto">
             <div className="text-6xl mb-6">📊</div>
             <h3 className="text-2xl font-bold text-frost-white mb-4">暫無排名資料</h3>
-            <p className="text-crystal-blue">還沒有足夠的訪問記錄來生成排名</p>
+            <p className="text-crystal-blue">還沒有足夠的訪問紀錄來生成排名</p>
           </div>
         )}
       </div>

@@ -12,7 +12,7 @@
 
 ### T1. 抽離業務邏輯到 Service 層
 - [x] T1.1 建立 `services/resort_service.py` - 雪場查詢、過濾邏輯
-- [x] T1.2 建立 `services/history_service.py` - 滑雪歷史記錄邏輯
+- [x] T1.2 建立 `services/history_service.py` - 滑雪歷史紀錄邏輯
 - [x] T1.3 將 `_get_cached_resorts()` 移至 service 層
 
 ### T2. 抽離配置到獨立模組
@@ -28,7 +28,7 @@
 
 ### T4. 路由模組化
 - [x] T4.1 建立 `routers/resort_router.py` - 雪場相關路由
-- [x] T4.2 建立 `routers/history_router.py` - 歷史記錄路由
+- [x] T4.2 建立 `routers/history_router.py` - 歷史紀錄路由
 - [x] T4.3 建立 `routers/health_router.py` - 健康檢查路由
 - [x] T4.4 簡化 `main.py` 為應用程式入口
 

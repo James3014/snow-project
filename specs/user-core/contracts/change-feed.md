@@ -40,7 +40,7 @@
 - `payload.actor`: 觸發此次變更的操作者（來自 `X-Actor-Id`，預設 `system`）。  
 - `payload.before` / `payload.after`: 變更前後的資料快照。  
 - `payload.diff`: 欄位層級的差異，格式為 `{欄位: {before, after}}`。  
-- `payload.recorded_at`: 事件在 user-core 中記錄的時間戳。
+- `payload.recorded_at`: 事件在 user-core 中紀錄的時間戳。
 
 ## 3. Payload Schema
 
@@ -97,7 +97,7 @@
 |-------------|---------|-------|
 | `created` | 新增資料 | Snapshot 為完整資料 |
 | `updated` | 資料更新 | Snapshot 為更新後資料，可附 diff |
-| `deleted` | 資料刪除/停用 | payload.after 記錄停用後狀態（如 `status` = `inactive`） |
+| `deleted` | 資料刪除/停用 | payload.after 紀錄停用後狀態（如 `status` = `inactive`） |
 | `merged` | 帳號合併 | payload.after 包含 `status = merged`；subscriber 須更新引用 |
 
 **Merged Snapshot Example**
@@ -132,7 +132,7 @@
 - 改動 `UserProfile` 或 `NotificationPreference`，在交易提交後必須立刻發布對應的 change feed。  
 - Change feed 不應包含敏感資訊（如密碼、token）；若需，需額外加密或避免放入 `payload`。  
 - Change feed 訊息需保留至少 30 天，以便重播或災難復原。  
-- 若外部系統需確認處理狀態，可使用自訂欄位記錄 ACK（可由 subscriber 回寫）。
+- 若外部系統需確認處理狀態，可使用自訂欄位紀錄 ACK（可由 subscriber 回寫）。
 
 ## 7. Outstanding Items
 

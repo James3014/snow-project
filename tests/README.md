@@ -29,7 +29,7 @@ node tests/user_reported_issues_test.js
   input: '用戶的實際輸入',
   expected: 'expected_resort_id',
   description: '問題描述',
-  originalError: '原始錯誤信息',
+  originalError: '原始錯誤資訊',
 }
 ```
 
@@ -37,18 +37,18 @@ node tests/user_reported_issues_test.js
 
 ### 1. `resort_recognition_test.ts`
 - **目的**: 测试所有雪场的各种变体是否能被正确识别
-- **测试内容**:
+- **测试內容**:
   - 完整中文名（如"白馬Cortina滑雪場"）
   - 英文名（如"Hakuba Cortina Ski Resort"）
   - 日文名（如"白馬コルチナスキー場"）
   - 简短名称（如"白馬"、"Cortina"）
   - 拼音（如"baima"、"cortina"）
   - 各种别名和缩写
-- **数据源**: `data/resorts_for_matcher.json` (43个雪场)
+- **資料源**: `data/resorts_for_matcher.json` (43个雪场)
 
 ### 2. `date_recognition_test.ts`
 - **目的**: 测试各种日期格式是否能被正确识别
-- **测试内容**:
+- **测试內容**:
   - **绝对日期格式**:
     - 完整日期: `2024-12-25`, `2024/12/25`, `2024年12月25日`
     - 月日格式: `12月25日`, `12/25`, `12-25`
@@ -64,7 +64,7 @@ node tests/user_reported_issues_test.js
 
 ### 3. `conversation_integration_test.ts`
 - **目的**: 测试真实用户输入场景中的雪场和日期识别
-- **测试内容**:
+- **测试內容**:
   - 雪场 + 日期的组合识别
   - 各种口语化表达
   - 中文、英文、拼音混合输入
@@ -130,7 +130,7 @@ npm run build
 
 ## 测试统计
 
-运行所有测试后，会显示:
+运行所有测试后，会顯示:
 - 总测试数
 - 通过率
 - 失败的测试用例详情
@@ -145,7 +145,7 @@ npm run build
 
 2. **日期识别失败**:
    - 检查 `dateParser.ts` 的日期解析逻辑
-   - 确认日期格式是否在支持范围内
+   - 確認日期格式是否在支持范围内
 
 3. **综合场景失败**:
    - 检查是否是雪场识别问题
@@ -154,7 +154,7 @@ npm run build
 
 ## 添加新测试
 
-要添加新的测试用例，编辑相应的测试文件:
+要添加新的测试用例，編輯相应的测试文件:
 
 ### 添加雪场识别测试
 
@@ -195,9 +195,9 @@ npm install -D ts-node
 ### 测试失败
 
 如果测试失败:
-1. 查看详细的错误信息
+1. 查看详细的错误資訊
 2. 检查 `tests/logs/` 目录下的日志文件
-3. 确认测试用例的期望值是否正确
+3. 確認测试用例的期望值是否正确
 4. 如果是已知的限制，可以调整测试用例或标记为预期失败
 
 ## 持续改进

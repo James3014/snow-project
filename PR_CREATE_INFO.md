@@ -1,4 +1,4 @@
-# Pull Request 信息
+# Pull Request 資訊
 
 ## PR 創建連結
 https://github.com/James3014/snow-project/compare/main...claude/complete-conversation-engine-tests-01BUFnJefqBAKBH5MogjLJ4f
@@ -299,7 +299,7 @@ Round 5: "好" → 狀態: TRIP_CREATED
 
 ---
 
-## 📝 提交記錄
+## 📝 提交紀錄
 
 ```
 838d40e - fix: 修復 TypeScript 編譯錯誤以通過部署構建

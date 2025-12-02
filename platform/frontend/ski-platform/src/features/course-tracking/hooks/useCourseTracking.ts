@@ -22,7 +22,7 @@ import {
 } from '@/store/slices/courseTrackingSlice';
 
 /**
- * 取得使用者雪道訪問記錄
+ * 取得使用者雪道訪問紀錄
  */
 export function useCourseVisits(resortId?: string) {
   const dispatch = useAppDispatch();
@@ -37,7 +37,7 @@ export function useCourseVisits(resortId?: string) {
       const data = await courseTrackingApi.visits.list(userId, resortId);
       dispatch(setVisits(data));
     } catch {
-      dispatch(addToast({ type: 'error', message: '載入訪問記錄失敗' }));
+      dispatch(addToast({ type: 'error', message: '載入訪問紀錄失敗' }));
     } finally {
       dispatch(setLoadingVisits(false));
     }

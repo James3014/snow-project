@@ -9,7 +9,7 @@
   - `members-*.csv`, `student_orders_final_with_details*.csv`（位於根目錄）包含學員基本資料、課程紀錄與聯絡資訊。  
   - `orders*.csv/json/sql` 系列檔案存放課程訂單，可能是 user-core 的歷史來源之一。  
   - `mail/`, `已分析mail/` 及 `04_郵件系統與客戶數據` 底下報表，提供過去推播或通知資訊。  
-  - `skidiy.db` / `skidiy_orders*.sql`：現行 SQLite 版本的資料庫，需確認是否存在唯一使用者表。
+  - `snowtrace.db` / `snowtrace_orders*.sql`：現行 SQLite 版本的資料庫，需確認是否存在唯一使用者表。
 - **Identity Handling**  
   - 目前可能依據 email、手機或姓名組合辨識使用者，缺乏統一 `User ID`。  
   - mindmap 顯示需要支援教練/學生雙重身份，但現行資料尚未確認是否已有此欄位。
@@ -24,7 +24,7 @@
 - **Primary Stakeholders**:  
   - 營運/客服人員：需要快速查詢使用者主檔。  
   - 教練團隊：需要確保排課與身份資訊同步。  
-  - Data/報表團隊：依賴統一事件記錄產生報表。  
+  - Data/報表團隊：依賴統一事件紀錄產生報表。  
   - 其他子專案負責人：`coach-scheduling`, `snowbuddy-matching`, `gear-ops`, `resort-services`, `knowledge-engagement`。
 - **Upstream Dependencies**:  
   - 現有資料匯入流程（CSV/DB）。  
@@ -39,7 +39,7 @@
 - **重複帳號**：缺乏唯一識別時，合併流程尚不明確。  
 - **跨國身分合規**：不同國家（台灣/香港/中國/日本/國際）對個資保存與遮罩規範不同，需要定義 UserLocaleProfile 的儲存策略。  
 - **遷移策略**：必須在不中斷既有腳本的情況下導入新 `User ID`；需考慮雙寫或軟啟動。  
-- **隱私與授權**：推播偏好需要符合使用者授權記錄；現有資料是否有同意紀錄需確認。  
+- **隱私與授權**：推播偏好需要符合使用者授權紀錄；現有資料是否有同意紀錄需確認。  
 - **技術棧決策**：尚未決定最終實作語言與框架，須確認與現有基礎設施兼容。
 
 ## 4. Open Questions
@@ -53,7 +53,7 @@
 
 ## 5. Next Research Actions
 
-- 盤點 `members-*.csv` 與 `skidiy.db` 的欄位，確認可用作 `User ID` 的欄位與重複情況。  
-- 記錄既有腳本對使用者資料的存取方式，確定遷移時需調整的接觸點。  
+- 盤點 `members-*.csv` 與 `snowtrace.db` 的欄位，確認可用作 `User ID` 的欄位與重複情況。  
+- 紀錄既有腳本對使用者資料的存取方式，確定遷移時需調整的接觸點。  
 - 收集任何推播相關檔案或 API 存在與否，確定偏好管理需求的初始資料。  
 - 設計初版事件類別與 schema 草案，供各子專案討論。

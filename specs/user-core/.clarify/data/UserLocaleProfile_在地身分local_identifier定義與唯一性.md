@@ -26,7 +26,7 @@ ERM：Entity `UserLocaleProfile` 的屬性 `local_identifier` 與 `(user_id, cou
 High
 
 ---
-# 解決記錄
+# 解決紀錄
 
 - **回答**：C - 依 `country_code` 驗證 + `local_identifier_hash` 唯一索引
 - **更新的規格檔**：spec/erm.dbml

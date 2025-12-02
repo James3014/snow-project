@@ -62,7 +62,7 @@ export default function Achievements() {
           <p className="text-crystal-blue mb-8 text-balance">
             登入後即可查看您獲得的成就和積分！
             <br />
-            開始記錄您的滑雪之旅，解鎖專屬榮耀。
+            開始紀錄您的滑雪之旅，解鎖專屬榮耀。
           </p>
 
           <button
@@ -121,14 +121,14 @@ export default function Achievements() {
               還沒有獲得成就
             </h3>
             <p className="text-crystal-blue mb-8 text-balance">
-              開始記錄滑雪、完成挑戰來獲得成就和積分！
+              開始紀錄滑雪、完成挑戰來獲得成就和積分！
               每一次征服雪道都是您成長的見證。
             </p>
             <button
               onClick={() => navigate('/resorts')}
               className="btn-neon ski-trail"
             >
-              前往記錄
+              前往紀錄
             </button>
           </div>
         ) : (

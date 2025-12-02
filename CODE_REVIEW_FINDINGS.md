@@ -15,7 +15,7 @@
 
 ## 🔍 發現的問題
 
-### 1. ✅ **已修復** - 編輯記錄時的資料丟失風險
+### 1. ✅ **已修復** - 編輯紀錄時的資料丟失風險
 
 **檔案**: `src/features/course-tracking/pages/CourseHistory.tsx`
 **行數**: 59-106
@@ -23,13 +23,13 @@
 **狀態**: ✅ 已修復
 
 **原問題描述**:
-在 `handleEditSubmit` 函數中，使用「先刪除舊記錄，再創建新記錄」的方式來更新資料。如果刪除成功但創建失敗（網絡中斷、API 錯誤等），會導致用戶的記錄永久丟失。
+在 `handleEditSubmit` 函數中，使用「先刪除舊紀錄，再創建新紀錄」的方式來更新資料。如果刪除成功但創建失敗（網絡中斷、API 錯誤等），會導致用戶的紀錄永久丟失。
 
 **修復方案**:
-已改為「先創建新記錄，再刪除舊記錄」的順序，並加強了錯誤處理：
-1. ✅ 先創建新記錄 - 如果失敗，舊記錄仍然存在
-2. ✅ 創建成功後再刪除舊記錄
-3. ✅ 如果刪除失敗，會顯示警告訊息提醒用戶手動刪除重複記錄
+已改為「先創建新紀錄，再刪除舊紀錄」的順序，並加強了錯誤處理：
+1. ✅ 先創建新紀錄 - 如果失敗，舊紀錄仍然存在
+2. ✅ 創建成功後再刪除舊紀錄
+3. ✅ 如果刪除失敗，會顯示警告訊息提醒用戶手動刪除重複紀錄
 4. ✅ 無論哪一步失敗，都不會導致資料永久丟失
 
 **修復後的程式碼**:
@@ -41,7 +41,7 @@ const handleEditSubmit = async (data: CourseRecordData) => {
   let newVisitCreated = false;
 
   try {
-    // 步驟 1: 先創建新記錄（避免資料丟失）
+    // 步驟 1: 先創建新紀錄（避免資料丟失）
     await courseTrackingApi.visits.create(userId, {
       resort_id: editingVisit.resort_id,
       course_name: editingVisit.course_name,
@@ -50,15 +50,15 @@ const handleEditSubmit = async (data: CourseRecordData) => {
     });
     newVisitCreated = true;
 
-    // 步驟 2: 創建成功後再刪除舊記錄
+    // 步驟 2: 創建成功後再刪除舊紀錄
     try {
       await courseTrackingApi.visits.delete(userId, oldVisitId);
     } catch (deleteError) {
-      // 如果刪除失敗，至少新記錄已經創建，用戶資料不會丟失
-      console.error('刪除舊記錄失敗，但新記錄已創建:', deleteError);
+      // 如果刪除失敗，至少新紀錄已經創建，用戶資料不會丟失
+      console.error('刪除舊紀錄失敗，但新紀錄已創建:', deleteError);
       dispatch(addToast({
         type: 'warning',
-        message: '記錄已更新，但舊記錄刪除失敗，請手動刪除重複記錄'
+        message: '紀錄已更新，但舊紀錄刪除失敗，請手動刪除重複紀錄'
       }));
       setIsEditModalOpen(false);
       setEditingVisit(null);
@@ -67,18 +67,18 @@ const handleEditSubmit = async (data: CourseRecordData) => {
     }
 
     // 兩步都成功
-    dispatch(addToast({ type: 'success', message: '記錄已更新' }));
+    dispatch(addToast({ type: 'success', message: '紀錄已更新' }));
     setIsEditModalOpen(false);
     setEditingVisit(null);
     loadVisits();
   } catch (error) {
-    // 如果創建新記錄失敗，舊記錄仍然存在，不會丟失資料
+    // 如果創建新紀錄失敗，舊紀錄仍然存在，不會丟失資料
     if (!newVisitCreated) {
       dispatch(addToast({ type: 'error', message: '更新失敗，請稍後再試' }));
     } else {
       dispatch(addToast({ type: 'error', message: '更新過程出現異常' }));
     }
-    console.error('編輯記錄錯誤:', error);
+    console.error('編輯紀錄錯誤:', error);
   }
 };
 ```
@@ -90,8 +90,8 @@ const handleEditSubmit = async (data: CourseRecordData) => {
 - 更好的效能（只需一次 API 呼叫）
 
 **修復效果**:
-- ✅ 創建失敗時：舊記錄保持不變
-- ✅ 刪除失敗時：新記錄已創建，用戶收到警告訊息
+- ✅ 創建失敗時：舊紀錄保持不變
+- ✅ 刪除失敗時：新紀錄已創建，用戶收到警告訊息
 - ✅ 兩步都成功：正常更新，顯示成功訊息
 - ✅ 零資料丟失風險
 
@@ -184,21 +184,21 @@ const handleEditSubmit = async (data: CourseRecordData) => {
 2. **雪場詳情頁**
    - ✅ 雪場資訊顯示
    - ✅ 雪道列表
-   - ✅ 記錄雪道功能
-   - ✅ 增強記錄模態框（評分、雪況、天氣等）
+   - ✅ 紀錄雪道功能
+   - ✅ 增強紀錄模態框（評分、雪況、天氣等）
    - ✅ 進度追蹤
 
-3. **記錄歷史頁** 🆕
-   - ✅ 記錄列表（按日期分組）
+3. **紀錄歷史頁** 🆕
+   - ✅ 紀錄列表（按日期分組）
    - ✅ 統計卡片
    - ✅ 搜尋功能
    - ✅ 篩選功能（評分、雪況、天氣）
    - ✅ 雪道評分排名
-   - ✅ 編輯記錄功能
-   - ✅ 刪除記錄功能
+   - ✅ 編輯紀錄功能
+   - ✅ 刪除紀錄功能
    - ✅ 空狀態處理
 
-4. **增強記錄模態框** 🆕
+4. **增強紀錄模態框** 🆕
    - ✅ 評分系統（1-5星，實心/空心星星）
    - ✅ 雪況選擇
    - ✅ 天氣選擇
@@ -214,15 +214,15 @@ const handleEditSubmit = async (data: CourseRecordData) => {
 基於程式碼審查，建議重點測試以下項目：
 
 ### 高優先級
-1. ⚠️ **編輯記錄功能** - 在網絡不穩定時測試
+1. ⚠️ **編輯紀錄功能** - 在網絡不穩定時測試
    - 測試步驟：
-     1. 編輯一筆記錄
+     1. 編輯一筆紀錄
      2. 在提交時中斷網絡
-     3. 檢查記錄是否丟失
+     3. 檢查紀錄是否丟失
 
 2. **資料一致性** - 多個頁面的資料同步
-   - 在雪場詳情頁記錄雪道
-   - 檢查記錄歷史頁是否即時更新
+   - 在雪場詳情頁紀錄雪道
+   - 檢查紀錄歷史頁是否即時更新
    - 檢查統計數字是否正確
 
 3. **篩選邏輯** - 複雜篩選組合
@@ -232,14 +232,14 @@ const handleEditSubmit = async (data: CourseRecordData) => {
 
 ### 中優先級
 4. **評分排名計算** - 驗證平均分計算
-   - 同一雪道記錄多次，評分不同
+   - 同一雪道紀錄多次，評分不同
    - 檢查平均分是否正確
    - 檢查排名順序是否正確
 
 5. **空狀態** - 各種空狀態情境
-   - 無記錄時
+   - 無紀錄時
    - 篩選無結果時
-   - 無評分記錄時
+   - 無評分紀錄時
 
 ### 低優先級
 6. **響應式設計** - 不同螢幕尺寸
@@ -252,7 +252,7 @@ const handleEditSubmit = async (data: CourseRecordData) => {
 ## 🔧 建議的後續改進
 
 ### 短期（1週內）
-1. ⚠️ 修復編輯記錄的資料丟失風險
+1. ⚠️ 修復編輯紀錄的資料丟失風險
 2. 加入更多錯誤處理和用戶提示
 
 ### 中期（2-4週）
@@ -279,7 +279,7 @@ const handleEditSubmit = async (data: CourseRecordData) => {
 - 結構清晰易維護
 
 **主要風險**:
-- 編輯記錄時的資料丟失風險需要儘快修復
+- 編輯紀錄時的資料丟失風險需要儘快修復
 
 **建議**:
 - 優先修復高優先級問題

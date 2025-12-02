@@ -1,6 +1,6 @@
-# SkiDIY 平台專案總覽 (SkiDIY Platform Project Overview)
+# SnowTrace 平台專案總覽 (SnowTrace Platform Project Overview)
 
-這份文件旨在提供 SkiDIY 平台所有子專案的技術性總覽，包含整體架構、各專案的目標、目前開發進度、主要 API 端點與核心資料實體。
+這份文件旨在提供 SnowTrace 平台所有子專案的技術性總覽，包含整體架構、各專案的目標、目前開發進度、主要 API 端點與核心資料實體。
 
 ## 1. 總體架構 (Overall Architecture)
 
@@ -12,7 +12,7 @@ graph TD
         A[User]
     end
 
-    subgraph SkiDIY Platform
+    subgraph SnowTrace Platform
         B(snowbuddy-matching)
         C(resort-services)
         D(user-core)
@@ -54,7 +54,7 @@ graph TD
 ## 3. 各專案詳細說明 (Detailed Project Descriptions)
 
 ### `user-core`
-- **目標**: 作為平台核心，可靠地維護使用者身份、角色、偏好，並統一記錄所有服務的行為事件。
+- **目標**: 作為平台核心，可靠地維護使用者身份、角色、偏好，並統一紀錄所有服務的行為事件。
 - **目前狀態**: ✅ **核心功能已實現**
 - **主要 API 端點**:
   - `GET /users`: 查詢使用者列表。
@@ -104,7 +104,7 @@ graph TD
 - **主要 API 端點**: N/A (尚未實現)
 - **核心資料實體 (規劃中)**:
   - `ScheduleSlot`: 教練的空堂時段。
-  - `Booking`: 學生的預約記錄。
+  - `Booking`: 學生的預約紀錄。
   - `CalendarSync`: 外部行事曆同步資訊。
 
 ### `gear-ops`
@@ -113,7 +113,7 @@ graph TD
 - **主要 API 端點**: N/A (尚未實現)
 - **核心資料實體 (規劃中)**:
   - `GearItem`: 裝備主檔。
-  - `GearInspection`: 裝備檢查記錄。
+  - `GearInspection`: 裝備檢查紀錄。
   - `GearListing`: 買賣刊登資訊。
   - `GearTrade`: 買賣交易紀錄。
 

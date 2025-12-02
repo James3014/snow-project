@@ -42,7 +42,7 @@ export default function Leaderboard() {
             <Card.Body className="text-center py-12">
               <div className="text-6xl mb-4">🏔️</div>
               <h3 className="text-2xl font-bold text-frost-white mb-2">排行榜尚無數據</h3>
-              <p className="text-crystal-blue">開始記錄雪道、獲得成就來累積積分，成為第一個上榜的滑雪高手！</p>
+              <p className="text-crystal-blue">開始紀錄雪道、獲得成就來累積積分，成為第一個上榜的滑雪高手！</p>
             </Card.Body>
           </Card>
         ) : (

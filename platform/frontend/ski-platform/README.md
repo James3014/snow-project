@@ -1,15 +1,15 @@
 # 滑雪课程追踪平台 (Ski Course Tracking Platform)
 
-雪场课程打卡与成就系统的前端应用，支持记录滑雪课程、获取成就、查看排行榜等功能。
+雪场课程打卡与成就系统的前端应用，支持记录滑雪课程、取得成就、查看排行榜等功能。
 
 ## 功能特性
 
-- **雪场课程追踪** - 记录已完成的雪道课程，显示完成度百分比
+- **雪场课程追踪** - 记录已完成的雪道课程，顯示完成度百分比
 - **成就系统** - 解锁20种不同的成就，获得积分奖励
 - **课程推荐** - 推荐最喜欢的前3条雪道，参与社区评选
 - **人气排名** - 查看每个雪场的课程人气排行榜
 - **全球排行榜** - 查看用户积分和完成度排名
-- **实时通知** - 顶部通知栏显示成就解锁等重要事件
+- **实时通知** - 顶部通知栏顯示成就解锁等重要事件
 
 ## 技术栈
 
@@ -125,34 +125,34 @@ VITE_API_BASE_URL=https://api.yourdomain.com/api/v1
 ## 主要页面
 
 ### 1. 雪场列表 (`/resorts`)
-- 显示所有可用的雪场
-- 显示每个雪场的完成进度
+- 顯示所有可用的雪场
+- 顯示每个雪场的完成进度
 
 ### 2. 雪场详情 (`/resorts/:id`)
-- 显示雪场的所有课程
+- 顯示雪场的所有课程
 - 支持批量或单独打卡课程
-- 显示课程难度和坡度信息
+- 顯示课程难度和坡度資訊
 - 推荐最喜欢的前3条雪道
 
 ### 3. 课程推荐 (`/resorts/:id/recommendations`)
-- 查看当前雪场的推荐记录
-- 删除推荐
+- 查看目前雪场的推荐记录
+- 刪除推荐
 - 查看推荐状态（待审核/已批准/已拒绝）
 
 ### 4. 人气排名 (`/resorts/:id/rankings`)
 - 查看雪场课程的人气排行
-- 显示访问次数和推荐次数
-- 显示综合人气分数
+- 顯示访问次数和推荐次数
+- 顯示综合人气分数
 
 ### 5. 我的成就 (`/achievements`)
 - 查看已获得的所有成就
-- 显示成就图标、名称、描述和获得时间
-- 显示获得的积分
+- 顯示成就图标、名称、描述和获得时间
+- 顯示获得的积分
 
 ### 6. 全球排行榜 (`/leaderboard`)
 - 查看全球用户排名
-- 显示用户总积分、完成雪场数、完成课程数
-- 高亮显示当前用户位置
+- 顯示用户总积分、完成雪场数、完成课程数
+- 高亮顯示目前用户位置
 
 ### 7. 成就分享 (`/share/achievement/:id`)
 - 分享成就卡片（开发中）
@@ -161,12 +161,12 @@ VITE_API_BASE_URL=https://api.yourdomain.com/api/v1
 
 项目提供了一系列自定义 Hooks 简化状态管理和 API 调用：
 
-- `useCourseVisits(userId)` - 获取用户的课程访问记录
-- `useRecommendations(userId)` - 获取用户的课程推荐
-- `useResortProgress(userId, resortId)` - 获取雪场完成进度
-- `useCourseRankings(resortId)` - 获取课程人气排名
-- `useAchievements(userId)` - 获取用户成就
-- `useLeaderboard()` - 获取全球排行榜
+- `useCourseVisits(userId)` - 取得用户的课程访问记录
+- `useRecommendations(userId)` - 取得用户的课程推荐
+- `useResortProgress(userId, resortId)` - 取得雪场完成进度
+- `useCourseRankings(resortId)` - 取得课程人气排名
+- `useAchievements(userId)` - 取得用户成就
+- `useLeaderboard()` - 取得全球排行榜
 
 ## 成就系统
 
@@ -177,7 +177,7 @@ VITE_API_BASE_URL=https://api.yourdomain.com/api/v1
 3. **挑战成就** - 完成困难课程、获得高排名
 4. **特殊成就** - 社区贡献、连续打卡等
 
-每个成就都有对应的积分奖励（10-300分），解锁成就时会显示顶部通知。
+每个成就都有对应的积分奖励（10-300分），解锁成就时会顯示顶部通知。
 
 ## 测试用户
 
@@ -192,13 +192,13 @@ VITE_API_BASE_URL=https://api.yourdomain.com/api/v1
 
 ### 添加新页面
 
-1. 在 `src/features/course-tracking/pages/` 创建页面组件
+1. 在 `src/features/course-tracking/pages/` 建立页面组件
 2. 在 `src/router/index.tsx` 添加路由配置
-3. 在 `src/shared/components/Navbar.tsx` 添加导航链接（如需要）
+3. 在 `src/shared/components/Navbar.tsx` 添加导航連結（如需要）
 
 ### 添加新 API
 
-1. 在 `src/shared/api/` 创建 API 服务文件
+1. 在 `src/shared/api/` 建立 API 服务文件
 2. 使用 `client.ts` 中配置的 Axios 实例
 3. 定义 TypeScript 类型在 `src/shared/types/`
 
@@ -238,7 +238,7 @@ dispatch(addVisit(newVisit));
 ## 贡献指南
 
 1. Fork 项目
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+2. 建立功能分支 (`git checkout -b feature/AmazingFeature`)
 3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启 Pull Request
@@ -249,4 +249,4 @@ dispatch(addVisit(newVisit));
 
 ## 联系方式
 
-如有问题或建议，请创建 Issue 或联系项目维护者。
+如有问题或建议，请建立 Issue 或联系项目维护者。

@@ -24,9 +24,9 @@ trip_planning_models.Base.metadata.create_all(bind=db.engine)
 gear_models.Base.metadata.create_all(bind=db.engine)
 
 app = FastAPI(
-    title="SkiDIY User Core Service",
+    title="SnowTrace User Core Service",
     version="1.0.0",
-    description="Manages user profiles, preferences, and behavior events for the SkiDIY platform."
+    description="Manages user profiles, preferences, and behavior events for the SnowTrace platform."
 )
 
 # Configure CORS - Allow frontend to access backend API

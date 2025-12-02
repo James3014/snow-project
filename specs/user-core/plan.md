@@ -53,7 +53,7 @@ platform/
     ├── schemas/         # 輸入/輸出 Pydantic schema
     ├── services/        # 商務邏輯：主檔維護、事件寫入、偏好管理
     ├── api/             # FastAPI 路由或等效接口
-    ├── audit/           # 審計記錄與 change-feed 發布
+    ├── audit/           # 審計紀錄與 change-feed 發布
     └── __init__.py
 
 tests/

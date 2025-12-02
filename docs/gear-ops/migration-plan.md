@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-本文档描述将现有装备管理数据迁移到新的 Gear Operations 系统的策略。遵循 **"Never Break Userspace"** 原则，确保迁移过程零停机、可回滚、数据一致性。
+本文档描述将现有装备管理資料迁移到新的 Gear Operations 系统的策略。遵循 **"Never Break Userspace"** 原则，确保迁移过程零停机、可回滚、資料一致性。
 
 ---
 
@@ -14,9 +14,9 @@
 
 ### 1.1 现有系统评估
 
-**需要调查的信息**：
-- [ ] 现有装备数据存储在哪里？（数据库表名、schema）
-- [ ] 现有数据量是多少？（用户数、装备数）
+**需要调查的資訊**：
+- [ ] 现有装备資料存储在哪里？（資料库表名、schema）
+- [ ] 现有資料量是多少？（用户数、装备数）
 - [ ] 现有系统是否有提醒功能？
 - [ ] 现有系统的API端点有哪些？
 - [ ] 有哪些下游系统依赖现有API？
@@ -24,8 +24,8 @@
 **假设情境**（需根据实际情况调整）：
 ```
 旧系统：
-- 表名：old_equipment（在 user_core 数据库中）
-- 数据量：3,000 用户，10,000 件装备
+- 表名：old_equipment（在 user_core 資料库中）
+- 資料量：3,000 用户，10,000 件装备
 - 无检查记录和提醒功能
 - API：GET /user/{id}/equipment, POST /equipment
 ```
@@ -46,7 +46,7 @@
 
 ```
 Phase 1: 新系统上线（双写）
-Phase 2: 历史数据迁移
+Phase 2: 历史資料迁移
 Phase 3: 切流量到新系统
 Phase 4: 关闭旧系统
 ```
@@ -57,7 +57,7 @@ Phase 4: 关闭旧系统
 
 ## Phase 1: 新系统上线（双写）
 
-**目标**：新系统与旧系统同时运行，新数据写入两边
+**目标**：新系统与旧系统同时运行，新資料写入两边
 
 ### 1.1 部署新系统
 
@@ -67,7 +67,7 @@ cd platform/gear_ops
 docker build -t gear_ops:v1 .
 docker run -d -p 8002:8002 gear_ops:v1
 
-# 2. 运行数据库迁移
+# 2. 运行資料库迁移
 alembic upgrade head
 
 # 3. 验证健康检查
@@ -98,12 +98,12 @@ def create_equipment(user_id, equipment_data):
 **关键原则**：
 - ✅ 写入旧系统成功是硬性要求
 - ✅ 写入新系统失败不影响用户操作
-- ✅ 记录双写失败的数据，后续补齐
+- ✅ 记录双写失败的資料，后续补齐
 
 ### 1.3 验证标准
 
-- [ ] 新装备创建时，两边数据库都有记录
-- [ ] 新系统API可以正常查询
+- [ ] 新装备建立时，两边資料库都有记录
+- [ ] 新系统API可以正常查詢
 - [ ] 旧系统功能不受影响
 - [ ] 双写失败率 < 1%
 
@@ -123,11 +123,11 @@ def create_equipment(user_id, equipment_data):
 
 ---
 
-## Phase 2: 历史数据迁移
+## Phase 2: 历史資料迁移
 
-**目标**：将旧系统的历史数据迁移到新系统
+**目标**：将旧系统的历史資料迁移到新系统
 
-### 2.1 数据映射
+### 2.1 資料映射
 
 ```sql
 -- 旧表 → 新表映射
@@ -137,7 +137,7 @@ old_equipment.name        → gear_items.name
 old_equipment.type        → gear_items.category
 old_equipment.brand       → gear_items.brand
 old_equipment.created_at  → gear_items.created_at
--- 新增字段使用默认值
+-- 新增字段使用預設值
 gear_items.status         → 'active'
 gear_items.role           → 'personal'
 ```
@@ -148,7 +148,7 @@ gear_items.role           → 'personal'
 # scripts/migrate_old_equipment.py
 
 def migrate_equipment_batch(offset, limit):
-    """批量迁移装备数据"""
+    """批量迁移装备資料"""
     old_items = old_db.query(
         "SELECT * FROM old_equipment LIMIT %s OFFSET %s",
         (limit, offset)
@@ -176,13 +176,13 @@ def migrate_equipment_batch(offset, limit):
 # 分批执行，每批1000条
 for offset in range(0, total_count, 1000):
     migrate_equipment_batch(offset, 1000)
-    time.sleep(1)  # 避免数据库压力
+    time.sleep(1)  # 避免資料库压力
 ```
 
-### 2.3 数据验证
+### 2.3 資料验证
 
 ```sql
--- 验证数据一致性
+-- 验证資料一致性
 SELECT
     COUNT(*) as old_count,
     (SELECT COUNT(*) FROM gear_ops.gear_items) as new_count,
@@ -195,21 +195,21 @@ FROM old_equipment;
 ### 2.4 验证标准
 
 - [ ] 新旧系统装备数量一致
-- [ ] 随机抽样100条数据，字段一致性100%
-- [ ] 迁移失败的数据已补齐
+- [ ] 随机抽样100条資料，字段一致性100%
+- [ ] 迁移失败的資料已补齐
 
 ### 2.5 回滚方案
 
 **触发条件**：
-- 数据一致性 < 99%
-- 发现严重的数据损坏
+- 資料一致性 < 99%
+- 发现严重的資料损坏
 
 **回滚步骤**：
 1. 停止迁移脚本
 2. 清空 gear_items 表
 3. 重新执行迁移（修复bug后）
 
-**数据不会丢失**：旧系统数据未被修改
+**資料不会丢失**：旧系统資料未被修改
 
 ---
 
@@ -241,12 +241,12 @@ upstream equipment_backend {
 **实时监控**：
 - API 响应时间（p50, p95, p99）
 - 错误率
-- 数据一致性（每小时抽样检查）
+- 資料一致性（每小时抽样检查）
 
 **报警阈值**：
 - 新系统错误率 > 1% → 回滚
 - 新系统p99延迟 > 500ms → 回滚
-- 数据不一致 > 5条/小时 → 暂停切流量
+- 資料不一致 > 5条/小时 → 暂停切流量
 
 ### 3.3 验证标准
 
@@ -272,20 +272,20 @@ upstream equipment_backend {
 
 ## Phase 4: 关闭旧系统
 
-**目标**：下线旧系统，清理冗余代码和数据
+**目标**：下线旧系统，清理冗余代码和資料
 
 ### 4.1 准备工作
 
-**在关闭前确认**：
+**在关闭前確認**：
 - [ ] 新系统稳定运行30天
-- [ ] 无数据一致性问题
+- [ ] 无資料一致性问题
 - [ ] 所有下游系统已更新到新API
-- [ ] 旧数据已备份
+- [ ] 旧資料已备份
 
 ### 4.2 关闭步骤
 
 ```bash
-# 1. 备份旧数据
+# 1. 备份旧資料
 pg_dump old_equipment > backup_old_equipment_$(date +%Y%m%d).sql
 
 # 2. 停止双写逻辑
@@ -294,14 +294,14 @@ pg_dump old_equipment > backup_old_equipment_$(date +%Y%m%d).sql
 # 3. 停止旧系统服务
 docker stop old_equipment_service
 
-# 4. 归档旧数据（不要立即删除）
+# 4. 归档旧資料（不要立即刪除）
 # 保留6个月，以备不时之需
 ```
 
 ### 4.3 验证标准
 
 - [ ] 新系统继续正常运行
-- [ ] 旧数据已备份并可恢复
+- [ ] 旧資料已备份并可恢复
 - [ ] 所有旧系统代码已移除
 
 ### 4.4 回滚方案（紧急情况）
@@ -311,7 +311,7 @@ docker stop old_equipment_service
 
 **回滚步骤**：
 1. 重新启动旧系统服务
-2. 恢复旧数据（如果被修改）
+2. 恢复旧資料（如果被修改）
 3. 切换流量到旧系统
 4. 修复新系统bug
 
@@ -319,7 +319,7 @@ docker stop old_equipment_service
 
 ---
 
-## 3. 数据一致性保障
+## 3. 資料一致性保障
 
 ### 3.1 双写一致性检查
 
@@ -328,8 +328,8 @@ docker stop old_equipment_service
 # scripts/check_consistency.py
 
 def check_daily_consistency():
-    """检查双写数据一致性"""
-    # 随机抽样100条数据
+    """检查双写資料一致性"""
+    # 随机抽样100条資料
     sample_ids = random.sample(all_ids, 100)
 
     inconsistent = []
@@ -368,10 +368,10 @@ FROM gear_ops.gear_items;
 
 ## 4. 回滚触发条件总结
 
-| 阶段 | 触发条件 | 回滚时间 | 数据丢失风险 |
+| 阶段 | 触发条件 | 回滚时间 | 資料丢失风险 |
 |------|----------|----------|--------------|
 | Phase 1 | 双写失败率 > 5% | < 5分钟 | 无 |
-| Phase 2 | 数据一致性 < 99% | < 10分钟 | 无 |
+| Phase 2 | 資料一致性 < 99% | < 10分钟 | 无 |
 | Phase 3 | 错误率 > 1% 或 p99 > 500ms | < 2分钟 | 无 |
 | Phase 4 | 新系统致命bug | < 30分钟 | 低（有备份） |
 
@@ -383,7 +383,7 @@ FROM gear_ops.gear_items;
 |------|----------|--------|----------|
 | Phase 1 准备 | Week 1 | DevOps | 新系统部署完成 |
 | Phase 1 双写 | Week 2 | Backend | 双写成功率 > 99% |
-| Phase 2 迁移 | Week 3 | Backend | 数据一致性100% |
+| Phase 2 迁移 | Week 3 | Backend | 資料一致性100% |
 | Phase 3 切流量 | Week 4-5 | 全团队 | 100%流量稳定3天 |
 | Phase 4 关闭旧系统 | Week 6+ | DevOps | 旧系统下线 |
 
@@ -398,7 +398,7 @@ FROM gear_ops.gear_items;
 | 风险 | 概率 | 影响 | 缓解措施 |
 |------|------|------|----------|
 | 双写失败率高 | 中 | 高 | 完善错误处理，增加重试机制 |
-| 数据迁移bug | 低 | 高 | 充分测试，分批迁移，实时监控 |
+| 資料迁移bug | 低 | 高 | 充分测试，分批迁移，实时监控 |
 | 新系统性能问题 | 低 | 中 | 压力测试，灰度发布 |
 | 下游系统兼容性 | 中 | 中 | 提前沟通，提供API兼容层 |
 
@@ -422,9 +422,9 @@ FROM gear_ops.gear_items;
 - [ ] 用户已通知（如需要）
 
 ### Post-Migration
-- [ ] 旧数据已备份
+- [ ] 旧資料已备份
 - [ ] 新系统运行稳定30天
-- [ ] 无数据丢失
+- [ ] 无資料丢失
 - [ ] 用户满意度无下降
 - [ ] 文档已更新
 
@@ -434,18 +434,18 @@ FROM gear_ops.gear_items;
 
 ✅ **Never Break Userspace**:
 - 用户API保持兼容（或提供兼容层）
-- 数据零丢失
+- 資料零丢失
 - 服务零停机
 - 任何阶段都可回滚
 
 ✅ **简单实用**:
-- 不用复杂的数据同步工具
+- 不用复杂的資料同步工具
 - 分阶段渐进，每步可验证
 - 双写逻辑简单直接
 
-✅ **数据第一**:
-- 数据一致性是最高优先级
-- 每个阶段都有数据验证
+✅ **資料第一**:
+- 資料一致性是最高优先级
+- 每个阶段都有資料验证
 
 ---
 

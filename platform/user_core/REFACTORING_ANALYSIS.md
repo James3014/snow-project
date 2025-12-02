@@ -84,7 +84,7 @@ social_service.create_feed_item_from_course_visit(db, db_visit)
 # course_tracking_service.py
 def record_course_visit():  # ~80 行
     # 1. 驗證用戶
-    # 2. 創建訪問記錄
+    # 2. 創建訪問紀錄
     # 3. 檢查成就
     # 4. 生成動態
     # 5. 錯誤處理
@@ -230,7 +230,7 @@ else:
 #### 問題：不明顯的副作用
 ```python
 def record_course_visit():
-    # ... 記錄訪問
+    # ... 紀錄訪問
     _check_and_award_achievements(db, user_id)  # 隱藏的副作用
     social_service.create_feed_item(...)  # 另一個副作用
 ```
@@ -292,7 +292,7 @@ def record_course_visit():
    - 使用 TypedDict
    - 啟用 mypy 檢查
 
-10. **改善日誌記錄**
+10. **改善日誌紀錄**
     - 結構化日誌
     - 統一日誌級別
     - 添加追蹤 ID

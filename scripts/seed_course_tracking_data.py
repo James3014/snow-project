@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-测试数据生成脚本 - 雪道追踪系统
+测试資料生成脚本 - 雪道追踪系统
 
-创建10个测试用户并生成模拟数据：
+建立10个测试用户并生成模拟資料：
 - 用户资料
 - 雪道访问记录
 - 课程推荐
-- 成就数据
+- 成就資料
 """
 import sys
 import os
@@ -28,7 +28,7 @@ from models.course_tracking import (
     AchievementDefinition, Base as CourseBase
 )
 
-# 测试用户数据
+# 测试用户資料
 TEST_USERS = [
     {"name": "张伟", "bio": "滑雪爱好者，喜欢挑战黑道", "roles": ["student"]},
     {"name": "王芳", "bio": "初学者，正在努力学习中", "roles": ["student"]},
@@ -42,7 +42,7 @@ TEST_USERS = [
     {"name": "吴刚", "bio": "单板滑雪玩家", "roles": ["student"]},
 ]
 
-# Rusutsu雪场的雪道列表（从之前的数据）
+# Rusutsu雪场的雪道列表（从之前的資料）
 RUSUTSU_COURSES = {
     "beginner": [
         "Family Course / ファミリーコース",
@@ -112,23 +112,23 @@ RECOMMENDATION_REASONS = [
 
 
 def create_tables():
-    """创建所有数据表"""
-    print("📋 创建数据表...")
+    """建立所有資料表"""
+    print("📋 建立資料表...")
     UserBase.metadata.create_all(bind=engine)
     CourseBase.metadata.create_all(bind=engine)
-    print("✅ 数据表创建完成")
+    print("✅ 資料表建立完成")
 
 
 def clear_test_data(db: Session):
-    """清除旧的测试数据"""
-    print("🧹 清除旧测试数据...")
+    """清除旧的测试資料"""
+    print("🧹 清除旧测试資料...")
 
-    # 删除课程追踪数据
+    # 刪除课程追踪資料
     db.query(CourseVisit).delete()
     db.query(CourseRecommendation).delete()
     db.query(UserAchievement).delete()
 
-    # 删除测试用户（bio包含特定标记的）
+    # 刪除测试用户（bio包含特定标记的）
     test_users = db.query(UserProfile).filter(
         UserProfile.bio.contains("滑雪")
     ).all()
@@ -137,12 +137,12 @@ def clear_test_data(db: Session):
         db.delete(user)
 
     db.commit()
-    print(f"✅ 清除了 {len(test_users)} 个测试用户的数据")
+    print(f"✅ 清除了 {len(test_users)} 个测试用户的資料")
 
 
 def create_test_users(db: Session):
-    """创建10个测试用户"""
-    print("\n👥 创建测试用户...")
+    """建立10个测试用户"""
+    print("\n👥 建立测试用户...")
 
     created_users = []
 
@@ -162,7 +162,7 @@ def create_test_users(db: Session):
         })
 
     db.commit()
-    print(f"✅ 创建了 {len(created_users)} 个测试用户")
+    print(f"✅ 建立了 {len(created_users)} 个测试用户")
 
     return created_users
 
@@ -186,7 +186,7 @@ def generate_course_visits(db: Session, users):
         else:
             num_courses = random.randint(3, 8)    # 新用户
 
-        # 随机选择雪道
+        # 随机選擇雪道
         selected_courses = random.sample(ALL_COURSES, min(num_courses, len(ALL_COURSES)))
 
         # 生成访问记录（最近30天内）
@@ -228,7 +228,7 @@ def generate_recommendations(db: Session, users):
         user_id = user_data["id"]
         name = user_data["name"]
 
-        # 获取该用户访问过的雪道
+        # 取得该用户访问过的雪道
         visited = db.query(CourseVisit.course_name).filter(
             CourseVisit.user_id == user_id
         ).distinct().all()
@@ -238,7 +238,7 @@ def generate_recommendations(db: Session, users):
 
         visited_courses = [v.course_name for v in visited]
 
-        # 随机选择3条推荐（从访问过的里面选）
+        # 随机選擇3条推荐（从访问过的里面选）
         recommended_courses = random.sample(visited_courses, min(3, len(visited_courses)))
 
         for rank, course in enumerate(recommended_courses, 1):
@@ -260,8 +260,8 @@ def generate_recommendations(db: Session, users):
 
 
 def generate_achievements(db: Session, users):
-    """为用户生成成就数据"""
-    print("\n🏆 生成成就数据...")
+    """为用户生成成就資料"""
+    print("\n🏆 生成成就資料...")
 
     # 先确保有成就定义
     definitions_count = db.query(AchievementDefinition).count()
@@ -271,7 +271,7 @@ def generate_achievements(db: Session, users):
 
     print(f"  找到 {definitions_count} 个成就定义")
 
-    # 获取一些基础成就
+    # 取得一些基础成就
     basic_achievements = [
         "first_course",
         "early_bird",
@@ -284,7 +284,7 @@ def generate_achievements(db: Session, users):
         user_id = user_data["id"]
         name = user_data["name"]
 
-        # 获取用户完成的雪道数量
+        # 取得用户完成的雪道数量
         course_count = db.query(CourseVisit).filter(
             CourseVisit.user_id == user_id
         ).distinct(CourseVisit.course_name).count()
@@ -353,9 +353,9 @@ def generate_achievements(db: Session, users):
 
 
 def print_summary(db: Session, users):
-    """打印数据摘要"""
+    """打印資料摘要"""
     print("\n" + "="*60)
-    print("📊 测试数据摘要")
+    print("📊 测试資料摘要")
     print("="*60)
 
     print(f"\n👥 用户: {len(users)}")
@@ -414,23 +414,23 @@ def print_summary(db: Session, users):
 def main():
     """主函数"""
     print("\n" + "="*60)
-    print("🎿 雪道追踪系统 - 测试数据生成器")
+    print("🎿 雪道追踪系统 - 测试資料生成器")
     print("="*60)
 
-    # 创建表
+    # 建立表
     create_tables()
 
-    # 获取数据库会话
+    # 取得資料库会话
     db = next(get_db())
 
     try:
-        # 清除旧数据
+        # 清除旧資料
         clear_test_data(db)
 
-        # 创建用户
+        # 建立用户
         users = create_test_users(db)
 
-        # 生成数据
+        # 生成資料
         generate_course_visits(db, users)
         generate_recommendations(db, users)
         generate_achievements(db, users)
@@ -438,11 +438,11 @@ def main():
         # 打印摘要
         print_summary(db, users)
 
-        print("\n✅ 测试数据生成完成！")
+        print("\n✅ 测试資料生成完成！")
         print("\n💡 提示：")
         print("  - 可以使用上面的用户ID进行前端测试")
-        print("  - 用户密码需要通过认证系统设置")
-        print("  - 数据已写入数据库，可以直接通过API访问")
+        print("  - 用户密码需要通过认证系统設定")
+        print("  - 資料已写入資料库，可以直接通过API访问")
 
     except Exception as e:
         print(f"\n❌ 错误: {e}")

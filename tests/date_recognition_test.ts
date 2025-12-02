@@ -53,7 +53,7 @@ function getFutureDate(daysFromNow: number): string {
 }
 
 /**
- * 获取下一个指定星期几
+ * 取得下一个指定星期几
  */
 function getNextWeekday(targetDay: number): string {
   const now = new Date();

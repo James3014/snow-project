@@ -78,7 +78,7 @@
 - ✅ Mobile-First 橫向滾動篩選器（評分/雪況/天氣）
 - ✅ 統計儀表板（3格）
 - ✅ 雪道評分排名卡片
-- ✅ Timeline 記錄視圖with Glassmorphism
+- ✅ Timeline 紀錄視圖with Glassmorphism
 - ✅ 鎖定狀態（未登入）
 
 ### 8. SeasonManagement 頁面
@@ -137,7 +137,7 @@
   <div className="absolute inset-0 bg-gradient-to-b from-ice-primary/10 to-transparent opacity-50" />
   <div className="relative z-10 max-w-4xl mx-auto text-center">
     <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-4 animate-slide-up">
-      記錄歷史
+      紀錄歷史
     </h1>
     <p className="text-crystal-blue text-sm md:text-base animate-slide-up stagger-1">
       回顧您的每一次滑雪征程
@@ -160,10 +160,10 @@
   ))}
 </div>
 
-// 4. 替換記錄卡片
+// 4. 替換紀錄卡片
 {sortedDates.map(date => (
   <div key={date} className="glass-card p-5 mb-4 animate-slide-up">
-    {/* 記錄內容 */}
+    {/* 紀錄內容 */}
   </div>
 ))}
 
@@ -281,7 +281,7 @@ find src/features -name "*.tsx" -exec sed -i '' 's/bg-blue-600 text-white/btn-ne
 
 ### Option C: 逐步漸進
 優先完成高流量頁面：
-1. CourseHistory（記錄歷史）- 使用頻率高
+1. CourseHistory（紀錄歷史）- 使用頻率高
 2. SeasonManagement（行程管理）- 核心功能
 3. FeedPage（動態牆）- 社交功能
 4. MyGear（裝備管理）- 輔助功能
@@ -341,7 +341,7 @@ find src/features -name "*.tsx" -exec sed -i '' 's/bg-blue-600 text-white/btn-ne
 - 身份驗證（LoginPage, RegisterPage）
 - 雪伴社交（SnowbuddyBoard, TripBoardCard）
 - 成就追蹤（Achievements, ResortList, SkiMapPage）
-- 記錄管理（CourseHistory, SeasonManagement）
+- 紀錄管理（CourseHistory, SeasonManagement）
 - 社群動態（FeedPage）
 - 裝備管理（MyGear）
 

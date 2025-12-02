@@ -134,7 +134,7 @@ export default function MyGear() {
           <p className="text-crystal-blue mb-8 text-balance">
             登入後即可管理您的滑雪裝備
             <br />
-            記錄裝備資訊、追蹤使用狀態
+            紀錄裝備資訊、追蹤使用狀態
           </p>
 
           <button onClick={() => navigate('/login')} className="btn-neon ski-trail w-full">
@@ -236,7 +236,7 @@ export default function MyGear() {
               還沒有裝備
             </h3>
             <p className="text-crystal-blue mb-8 text-balance">
-              開始添加您的滑雪裝備，記錄裝備資訊
+              開始添加您的滑雪裝備，紀錄裝備資訊
             </p>
             <button onClick={() => setShowCreateModal(true)} className="btn-neon w-full">
               添加第一個裝備

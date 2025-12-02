@@ -162,7 +162,7 @@ export default function SeasonManagement() {
             我的滑雪行程
           </h1>
           <p className="text-crystal-blue mb-8 text-balance">
-            登入後即可創建行程、記錄雪道、追蹤進度
+            登入後即可創建行程、紀錄雪道、追蹤進度
             <br />
             開始規劃您的滑雪之旅
           </p>
@@ -214,7 +214,7 @@ export default function SeasonManagement() {
                 我的滑雪行程
               </h1>
               <p className="text-crystal-blue text-sm md:text-base animate-slide-up stagger-1">
-                {viewMode === 'date' ? '按日期排序，最新的行程在前' : '按雪季自動分組，輕鬆管理您的滑雪記錄'}
+                {viewMode === 'date' ? '按日期排序，最新的行程在前' : '按雪季自動分組，輕鬆管理您的滑雪紀錄'}
               </p>
             </div>
             <div className="flex gap-3 flex-wrap animate-slide-up stagger-2">
@@ -270,7 +270,7 @@ export default function SeasonManagement() {
               還沒有任何行程
             </h3>
             <p className="text-crystal-blue mb-8 text-balance">
-              創建您的第一個滑雪行程，開始記錄美好的回憶
+              創建您的第一個滑雪行程，開始紀錄美好的回憶
             </p>
             <button onClick={() => setShowCreateModal(true)} className="btn-neon w-full">
               創建第一個行程

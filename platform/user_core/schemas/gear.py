@@ -97,7 +97,7 @@ class GearItemRead(BaseModel):
 # ===== GearInspection Schemas =====
 
 class GearInspectionCreate(BaseModel):
-    """建立檢查記錄"""
+    """建立檢查紀錄"""
     checklist: Dict[str, Any] = Field(..., description="檢查清单，例如 {'edge': 'good', 'bindings': 'worn'}")
     overall_status: str = Field(..., description="总体状态：good, needs_attention, unsafe")
     notes: Optional[str] = None
@@ -111,7 +111,7 @@ class GearInspectionCreate(BaseModel):
 
 
 class GearInspectionRead(BaseModel):
-    """读取檢查記錄"""
+    """读取檢查紀錄"""
     id: UUID
     gear_item_id: UUID
     inspector_user_id: UUID

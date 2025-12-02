@@ -2,13 +2,13 @@
 
 ## 概述
 
-已创建全面的测试套件来验证对话功能中的雪场识别和日期识别功能。测试涵盖了43个雪场和多种日期格式。
+已建立全面的测试套件来验证对话功能中的雪场识别和日期识别功能。测试涵盖了43个雪场和多种日期格式。
 
-## 测试数据统计
+## 测试資料统计
 
-### 雪场数据
+### 雪场資料
 - **总雪场数**: 43个
-- **数据来源**: `data/resorts_for_matcher.json`
+- **資料来源**: `data/resorts_for_matcher.json`
 - **生成时间**: 2025-11-10T09:15:36.930256
 
 ### 雪场分布
@@ -43,12 +43,12 @@
 5. **其他热门雪场**:
    - 富良野、留壽都、安比、藏王等
 
-## 创建的测试文件
+## 建立的测试文件
 
 ### 1. `resort_recognition_test.ts`
 **测试雪场识别功能**
 
-测试内容：
+测试內容：
 - ✅ 完整中文名识别（如"白馬Cortina滑雪場"）
 - ✅ 英文名识别（如"Hakuba Cortina Ski Resort"）
 - ✅ 日文名识别（如"白馬コルチナスキー場"）
@@ -61,7 +61,7 @@
 ### 2. `date_recognition_test.ts`
 **测试日期识别功能**
 
-测试内容：
+测试內容：
 
 #### 绝对日期格式
 - `2024-12-25` (YYYY-MM-DD)
@@ -121,10 +121,10 @@
 **快速验证脚本**
 
 功能：
-- ✅ 验证雪场数据加载
+- ✅ 验证雪场資料加载
 - ✅ 列出所有雪场（按区域分组）
-- ✅ 显示需要测试的场景
-- ✅ 显示需要测试的日期格式
+- ✅ 顯示需要测试的场景
+- ✅ 顯示需要测试的日期格式
 
 运行方式：
 ```bash
@@ -138,7 +138,7 @@ node tests/simple_test.js
 - 自动安装 ts-node（如果需要）
 - 运行所有三个测试套件
 - 生成测试日志
-- 显示测试总结
+- 顯示测试总结
 
 运行方式：
 ```bash
@@ -150,7 +150,7 @@ chmod +x tests/run_all_tests.sh
 
 ### 快速验证（推荐先运行）
 ```bash
-# 快速验证数据加载和测试场景
+# 快速验证資料加载和测试场景
 node tests/simple_test.js
 ```
 
@@ -198,13 +198,13 @@ npx ts-node --esm ../../../tests/conversation_integration_test.ts
 - `"星野"` 可能匹配星野TOMAMU和星野NEKOMA
 
 解决方案：
-1. 在对话中提供选择界面
-2. 根据上下文智能选择
+1. 在对话中提供選擇界面
+2. 根据上下文智能選擇
 3. 要求用户提供更具体的输入
 
 #### 日期推断
 某些日期格式需要推断年份：
-- `"12月25日"` → 当前年份的12月25日
+- `"12月25日"` → 目前年份的12月25日
 - `"1月15日"` → 可能是明年1月15日（雪季逻辑）
 
 ## 关键发现
@@ -227,7 +227,7 @@ npx ts-node --esm ../../../tests/conversation_integration_test.ts
 
 1. **雪季逻辑**:
    - 11-12月使用当年
-   - 1-4月根据当前月份判断（如果现在是11-12月，则是明年）
+   - 1-4月根据目前月份判断（如果现在是11-12月，则是明年）
    - 实现了智能年份推断
 
 2. **多种格式支持**:
@@ -246,7 +246,7 @@ npx ts-node --esm ../../../tests/conversation_integration_test.ts
 3. 🔄 改进歧义处理逻辑
 
 ### 长期改进
-1. 🔄 基于用户历史选择进行智能推荐
+1. 🔄 基于用户历史選擇进行智能推荐
 2. 🔄 支持更多日期格式（如"圣诞节"、"元旦"）
 3. 🔄 支持模糊匹配和纠错
 
@@ -299,8 +299,8 @@ npx ts-node --esm ../../../tests/conversation_integration_test.ts
 
 - 📄 **测试说明**: `tests/README.md`
 - 📄 **本文档**: `tests/TEST_SUMMARY.md`
-- 📊 **雪场数据**: `data/resorts_for_matcher.json`
-- 📊 **数据说明**: `data/RESORT_MATCHER_README.md`
+- 📊 **雪场資料**: `data/resorts_for_matcher.json`
+- 📊 **資料说明**: `data/RESORT_MATCHER_README.md`
 - 🔧 **拼音映射**: `platform/frontend/ski-platform/src/features/ai/utils/pinyinMapper.ts`
 - 🔧 **雪场匹配器**: `platform/frontend/ski-platform/src/features/ai/utils/resortMatcher.ts`
 - 🔧 **日期解析器**: `platform/frontend/ski-platform/src/features/ai/utils/dateParser.ts`
@@ -308,11 +308,11 @@ npx ts-node --esm ../../../tests/conversation_integration_test.ts
 ## 联系和支持
 
 如有问题或需要帮助，请：
-1. 查看 `tests/README.md` 获取详细说明
+1. 查看 `tests/README.md` 取得详细说明
 2. 查看测试日志 `tests/logs/` 了解失败原因
 3. 联系开发团队
 
 ---
 
-**创建时间**: 2025-11-10
-**测试状态**: ✅ 测试套件已创建，待运行完整测试
+**建立时间**: 2025-11-10
+**测试状态**: ✅ 测试套件已建立，待运行完整测试

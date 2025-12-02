@@ -207,7 +207,7 @@ def convert_resort_to_matcher_format(yaml_data):
         result["tagline"] = description.get('tagline', '')
 
     # 標註缺少的欄位（需要手動補充）
-    result["pass"] = []  # 需要手動補充通行證信息
+    result["pass"] = []  # 需要手動補充通行證資訊
     result["lessons_languages"] = []  # 需要手動補充教學語言
 
     return result
@@ -255,7 +255,7 @@ def main():
     print(f"\n✅ 已生成 {output_file}")
     print(f"✅ 總共 {len(resorts)} 個雪場")
     print(f"\n📝 注意：以下欄位需要手動補充：")
-    print(f"   - pass: 通行證信息（Ikon, Epic 等）")
+    print(f"   - pass: 通行證資訊（Ikon, Epic 等）")
     print(f"   - lessons_languages: 教學語言（Japanese, English, Chinese 等）")
 
 if __name__ == '__main__':

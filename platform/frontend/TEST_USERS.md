@@ -17,7 +17,7 @@
 | 周婷 | `7f098dc1-8044-4a49-8167-2d7540272eb7` | 5条 | 0条 | 新用户 |
 | 吴刚 | `270b857b-40b1-485c-901d-432177331c84` | 8条 | 0条 | 新用户 |
 
-## 测试数据统计
+## 测试資料统计
 
 - **总用户数**: 10人
 - **总访问记录**: 114条
@@ -32,7 +32,7 @@
 // 可以硬编码一个测试用户ID
 const TEST_USER_ID = 'c7347757-0bc3-4a5c-aad8-148cb6403d22'; // 张伟
 
-// 或者创建一个用户选择器
+// 或者建立一个用户選擇器
 const TEST_USERS = [
   { id: 'c7347757-0bc3-4a5c-aad8-148cb6403d22', name: '张伟' },
   { id: 'a5aecb9e-fa75-406c-8354-0b6e5f1c8f24', name: '王芳' },
@@ -43,19 +43,19 @@ const TEST_USERS = [
 ### API测试
 
 ```bash
-# 获取用户的雪道访问记录
+# 取得用户的雪道访问记录
 curl http://localhost:8000/users/c7347757-0bc3-4a5c-aad8-148cb6403d22/course-visits
 
-# 获取用户在Rusutsu的进度
+# 取得用户在Rusutsu的进度
 curl http://localhost:8000/users/c7347757-0bc3-4a5c-aad8-148cb6403d22/resorts/rusutsu/progress?total_courses=37
 
-# 获取用户的推荐
+# 取得用户的推荐
 curl http://localhost:8000/users/c7347757-0bc3-4a5c-aad8-148cb6403d22/recommendations
 ```
 
 ## 注意事项
 
-1. 这些用户暂时**没有设置密码**，需要通过认证系统单独设置
-2. 成就数据需要应用启动后自动生成
-3. 所有数据都在Rusutsu雪场
-4. 可以重新运行 `python scripts/seed_course_tracking_data.py` 重新生成数据
+1. 这些用户暂时**没有設定密码**，需要通过认证系统单独設定
+2. 成就資料需要应用启动后自动生成
+3. 所有資料都在Rusutsu雪场
+4. 可以重新运行 `python scripts/seed_course_tracking_data.py` 重新生成資料

@@ -26,7 +26,7 @@ ERM：Entity `ChangeFeed` 的屬性命名（`snapshot`）
 Medium
 
 ---
-# 解決記錄
+# 解決紀錄
 
 - **回答**：B - 統一使用 `payload`
 - **更新的規格檔**：spec/erm.dbml（`change_feed.snapshot` → `payload`）

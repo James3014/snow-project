@@ -8,7 +8,7 @@
 - 但 localStorage 中没有有效的生产环境 token
 - 或者浏览器缓存了旧的生产构建文件
 
-### 已修复内容
+### 已修复內容
 在提交 `22b3982` 中：
 - ✅ 修复了 `gearApi.ts` 中的 localStorage key：从 `'token'` 改为 `'auth_token'`
 - ✅ 确保与其他 API 客户端保持一致
@@ -18,9 +18,9 @@
 ### 后端 API 测试（全部通过✅）
 ```bash
 1. 用户注册：✅ 成功，返回 access_token
-2. Gear API 查询（带认证）：✅ 成功返回空数组
-3. 创建 Gear Item：✅ 成功创建
-4. 再次查询：✅ 成功返回创建的 item
+2. Gear API 查詢（带认证）：✅ 成功返回空数组
+3. 建立 Gear Item：✅ 成功建立
+4. 再次查詢：✅ 成功返回建立的 item
 ```
 
 ### 服务器状态
@@ -45,12 +45,12 @@ npm run dev
 
 ### 步骤 2：清除浏览器缓存和 localStorage
 
-**重要！必须清除旧数据：**
+**重要！必须清除旧資料：**
 1. 打开浏览器开发者工具（F12）
 2. 进入 Application / Storage 标签
-3. 清除以下内容：
+3. 清除以下內容：
    - **Clear storage**（推荐）
-   - 或手动删除 localStorage 中的 `auth_token`
+   - 或手动刪除 localStorage 中的 `auth_token`
    - 清除 Cache Storage
 4. 硬刷新页面（Ctrl+Shift+R 或 Cmd+Shift+R）
 
@@ -62,12 +62,12 @@ npm run dev
 
 1. **注册新用户**
    - 打开注册页面
-   - 填写邮箱、密码、显示名称
+   - 填写邮箱、密码、顯示名称
    - 提交注册
 
 2. **检查认证状态**
    - 打开开发者工具 > Application > Local Storage
-   - 确认有 `auth_token` 项目
+   - 確認有 `auth_token` 项目
    - token 应该是一个 UUID 格式的字符串
 
 3. **访问 My Gear 页面**
@@ -75,9 +75,9 @@ npm run dev
    - 应该能看到空列表或装备列表
    - **不应该出现 401 错误**
 
-4. **创建测试装备**
+4. **建立测试装备**
    - 点击"添加装备"
-   - 填写装备信息
+   - 填写装备資訊
    - 保存
 
 5. **验证 API 调用**
@@ -117,7 +117,7 @@ npm run dev
 
 使用 curl 测试：
 ```bash
-# 1. 注册用户并获取 token
+# 1. 注册用户并取得 token
 TOKEN=$(curl -s -X POST http://localhost:8000/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@test.com","password":"test123","display_name":"Test"}' \
@@ -136,11 +136,11 @@ curl -X GET http://localhost:8000/api/gear/items \
 1. 确保 `.env.production` 配置正确
 2. 构建前端：`npm run build`
 3. 部署到 Zeabur 或其他平台
-4. 在生产环境中重新注册/登录获取有效的生产 token
+4. 在生产环境中重新注册/登录取得有效的生产 token
 
 ## 技术细节
 
-### 修复内容（gearApi.ts:29）
+### 修复內容（gearApi.ts:29）
 ```typescript
 // 修复前（错误）
 const token = localStorage.getItem('token');
@@ -159,7 +159,7 @@ const token = localStorage.getItem('auth_token');
 ### 环境变量说明
 - **开发环境** (`.env.development`): `VITE_USER_CORE_API=http://localhost:8000`
 - **生产环境** (`.env.production`): `VITE_USER_CORE_API=https://user-core.zeabur.app`
-- Vite 根据运行模式自动选择对应的 .env 文件
+- Vite 根据运行模式自动選擇对应的 .env 文件
 
 ---
 
@@ -168,7 +168,7 @@ const token = localStorage.getItem('auth_token');
 ✅ **代码修复已完成且经过测试验证**
 
 如果仍然遇到问题，请：
-1. 确认访问的是开发服务器 (localhost:3000)
+1. 確認访问的是开发服务器 (localhost:3000)
 2. 清除所有浏览器缓存和 localStorage
 3. 重新启动前后端服务器
 4. 按照上述测试流程重新测试

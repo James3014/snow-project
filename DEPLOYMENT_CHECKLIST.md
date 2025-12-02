@@ -21,7 +21,7 @@
 - ✅ 數據模型（4 個新表）
   - `user_follows` - 關注關係
   - `activity_feed_items` - 動態內容
-  - `activity_likes` - 點讚記錄
+  - `activity_likes` - 點讚紀錄
   - `activity_comments` - 評論
 
 - ✅ API 端點（16 個新端點）
@@ -74,7 +74,7 @@ REDIS_PORT=6379
 REDIS_DB=0
 
 # 數據庫
-USER_CORE_DB_URL=postgresql://skidiy:skidiy@db:5432/user_core_db
+USER_CORE_DB_URL=postgresql://snowtrace:snowtrace@db:5432/user_core_db
 
 # 環境
 ENV=production
@@ -188,7 +188,7 @@ exit
 ### API 測試
 - [ ] 可以創建用戶
 - [ ] 可以關注其他用戶
-- [ ] 記錄滑雪活動時自動生成動態
+- [ ] 紀錄滑雪活動時自動生成動態
 - [ ] 可以點讚和評論
 - [ ] 可以獲取滑雪地圖數據
 

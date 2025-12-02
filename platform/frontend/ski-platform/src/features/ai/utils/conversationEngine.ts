@@ -15,7 +15,7 @@ import type { ResortMatch } from './resortMatcher';
  * 雪場列表詢問關鍵詞（DRY：單一數據源）
  */
 const RESORT_LIST_KEYWORDS = [
-  '哪些雪場', '有哪些雪場', '可以記錄哪些', '支持哪些雪場', '支援哪些雪場',
+  '哪些雪場', '有哪些雪場', '可以紀錄哪些', '支持哪些雪場', '支援哪些雪場',
   '有什麼雪場', '都有哪些', '雪場列表', '所有雪場',
 ] as const;
 
@@ -273,7 +273,7 @@ export async function processUserInput(
   input: string,
   context: ConversationContext
 ): Promise<{ response: ConversationResponse; updatedContext: ConversationContext }> {
-  // 記錄對話歷史
+  // 紀錄對話歷史
   const updatedContext: ConversationContext = {
     ...context,
     conversationHistory: [

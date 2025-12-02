@@ -19,7 +19,7 @@
   - **`GET /users`**: 用於獲取符合基本條件 (如：活躍、同意被媒合) 的潛在候選人列表。
   - **`GET /users/{user_id}`**: 用於獲取特定使用者的詳細公開資料 (如暱稱、滑雪等級)。
   - **`GET /users/{user_id}/preferences`**: 用於獲取使用者的媒合偏好設定。
-  - **`POST /events`**: 用於回寫媒合生命週期中的所有關鍵行為事件 (如 `matching.request.sent`, `matching.request.accepted`)，實現行為記錄的統一管理。
+  - **`POST /events`**: 用於回寫媒合生命週期中的所有關鍵行為事件 (如 `matching.request.sent`, `matching.request.accepted`)，實現行為紀錄的統一管理。
 
 - **`resort-services` (地理資料來源):**
   - **`GET /resorts`**: 在處理以地點為基礎的媒合時，呼叫此 API 來驗證雪場 ID 的有效性，或獲取地區內的雪場列表。

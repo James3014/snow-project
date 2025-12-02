@@ -2,7 +2,7 @@
 
 ## 📋 概述
 
-這個 AI 助手系統允許用戶通過自然語言快速執行行程管理、雪道記錄等操作。系統支援切換不同的 AI 模型（OpenAI、Claude、Gemini）。
+這個 AI 助手系統允許用戶通過自然語言快速執行行程管理、雪道紀錄等操作。系統支援切換不同的 AI 模型（OpenAI、Claude、Gemini）。
 
 ---
 
@@ -145,7 +145,7 @@ GOOGLE_API_KEY=xxx...
 from .base import Tool, ToolResult
 
 class RecordMultipleCoursesTool(Tool):
-    """批次記錄雪道工具"""
+    """批次紀錄雪道工具"""
 
     @property
     def name(self) -> str:
@@ -153,7 +153,7 @@ class RecordMultipleCoursesTool(Tool):
 
     @property
     def description(self) -> str:
-        return "批次記錄滑過的雪道"
+        return "批次紀錄滑過的雪道"
 
     @property
     def parameters(self) -> Dict[str, Any]:
@@ -245,7 +245,7 @@ curl https://user-core.zeabur.app/ai-assistant/tools
 
 ### 日誌監控
 
-AI 助手的所有工具執行都會記錄在日誌中：
+AI 助手的所有工具執行都會紀錄在日誌中：
 
 ```bash
 tail -f /var/log/user_core/ai_assistant.log
@@ -259,7 +259,7 @@ tail -f /var/log/user_core/ai_assistant.log
 
 1. **語音輸入**：整合 Web Speech API
 2. **更多工具**：
-   - 記錄雪道
+   - 紀錄雪道
    - 查詢統計
    - 搜尋雪場
    - 推薦雪場

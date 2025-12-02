@@ -3,7 +3,7 @@
 ## Scope Snapshot
 - 依滑雪等級、地點、角色偏好媒合滑友或學員
 - 讀取 `user-core` 的身份、偏好與行為紀錄；串接 `resort-services` 的地點/時間資料
-- 寫回媒合事件，確保行為記錄與推播偏好一致
+- 寫回媒合事件，確保行為紀錄與推播偏好一致
 
 ## Immediate Next Steps
 1. `/speckit.specify`：界定媒合流程、成功/失敗條件、通知節點。

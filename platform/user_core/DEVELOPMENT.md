@@ -68,7 +68,7 @@ def get_user(user_id: str):
     return user
 ```
 
-### 日誌記錄
+### 日誌紀錄
 
 ```python
 from logging import get_logger

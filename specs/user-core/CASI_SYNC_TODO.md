@@ -66,7 +66,7 @@ def update_casi_profile_task(user_id: uuid.UUID) -> None:
     """後台任務：更新用戶的 CASI 技能檔案
     
     這個函數會在後台異步執行，不阻塞主流程。
-    如果發生錯誤，只記錄日誌，不影響事件寫入。
+    如果發生錯誤，只紀錄日誌，不影響事件寫入。
     """
     try:
         from services.db import get_db
@@ -138,7 +138,7 @@ def test_casi_sync_throttling():
 
 **文件**: `specs/user-core/CASI_SKILL_SYNC.md`（新建）
 
-記錄：
+紀錄：
 - 同步機制的工作原理
 - 觸發條件
 - 節流策略
@@ -199,12 +199,12 @@ def test_casi_sync_throttling():
 
 ## 額外完成
 
-- ✅ 添加詳細日誌記錄
+- ✅ 添加詳細日誌紀錄
 - ✅ skill_level 自動從 CASI 平均分數計算
 - ✅ 等級對照表（1-3 初級，4-6 中級，7-9 高級，10 專家）
 - ✅ **修正 practice.ts 傳送 rating 欄位**
 
-## 🔧 修正記錄
+## 🔧 修正紀錄
 
 ### 2025-12-02 09:50 - 修正 rating 傳送
 

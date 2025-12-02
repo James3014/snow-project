@@ -1,8 +1,8 @@
 ---
-description: 掃描當前規格，識別所有未釐清、未覆蓋之處，並將釐清項目以結構化格式記錄於 .clarify/ 資料夾中，供後續 formulation 階段使用。
+description: 掃描當前規格，識別所有未釐清、未覆蓋之處，並將釐清項目以結構化格式紀錄於 .clarify/ 資料夾中，供後續 formulation 階段使用。
 ---
 
-目標：偵測作用中規格（specification）的歧義或遺漏決策點，將釐清問題以檔案形式記錄到 `.clarify/` 資料夾，產生 `overview.md` 說明釐清優先順序策略。
+目標：偵測作用中規格（specification）的歧義或遺漏決策點，將釐清問題以檔案形式紀錄到 `.clarify/` 資料夾，產生 `overview.md` 說明釐清優先順序策略。
 
 # 執行步驟
 
@@ -111,7 +111,7 @@ description: 掃描當前規格，識別所有未釐清、未覆蓋之處，並�
 在建立新的釐清項目前，必須先檢查 `.clarify/resolved/` 目錄：
 - 掃描 `.clarify/resolved/data/` 和 `.clarify/resolved/features/` 中所有已解決的釐清項目
 - 檢查問題主題是否已被回答（即使問法略有不同）
-- 若該問題已在 resolved 中有解決記錄，則不重複建立新的釐清項目
+- 若該問題已在 resolved 中有解決紀錄，則不重複建立新的釐清項目
 - 若問題角度不同但相關，應在新釐清項目的「定位」或「影響範圍」中註記相關的已解決項目
 
 ## 2. 產生釐清項目檔案

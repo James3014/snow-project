@@ -156,7 +156,7 @@ const updatedForm = {
 };
 ```
 
-#### 提交記錄
+#### 提交紀錄
 ```bash
 commit cc97163
 feat: 實現 tripFormLogic 完整驗證達成 50/50 測試通過
@@ -258,7 +258,7 @@ function formToTripData(form: TripForm) {
 }
 ```
 
-#### 提交記錄
+#### 提交紀錄
 ```bash
 commit da4b798
 refactor: 優化 tripFormLogic 核心邏輯並創建 conversationEngineV2
@@ -291,7 +291,7 @@ handleTripCreated(context);         // ✅ 移除 tripId 參數
 - ✅ API 兼容性已確保
 - ✅ 無破壞性變更
 
-#### 提交記錄
+#### 提交紀錄
 ```bash
 commit b4d55fe
 feat: 整合 conversationEngineV2 到 UI 層
@@ -538,7 +538,7 @@ Round 5:
 
 ## 🔧 Git 提交歷史
 
-### 完整提交記錄
+### 完整提交紀錄
 ```bash
 commit b4d55fe (HEAD -> claude/complete-conversation-engine-tests-01BUFnJefqBAKBH5MogjLJ4f)
 Author: Claude Code

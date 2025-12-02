@@ -1,6 +1,6 @@
 /**
  * Enhanced Course Record Modal
- * 增強的雪道記錄模態框 - 支援評分、雪況、天氣、心情標籤等
+ * 增強的雪道紀錄模態框 - 支援評分、雪況、天氣、心情標籤等
  */
 import { useState, useEffect } from 'react';
 import Button from '@/shared/components/Button';
@@ -133,7 +133,7 @@ export default function EnhancedCourseRecordModal({
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-t-2xl">
-          <h2 className="text-2xl font-bold">{mode === 'edit' ? '編輯雪道體驗' : '記錄雪道體驗'}</h2>
+          <h2 className="text-2xl font-bold">{mode === 'edit' ? '編輯雪道體驗' : '紀錄雪道體驗'}</h2>
           <p className="text-primary-100 mt-1">{courseName}</p>
         </div>
 
@@ -292,7 +292,7 @@ export default function EnhancedCourseRecordModal({
             onClick={handleSubmit}
             className="flex-1 bg-gradient-to-r from-primary-500 to-primary-600"
           >
-            ✓ 完成記錄
+            ✓ 完成紀錄
           </Button>
         </div>
       </div>

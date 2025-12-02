@@ -18,7 +18,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     """Add display_name and avatar_url to user_profiles."""
 
-    # 添加显示名称（用于社交功能）
+    # 添加顯示名称（用于社交功能）
     op.add_column('user_profiles',
         sa.Column('display_name', sa.String(length=100), nullable=True)
     )
@@ -28,14 +28,14 @@ def upgrade() -> None:
         sa.Column('avatar_url', sa.String(length=500), nullable=True)
     )
 
-    # 添加默认动态可见性设置
+    # 添加預設动态可见性設定
     op.add_column('user_profiles',
         sa.Column('default_post_visibility', sa.String(length=20),
                   server_default='public', nullable=True)
     )
 
-    # 为现有用户生成默认名称（从 user_id 生成）
-    # 注意：这是一个数据迁移，确保现有用户有名称
+    # 为现有用户生成預設名称（从 user_id 生成）
+    # 注意：这是一个資料迁移，确保现有用户有名称
     op.execute("""
         UPDATE user_profiles
         SET display_name = 'User_' || SUBSTRING(CAST(user_id AS TEXT), 1, 8)

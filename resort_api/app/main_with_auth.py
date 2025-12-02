@@ -27,7 +27,7 @@ except ImportError:
         raise HTTPException(status_code=401, detail="Authentication required")
 
 app = FastAPI(
-    title="SkiDIY Resort Services API",
+    title="SnowTrace Resort Services API",
     version="0.1.0",
     description="Provides comprehensive information about ski resorts."
 )

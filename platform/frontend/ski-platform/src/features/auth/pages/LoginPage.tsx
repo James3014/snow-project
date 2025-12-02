@@ -91,7 +91,7 @@ export default function LoginPage() {
             <span className="text-5xl">🎿</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-3">
-            SKIDIY
+            SNOWTRACE
           </h1>
           <p className="text-crystal-blue text-sm md:text-base font-light tracking-wide">
             GLACIAL ADVENTURE AWAITS

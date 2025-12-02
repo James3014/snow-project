@@ -28,7 +28,7 @@ This service provides an intelligent matching engine to help users find ski and 
 
 ## Running with Docker
 
-This service is designed to be run as part of the larger `skidiy` project using Docker Compose.
+This service is designed to be run as part of the larger `snowtrace` project using Docker Compose.
 
 1.  **Navigate to the Project Root**.
 

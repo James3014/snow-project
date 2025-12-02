@@ -75,7 +75,7 @@ export function NoCoursesEmptyState() {
     <EmptyState
       icon="⛷️"
       title="還沒有完成任何雪道"
-      description="開始你的滑雪之旅，記錄第一條雪道吧！"
+      description="開始你的滑雪之旅，紀錄第一條雪道吧！"
     />
   );
 }

@@ -54,7 +54,7 @@
   - 其唯一職責是作為一個轉發器 (forwarder) 和事件產生器。
   - 它將根據請求內容 (包含 `user_id`, `resort_id`, `date`)，建構一個符合 `user-core` API 規格的 `BehaviorEventCreate` 物件。
   - 該物件的 `source_project` 將設為 `resort-services`，`event_type` 設為 `resort.visited`。
-  - 最後，它將向 `user-core` 服務的 `/events` 端點發起一個 `POST` 請求，將此行為事件提交給 `user-core` 進行統一記錄。
+  - 最後，它將向 `user-core` 服務的 `/events` 端點發起一個 `POST` 請求，將此行為事件提交給 `user-core` 進行統一紀錄。
   - 這種設計遵循了專案的事件驅動架構，確保了服務之間的低耦合性。
 
 ## 7. 特色功能實作方案 (Feature Implementation)

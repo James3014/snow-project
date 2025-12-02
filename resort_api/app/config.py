@@ -11,7 +11,7 @@ class Settings:
     """Application settings loaded from environment variables."""
     
     # API Settings
-    app_title: str = "SkiDIY Resort Services API"
+    app_title: str = "SnowTrace Resort Services API"
     app_version: str = "0.1.0"
     
     # External Services

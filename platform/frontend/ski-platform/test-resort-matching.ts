@@ -4,7 +4,7 @@
  * 按照 Linus Torvalds 原则：
  * "Bad programmers worry about the code. Good programmers worry about data structures."
  *
- * 本测试专注于数据完整性和识别准确性
+ * 本测试专注于資料完整性和识别准确性
  */
 
 import { ResortIndex } from './src/features/ai/utils/ResortIndex';
@@ -32,7 +32,7 @@ interface TestResult {
 }
 
 /**
- * 测试用例数据（覆盖所有 43 个雪场）
+ * 测试用例資料（覆盖所有 43 个雪场）
  */
 const TEST_CASES: TestCase[] = [
   // ==================== 北海道 (5个) ====================
@@ -227,14 +227,14 @@ async function runTests(): Promise<void> {
   console.log('='.repeat(80));
   console.log();
 
-  // 获取雪场数据
+  // 取得雪场資料
   const resorts = getLocalResorts();
-  console.log(`✓ 已加载 ${resorts.length} 个雪场数据`);
+  console.log(`✓ 已加载 ${resorts.length} 个雪场資料`);
   console.log();
 
-  // 创建索引
+  // 建立索引
   const index = new ResortIndex(resorts);
-  console.log('✓ 已创建雪场索引');
+  console.log('✓ 已建立雪场索引');
   console.log();
 
   // 运行测试
@@ -413,7 +413,7 @@ function analyzeFailures(failures: TestResult[], resorts: Resort[]): void {
 
   console.log('3. 建议改善措施:');
   console.log('-'.repeat(80));
-  console.log('  a) 数据结构层面:');
+  console.log('  a) 資料结构层面:');
   console.log('     - 补充缺失的雪场别名（resortAliases.ts）');
   console.log('     - 调整优先级配置，处理歧义匹配');
   console.log('     - 添加更多常见的简称和口语化表达');

@@ -10,19 +10,19 @@ uv venv .venv
 source .venv/bin/activate
 pip install -r requirements-knowledge.txt  # FastAPI, SQLAlchemy, Pydantic, redis, celery/apscheduler, pillow, numpy, pandas, pytest, schemathesis
 
-docker run -d --name skidiy-knowledge-pg \
+docker run -d --name snowtrace-knowledge-pg \
   -e POSTGRES_PASSWORD=secret \
-  -e POSTGRES_DB=skidiy_knowledge \
+  -e POSTGRES_DB=snowtrace_knowledge \
   -p 5436:5432 postgres:15
 
-docker run -d --name skidiy-knowledge-redis -p 6382:6379 redis:7
+docker run -d --name snowtrace-knowledge-redis -p 6382:6379 redis:7
 ```
 
 ## 2. Environment Variables
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `KNOWLEDGE_DB_URL` | PostgreSQL 連線字串 | `postgresql+psycopg://postgres:secret@localhost:5436/skidiy_knowledge` |
+| `KNOWLEDGE_DB_URL` | PostgreSQL 連線字串 | `postgresql+psycopg://postgres:secret@localhost:5436/snowtrace_knowledge` |
 | `KNOWLEDGE_REDIS_URL` | 任務/快取 backend | `redis://localhost:6382/0` |
 | `USER_CORE_BASE_URL` | user-core API | `http://localhost:8000` |
 | `RESORT_SERVICES_BASE_URL` | resort-services API | `http://localhost:8400` |

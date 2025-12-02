@@ -4,7 +4,7 @@ graph TD
         A[User]
     end
 
-    subgraph SkiDIY Platform
+    subgraph SnowTrace Platform
         B(snowbuddy-matching)
         C(resort-services)
         D(user-core)
@@ -43,7 +43,7 @@ graph TD
 
 2.  **`resort-services` (綠色)**: 負責管理所有雪場的靜態資料。它從我們建立的 YAML 檔案中讀取資料，並透過 API 提供給前端或其他服務 (如 `snowbuddy-matching`) 查詢。當使用者紀錄滑雪足跡時，它會通知 `user-core`。
 
-3.  **`snowbuddy-matching` (紫色)**: 負責執行媒合邏輯。它會從 `user-core` 獲取使用者資訊，從 `resort-services` 獲取地點資訊，運算後回傳結果，並將媒合過程中的重要事件 (如發送邀請、接受邀請) 記錄回 `user-core`。
+3.  **`snowbuddy-matching` (紫色)**: 負責執行媒合邏輯。它會從 `user-core` 獲取使用者資訊，從 `resort-services` 獲取地點資訊，運算後回傳結果，並將媒合過程中的重要事件 (如發送邀請、接受邀請) 紀錄回 `user-core`。
 
 使用者 (User Client) 的請求會根據功能，分別發送至 `snowbuddy-matching` 或 `resort-services`。
 

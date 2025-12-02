@@ -26,7 +26,7 @@ ERM：Entity `UserProfile` 的屬性 `roles`
 High
 
 ---
-# 解決記錄
+# 解決紀錄
 
 - **回答**：B - 正規化為 `user_roles(user_id, role)` 關聯表
 - **更新的規格檔**：spec/erm.dbml

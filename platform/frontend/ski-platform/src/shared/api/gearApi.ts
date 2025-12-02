@@ -63,13 +63,13 @@ export const gearApi = {
   deleteGearItem: (itemId: string) =>
     gearApiClient.delete(`/items/${itemId}`),
 
-  // ==================== 檢查記錄 ====================
+  // ==================== 檢查紀錄 ====================
 
   /** 取得裝備的檢查歷史 */
   getInspections: (itemId: string) =>
     gearApiClient.get<GearInspection[]>(`/items/${itemId}/inspections`),
 
-  /** 建立檢查記錄 */
+  /** 建立檢查紀錄 */
   createInspection: (itemId: string, data: GearInspectionCreate) =>
     gearApiClient.post<GearInspection>(`/items/${itemId}/inspections`, data),
 

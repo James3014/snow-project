@@ -1,7 +1,7 @@
 """
 Property-based tests for CASI Skill Analyzer.
 
-**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
 **Validates: Requirements 10.1**
 
 **Feature: enhanced-buddy-matching, Property 15: CASI 技能相似度加分**
@@ -91,7 +91,7 @@ class TestCASISkillInference:
     @given(events=st.lists(behavior_event_strategy(), min_size=0, max_size=50))
     @settings(max_examples=100)
     def test_skill_values_always_in_valid_range(self, events):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: For any set of practice events, inferred skill values
         should always be in the range [0.0, 1.0].
@@ -109,7 +109,7 @@ class TestCASISkillInference:
     @given(events=st.lists(behavior_event_strategy(), min_size=1, max_size=50))
     @settings(max_examples=100)
     def test_all_casi_skills_have_scores(self, events):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: For any set of events, all five CASI skills should have scores.
         """
@@ -127,7 +127,7 @@ class TestCASISkillInference:
     @given(rating=st.floats(min_value=0.0, max_value=5.0))
     @settings(max_examples=50)
     def test_higher_ratings_give_higher_scores(self, rating):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: Events with higher ratings should result in higher skill scores
         (for the same lesson).
@@ -168,7 +168,7 @@ class TestCASISkillInference:
     @given(events=st.lists(behavior_event_strategy(), min_size=1, max_size=20))
     @settings(max_examples=50)
     def test_more_events_same_lesson_increases_confidence(self, events):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: Multiple events for the same lesson should result in
         averaged skill scores (not just the last event).
@@ -192,7 +192,7 @@ class TestCASISkillInference:
             f"Expected score ~{expected_score}, got {skill_scores['stance_balance']}"
     
     def test_empty_events_give_zero_scores(self):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: With no events, all skill scores should be 0.0.
         """
@@ -207,7 +207,7 @@ class TestCASISkillInference:
     @given(events=st.lists(behavior_event_strategy(), min_size=1, max_size=50))
     @settings(max_examples=50)
     def test_events_without_lesson_id_are_ignored(self, events):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: Events without lesson_id should be ignored in skill computation.
         """
@@ -228,7 +228,7 @@ class TestCASISkillInference:
     @given(rating=st.floats(min_value=-10.0, max_value=10.0))
     @settings(max_examples=50)
     def test_out_of_range_ratings_are_clamped(self, rating):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: Ratings outside [0, 5] range should be clamped to valid range.
         """
@@ -477,7 +477,7 @@ class TestLessonSkillMapping:
     @given(lesson_id=st.text(min_size=1, max_size=50))
     @settings(max_examples=100)
     def test_all_lessons_have_mapping(self, lesson_id):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: Every lesson ID should have a skill mapping (at least default).
         """
@@ -494,7 +494,7 @@ class TestLessonSkillMapping:
     @given(lesson_id=st.text(min_size=1, max_size=50))
     @settings(max_examples=100)
     def test_mapping_weights_in_valid_range(self, lesson_id):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: All skill weights in mapping should be in [0.0, 1.0] range.
         """
@@ -507,7 +507,7 @@ class TestLessonSkillMapping:
                 f"Weight for skill {skill} should be in [0, 1], got {weight}"
     
     def test_known_lessons_have_specific_mappings(self):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: Known lessons should have their specific mappings, not default.
         """
@@ -523,7 +523,7 @@ class TestLessonSkillMapping:
             f"basic_stance should have high stance_balance weight, got {mapping['stance_balance']}"
     
     def test_unknown_lessons_use_default_mapping(self):
-        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能記錄**
+        """**Feature: enhanced-buddy-matching, Property 14: CASI 技能紀錄**
         
         Property: Unknown lessons should use the default mapping.
         """

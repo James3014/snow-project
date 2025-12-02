@@ -2,7 +2,7 @@
 
 ## 1. 專案願景與範疇 (Vision & Scope)
 
-`resort-services` 專案的核心目標是成為 SkiDIY 平台中所有雪場資訊的權威來源 (Single Source of Truth)。它負責管理、提供全球滑雪場的地理、設施、雪道、交通等詳細資料，並以此為基礎，支援使用者紀錄個人滑雪足跡、查詢交通方式，以及生成可用於社群分享的個人化圖卡。
+`resort-services` 專案的核心目標是成為 SnowTrace 平台中所有雪場資訊的權威來源 (Single Source of Truth)。它負責管理、提供全球滑雪場的地理、設施、雪道、交通等詳細資料，並以此為基礎，支援使用者紀錄個人滑雪足跡、查詢交通方式，以及生成可用於社群分享的個人化圖卡。
 
 此服務是平台地理與時序資料的基礎，將為 `snowbuddy-matching` (雪伴媒合)、`coach-scheduling` (教練排課) 等其他專案提供必要的雪場資料支援。
 
@@ -16,7 +16,7 @@
   - `AS A` Rider, `I WANT TO` 查看特定雪場的詳細資訊，包含雪道數量、難易度比例、最長滑道、交通方式、票價等，`SO THAT` 我能做出最充分的行前準備。
 
 - **紀錄與分享:**
-  - `AS A` Rider, `I WANT TO` 標記我去過某個雪場，並記錄下日期，`SO THAT` 我可以建立我的個人滑雪地圖和歷史足跡。
+  - `AS A` Rider, `I WANT TO` 標記我去過某個雪場，並紀錄下日期，`SO THAT` 我可以建立我的個人滑雪地圖和歷史足跡。
   - `AS A` Rider, `I WANT TO` 將我喜歡的雪場資訊，生成一張包含重點資訊 (如雪場名稱、代表性雪道、我的滑行日期) 的精美圖卡，`SO THAT` 我可以方便地在社群媒體上分享我的滑雪體驗。
 
 - **交通與決策:**
@@ -54,7 +54,7 @@
 - **FR3.1: 紀錄滑雪足跡 (與 `user-core` 整合)**
   - 系統需提供一個端點 (如 `POST /users/{user_id}/ski-history`)，允許使用者新增一筆滑雪紀錄。
   - 請求中必須包含 `resort_id` 和 `date` (滑雪日期)。
-  - 此操作成功後，應觸發一個標準化的行為事件 (例如 `event_type: "resort.visited"`)，並將其傳送至 `user-core` 服務進行記錄。
+  - 此操作成功後，應觸發一個標準化的行為事件 (例如 `event_type: "resort.visited"`)，並將其傳送至 `user-core` 服務進行紀錄。
 
 ### 3.4 分享圖卡生成 (Share Card Generation)
 

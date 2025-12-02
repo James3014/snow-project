@@ -187,7 +187,7 @@ async def match_by_skill_level(seeker_id: str) -> List[MatchResult]:
 async def match_by_learning_progress(seeker_id: str) -> List[MatchResult]:
     """基於學習進度匹配"""
     
-    # 1. 獲取搜尋者的練習記錄
+    # 1. 獲取搜尋者的練習紀錄
     seeker_events = await user_core_client.get_events(
         user_id=seeker_id,
         source_project='snowboard-teaching',
@@ -201,7 +201,7 @@ async def match_by_learning_progress(seeker_id: str) -> List[MatchResult]:
         for event in seeker_events
     )
     
-    # 3. 查詢其他用戶的練習記錄
+    # 3. 查詢其他用戶的練習紀錄
     all_users = await user_core_client.get_users(limit=1000)
     
     candidates = []
@@ -209,7 +209,7 @@ async def match_by_learning_progress(seeker_id: str) -> List[MatchResult]:
         if user['user_id'] == seeker_id:
             continue
         
-        # 獲取該用戶的練習記錄
+        # 獲取該用戶的練習紀錄
         user_events = await user_core_client.get_events(
             user_id=user['user_id'],
             source_project='snowboard-teaching',
@@ -473,7 +473,7 @@ async def match_students_to_coaches(student_id: str) -> List[MatchResult]:
     # 5. 為每個教練計分
     candidates = []
     for coach in coaches:
-        # 5.1 獲取教練的教學記錄（假設有相關事件）
+        # 5.1 獲取教練的教學紀錄（假設有相關事件）
         coach_events = await user_core_client.get_events(
             user_id=coach['user_id'],
             source_project='snowboard-teaching',
@@ -769,7 +769,7 @@ async def test_learning_progress_matching():
 | API 響應時間 | < 2 秒 | 完整匹配流程 |
 | 資料新鮮度 | < 5 分鐘 | 事件同步延遲 |
 
-### 日誌記錄
+### 日誌紀錄
 
 ```python
 import logging

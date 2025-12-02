@@ -12,9 +12,9 @@ source .venv/bin/activate
 pip install -r requirements.txt  # 待建置：含 FastAPI、SQLAlchemy、Pydantic、psycopg、alembic、pytest
 
 # 建立本地 PostgreSQL（若使用 Docker）
-docker run -d --name skidiy-pg \
+docker run -d --name snowtrace-pg \
   -e POSTGRES_PASSWORD=secret \
-  -e POSTGRES_DB=skidiy_user_core \
+  -e POSTGRES_DB=snowtrace_user_core \
   -p 5432:5432 postgres:15
 ```
 
@@ -22,7 +22,7 @@ docker run -d --name skidiy-pg \
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `USER_CORE_DB_URL` | PostgreSQL 連線字串 | `postgresql+psycopg://postgres:secret@localhost:5432/skidiy_user_core` |
+| `USER_CORE_DB_URL` | PostgreSQL 連線字串 | `postgresql+psycopg://postgres:secret@localhost:5432/snowtrace_user_core` |
 | `USER_CORE_CHANGEFEED_URL` | Change feed 目標（預設 HTTPS webhook gateway） | `https://localhost:9000/changefeed/user-core` |
 | `USER_CORE_LOG_LEVEL` | Logging 層級 | `INFO` |
 | `USER_CORE_API_KEY` | 發佈 API key（若使用簡易 auth） | `dev-secret` |
