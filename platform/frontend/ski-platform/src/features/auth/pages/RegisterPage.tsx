@@ -1,6 +1,8 @@
 /**
- * Register Page
- * 註冊頁面
+ * Register Page - Glacial Futurism Design
+ * 註冊頁面 - 冰川未來主義設計
+ *
+ * Mobile-First | Immersive Background | Glassmorphism Form
  */
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -25,20 +27,17 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // 密碼強度計算
-  const getPasswordStrength = (password: string): { level: 'weak' | 'medium' | 'strong'; text: string; color: string } => {
-    if (password.length < 6) return { level: 'weak', text: '弱', color: 'text-red-600' };
-    if (password.length < 10) return { level: 'medium', text: '中', color: 'text-yellow-600' };
-    return { level: 'strong', text: '強', color: 'text-green-600' };
+  const getPasswordStrength = (password: string): { level: 'weak' | 'medium' | 'strong'; text: string; colorClass: string } => {
+    if (password.length < 6) return { level: 'weak', text: '弱', colorClass: 'text-neon-pink' };
+    if (password.length < 10) return { level: 'medium', text: '中', colorClass: 'text-ice-accent' };
+    return { level: 'strong', text: '強', colorClass: 'text-green-400' };
   };
 
   useEffect(() => {
-    // Clear any previous errors when component mounts
     dispatch(clearError());
   }, [dispatch]);
 
   useEffect(() => {
-    // Redirect to home if already authenticated
     if (isAuthenticated) {
       navigate('/');
     }
@@ -56,61 +55,98 @@ export default function RegisterPage() {
     e.preventDefault();
     setValidationError('');
 
-    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setValidationError('密碼與確認密碼不一致');
       return;
     }
 
-    // Validate password length
     if (formData.password.length < 6) {
       setValidationError('密碼至少需要 6 個字元');
       return;
     }
 
-    // Send registration request (exclude confirmPassword from API payload)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmPassword, ...registrationData } = formData;
     dispatch(registerThunk(registrationData));
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <div className="flex justify-center">
-            <span className="text-6xl">🎿</span>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Animated Mountain Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-bg-deep-space via-bg-ice-dark to-bg-glacier" />
+
+        {/* Mountain Silhouettes */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-1/2 opacity-20"
+          style={{
+            background: 'linear-gradient(to top, var(--ice-primary), transparent)',
+            clipPath: 'polygon(0% 100%, 0% 60%, 10% 55%, 20% 50%, 30% 45%, 40% 55%, 50% 40%, 60% 50%, 70% 45%, 80% 55%, 90% 50%, 100% 60%, 100% 100%)',
+          }}
+        />
+        <div
+          className="absolute bottom-0 left-0 right-0 h-2/5 opacity-30"
+          style={{
+            background: 'linear-gradient(to top, var(--ice-secondary), transparent)',
+            clipPath: 'polygon(0% 100%, 0% 70%, 15% 65%, 30% 55%, 45% 60%, 60% 50%, 75% 60%, 90% 55%, 100% 65%, 100% 100%)',
+          }}
+        />
+
+        {/* Floating Snow Particles */}
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="snow-particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDuration: `${8 + Math.random() * 12}s`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Form Container */}
+      <div className="max-w-md w-full space-y-8 relative z-10 animate-slide-up">
+        {/* Logo & Header */}
+        <div className="text-center">
+          <div className="flex justify-center mb-6">
+            <div className="text-7xl animate-slide-up pulse-glow">🎿</div>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="text-4xl font-bold text-gradient-glacier mb-4 animate-slide-up stagger-1">
             註冊 SkiDIY 帳號
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="text-crystal-blue text-sm animate-slide-up stagger-2">
             已經有帳號了？{' '}
             <Link
               to="/login"
-              className="font-medium text-primary-600 hover:text-primary-500"
+              className="font-semibold text-ice-accent hover:text-ice-primary transition-colors"
             >
               立即登入
             </Link>
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        {/* Form Card */}
+        <form className="glass-card p-8 space-y-6 animate-slide-up stagger-3" onSubmit={handleSubmit}>
+          {/* Error Display */}
           {(error || validationError) && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="flex">
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">
-                    {validationError || error}
-                  </h3>
-                </div>
+            <div className="p-4 rounded-lg bg-gradient-to-r from-neon-pink/20 to-red-500/20 border border-neon-pink/30">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-neon-pink flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <h3 className="text-sm font-medium text-neon-pink">
+                  {validationError || error}
+                </h3>
               </div>
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-5">
+            {/* Display Name */}
             <div>
-              <label htmlFor="display_name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="display_name" className="block text-sm font-medium text-crystal-blue mb-2">
                 顯示名稱
               </label>
               <input
@@ -120,13 +156,14 @@ export default function RegisterPage() {
                 required
                 value={formData.display_name}
                 onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="input-glacier"
                 placeholder="請輸入您的名稱"
               />
             </div>
 
+            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-crystal-blue mb-2">
                 電子郵件
               </label>
               <input
@@ -137,13 +174,14 @@ export default function RegisterPage() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="input-glacier"
                 placeholder="your@email.com"
               />
             </div>
 
+            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-crystal-blue mb-2">
                 密碼
               </label>
               <div className="relative">
@@ -155,13 +193,13 @@ export default function RegisterPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="input-glacier pr-12"
                   placeholder="至少 6 個字元"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-crystal-blue/50 hover:text-ice-primary transition-colors"
                 >
                   {showPassword ? (
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,17 +214,18 @@ export default function RegisterPage() {
                 </button>
               </div>
               {formData.password && (
-                <div className="mt-1 flex items-center gap-2 text-sm">
-                  <span className="text-gray-600">密碼強度：</span>
-                  <span className={`font-semibold ${getPasswordStrength(formData.password).color}`}>
+                <div className="mt-2 flex items-center gap-2 text-sm">
+                  <span className="text-crystal-blue/70">密碼強度：</span>
+                  <span className={`font-semibold ${getPasswordStrength(formData.password).colorClass}`}>
                     {getPasswordStrength(formData.password).text}
                   </span>
                 </div>
               )}
             </div>
 
+            {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-crystal-blue mb-2">
                 確認密碼
               </label>
               <div className="relative">
@@ -198,13 +237,13 @@ export default function RegisterPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="input-glacier pr-12"
                   placeholder="再次輸入密碼"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-crystal-blue/50 hover:text-ice-primary transition-colors"
                 >
                   {showConfirmPassword ? (
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,15 +258,16 @@ export default function RegisterPage() {
                 </button>
               </div>
               {formData.confirmPassword && formData.confirmPassword !== formData.password && (
-                <p className="mt-1 text-sm text-red-600">密碼不一致</p>
+                <p className="mt-2 text-sm text-neon-pink">密碼不一致</p>
               )}
               {formData.confirmPassword && formData.confirmPassword === formData.password && formData.password.length >= 6 && (
-                <p className="mt-1 text-sm text-green-600">✓ 密碼一致</p>
+                <p className="mt-2 text-sm text-green-400">✓ 密碼一致</p>
               )}
             </div>
 
+            {/* Experience Level */}
             <div>
-              <label htmlFor="experience_level" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="experience_level" className="block text-sm font-medium text-crystal-blue mb-2">
                 滑雪程度
               </label>
               <select
@@ -235,7 +275,7 @@ export default function RegisterPage() {
                 name="experience_level"
                 value={formData.experience_level}
                 onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="input-glacier"
               >
                 <option value="beginner">初學者</option>
                 <option value="intermediate">中級</option>
@@ -244,8 +284,9 @@ export default function RegisterPage() {
               </select>
             </div>
 
+            {/* Preferred Language */}
             <div>
-              <label htmlFor="preferred_language" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="preferred_language" className="block text-sm font-medium text-crystal-blue mb-2">
                 偏好語言
               </label>
               <select
@@ -253,7 +294,7 @@ export default function RegisterPage() {
                 name="preferred_language"
                 value={formData.preferred_language}
                 onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="input-glacier"
               >
                 <option value="zh-TW">繁體中文</option>
                 <option value="zh-CN">简体中文</option>
@@ -263,21 +304,30 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          {/* Submit Button */}
           <div>
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-neon ski-trail w-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? '註冊中...' : '註冊'}
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-frost-white border-t-transparent rounded-full animate-spin" />
+                  註冊中...
+                </span>
+              ) : (
+                '註冊'
+              )}
             </button>
           </div>
         </form>
 
-        <div className="text-center">
+        {/* Back to Home */}
+        <div className="text-center animate-slide-up stagger-4">
           <Link
             to="/"
-            className="text-sm text-gray-600 hover:text-primary-600"
+            className="text-sm text-crystal-blue hover:text-ice-primary transition-colors"
           >
             ← 返回首頁
           </Link>

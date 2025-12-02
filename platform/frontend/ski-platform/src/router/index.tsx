@@ -31,6 +31,8 @@ const TripExplore = lazy(() => import('@/features/trip-planning/pages/TripExplor
 const TripRecommendations = lazy(() => import('@/features/trip-planning/pages/TripRecommendations'));
 const MyGear = lazy(() => import('@/features/gear/pages/MyGear'));
 const SnowbuddyBoard = lazy(() => import('@/features/snowbuddy/pages/SnowbuddyBoard'));
+const SmartMatchingPage = lazy(() => import('@/features/snowbuddy/pages/SmartMatchingPage'));
+const MatchRequestsPage = lazy(() => import('@/features/snowbuddy/pages/MatchRequestsPage'));
 
 export const router = createBrowserRouter([
   {
@@ -128,6 +130,14 @@ export const router = createBrowserRouter([
       {
         path: 'snowbuddy',
         element: <SnowbuddyBoard />,
+      },
+      {
+        path: 'snowbuddy/smart-matching',
+        element: <SmartMatchingPage />,
+      },
+      {
+        path: 'snowbuddy/requests',
+        element: <MatchRequestsPage />,
       },
     ],
   },

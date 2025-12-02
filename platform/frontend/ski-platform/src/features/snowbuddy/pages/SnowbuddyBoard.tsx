@@ -277,9 +277,25 @@ export default function SnowbuddyBoard() {
           <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-4 animate-slide-up">
             雪伴公佈欄
           </h1>
-          <p className="text-crystal-blue text-sm md:text-base animate-slide-up stagger-1">
+          <p className="text-crystal-blue text-sm md:text-base animate-slide-up stagger-1 mb-6">
             尋找志同道合的滑雪夥伴，一起探索雪場
           </p>
+          
+          {/* 導航按鈕 */}
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => navigate('/snowbuddy/smart-matching')}
+              className="px-6 py-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white font-bold rounded-xl hover:shadow-2xl hover:shadow-cyan-500/50 transition-all"
+            >
+              🧠 智慧媒合
+            </button>
+            <button
+              onClick={() => navigate('/snowbuddy/requests')}
+              className="px-6 py-3 bg-zinc-800/50 backdrop-blur-md text-cyan-400 font-medium rounded-xl border border-cyan-500/30 hover:border-cyan-500/50 hover:bg-zinc-700/50 transition-all"
+            >
+              💌 媒合請求
+            </button>
+          </div>
         </div>
       </div>
 

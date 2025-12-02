@@ -26,7 +26,7 @@ class UserProfile(Base):
 
     preferred_language = Column(String(10))
     experience_level = Column(String(50))
-    skill_level = Column(String(20), nullable=True, default='beginner')  # Skill level for buddy matching
+    skill_level = Column(Integer, nullable=True, default=5)  # Skill level 1-10 (computed from CASI profile)
     roles = Column(JSON) # Consider a dedicated roles table in a real app
     coach_cert_level = Column(String(100), nullable=True)
     bio = Column(String, nullable=True)

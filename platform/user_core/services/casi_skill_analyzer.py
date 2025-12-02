@@ -14,6 +14,7 @@ from collections import defaultdict
 import math
 
 from models.buddy_matching import CASISkillProfile
+from models.user_profile import UserProfile
 from schemas.buddy_matching import CASISkillProfile as CASISkillProfileSchema
 from schemas.behavior_event import BehaviorEvent
 from services.user_core_client import UserCoreClient
@@ -144,7 +145,8 @@ class CASISkillAnalyzer:
         self,
         db: Session,
         user_id: uuid.UUID,
-        days: int = 90
+        days: int = 90,
+        min_update_interval_minutes: int = 30
     ) -> CASISkillProfileSchema:
         """從練習事件推斷技能掌握度
         
@@ -155,10 +157,25 @@ class CASISkillAnalyzer:
             db: Database session
             user_id: User ID
             days: Number of days to look back for events (default: 90)
+            min_update_interval_minutes: Minimum interval between updates (default: 30)
             
         Returns:
             Updated CASISkillProfile
         """
+        # 檢查上次更新時間（節流機制）
+        stmt = select(CASISkillProfile).where(CASISkillProfile.user_id == user_id)
+        result = db.execute(stmt)
+        existing_profile = result.scalar_one_or_none()
+        
+        if existing_profile:
+            time_since_update = datetime.now(UTC) - existing_profile.updated_at
+            if time_since_update.total_seconds() < min_update_interval_minutes * 60:
+                logger.debug(
+                    f"Skipping CASI update for user {user_id}, "
+                    f"last updated {time_since_update.total_seconds():.0f}s ago"
+                )
+                return CASISkillProfileSchema.model_validate(existing_profile)
+        
         # Fetch practice events from user-core
         try:
             events = self.user_core_client.get_user_events(
@@ -189,20 +206,15 @@ class CASISkillAnalyzer:
         }
         
         # Update or create profile in database
-        stmt = select(CASISkillProfile).where(
-            CASISkillProfile.user_id == user_id
-        )
-        result = db.execute(stmt)
-        profile = result.scalar_one_or_none()
-        
-        if profile:
+        if existing_profile:
             # Update existing profile
-            profile.stance_balance = skill_scores["stance_balance"]
-            profile.rotation = skill_scores["rotation"]
-            profile.edging = skill_scores["edging"]
-            profile.pressure = skill_scores["pressure"]
-            profile.timing_coordination = skill_scores["timing_coordination"]
-            profile.updated_at = datetime.now(UTC)
+            existing_profile.stance_balance = skill_scores["stance_balance"]
+            existing_profile.rotation = skill_scores["rotation"]
+            existing_profile.edging = skill_scores["edging"]
+            existing_profile.pressure = skill_scores["pressure"]
+            existing_profile.timing_coordination = skill_scores["timing_coordination"]
+            existing_profile.updated_at = datetime.now(UTC)
+            profile = existing_profile
         else:
             # Create new profile
             profile = CASISkillProfile(
@@ -218,6 +230,17 @@ class CASISkillAnalyzer:
         
         db.commit()
         db.refresh(profile)
+        
+        # 同步更新 user_profiles.skill_level (1-10)
+        # 計算平均技能分數並轉換為 1-10 等級
+        avg_skill = sum(skill_scores.values()) / len(skill_scores)
+        skill_level_1_10 = max(1, min(10, int(avg_skill * 10)))
+        
+        user_profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
+        if user_profile:
+            user_profile.skill_level = skill_level_1_10
+            db.commit()
+            logger.debug(f"Updated user_profiles.skill_level to {skill_level_1_10} for user {user_id}")
         
         logger.info(f"Updated CASI profile for user {user_id}: {skill_scores}")
         
@@ -340,7 +363,7 @@ class CASISkillAnalyzer:
     def _get_lesson_skill_mapping(self, lesson_id: str) -> Dict[str, float]:
         """獲取課程的技能映射
         
-        Maps a lesson ID to its associated CASI skills and weights.
+        使用關鍵字匹配來推斷課程對應的 CASI 技能。
         
         Args:
             lesson_id: Lesson or drill ID
@@ -348,14 +371,92 @@ class CASISkillAnalyzer:
         Returns:
             Dict mapping skill name to weight (0.0-1.0)
         """
-        # Try to find exact match
-        if lesson_id in self.LESSON_SKILL_MAPPING:
-            return self.LESSON_SKILL_MAPPING[lesson_id]
+        # 關鍵字到技能的映射
+        keyword_skills = {
+            # Stance & Balance
+            "站姿": {"stance_balance": 1.0, "timing_coordination": 0.3},
+            "平衡": {"stance_balance": 0.9, "timing_coordination": 0.4},
+            "居中": {"stance_balance": 0.8, "pressure": 0.5},
+            "重心": {"stance_balance": 0.7, "pressure": 0.6},
+            "牛仔": {"stance_balance": 0.8, "pressure": 0.5},
+            
+            # Rotation
+            "換刃": {"rotation": 0.8, "edging": 0.7, "timing_coordination": 0.6},
+            "轉彎": {"rotation": 0.9, "edging": 0.6, "timing_coordination": 0.7},
+            "旋轉": {"rotation": 1.0, "timing_coordination": 0.5},
+            "反擰": {"rotation": 0.9, "stance_balance": 0.5},
+            "扭轉": {"rotation": 0.8, "timing_coordination": 0.6},
+            "180": {"rotation": 1.0, "timing_coordination": 0.7},
+            "360": {"rotation": 1.0, "timing_coordination": 0.8},
+            
+            # Edging
+            "刃": {"edging": 0.9, "pressure": 0.6},
+            "刻滑": {"edging": 1.0, "pressure": 0.8, "stance_balance": 0.6},
+            "走刃": {"edging": 0.9, "pressure": 0.7},
+            "立刃": {"edging": 0.8, "pressure": 0.7},
+            "滾刃": {"edging": 0.9, "timing_coordination": 0.7},
+            "前刃": {"edging": 0.8, "pressure": 0.6},
+            "後刃": {"edging": 0.8, "pressure": 0.6},
+            
+            # Pressure
+            "壓": {"pressure": 0.9, "edging": 0.5},
+            "折疊": {"pressure": 0.8, "stance_balance": 0.6},
+            "傾倒": {"pressure": 0.9, "edging": 0.7},
+            "施壓": {"pressure": 1.0, "timing_coordination": 0.6},
+            "蓄力": {"pressure": 0.8, "timing_coordination": 0.7},
+            
+            # Timing & Coordination
+            "時機": {"timing_coordination": 1.0},
+            "節奏": {"timing_coordination": 0.9, "rotation": 0.5},
+            "流暢": {"timing_coordination": 0.8, "rotation": 0.6},
+            "連貫": {"timing_coordination": 0.9, "rotation": 0.5},
+            "起伏": {"timing_coordination": 0.8, "pressure": 0.6},
+        }
         
-        # Try to find partial match (e.g., lesson_id contains key)
-        for key, mapping in self.LESSON_SKILL_MAPPING.items():
-            if key != "_default" and key in lesson_id.lower():
-                return mapping
+        # 找到匹配的關鍵字
+        skills = {}
+        for keyword, skill_weights in keyword_skills.items():
+            if keyword in lesson_id:
+                for skill, weight in skill_weights.items():
+                    # 取最大權重
+                    skills[skill] = max(skills.get(skill, 0), weight)
         
-        # No match found - use default mapping
+        # 如果有匹配到關鍵字，返回結果
+        if skills:
+            return skills
+        
+        # 沒有匹配 - 使用默認映射
         return self.LESSON_SKILL_MAPPING["_default"]
+
+
+def update_casi_profile_task(user_id: uuid.UUID) -> None:
+    """後台任務：更新用戶的 CASI 技能檔案
+    
+    這個函數會在後台異步執行，不阻塞主流程。
+    如果發生錯誤，只記錄日誌，不影響事件寫入。
+    
+    Args:
+        user_id: User ID to update CASI profile for
+    """
+    from services.db import get_db
+    
+    db_gen = get_db()
+    db = next(db_gen)
+    
+    try:
+        analyzer = CASISkillAnalyzer()
+        profile = analyzer.update_skill_profile_from_events(db, user_id)
+        
+        logger.info(f"[CASI Sync] Updated skill profile for user {user_id}")
+        logger.debug(f"[CASI Sync] Profile: stance={profile.stance_balance:.2f}, "
+                    f"rotation={profile.rotation:.2f}, edging={profile.edging:.2f}, "
+                    f"pressure={profile.pressure:.2f}, timing={profile.timing_coordination:.2f}")
+        
+    except Exception as e:
+        logger.error(f"[CASI Sync] Failed to update profile for user {user_id}: {e}")
+        # 靜默失敗，不影響主流程
+    finally:
+        try:
+            db_gen.close()
+        except:
+            pass
