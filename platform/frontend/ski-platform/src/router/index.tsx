@@ -44,7 +44,7 @@ const SmartMatchingPage = lazy(() => import('@/features/snowbuddy/pages/SmartMat
 const MatchRequestsPage = lazy(() => import('@/features/snowbuddy/pages/MatchRequestsPage'));
 
 // Wrapper for lazy components
-const withSuspense = (Component: React.LazyExoticComponent<() => JSX.Element>) => (
+const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
   <Suspense fallback={<PageLoader />}>
     <Component />
   </Suspense>
