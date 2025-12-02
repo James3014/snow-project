@@ -14,7 +14,6 @@ import Button from '@/shared/components/Button';
 import Badge from '@/shared/components/Badge';
 import ProgressBar from '@/shared/components/ProgressBar';
 import { ListSkeleton } from '@/shared/components/Skeleton';
-import EmptyState, { ErrorEmptyState } from '@/shared/components/EmptyState';
 import EnhancedCourseRecordModal, { type CourseRecordData } from '../components/EnhancedCourseRecordModal';
 import ShareCardPreviewModal from '../components/ShareCardPreviewModal';
 

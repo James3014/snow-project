@@ -4,12 +4,9 @@
  */
 import { useLeaderboard } from '../hooks/useCourseTracking';
 import { useAppSelector } from '@/store/hooks';
-import { useNavigate } from 'react-router-dom';
 import Card from '@/shared/components/Card';
-import Badge from '@/shared/components/Badge';
 
 export default function Leaderboard() {
-  const navigate = useNavigate();
   const { leaderboard, loading } = useLeaderboard();
   const currentUserId = useAppSelector(state => state.auth.user?.user_id);
 

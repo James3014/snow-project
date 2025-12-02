@@ -5,7 +5,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useRecommendations } from '../hooks/useCourseTracking';
 import Card from '@/shared/components/Card';
-import Button from '@/shared/components/Button';
 import Badge from '@/shared/components/Badge';
 
 export default function Recommendations() {

@@ -3,7 +3,7 @@
  * 用戶列表頁面
  */
 import { useEffect, useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { adminApi } from '@/shared/api/adminApi';
 import Card from '@/shared/components/Card';
 import Button from '@/shared/components/Button';
@@ -11,7 +11,6 @@ import Badge from '@/shared/components/Badge';
 import type { UserListResponse, UserListItem } from '@/shared/api/adminApi';
 
 export default function UserListPage() {
-  const navigate = useNavigate();
   const [data, setData] = useState<UserListResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

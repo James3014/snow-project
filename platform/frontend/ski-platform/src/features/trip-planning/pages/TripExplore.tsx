@@ -8,12 +8,12 @@ import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { resortApiService } from '@/shared/api/resortApi';
 import Card from '@/shared/components/Card';
 import Button from '@/shared/components/Button';
-import type { TripSummary } from '../types';
+import type { Trip } from '../types';
 import type { Resort } from '@/shared/data/resorts';
 
 export default function TripExplore() {
   const navigate = useNavigate();
-  const [trips, setTrips] = useState<TripSummary[]>([]);
+  const [trips, setTrips] = useState<Trip[]>([]);
   const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -166,9 +166,6 @@ export default function TripExplore() {
                       <h3 className="text-lg font-semibold text-frost-white mb-2">
                         {displayName}
                       </h3>
-                      <p className="text-xs text-crystal-blue">
-                        {trip.owner_info?.display_name || '匿名用戶'}
-                      </p>
                     </div>
 
                     {/* Trip Info */}
