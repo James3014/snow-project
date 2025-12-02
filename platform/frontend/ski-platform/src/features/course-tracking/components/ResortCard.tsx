@@ -41,22 +41,21 @@ export default function ResortCard({
         }}
       >
         {/* Logo 圖片區 */}
-        <div className="relative h-32 bg-gradient-to-b from-zinc-700 to-zinc-800 flex items-center justify-center">
-          <img
-            src={getResortLogoUrl(resort.resort_id)}
-            alt={`${resort.names.zh} Logo`}
-            className="max-h-24 max-w-[80%] object-contain rounded-lg"
+        <div className="relative h-32 bg-gradient-to-b from-zinc-700 to-zinc-800 flex items-center justify-center p-4">
+          <div className="bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-xl">
+            <img
+              src={getResortLogoUrl(resort.resort_id)}
+              alt={`${resort.names.zh} Logo`}
+              className="max-h-20 max-w-full object-contain"
             onError={(e) => {
-              e.currentTarget.style.display = 'none';
-              const parent = e.currentTarget.parentElement;
-              if (parent && !parent.querySelector('.fallback-emoji')) {
-                const emoji = document.createElement('div');
-                emoji.className = 'fallback-emoji text-6xl';
-                emoji.textContent = '🏔️';
-                parent.appendChild(emoji);
+              const container = e.currentTarget.parentElement;
+              if (container) {
+                container.className = 'text-6xl';
+                container.innerHTML = '🏔️';
               }
             }}
           />
+          </div>
           {/* 漸層遮罩 */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-zinc-800/50" />
 

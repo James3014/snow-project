@@ -56,9 +56,7 @@ export default function ResortDetail() {
 
   // 雪場 Logo URL 生成器（使用本地官方 Logo）
   const getResortLogoUrl = (resortId: string) => {
-    // 嘗試載入本地 Logo（支援多種格式）
-    // 優先順序: PNG > JPG > SVG
-    return `/logos/${resortId}.png`;
+    return `/resort-logos/${resortId}_logo.jpeg`;
   };
 
   // 載入雪場資料
@@ -267,12 +265,12 @@ export default function ResortDetail() {
           <div className="relative z-10 max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 bg-white/90 backdrop-blur-sm rounded-2xl p-3 shadow-lg">
                   <img
                     src={getResortLogoUrl(resort.resort_id)}
                     alt={`${resort.names.zh} Logo`}
                     loading="lazy"
-                    className="w-20 h-20 object-contain rounded-lg"
+                    className="w-20 h-20 object-contain"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       const parent = e.currentTarget.parentElement;
@@ -405,12 +403,12 @@ export default function ResortDetail() {
         <div className="relative z-10 max-w-6xl mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 bg-white/90 backdrop-blur-sm rounded-2xl p-3 shadow-lg">
                 <img
                   src={getResortLogoUrl(resort.resort_id)}
                   alt={`${resort.names.zh} Logo`}
                   loading="lazy"
-                  className="w-20 h-20 object-contain rounded-lg"
+                  className="w-20 h-20 object-contain"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     const parent = e.currentTarget.parentElement;
