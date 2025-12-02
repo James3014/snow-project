@@ -10,7 +10,6 @@ import MatchRequestCard from '../components/MatchRequestCard';
 import type { MatchRequest } from '@/shared/api/snowbuddyApi';
 
 export default function MatchRequestsPage() {
-  const userId = useAppSelector((state) => state.auth.user?.user_id);
   const [activeTab, setActiveTab] = useState<'received' | 'sent'>('received');
   const [requests, setRequests] = useState<MatchRequest[]>([]);
   const [loading, setLoading] = useState(true);

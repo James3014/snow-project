@@ -72,7 +72,7 @@ export default function MatchingPreferenceForm({ onSubmit, loading }: MatchingPr
                 }
               `}
             >
-              {resort.name_zh}
+              {resort.names.zh}
             </button>
           ))}
         </div>

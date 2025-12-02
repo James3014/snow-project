@@ -5,13 +5,12 @@
  * Mobile-First | Interactive Map | Progress Visualization
  */
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useSkiMap } from '../hooks/useSkiMap';
 import JapanSkiRegionsMap from '../components/JapanSkiRegionsMap';
 import { useAppSelector } from '@/store/hooks';
 
 const SkiMapPage: React.FC = () => {
-  const navigate = useNavigate();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const { mapData, isLoading, error } = useSkiMap(user?.user_id || '');
 
