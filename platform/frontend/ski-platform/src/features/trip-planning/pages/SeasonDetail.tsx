@@ -1,5 +1,5 @@
 /**
- * Season Detail Page with Calendar View
+ * Season Detail Page with Calendar View - Glacial Futurism Design
  * 雪季詳情頁面（含日曆視圖）
  */
 import { useState, useEffect, useCallback } from 'react';
@@ -8,6 +8,8 @@ import { useAppSelector } from '@/store/hooks';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { resortApiService } from '@/shared/api/resortApi';
 import Card from '@/shared/components/Card';
+import Button from '@/shared/components/Button';
+import Badge from '@/shared/components/Badge';
 import TripCreateModal from '../components/TripCreateModal';
 import type { Season, SeasonStats, CalendarTrip, Trip, TripCreate } from '../types';
 import type { Resort } from '@/shared/data/resorts';
@@ -104,116 +106,145 @@ export default function SeasonDetail() {
 
   if (loading || !season) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="min-h-screen flex items-center justify-center pb-20">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">載入中...</p>
+          <div className="spinner-glacier mb-4" />
+          <p className="text-crystal-blue">載入雪季資料中...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <button
-          onClick={() => navigate('/trips')}
-          className="text-blue-600 hover:text-blue-700 mb-4 flex items-center"
-        >
-          <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          返回我的行程
-        </button>
+    <div className="min-h-screen pb-20">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden px-4 pt-8 pb-12 mb-6">
+        <div className="absolute inset-0 bg-gradient-to-b from-ice-primary/10 to-transparent opacity-50" />
+        <div className="relative z-10 max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <button
+              onClick={() => navigate('/trips')}
+              className="flex items-center gap-2 text-crystal-blue hover:text-ice-primary transition-colors w-fit"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              返回我的行程
+            </button>
 
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              📅 {season.title} 雪季
-            </h1>
-            <p className="text-gray-600">查看這個雪季的所有行程和統計資料</p>
+            <Button
+              variant="neon"
+              onClick={() => setShowCreateModal(true)}
+            >
+              + 新增行程
+            </Button>
           </div>
 
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-          >
-            + 新增行程
-          </button>
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-4 animate-slide-up">
+              📅 {season.title} 雪季
+            </h1>
+            <p className="text-crystal-blue animate-slide-up stagger-1">
+              查看這個雪季的所有行程和統計資料
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card className="p-4">
-            <div className="text-sm text-gray-600 mb-1">📍 雪場數</div>
-            <div className="text-2xl font-bold text-gray-900">{stats.unique_resorts} 個</div>
-          </Card>
+      <div className="max-w-6xl mx-auto px-4">
+        {/* Stats Cards */}
+        {stats && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <Card
+              variant="glass"
+              className="animate-slide-up"
+              style={{ animationDelay: '0.1s' }}
+            >
+              <Card.Body className="text-center py-6">
+                <div className="text-sm text-crystal-blue mb-2">📍 雪場數</div>
+                <div className="text-3xl font-bold text-ice-primary">{stats.unique_resorts}</div>
+              </Card.Body>
+            </Card>
 
-          <Card className="p-4">
-            <div className="text-sm text-gray-600 mb-1">✈️ 行程數</div>
-            <div className="text-2xl font-bold text-blue-600">{stats.trip_count} 趟</div>
-          </Card>
+            <Card
+              variant="glass"
+              className="animate-slide-up"
+              style={{ animationDelay: '0.15s' }}
+            >
+              <Card.Body className="text-center py-6">
+                <div className="text-sm text-crystal-blue mb-2">✈️ 行程數</div>
+                <div className="text-3xl font-bold text-ice-accent">{stats.trip_count}</div>
+              </Card.Body>
+            </Card>
 
-          <Card className="p-4">
-            <div className="text-sm text-gray-600 mb-1">✅ 已完成</div>
-            <div className="text-2xl font-bold text-green-600">{stats.completed_trips} 趟</div>
-          </Card>
+            <Card
+              variant="glass"
+              className="animate-slide-up"
+              style={{ animationDelay: '0.2s' }}
+            >
+              <Card.Body className="text-center py-6">
+                <div className="text-sm text-crystal-blue mb-2">✅ 已完成</div>
+                <div className="text-3xl font-bold text-neon-pink">{stats.completed_trips}</div>
+              </Card.Body>
+            </Card>
 
-          <Card className="p-4">
-            <div className="text-sm text-gray-600 mb-1">🎿 滑雪夥伴</div>
-            <div className="text-2xl font-bold text-purple-600">{stats.total_buddies} 位</div>
-          </Card>
-        </div>
-      )}
+            <Card
+              variant="glass"
+              className="animate-slide-up"
+              style={{ animationDelay: '0.25s' }}
+            >
+              <Card.Body className="text-center py-6">
+                <div className="text-sm text-crystal-blue mb-2">🎿 滑雪夥伴</div>
+                <div className="text-3xl font-bold text-neon-purple">{stats.total_buddies}</div>
+              </Card.Body>
+            </Card>
+          </div>
+        )}
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8">
+        {/* Tabs */}
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scroll-snap-x">
           {[
-            { id: 'resorts', label: '雪場行程', icon: '🏔️' },
-            { id: 'calendar', label: '日曆視圖', icon: '📅' },
-            { id: 'stats', label: '統計', icon: '📊' },
+            { id: 'resorts', label: '🏔️ 雪場行程', icon: '🏔️' },
+            { id: 'calendar', label: '📅 日曆視圖', icon: '📅' },
+            { id: 'stats', label: '📊 統計', icon: '📊' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`${
+              className={`whitespace-nowrap px-4 py-2 rounded-lg font-medium transition-all ${
                 activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                  ? 'bg-gradient-to-r from-ice-primary to-ice-accent text-frost-white'
+                  : 'bg-ice-primary/10 text-crystal-blue hover:bg-ice-primary/20'
+              }`}
             >
-              {tab.icon} {tab.label}
+              {tab.label}
             </button>
           ))}
-        </nav>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'resorts' && (
+          <ResortGroupedTripsView
+            trips={trips}
+            resorts={resorts}
+            onTripClick={(tripId) => navigate(`/trips/${tripId}`)}
+          />
+        )}
+
+        {activeTab === 'calendar' && (
+          <CalendarView
+            trips={calendarTrips}
+            resorts={resorts}
+            currentMonth={currentMonth}
+            onMonthChange={changeMonth}
+            onTripClick={(tripId) => navigate(`/trips/${tripId}`)}
+          />
+        )}
+
+        {activeTab === 'stats' && stats && (
+          <StatsView stats={stats} />
+        )}
       </div>
-
-      {/* Tab Content */}
-      {activeTab === 'resorts' && (
-        <ResortGroupedTripsView
-          trips={trips}
-          resorts={resorts}
-          onTripClick={(tripId) => navigate(`/trips/${tripId}`)}
-        />
-      )}
-
-      {activeTab === 'calendar' && (
-        <CalendarView
-          trips={calendarTrips}
-          resorts={resorts}
-          currentMonth={currentMonth}
-          onMonthChange={changeMonth}
-          onTripClick={(tripId) => navigate(`/trips/${tripId}`)}
-        />
-      )}
-
-      {activeTab === 'stats' && stats && (
-        <StatsView stats={stats} />
-      )}
 
       {/* Trip Create Modal */}
       {showCreateModal && (
@@ -280,81 +311,89 @@ function CalendarView({
   };
 
   return (
-    <Card className="p-6">
-      {/* Month Navigation */}
-      <div className="flex justify-between items-center mb-6">
-        <button
-          onClick={() => onMonthChange(-1)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
+    <Card variant="glass" className="animate-slide-up">
+      <Card.Body className="space-y-6">
+        {/* Month Navigation */}
+        <div className="flex justify-between items-center">
+          <button
+            onClick={() => onMonthChange(-1)}
+            className="p-2 hover:bg-ice-primary/20 rounded-lg transition-colors text-crystal-blue"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
 
-        <h2 className="text-2xl font-bold text-gray-900">
-          {year} 年 {month + 1} 月
-        </h2>
+          <h2 className="text-2xl font-bold text-gradient-glacier">
+            {year} 年 {month + 1} 月
+          </h2>
 
-        <button
-          onClick={() => onMonthChange(1)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
+          <button
+            onClick={() => onMonthChange(1)}
+            className="p-2 hover:bg-ice-primary/20 rounded-lg transition-colors text-crystal-blue"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
 
-      {/* Weekday Headers */}
-      <div className="grid grid-cols-7 gap-2 mb-2">
-        {['日', '一', '二', '三', '四', '五', '六'].map((day) => (
-          <div key={day} className="text-center text-sm font-medium text-gray-600 py-2">
-            {day}
-          </div>
-        ))}
-      </div>
-
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-2">
-        {calendarDays.map((day, index) => {
-          if (day === null) {
-            return <div key={`empty-${index}`} className="aspect-square" />;
-          }
-
-          const dayTrips = getTripsForDay(day);
-          const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
-
-          return (
-            <div
-              key={day}
-              className={`aspect-square border rounded-lg p-2 ${
-                isToday ? 'bg-blue-50 border-blue-300' : 'bg-white border-gray-200'
-              } hover:border-blue-400 transition-colors`}
-            >
-              <div className="text-sm font-medium mb-1">{day}</div>
-              <div className="space-y-1">
-                {dayTrips.slice(0, 2).map((trip) => {
-                  const displayName = trip.title || getResortName(trip.resort_id);
-                  return (
-                    <div
-                      key={trip.trip_id}
-                      onClick={() => onTripClick(trip.trip_id)}
-                      className="text-xs bg-blue-100 text-blue-800 px-1 py-0.5 rounded cursor-pointer hover:bg-blue-200 truncate"
-                      title={displayName}
-                    >
-                      {displayName}
-                    </div>
-                  );
-                })}
-                {dayTrips.length > 2 && (
-                  <div className="text-xs text-gray-500">+{dayTrips.length - 2}</div>
-                )}
-              </div>
+        {/* Weekday Headers */}
+        <div className="grid grid-cols-7 gap-2">
+          {['日', '一', '二', '三', '四', '五', '六'].map((day) => (
+            <div key={day} className="text-center text-sm font-medium text-crystal-blue py-2">
+              {day}
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-2">
+          {calendarDays.map((day, index) => {
+            if (day === null) {
+              return <div key={`empty-${index}`} className="aspect-square" />;
+            }
+
+            const dayTrips = getTripsForDay(day);
+            const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
+
+            return (
+              <div
+                key={day}
+                className={`aspect-square border rounded-lg p-2 transition-all ${
+                  isToday
+                    ? 'bg-ice-primary/20 border-ice-primary/50'
+                    : 'bg-ice-primary/5 border-ice-primary/20 hover:border-ice-primary/40'
+                }`}
+              >
+                <div className={`text-sm font-medium mb-1 ${
+                  isToday ? 'text-ice-primary' : 'text-crystal-blue'
+                }`}>
+                  {day}
+                </div>
+                <div className="space-y-1">
+                  {dayTrips.slice(0, 2).map((trip) => {
+                    const displayName = trip.title || getResortName(trip.resort_id);
+                    return (
+                      <div
+                        key={trip.trip_id}
+                        onClick={() => onTripClick(trip.trip_id)}
+                        className="text-xs bg-ice-primary/30 text-ice-accent px-1 py-0.5 rounded cursor-pointer hover:bg-ice-primary/50 truncate transition-colors"
+                        title={displayName}
+                      >
+                        {displayName}
+                      </div>
+                    );
+                  })}
+                  {dayTrips.length > 2 && (
+                    <div className="text-xs text-crystal-blue/70">+{dayTrips.length - 2}</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card.Body>
     </Card>
   );
 }
@@ -371,8 +410,12 @@ function ResortGroupedTripsView({
 }) {
   if (trips.length === 0) {
     return (
-      <Card className="p-12 text-center">
-        <p className="text-gray-600">還沒有任何行程</p>
+      <Card variant="glass" className="animate-slide-up">
+        <Card.Body className="text-center py-12">
+          <div className="text-6xl mb-4">🏔️</div>
+          <h3 className="text-2xl font-bold text-frost-white mb-2">還沒有任何行程</h3>
+          <p className="text-crystal-blue">建立您的第一個行程，開始規劃雪季冒險！</p>
+        </Card.Body>
       </Card>
     );
   }
@@ -406,14 +449,20 @@ function ResortGroupedTripsView({
     return acc;
   }, {} as Record<string, Trip[]>);
 
-  // 獲取狀態樣式
-  const getStatusBadge = (status: string) => {
-    const badges: Record<string, { class: string; text: string }> = {
-      completed: { class: 'bg-green-100 text-green-800', text: '✅ 已完成' },
-      confirmed: { class: 'bg-blue-100 text-blue-800', text: '✈️ 已確認' },
-      planning: { class: 'bg-gray-100 text-gray-800', text: '📋 規劃中' },
+  // 獲取狀態徽章變體
+  const getStatusBadgeVariant = (status: string): 'ice' | 'accent' | 'pink' => {
+    if (status === 'completed') return 'ice';
+    if (status === 'confirmed') return 'accent';
+    return 'pink';
+  };
+
+  const getStatusText = (status: string) => {
+    const statusMap: Record<string, string> = {
+      completed: '✅ 已完成',
+      confirmed: '✈️ 已確認',
+      planning: '📋 規劃中',
     };
-    return badges[status] || badges.planning;
+    return statusMap[status] || '📋 規劃中';
   };
 
   const getTransportIcon = (status: string) => {
@@ -432,72 +481,93 @@ function ResortGroupedTripsView({
 
   return (
     <div className="space-y-6">
-      {Object.entries(groupedByResort).map(([resortId, resortTrips]) => {
+      {Object.entries(groupedByResort).map(([resortId, resortTrips], resortIdx) => {
         const resortName = getResortName(resortId);
         const tripCount = resortTrips.length;
 
         return (
-          <div key={resortId} className="border rounded-lg overflow-hidden">
+          <Card
+            key={resortId}
+            variant="glass"
+            className="animate-slide-up overflow-hidden"
+            style={{ animationDelay: `${(resortIdx + 1) * 0.05}s` }}
+          >
             {/* 雪場標題 */}
-            <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b">
-              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <div className="relative overflow-hidden px-6 py-4 border-b border-ice-primary/20">
+              <div className="absolute inset-0 bg-gradient-to-r from-ice-primary/10 to-ice-accent/5" />
+              <h3 className="relative text-xl font-bold text-gradient-glacier flex items-center gap-3">
                 🏔️ {resortName}
-                <span className="text-sm font-normal text-gray-600">({tripCount} 趟行程)</span>
+                <Badge variant="ice" size="sm">
+                  {tripCount} 趟
+                </Badge>
               </h3>
             </div>
 
             {/* 行程列表 */}
-            <div className="divide-y">
-              {resortTrips.map((trip) => {
-                const statusBadge = getStatusBadge(trip.trip_status);
-
-                return (
+            <Card.Body className="p-0">
+              <div className="divide-y divide-ice-primary/10">
+                {resortTrips.map((trip, tripIdx) => (
                   <div
                     key={trip.trip_id}
                     onClick={() => onTripClick(trip.trip_id)}
-                    className="p-6 hover:bg-gray-50 cursor-pointer transition-colors"
+                    className="p-6 hover:bg-ice-primary/5 cursor-pointer transition-colors border-0 animate-slide-up"
+                    style={{ animationDelay: `${(resortIdx * 10 + tripIdx + 2) * 0.02}s` }}
                   >
-                    <div className="flex justify-between items-start mb-3">
+                    <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusBadge.class}`}>
-                            {statusBadge.text}
-                          </span>
+                        <div className="flex items-center gap-3 mb-3 flex-wrap">
+                          <Badge variant={getStatusBadgeVariant(trip.trip_status)}>
+                            {getStatusText(trip.trip_status)}
+                          </Badge>
                           {trip.visibility === 'public' && (
-                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <Badge variant="accent">
                               📢 已發布
-                            </span>
+                            </Badge>
                           )}
                           {trip.title && (
-                            <span className="text-sm text-gray-600">{trip.title}</span>
+                            <span className="text-sm text-crystal-blue">{trip.title}</span>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      <div className="flex items-center text-gray-700">
-                        📅 {new Date(trip.start_date).toLocaleDateString('zh-TW')} - {new Date(trip.end_date).toLocaleDateString('zh-TW')}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-crystal-blue">
+                      <div className="flex items-center gap-2">
+                        <span>📅</span>
+                        <span>
+                          {new Date(trip.start_date).toLocaleDateString('zh-TW')} - {new Date(trip.end_date).toLocaleDateString('zh-TW')}
+                        </span>
                       </div>
                       <div className="flex items-center gap-4">
                         <span>{getTransportIcon(trip.flight_status)} 機票</span>
                         <span>{getAccommodationIcon(trip.accommodation_status)} 住宿</span>
                       </div>
-                      <div className="flex items-center text-gray-700">
-                        👥 {trip.current_buddies}/{trip.max_buddies} 人
+                      <div className="flex items-center gap-2">
+                        <span>👥</span>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between text-xs">
+                            <span>{trip.current_buddies}/{trip.max_buddies} 人</span>
+                          </div>
+                          <div className="w-full bg-ice-primary/10 rounded-full h-1.5 mt-1">
+                            <div
+                              className="bg-gradient-to-r from-ice-primary to-ice-accent h-1.5 rounded-full"
+                              style={{ width: `${Math.round((trip.current_buddies / trip.max_buddies) * 100)}%` }}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
 
                     {trip.notes && (
-                      <div className="mt-3 text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                      <div className="mt-3 text-sm text-crystal-blue bg-ice-primary/10 p-3 rounded border border-ice-primary/20">
                         📝 {trip.notes}
                       </div>
                     )}
                   </div>
-                );
-              })}
-            </div>
-          </div>
+                ))}
+              </div>
+            </Card.Body>
+          </Card>
         );
       })}
     </div>
@@ -511,40 +581,53 @@ function StatsView({ stats }: { stats: SeasonStats }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {/* 行程完成率 */}
-      <Card className="p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">行程完成率</h3>
-        <div className="text-center">
-          <div className="text-5xl font-bold text-green-600 mb-2">{completionRate}%</div>
-          <p className="text-gray-600">{stats.completed_trips} / {stats.trip_count} 趟已完成</p>
-        </div>
+      <Card
+        variant="glass"
+        className="animate-slide-up"
+        style={{ animationDelay: '0.1s' }}
+      >
+        <Card.Body className="text-center py-8">
+          <h3 className="text-lg font-bold text-frost-white mb-6">行程完成率</h3>
+          <div className="relative inline-flex items-center justify-center w-24 h-24 mb-4">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-ice-primary/20 to-ice-accent/20 border-2 border-ice-primary/40" />
+            <div className="text-4xl font-bold text-gradient-glacier">{completionRate}%</div>
+          </div>
+          <p className="text-crystal-blue text-sm">{stats.completed_trips} / {stats.trip_count} 趟已完成</p>
+        </Card.Body>
       </Card>
 
       {/* 雪場統計 */}
-      <Card className="p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">雪場統計</h3>
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">總雪場數</span>
-            <span className="text-2xl font-bold text-gray-900">{stats.unique_resorts}</span>
+      <Card
+        variant="glass"
+        className="animate-slide-up"
+        style={{ animationDelay: '0.15s' }}
+      >
+        <Card.Body className="space-y-4 py-8">
+          <h3 className="text-lg font-bold text-frost-white text-center">🏔️ 雪場統計</h3>
+          <div className="flex items-center justify-between">
+            <span className="text-crystal-blue">本季探索雪場</span>
+            <span className="text-3xl font-bold text-ice-primary">{stats.unique_resorts}</span>
           </div>
-          <div className="text-sm text-gray-500 text-center pt-2">
-            本季探索了 {stats.unique_resorts} 個不同雪場
+          <div className="h-2 bg-ice-primary/10 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-ice-primary to-ice-accent" style={{ width: '100%' }} />
           </div>
-        </div>
+        </Card.Body>
       </Card>
 
       {/* 社交統計 */}
-      <Card className="p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">社交統計</h3>
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">滑雪夥伴</span>
-            <span className="text-2xl font-bold text-purple-600">{stats.total_buddies}</span>
+      <Card
+        variant="glass"
+        className="animate-slide-up"
+        style={{ animationDelay: '0.2s' }}
+      >
+        <Card.Body className="space-y-4 py-8">
+          <h3 className="text-lg font-bold text-frost-white text-center">👥 社交統計</h3>
+          <div className="flex items-center justify-between">
+            <span className="text-crystal-blue">滑雪夥伴</span>
+            <span className="text-3xl font-bold text-neon-pink">{stats.total_buddies}</span>
           </div>
-          <div className="text-sm text-gray-500 text-center pt-2">
-            與 {stats.total_buddies} 位夥伴一起滑雪
-          </div>
-        </div>
+          <p className="text-xs text-crystal-blue text-center">與 {stats.total_buddies} 位夥伴一起滑雪</p>
+        </Card.Body>
       </Card>
     </div>
   );

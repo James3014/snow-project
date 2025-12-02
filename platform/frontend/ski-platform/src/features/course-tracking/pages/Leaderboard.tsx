@@ -1,52 +1,98 @@
+/**
+ * Leaderboard Page - Glacial Futurism Design
+ * 全球排行榜頁面
+ */
 import { useLeaderboard } from '../hooks/useCourseTracking';
 import { useAppSelector } from '@/store/hooks';
 import { useNavigate } from 'react-router-dom';
 import Card from '@/shared/components/Card';
-import EmptyState from '@/shared/components/EmptyState';
+import Badge from '@/shared/components/Badge';
 
 export default function Leaderboard() {
   const navigate = useNavigate();
   const { leaderboard, loading } = useLeaderboard();
   const currentUserId = useAppSelector(state => state.auth.user?.user_id);
 
-  if (loading) return <div className="text-center py-12">載入中...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center pb-20">
+        <div className="text-center">
+          <div className="spinner-glacier mb-4" />
+          <p className="text-crystal-blue">載入排行榜中...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">全球排行榜</h1>
-
-      {leaderboard.length === 0 ? (
-        <EmptyState
-          icon="🏆"
-          title="排行榜尚無數據"
-          description="開始記錄雪道、獲得成就來累積積分，成為第一個上榜的滑雪高手！"
-          action={{ label: '前往記錄', onClick: () => navigate('/history') }}
-        />
-      ) : (
-        <div className="space-y-2">
-          {leaderboard.map(entry => (
-            <Card key={entry.user_id} className={entry.user_id === currentUserId ? 'ring-2 ring-primary-500' : ''}>
-              <Card.Body>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span className={`text-2xl font-bold ${entry.rank <= 3 ? 'text-yellow-500' : 'text-gray-400'}`}>
-                      #{entry.rank}
-                    </span>
-                    <div>
-                      <div className="font-semibold">{entry.user_display_name}</div>
-                      <div className="text-xs text-gray-500">{entry.resorts_count} 雪場 · {entry.courses_count} 雪道</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-primary-600">{entry.total_points}</div>
-                    <div className="text-xs text-gray-500">積分</div>
-                  </div>
-                </div>
-              </Card.Body>
-            </Card>
-          ))}
+    <div className="min-h-screen pb-20">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden px-4 pt-8 pb-12 mb-6">
+        <div className="absolute inset-0 bg-gradient-to-b from-neon-purple/10 to-transparent opacity-50" />
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-4 animate-slide-up">
+            🏆 全球排行榜
+          </h1>
+          <p className="text-crystal-blue text-sm md:text-base animate-slide-up stagger-1">
+            與全球滑雪愛好者競爭，成為排行榜頂級高手
+          </p>
         </div>
-      )}
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4">
+        {leaderboard.length === 0 ? (
+          <Card variant="glass" className="animate-slide-up stagger-2">
+            <Card.Body className="text-center py-12">
+              <div className="text-6xl mb-4">🏔️</div>
+              <h3 className="text-2xl font-bold text-frost-white mb-2">排行榜尚無數據</h3>
+              <p className="text-crystal-blue">開始記錄雪道、獲得成就來累積積分，成為第一個上榜的滑雪高手！</p>
+            </Card.Body>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {leaderboard.map((entry, idx) => {
+              const isCurrentUser = entry.user_id === currentUserId;
+              const medalEmoji = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : '';
+
+              return (
+                <Card
+                  key={entry.user_id}
+                  variant="glass"
+                  hover
+                  className={`animate-slide-up ${isCurrentUser ? 'ring-2 ring-ice-primary/50' : ''}`}
+                  style={{ animationDelay: `${(idx + 2) * 0.05}s` }}
+                >
+                  <Card.Body className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-ice-primary/20 to-neon-purple/20 border border-ice-primary/30">
+                        <span className="text-lg font-bold">
+                          {medalEmoji || `#${entry.rank}`}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className={`font-semibold ${isCurrentUser ? 'text-ice-primary' : 'text-frost-white'}`}>
+                          {entry.user_display_name}
+                          {isCurrentUser && <span className="ml-2 text-xs text-crystal-blue">(你)</span>}
+                        </h3>
+                        <p className="text-xs text-crystal-blue mt-1">
+                          {entry.resorts_count} 雪場 · {entry.courses_count} 雪道
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-gradient-glacier">
+                        {entry.total_points}
+                      </div>
+                      <div className="text-xs text-ice-accent">積分</div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

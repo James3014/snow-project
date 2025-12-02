@@ -209,13 +209,15 @@ export default function ResortDetail() {
   // 雪場載入中
   if (resortLoading) {
     return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div className="space-y-2">
-            <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+      <div className="min-h-screen pb-20">
+        <div className="px-4 pt-8 pb-12">
+          <div className="flex justify-between items-center">
+            <div className="space-y-2">
+              <div className="h-8 bg-glacier/20 rounded-lg w-48 animate-pulse"></div>
+              <div className="h-4 bg-glacier/20 rounded-lg w-32 animate-pulse"></div>
+            </div>
+            <Button variant="glass" onClick={() => navigate('/resorts')}>← 返回</Button>
           </div>
-          <Button onClick={() => navigate('/resorts')}>返回</Button>
         </div>
         <ListSkeleton count={8} />
       </div>
@@ -225,23 +227,31 @@ export default function ResortDetail() {
   // 雪場載入失敗
   if (resortError || !resort) {
     return (
-      <ErrorEmptyState
-        message={resortError || "未找到雪場資訊"}
-        onRetry={() => window.location.reload()}
-      />
+      <div className="min-h-screen pb-20 flex items-center justify-center px-4">
+        <div className="glass-card p-12 text-center max-w-md w-full">
+          <div className="text-6xl mb-6">⚠️</div>
+          <h2 className="text-2xl font-bold text-gradient-glacier mb-4">載入失敗</h2>
+          <p className="text-crystal-blue mb-8">{resortError || "未找到雪場資訊"}</p>
+          <Button variant="neon" onClick={() => window.location.reload()} className="w-full">
+            重新載入
+          </Button>
+        </div>
+      </div>
     );
   }
 
   // Loading State (for tracking data)
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div className="space-y-2">
-            <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+      <div className="min-h-screen pb-20">
+        <div className="px-4 pt-8 pb-12">
+          <div className="flex justify-between items-center">
+            <div className="space-y-2">
+              <div className="h-8 bg-glacier/20 rounded-lg w-48 animate-pulse"></div>
+              <div className="h-4 bg-glacier/20 rounded-lg w-32 animate-pulse"></div>
+            </div>
+            <Button variant="glass" onClick={() => navigate('/resorts')}>← 返回</Button>
           </div>
-          <Button onClick={() => navigate('/resorts')}>返回</Button>
         </div>
         <ListSkeleton count={8} />
       </div>
@@ -251,59 +261,90 @@ export default function ResortDetail() {
   // 未登入用戶：顯示基本資訊，提示登入以追蹤進度
   if (!userId) {
     return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
-            <p className="text-gray-600">{resort.names.en}</p>
-          </div>
-          <Button onClick={() => navigate('/resorts')}>返回</Button>
-        </div>
-
-        {/* 雪場基本資訊 */}
-        <Card>
-          <Card.Body>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold text-lg mb-2">雪場資訊</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-500">地區：</span>
-                    <span className="font-medium">{getRegionName(resort.region)}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">總雪道數：</span>
-                    <span className="font-medium">{resort.snow_stats.courses_total} 條</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">初級雪道：</span>
-                    <span className="font-medium text-green-600">{Math.round(resort.snow_stats.courses_total * resort.snow_stats.beginner_ratio)} 條</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">中級雪道：</span>
-                    <span className="font-medium text-blue-600">{Math.round(resort.snow_stats.courses_total * resort.snow_stats.intermediate_ratio)} 條</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">高級雪道：</span>
-                    <span className="font-medium text-red-600">{Math.round(resort.snow_stats.courses_total * resort.snow_stats.advanced_ratio)} 條</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">纜車數：</span>
-                    <span className="font-medium">{resort.snow_stats.lifts} 條</span>
-                  </div>
+      <div className="min-h-screen pb-20">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden px-4 pt-8 pb-12 mb-6">
+          <div className="absolute inset-0 bg-gradient-to-b from-ice-primary/10 to-transparent opacity-50" />
+          <div className="relative z-10 max-w-6xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0">
+                  <img
+                    src={getResortLogoUrl(resort.resort_id)}
+                    alt={`${resort.names.zh} Logo`}
+                    loading="lazy"
+                    className="w-20 h-20 object-contain rounded-lg"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const parent = e.currentTarget.parentElement;
+                      if (parent && !parent.querySelector('.fallback-emoji')) {
+                        const emoji = document.createElement('div');
+                        emoji.className = 'fallback-emoji text-5xl';
+                        emoji.textContent = '🏔️';
+                        parent.appendChild(emoji);
+                      }
+                    }}
+                  />
+                </div>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-2 animate-slide-up">
+                    {resort.names.zh}
+                  </h1>
+                  <p className="text-crystal-blue text-sm md:text-base animate-slide-up stagger-1">
+                    {resort.names.en}
+                  </p>
+                  <p className="text-ice-accent text-sm mt-2">📍 {getRegionName(resort.region)}</p>
                 </div>
               </div>
+              <Button variant="glass" onClick={() => navigate('/resorts')}>← 返回</Button>
             </div>
-          </Card.Body>
-        </Card>
+          </div>
+        </div>
 
-        {/* 登入提示 */}
-        <EmptyState
-          icon="🔐"
-          title="登入以追蹤進度"
-          description="登入後即可記錄完成的雪道、查看個人進度、獲得成就！"
-          action={{ label: '前往登入', onClick: () => navigate('/login') }}
-        />
+        <div className="max-w-6xl mx-auto px-4 space-y-6">
+          {/* 雪場基本資訊 */}
+          <Card variant="glass" className="animate-slide-up stagger-2">
+            <Card.Body className="space-y-4">
+              <h3 className="font-semibold text-lg text-gradient-glacier">雪場資訊</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="text-crystal-blue">地區：</span>
+                  <div className="font-medium text-frost-white">{getRegionName(resort.region)}</div>
+                </div>
+                <div>
+                  <span className="text-crystal-blue">總雪道數：</span>
+                  <div className="font-medium text-ice-accent">{resort.snow_stats.courses_total} 條</div>
+                </div>
+                <div>
+                  <span className="text-crystal-blue">初級雪道：</span>
+                  <div className="font-medium text-green-400">{Math.round(resort.snow_stats.courses_total * resort.snow_stats.beginner_ratio)} 條</div>
+                </div>
+                <div>
+                  <span className="text-crystal-blue">中級雪道：</span>
+                  <div className="font-medium text-ice-primary">{Math.round(resort.snow_stats.courses_total * resort.snow_stats.intermediate_ratio)} 條</div>
+                </div>
+                <div>
+                  <span className="text-crystal-blue">高級雪道：</span>
+                  <div className="font-medium text-neon-pink">{Math.round(resort.snow_stats.courses_total * resort.snow_stats.advanced_ratio)} 條</div>
+                </div>
+                <div>
+                  <span className="text-crystal-blue">纜車數：</span>
+                  <div className="font-medium text-frost-white">{resort.snow_stats.lifts} 條</div>
+                </div>
+              </div>
+            </Card.Body>
+          </Card>
+
+          {/* 登入提示 */}
+          <div className="glass-card p-12 text-center max-w-md mx-auto animate-slide-up stagger-3">
+            <div className="text-6xl mb-6">🔐</div>
+            <h2 className="text-2xl font-bold text-gradient-glacier mb-4">登入以追蹤進度</h2>
+            <p className="text-crystal-blue mb-8">登入後即可記錄完成的雪道、查看個人進度、獲得成就！</p>
+            <Button variant="neon" onClick={() => navigate('/login')} className="w-full">
+              前往登入
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -311,20 +352,33 @@ export default function ResortDetail() {
   // 已登入但載入失敗
   if (!progress) {
     return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
-            <p className="text-gray-600">{resort.names.en}</p>
+      <div className="min-h-screen pb-20">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden px-4 pt-8 pb-12 mb-6">
+          <div className="absolute inset-0 bg-gradient-to-b from-ice-primary/10 to-transparent opacity-50" />
+          <div className="relative z-10 max-w-6xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-2">
+                  {resort.names.zh}
+                </h1>
+                <p className="text-crystal-blue">{resort.names.en}</p>
+              </div>
+              <Button variant="glass" onClick={() => navigate('/resorts')}>← 返回</Button>
+            </div>
           </div>
-          <Button onClick={() => navigate('/resorts')}>返回</Button>
         </div>
-        <EmptyState
-          icon="⚠️"
-          title="載入失敗"
-          description="無法載入雪場進度資料"
-          action={{ label: '重試', onClick: loadData }}
-        />
+
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="glass-card p-12 text-center max-w-md mx-auto">
+            <div className="text-6xl mb-6">⚠️</div>
+            <h2 className="text-2xl font-bold text-gradient-glacier mb-4">載入失敗</h2>
+            <p className="text-crystal-blue mb-8">無法載入雪場進度資料</p>
+            <Button variant="neon" onClick={loadData} className="w-full">
+              重試
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -350,144 +404,159 @@ export default function ResortDetail() {
   } as const;
 
   return (
-    <div className="space-y-6">
-      {/* 頂部資訊 */}
-      <div className="flex justify-between items-start">
-        <div className="flex items-center gap-4">
-          {/* Logo 圖片 */}
-          <div className="flex-shrink-0">
-            <img
-              src={getResortLogoUrl(resort.resort_id)}
-              alt={`${resort.names.zh} Logo`}
-              loading="lazy"
-              className="w-20 h-20 object-contain rounded-lg"
-              onError={(e) => {
-                // 如果圖片載入失敗，顯示預設 emoji
-                e.currentTarget.style.display = 'none';
-                const parent = e.currentTarget.parentElement;
-                if (parent && !parent.querySelector('.fallback-emoji')) {
-                  const emoji = document.createElement('div');
-                  emoji.className = 'fallback-emoji text-5xl';
-                  emoji.textContent = '🏔️';
-                  parent.appendChild(emoji);
-                }
-              }}
-            />
-          </div>
-          {/* 雪場資訊 */}
-          <div>
-            <h1 className="text-2xl font-bold">{resort.names.zh}</h1>
-            <p className="text-gray-600">{resort.names.en}</p>
-            <p className="text-sm text-gray-500 mt-1">📍 {getRegionName(resort.region)}</p>
+    <div className="min-h-screen pb-20">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden px-4 pt-8 pb-12 mb-6">
+        <div className="absolute inset-0 bg-gradient-to-b from-ice-primary/10 to-transparent opacity-50" />
+        <div className="relative z-10 max-w-6xl mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0">
+                <img
+                  src={getResortLogoUrl(resort.resort_id)}
+                  alt={`${resort.names.zh} Logo`}
+                  loading="lazy"
+                  className="w-20 h-20 object-contain rounded-lg"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const parent = e.currentTarget.parentElement;
+                    if (parent && !parent.querySelector('.fallback-emoji')) {
+                      const emoji = document.createElement('div');
+                      emoji.className = 'fallback-emoji text-5xl';
+                      emoji.textContent = '🏔️';
+                      parent.appendChild(emoji);
+                    }
+                  }}
+                />
+              </div>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-bold text-gradient-glacier mb-2 animate-slide-up">
+                  {resort.names.zh}
+                </h1>
+                <p className="text-crystal-blue text-sm md:text-base animate-slide-up stagger-1">
+                  {resort.names.en}
+                </p>
+                <p className="text-ice-accent text-sm mt-2">📍 {getRegionName(resort.region)}</p>
+              </div>
+            </div>
+            <Button variant="glass" onClick={() => navigate('/resorts')}>← 返回</Button>
           </div>
         </div>
-        <Button onClick={() => navigate('/resorts')}>返回</Button>
       </div>
 
-      {/* 雪場資訊卡片 */}
-      {resort.description && (
-        <Card>
-          <Card.Body>
-            <p className="text-gray-700 mb-3">{resort.description.tagline}</p>
-            <div className="flex flex-wrap gap-2">
-              {resort.description.highlights.map((highlight, idx) => (
-                <Badge key={idx} variant="info">
-                  {highlight}
-                </Badge>
-              ))}
+      <div className="max-w-6xl mx-auto px-4 space-y-6">
+        {/* 雪場資訊卡片 */}
+        {resort.description && (
+          <Card variant="glass" className="animate-slide-up stagger-2">
+            <Card.Body className="space-y-3">
+              <p className="text-crystal-blue text-lg font-medium">{resort.description.tagline}</p>
+              <div className="flex flex-wrap gap-2">
+                {resort.description.highlights.map((highlight, idx) => (
+                  <Badge key={idx} variant="ice">
+                    ✨ {highlight}
+                  </Badge>
+                ))}
+              </div>
+            </Card.Body>
+          </Card>
+        )}
+
+        {/* 進度卡片 */}
+        <Card variant="glass" className="animate-slide-up stagger-3">
+          <Card.Body className="space-y-4">
+            <h3 className="font-semibold text-lg text-gradient-glacier">完成進度</h3>
+            <ProgressBar
+              percentage={progress.completion_percentage}
+              label={`${progress.completed_courses.length} / ${resort.snow_stats.courses_total}`}
+            />
+            <div className="grid grid-cols-3 gap-4 text-center pt-2">
+              <div className="glass-card p-4 rounded-lg">
+                <div className="text-2xl font-bold text-green-400">
+                  {groupedCourses.beginner?.length || 0}
+                </div>
+                <div className="text-xs text-crystal-blue mt-1">初級雪道</div>
+              </div>
+              <div className="glass-card p-4 rounded-lg">
+                <div className="text-2xl font-bold text-ice-primary">
+                  {groupedCourses.intermediate?.length || 0}
+                </div>
+                <div className="text-xs text-crystal-blue mt-1">中級雪道</div>
+              </div>
+              <div className="glass-card p-4 rounded-lg">
+                <div className="text-2xl font-bold text-neon-pink">
+                  {groupedCourses.advanced?.length || 0}
+                </div>
+                <div className="text-xs text-crystal-blue mt-1">高級雪道</div>
+              </div>
             </div>
           </Card.Body>
         </Card>
-      )}
 
-      {/* 進度卡片 */}
-      <Card>
-        <Card.Body>
-          <div className="space-y-3">
-            <ProgressBar
-              percentage={progress.completion_percentage}
-              label={`完成進度: ${progress.completed_courses.length} / ${resort.snow_stats.courses_total}`}
-            />
-            <div className="grid grid-cols-3 gap-4 text-center text-sm pt-2">
-              <div>
-                <div className="text-2xl font-bold text-green-600">
-                  {groupedCourses.beginner?.length || 0}
-                </div>
-                <div className="text-gray-600">初級雪道</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-blue-600">
-                  {groupedCourses.intermediate?.length || 0}
-                </div>
-                <div className="text-gray-600">中級雪道</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-red-600">
-                  {groupedCourses.advanced?.length || 0}
-                </div>
-                <div className="text-gray-600">高級雪道</div>
-              </div>
-            </div>
-          </div>
-        </Card.Body>
-      </Card>
+        {/* 按难度分组顯示课程 */}
+        {levelOrder.map((level, sectionIndex) => {
+          const courses = groupedCourses[level];
+          if (!courses || courses.length === 0) return null;
 
-      {/* 按难度分组顯示课程 */}
-      {levelOrder.map((level) => {
-        const courses = groupedCourses[level];
-        if (!courses || courses.length === 0) return null;
+          const difficultyColors = {
+            beginner: { badge: 'text-green-400', text: '初級雪道' },
+            intermediate: { badge: 'text-ice-primary', text: '中級雪道' },
+            advanced: { badge: 'text-neon-pink', text: '高級雪道' },
+          };
 
-        return (
-          <div key={level}>
-            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              <Badge variant={levelColors[level]}>
-                {getDifficultyEmoji(level)} {getDifficultyLabel(level)}
-              </Badge>
-              <span>{courses.length} 条雪道</span>
-            </h3>
-            <div className="grid gap-2">
-              {courses.map((course) => {
-                const isCompleted = progress.completed_courses.includes(course.name);
-                return (
-                  <Card
-                    key={course.name}
-                    hover
-                    onClick={() => handleToggleCourse(course.name, isCompleted)}
-                    className={isCompleted ? 'opacity-60' : ''}
-                  >
-                    <Card.Body className="flex items-center justify-between py-3">
-                      <div className="flex-1">
-                        <div className={`font-medium ${isCompleted ? 'line-through text-gray-500' : ''}`}>
-                          {course.name}
-                        </div>
-                        <div className="flex gap-2 mt-1">
-                          <span className="text-xs text-gray-500">
-                            平均坡度: {course.avg_slope}°
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            最大坡度: {course.max_slope}°
-                          </span>
-                          {course.tags.length > 0 && (
-                            <span className="text-xs text-primary-600">
-                              {course.tags[0]}
+          return (
+            <div key={level} className={`animate-slide-up`} style={{ animationDelay: `${(sectionIndex + 4) * 0.1}s` }}>
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Badge variant={level === 'beginner' ? 'ice' : level === 'intermediate' ? 'accent' : 'pink'}>
+                  {getDifficultyEmoji(level)} {getDifficultyLabel(level)}
+                </Badge>
+                <span className="text-crystal-blue text-sm">{courses.length} 條雪道</span>
+              </h3>
+              <div className="grid gap-3">
+                {courses.map((course, index) => {
+                  const isCompleted = progress.completed_courses.includes(course.name);
+                  return (
+                    <Card
+                      key={course.name}
+                      variant="glass"
+                      hover
+                      onClick={() => handleToggleCourse(course.name, isCompleted)}
+                      className={`${isCompleted ? 'opacity-60' : ''} animate-slide-up`}
+                      style={{ animationDelay: `${(index + (sectionIndex * 10)) * 0.02}s` }}
+                    >
+                      <Card.Body className="flex items-center justify-between py-3">
+                        <div className="flex-1">
+                          <div className={`font-medium ${isCompleted ? 'line-through text-crystal-blue/50' : 'text-frost-white'}`}>
+                            {course.name}
+                          </div>
+                          <div className="flex gap-3 mt-1 flex-wrap">
+                            <span className="text-xs text-crystal-blue">
+                              📐 {course.avg_slope}° avg
                             </span>
+                            <span className="text-xs text-crystal-blue">
+                              🔺 {course.max_slope}° max
+                            </span>
+                            {course.tags.length > 0 && (
+                              <Badge variant="accent" size="sm">
+                                {course.tags[0]}
+                              </Badge>
+                            )}
+                          </div>
+                          {course.notes && (
+                            <div className="text-xs text-neon-pink mt-1">
+                              ⚠️ {course.notes}
+                            </div>
                           )}
                         </div>
-                        {course.notes && (
-                          <div className="text-xs text-orange-600 mt-1">
-                            ⚠️ {course.notes}
-                          </div>
-                        )}
-                      </div>
-                      {isCompleted && <span className="text-green-600 text-2xl">✓</span>}
-                    </Card.Body>
-                  </Card>
-                );
-              })}
+                        {isCompleted && <span className="text-green-400 text-2xl ml-4">✓</span>}
+                      </Card.Body>
+                    </Card>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
 
       {/* Enhanced Course Record Modal */}
       <EnhancedCourseRecordModal
