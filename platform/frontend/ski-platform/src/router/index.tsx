@@ -3,12 +3,21 @@
  * 路由配置
  */
 import { createBrowserRouter } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 import RootLayout from '@/shell/RootLayout';
 import AdminRoute from '@/shared/components/auth/AdminRoute';
 
-// Lazy load pages for code splitting
-import { lazy } from 'react';
+// Loading component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-ice-primary"></div>
+      <p className="mt-4 text-crystal-blue">載入中...</p>
+    </div>
+  </div>
+);
 
+// Lazy load pages for code splitting
 const ResortList = lazy(() => import('@/features/course-tracking/pages/ResortList'));
 const ResortDetail = lazy(() => import('@/features/course-tracking/pages/ResortDetail'));
 const CourseHistory = lazy(() => import('@/features/course-tracking/pages/CourseHistory'));
@@ -34,14 +43,21 @@ const SnowbuddyBoard = lazy(() => import('@/features/snowbuddy/pages/SnowbuddyBo
 const SmartMatchingPage = lazy(() => import('@/features/snowbuddy/pages/SmartMatchingPage'));
 const MatchRequestsPage = lazy(() => import('@/features/snowbuddy/pages/MatchRequestsPage'));
 
+// Wrapper for lazy components
+const withSuspense = (Component: React.LazyExoticComponent<() => JSX.Element>) => (
+  <Suspense fallback={<PageLoader />}>
+    <Component />
+  </Suspense>
+);
+
 export const router = createBrowserRouter([
   {
     path: '/login',
-    element: <LoginPage />,
+    element: withSuspense(LoginPage),
   },
   {
     path: '/register',
-    element: <RegisterPage />,
+    element: withSuspense(RegisterPage),
   },
   {
     path: '/',
@@ -49,95 +65,95 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ResortList />,
+        element: withSuspense(ResortList),
       },
       {
         path: 'resorts',
-        element: <ResortList />,
+        element: withSuspense(ResortList),
       },
       {
         path: 'resorts/:resortId',
-        element: <ResortDetail />,
+        element: withSuspense(ResortDetail),
       },
       {
         path: 'history',
-        element: <CourseHistory />,
+        element: withSuspense(CourseHistory),
       },
       {
         path: 'resorts/:resortId/recommendations',
-        element: <Recommendations />,
+        element: withSuspense(Recommendations),
       },
       {
         path: 'resorts/:resortId/rankings',
-        element: <Rankings />,
+        element: withSuspense(Rankings),
       },
       {
         path: 'achievements',
-        element: <Achievements />,
+        element: withSuspense(Achievements),
       },
       {
         path: 'leaderboard',
-        element: <Leaderboard />,
+        element: withSuspense(Leaderboard),
       },
       {
         path: 'share/achievement/:achievementId',
-        element: <ShareCard />,
+        element: withSuspense(ShareCard),
       },
       {
         path: 'feed',
-        element: <FeedPage />,
+        element: withSuspense(FeedPage),
       },
       {
         path: 'ski-map',
-        element: <SkiMapPage />,
+        element: withSuspense(SkiMapPage),
       },
       {
         path: 'admin',
-        element: <AdminRoute><AdminDashboard /></AdminRoute>,
+        element: <AdminRoute>{withSuspense(AdminDashboard)}</AdminRoute>,
       },
       {
         path: 'admin/users',
-        element: <AdminRoute><UserListPage /></AdminRoute>,
+        element: <AdminRoute>{withSuspense(UserListPage)}</AdminRoute>,
       },
       {
         path: 'admin/users/:userId',
-        element: <AdminRoute><UserDetailPage /></AdminRoute>,
+        element: <AdminRoute>{withSuspense(UserDetailPage)}</AdminRoute>,
       },
       {
         path: 'trips',
-        element: <SeasonManagement />,
+        element: withSuspense(SeasonManagement),
       },
       {
         path: 'seasons/:seasonId',
-        element: <SeasonDetail />,
+        element: withSuspense(SeasonDetail),
       },
       {
         path: 'trips/:tripId',
-        element: <TripDetail />,
+        element: withSuspense(TripDetail),
       },
       {
         path: 'trips/explore',
-        element: <TripExplore />,
+        element: withSuspense(TripExplore),
       },
       {
         path: 'trips/recommendations',
-        element: <TripRecommendations />,
+        element: withSuspense(TripRecommendations),
       },
       {
         path: 'gear',
-        element: <MyGear />,
+        element: withSuspense(MyGear),
       },
       {
         path: 'snowbuddy',
-        element: <SnowbuddyBoard />,
+        element: withSuspense(SnowbuddyBoard),
       },
       {
         path: 'snowbuddy/smart-matching',
-        element: <SmartMatchingPage />,
+        element: withSuspense(SmartMatchingPage),
       },
       {
         path: 'snowbuddy/requests',
-        element: <MatchRequestsPage />,
+        element: withSuspense(MatchRequestsPage),
       },
     ],
   },
