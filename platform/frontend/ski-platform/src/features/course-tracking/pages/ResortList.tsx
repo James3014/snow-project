@@ -94,7 +94,7 @@ export default function ResortList() {
   };
 
   const getRegionName = (region: string) => regionNameMap[region] || region;
-  const getResortLogoUrl = (resortId: string) => `/logos/${resortId}.png`;
+  const getResortLogoUrl = (resortId: string) => `/resort-logos/${resortId}_logo.jpeg`;
   const regions = Array.from(new Set(resorts.map((r) => r.region))).sort();
 
   if (loading) {
