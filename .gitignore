@@ -69,3 +69,7 @@ temp/
 test_*.db
 # 單板教學（獨立收費專案）
 specs/單板教學/
+
+# Test databases (except tests/data/)
+*.db
+!tests/data/*.db
