@@ -54,6 +54,19 @@ SnowTrace 是一個全面性的滑雪運動愛好者平台，採用微服務架�
     - 匿名化摘要：保護隱私的前提下展示匹配結果
     - 媒合生命週期管理：請求 → 通知 → 接受/拒絕 → 確認
     - 行為事件追蹤：所有媒合動作回寫至 user-core
+    
+  - **單板教學整合（進階媒合）**
+    - 基於學習行為的智能媒合：利用單板教學 App 同步到 user-core 的資料
+    - 5 種進階匹配算法：
+      1. 技能等級匹配：基於 experience_level（beginner/intermediate/advanced）
+      2. 學習進度匹配：基於已完成課程的 Jaccard 相似度
+      3. 練習評分匹配：基於練習平均評分的相似度
+      4. 學習興趣匹配：基於搜尋關鍵字和收藏課程的重疊度
+      5. 教練學生匹配：為需要幫助的學生推薦合適教練
+    - 學習行為追蹤：課程瀏覽、練習完成、搜尋、收藏等事件
+    - 教練推薦系統：識別學生困難領域，匹配專長教練
+    - 資料來源：user-core BehaviorEvent（source_project: snowboard-teaching）
+    - 詳見：`specs/snowbuddy-matching/SNOWBOARD_TEACHING_INTEGRATION.md`
 
 - **裝備管理**
   - 個人裝備庫：建立、編輯、刪除裝備資訊
