@@ -46,6 +46,7 @@ Thumbs.db
 
 # Logs
 logs/
+!docs/logs/
 *.log
 
 # Environment specific
