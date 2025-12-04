@@ -37,6 +37,16 @@ class Settings(BaseSettings):
     
     # API Key
     user_core_api_key: str = ""
+
+    # Workflow Endpoints
+    casi_workflow_url: str = ""
+    casi_workflow_api_key: str = ""
+    tripbuddy_workflow_url: str = ""
+    tripbuddy_workflow_api_key: str = ""
+    course_recommendation_workflow_url: str = ""
+    course_recommendation_workflow_api_key: str = ""
+    gear_reminder_workflow_url: str = ""
+    gear_reminder_workflow_api_key: str = ""
     
     class Config:
         env_file = ".env"
