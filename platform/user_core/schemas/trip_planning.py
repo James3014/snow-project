@@ -117,12 +117,6 @@ class CalendarEventSchema(BaseModel):
     description: Optional[str] = Field(None, description="Event description")
 
 
-class TripWithEvents(BaseModel):
-    """Schema for trip with calendar events."""
-    trip: Trip
-    events: List[CalendarEventSchema]
-
-
 class Trip(TripBase):
     """Schema for trip response."""
     trip_id: UUID4
@@ -136,6 +130,12 @@ class Trip(TripBase):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class TripWithEvents(BaseModel):
+    """Schema for trip with calendar events."""
+    trip: Trip
+    events: List[CalendarEventSchema]
 
 
 class TripWithDetails(Trip):
