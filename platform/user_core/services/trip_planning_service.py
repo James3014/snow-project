@@ -41,7 +41,6 @@ __all__ = [
     'TripPlanningError',
     'SeasonNotFoundError',
     'TripNotFoundError',
-    'BuddyRequestError',
     'UnauthorizedError',
     # Season operations
     'create_season',
@@ -62,10 +61,5 @@ __all__ = [
     'complete_trip',
     'generate_share_link',
     'get_trip_by_share_token',
-    # Buddy operations
-    # 'request_to_join_trip', - 現在由 Snowbuddy Service 提供
-    # 'respond_to_buddy_request', - 現在由 Snowbuddy Service 提供
-    'cancel_buddy_request',
-    'get_trip_buddies',
-    'calculate_match_score',
+    # Buddy operations 現在由獨立的 Snowbuddy Service 提供
 ]
