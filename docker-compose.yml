@@ -14,8 +14,7 @@ services:
 
   user-core:
     build:
-      context: .
-      dockerfile: platform/user_core/Dockerfile
+      context: ./platform/user_core
     ports:
       - "8001:8001"
     depends_on:
@@ -25,24 +24,17 @@ services:
 
   resort-api:
     build:
-      context: .
-      dockerfile: resort_api/Dockerfile
+      context: ./resort_api
     ports:
       - "8000:8000"
-    volumes:
-      - ./resort_api/app:/app/app
-      - ./specs:/app/specs
     environment:
       - USER_CORE_API_URL=http://user-core:8001
 
   snowbuddy-matching:
     build:
-      context: .
-      dockerfile: snowbuddy_matching/Dockerfile
+      context: ./snowbuddy_matching
     ports:
       - "8002:8002"
-    volumes:
-      - ./snowbuddy_matching/app:/app/app
     environment:
       - USER_CORE_API_URL=http://user-core:8001
       - RESORT_SERVICES_API_URL=http://resort-api:8000
@@ -56,18 +48,11 @@ services:
   frontend:
     build:
       context: ./platform/frontend/ski-platform
-      dockerfile: Dockerfile
-    container_name: snow-project-frontend
     ports:
       - "3000:80"
     depends_on:
       - user-core
       - resort-api
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   trip-planner-db:
     image: postgres:15-alpine
@@ -83,7 +68,6 @@ services:
   tour:
     build:
       context: ./tour
-      dockerfile: Dockerfile
     ports:
       - "3010:3000"
     depends_on:
