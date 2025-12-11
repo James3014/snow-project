@@ -215,7 +215,7 @@ export function extractDates(input: string): {
   const rangePatterns = [
     // 格式 0: 跨月格式 12-30到1月2號、12/30到1月2日 (最優先，處理跨年情況)
     {
-      regex: /(\d{1,2})[/-](\d{1,2})[日號]?[\s]*[到至~－─|\-]\s*(\d{1,2})月(\d{1,2})[日號]?/,
+      regex: /(\d{1,2})[/-](\d{1,2})[日號]?[\s]*[到至~－─|-]\s*(\d{1,2})月(\d{1,2})[日號]?/,
       extract: (m: RegExpMatchArray) => {
         const startMonth = parseInt(m[1]);
         const startDay = parseInt(m[2]);

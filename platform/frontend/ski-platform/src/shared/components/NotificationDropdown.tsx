@@ -29,7 +29,7 @@ export default function NotificationDropdown() {
   const userId = useAppSelector((state) => state.auth.user?.user_id);
 
   // 獲取待處理申請
-  const fetchPendingRequests = async () => {
+  const fetchPendingRequests = useCallback(async () => {
     if (!userId) return;
 
     setLoading(true);
@@ -67,7 +67,7 @@ export default function NotificationDropdown() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   // 處理申請
   const handleRespond = async (buddyId: string, tripId: string, status: 'accepted' | 'declined') => {

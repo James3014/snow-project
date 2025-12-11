@@ -26,7 +26,7 @@ const PageError = () => (
 );
 
 // Lazy load with retry
-const lazyWithRetry = (importFn: () => Promise<any>) => {
+const lazyWithRetry = (importFn: () => Promise<{ default: React.ComponentType<unknown> }>) => {
   return lazy(() =>
     importFn().catch(() => {
       // If import fails, reload the page to get fresh chunks
@@ -63,7 +63,7 @@ const SmartMatchingPage = lazyWithRetry(() => import('@/features/snowbuddy/pages
 const MatchRequestsPage = lazyWithRetry(() => import('@/features/snowbuddy/pages/MatchRequestsPage'));
 
 // Wrapper for lazy components
-const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
+const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<unknown>>) => (
   <Suspense fallback={<PageLoader />}>
     <Component />
   </Suspense>
