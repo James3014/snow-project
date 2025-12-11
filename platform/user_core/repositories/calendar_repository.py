@@ -35,6 +35,7 @@ class CalendarTripRepository:
             id=trip.id,
             user_id=trip.user_id,
             title=trip.title,
+            template_id=trip.template_id,
             start_date=trip.start_date,
             end_date=trip.end_date,
             timezone=trip.timezone,
@@ -71,6 +72,7 @@ class CalendarTripRepository:
         if not model:
             raise ValueError("Trip not found")
         model.title = trip.title
+        model.template_id = trip.template_id
         model.start_date = trip.start_date
         model.end_date = trip.end_date
         model.timezone = trip.timezone
@@ -100,6 +102,7 @@ def _to_domain_trip(model: CalendarTrip) -> Trip:
         timezone=model.timezone,
         visibility=model.visibility,
         status=model.status,
+        template_id=model.template_id,
         resort_id=model.resort_id,
         resort_name=model.resort_name,
         region=model.region,

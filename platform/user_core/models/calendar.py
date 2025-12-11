@@ -41,6 +41,7 @@ class CalendarTrip(Base):
     id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(PGUUID(as_uuid=True), ForeignKey("user_profiles.user_id"), nullable=False)
     title = Column(String(200), nullable=False)
+    template_id = Column(String(100), nullable=True)
     start_date = Column(DateTime(timezone=True), nullable=False)
     end_date = Column(DateTime(timezone=True), nullable=False)
     timezone = Column(String(64), nullable=False, default="Asia/Taipei")
