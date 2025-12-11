@@ -8,7 +8,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from platform.user_core.domain.calendar.enums import (
+from domain.calendar.enums import (
     TripVisibility,
     TripStatus,
     EventType,

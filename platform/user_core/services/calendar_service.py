@@ -6,14 +6,14 @@ from __future__ import annotations
 import datetime as dt
 from uuid import UUID
 
-from platform.user_core.domain.calendar.trip import Trip
-from platform.user_core.domain.calendar.calendar_event import CalendarEvent
-from platform.user_core.domain.calendar.day import Day
-from platform.user_core.domain.calendar.item import Item
-from platform.user_core.domain.calendar.trip_buddy import TripBuddy
-from platform.user_core.domain.calendar.matching_request import MatchingRequest
-from platform.user_core.domain.calendar.enums import TripVisibility, TripStatus, EventType
-from platform.user_core.repositories.calendar_repository import (
+from domain.calendar.trip import Trip
+from domain.calendar.calendar_event import CalendarEvent
+from domain.calendar.day import Day
+from domain.calendar.item import Item
+from domain.calendar.trip_buddy import TripBuddy
+from domain.calendar.matching_request import MatchingRequest
+from domain.calendar.enums import TripVisibility, TripStatus, EventType
+from repositories.calendar_repository import (
     CalendarTripRepository,
     CalendarEventRepository,
     CalendarTripBuddyRepository,

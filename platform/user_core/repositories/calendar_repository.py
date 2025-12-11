@@ -8,13 +8,13 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from platform.user_core.domain.calendar.trip import Trip
-from platform.user_core.domain.calendar.calendar_event import CalendarEvent
-from platform.user_core.domain.calendar.trip_buddy import TripBuddy
-from platform.user_core.domain.calendar.matching_request import MatchingRequest
-from platform.user_core.domain.calendar.day import Day
-from platform.user_core.domain.calendar.item import Item
-from platform.user_core.models.calendar import (
+from domain.calendar.trip import Trip
+from domain.calendar.calendar_event import CalendarEvent
+from domain.calendar.trip_buddy import TripBuddy
+from domain.calendar.matching_request import MatchingRequest
+from domain.calendar.day import Day
+from domain.calendar.item import Item
+from models.calendar import (
     CalendarTrip,
     CalendarDay as DayModel,
     CalendarItem as ItemModel,

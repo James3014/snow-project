@@ -1,6 +1,6 @@
 from enum import Enum
 
-from platform.user_core.models.enums import (
+from models.enums import (
     TripVisibility as BaseTripVisibility,
     TripStatus as BaseTripStatus,
     BuddyStatus as BaseBuddyStatus,

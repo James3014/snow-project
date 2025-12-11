@@ -21,7 +21,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Enum as SQLAlchemyEnum
 
 from .user_profile import Base
-from platform.user_core.domain.calendar.enums import (
+from domain.calendar.enums import (
     TripVisibility,
     TripStatus,
     EventType,
