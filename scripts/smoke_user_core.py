@@ -13,6 +13,7 @@ import requests
 
 BASE_URL = os.getenv("USER_CORE_BASE_URL")
 TOKEN = os.getenv("TOKEN")
+CAPTCHA_TOKEN = os.getenv("CAPTCHA_TOKEN")
 
 
 def skip(msg: str) -> None:
@@ -36,6 +37,15 @@ def check_validate() -> None:
     print("validate: ok")
 
 
+def _auth_headers(include_captcha: bool = False) -> dict:
+    headers = {}
+    if TOKEN:
+        headers["Authorization"] = f"Bearer {TOKEN}"
+    if include_captcha and CAPTCHA_TOKEN:
+        headers["X-Captcha-Token"] = CAPTCHA_TOKEN
+    return headers
+
+
 def check_calendar_trip():
     if not TOKEN:
         skip("TOKEN missing; skip calendar tests")
@@ -45,12 +55,27 @@ def check_calendar_trip():
         "start_date": "2025-01-01T00:00:00+00:00",
         "end_date": "2025-01-02T00:00:00+00:00",
     }
-    headers = {"Authorization": f"Bearer {TOKEN}"}
+    headers = _auth_headers(include_captcha=True)
     resp = requests.post(f"{BASE_URL}/calendar/trips", json=payload, headers=headers, timeout=5)
     resp.raise_for_status()
-    resp = requests.get(f"{BASE_URL}/calendar/trips", headers=headers, timeout=5)
+    resp = requests.get(f"{BASE_URL}/calendar/trips", headers=_auth_headers(), timeout=5)
     resp.raise_for_status()
     print("calendar trips: ok")
+
+
+def check_calendar_event():
+    if not TOKEN:
+        return
+    payload = {
+        "type": "TRIP",
+        "title": "Smoke event",
+        "start_date": "2025-01-01T00:00:00+00:00",
+        "end_date": "2025-01-01T12:00:00+00:00",
+    }
+    headers = _auth_headers(include_captcha=True)
+    resp = requests.post(f"{BASE_URL}/calendar/events", json=payload, headers=headers, timeout=5)
+    resp.raise_for_status()
+    print("calendar events: ok")
 
 
 def main() -> None:
@@ -61,6 +86,7 @@ def main() -> None:
     if TOKEN:
         check_validate()
         check_calendar_trip()
+        check_calendar_event()
     else:
         skip("TOKEN not set; skipping auth/calendar tests")
 

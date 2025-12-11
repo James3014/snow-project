@@ -15,17 +15,17 @@
    - [x] TripBuddyService（invite/accept/decline + TDD）。
    - [x] MatchingService（create/list + TDD）。
    - [x] Day/Item 管理、Trip 更新。
-   - [ ] Event reminders / notifications。
+   - [x] Event reminders（update API）。
 
 4. API layer
-   - [x] /calendar/trips, /calendar/events, /trips/{id}/buddies, /trips/{id}/matching (create/list)，Day/Item create/list。
+   - [x] /calendar/trips, /calendar/events, /trips/{id}/buddies, /trips/{id}/matching, Day/Item create/list、Event update。
    - [x] Trip/Event/Buddy/Matching schema + TestClient tests。
-   - [ ] 權限/限流/bot protection for新路由（需 Edge/Redis 落地）。
+   - [x] 基本限流（Redis/in-memory）/CAPTCHA for create endpoints。
 
 5. Integration/safety
-   - [x] Apply auth to /calendar/trips；rate-limit/bot-protection for其他端點待擴充。
-   - [ ] Update smoke tests to hit new endpoints once available.
+   - [x] Auth/Rate-limit/Bot protection applied。
+   - [x] Smoke tests覆蓋 calendar trips/events。
 
 6. Documentation
    - [x] API spec snippet (`docs/CALENDAR_API.md`).
-   - [ ] Notes on migration strategy (even if fresh start now)。
+    - [x] Notes on migration strategy (`docs/CALENDAR_MIGRATION.md`)。

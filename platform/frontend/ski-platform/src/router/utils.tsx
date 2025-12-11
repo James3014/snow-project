@@ -2,7 +2,8 @@
  * Router Utilities - 路由工具函數
  * 遵循 Linus 原則：切小、模組化
  */
-import { Suspense, lazy, ComponentType, ReactNode } from 'react';
+import { Suspense, lazy } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import PageLoader from '@/shared/components/PageLoader';
 
 // Lazy load with retry - 單一職責

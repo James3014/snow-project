@@ -85,6 +85,10 @@ class CalendarTripRepository:
         self.db.refresh(model)
         return _to_domain_trip(model)
 
+    def get(self, trip_id: UUID) -> Trip | None:
+        model = self.db.query(CalendarTrip).filter(CalendarTrip.id == trip_id).first()
+        return _to_domain_trip(model) if model else None
+
 
 def _to_domain_trip(model: CalendarTrip) -> Trip:
     return Trip.from_persistence(

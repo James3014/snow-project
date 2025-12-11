@@ -33,6 +33,23 @@ RATE_LIMIT_WINDOW = dt.timedelta(minutes=1)
 
 def _rate_limit(key: str):
     now = dt.datetime.now(dt.timezone.utc)
+    if _RL_CLIENT:
+        window_ms = int(RATE_LIMIT_WINDOW.total_seconds() * 1000)
+        now_ms = int(now.timestamp() * 1000)
+        key_name = f"calendar:rl:{key}"
+        pipeline = _RL_CLIENT.pipeline()
+        pipeline.zremrangebyscore(key_name, 0, now_ms - window_ms)
+        pipeline.zcard(key_name)
+        pipeline.zadd(key_name, {str(now_ms): now_ms})
+        pipeline.expire(key_name, int(RATE_LIMIT_WINDOW.total_seconds()))
+        try:
+            _, count, _, _ = pipeline.execute()
+            if count >= RATE_LIMIT_COUNT:
+                raise HTTPException(status_code=429, detail="Too many calendar operations")
+            return
+        except Exception:
+            pass
+
     entries = _RATE_LIMIT.setdefault(key, [])
     entries[:] = [t for t in entries if now - t <= RATE_LIMIT_WINDOW]
     if len(entries) >= RATE_LIMIT_COUNT:
@@ -143,8 +160,10 @@ def create_trip(
     request: TripCreateRequest,
     current_user = Depends(get_current_user),
     service: TripService = Depends(get_trip_service),
+    captcha_token: str | None = Header(None, alias="X-Captcha-Token"),
 ):
     _rate_limit(f"trip:{current_user.user_id}")
+    verify_captcha(captcha_token)
     trip = service.create_trip(
         user_id=current_user.user_id,
         title=request.title,
@@ -195,8 +214,10 @@ def create_event(
     request: EventCreateRequest,
     current_user = Depends(get_current_user),
     service: CalendarEventService = Depends(get_event_service),
+    captcha_token: str | None = Header(None, alias="X-Captcha-Token"),
 ):
     _rate_limit(f"event:{current_user.user_id}")
+    verify_captcha(captcha_token)
     event = service.create_event(
         user_id=current_user.user_id,
         type=request.type,
@@ -265,7 +286,7 @@ def update_event(
 @router.patch("/trips/{trip_id}", response_model=TripResponse)
 def update_trip(
     trip_id: str,
-    request: TripCreateRequest,
+    request: TripUpdateRequest,
     current_user = Depends(get_current_user),
     service: TripService = Depends(get_trip_service),
 ):
@@ -305,6 +326,9 @@ def add_day(
     service: TripService = Depends(get_trip_service),
 ):
     _rate_limit(f"day:{current_user.user_id}")
+    trip = service.get_trip(UUID(trip_id))
+    if not trip or trip.user_id != current_user.user_id:
+        raise HTTPException(status_code=404, detail="Trip not found")
     day = service.add_day(
         trip_id=UUID(trip_id),
         day_index=request.day_index,
@@ -334,6 +358,9 @@ def add_item(
     service: TripService = Depends(get_trip_service),
 ):
     _rate_limit(f"item:{current_user.user_id}")
+    trip = service.get_trip(UUID(request.trip_id))
+    if not trip or trip.user_id != current_user.user_id:
+        raise HTTPException(status_code=404, detail="Trip not found")
     item = service.add_item(
         trip_id=UUID(request.trip_id),
         day_id=UUID(request.day_id),
@@ -468,3 +495,15 @@ class EventUpdateRequest(BaseModel):
     end_date: dt.datetime | None = None
     description: str | None = None
     reminders: List[dict] | None = None
+class TripUpdateRequest(BaseModel):
+    title: Optional[str] = None
+    start_date: Optional[dt.datetime] = None
+    end_date: Optional[dt.datetime] = None
+    timezone: Optional[str] = None
+    visibility: Optional[TripVisibility] = None
+    status: Optional[TripStatus] = None
+    resort_id: Optional[str] = None
+    resort_name: Optional[str] = None
+    region: Optional[str] = None
+    people_count: Optional[int] = None
+    note: Optional[str] = None
