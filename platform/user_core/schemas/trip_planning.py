@@ -347,6 +347,13 @@ class SeasonGoalProgress(BaseModel):
     completion_percentage: float
 
 
+# ==================== Shared Calendar ====================
+
+class SharedCalendarResponse(BaseModel):
+    """Response for shared calendar endpoint."""
+    trips: List[Trip] = Field(..., description="List of trips (own + joined buddy trips)")
+
+
 # ==================== Activity Feed Integration ====================
 
 class TripActivity(BaseModel):
