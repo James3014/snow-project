@@ -77,11 +77,11 @@ export async function updateFormFromInput(form: TripForm, input: string): Promis
   const hasInvalidDay = invalidDayMatch && parseInt(invalidDayMatch[1]) > 31;
 
   // 檢查輸入中是否包含明確的年份（如 2025/3/20）
-  const explicitYearMatch = input.match(/(\d{4})[\/\-年]/);
+  const explicitYearMatch = input.match(/(\d{4})[/\-年]/);
   const explicitYear = explicitYearMatch ? parseInt(explicitYearMatch[1]) : null;
 
   // 檢查是否包含完整的日期範圍格式（如 2025/3/20-2025/3/25）
-  const fullDateRangeMatch = input.match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})[-到至](\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
+  const fullDateRangeMatch = input.match(/(\d{4})[/-](\d{1,2})[/-](\d{1,2})[-到至](\d{4})[/-](\d{1,2})[/-](\d{1,2})/);
   if (fullDateRangeMatch && parsed.endDate) {
     // 解析結束日期的年月日
     const endYear = parseInt(fullDateRangeMatch[4]);
