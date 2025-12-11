@@ -55,13 +55,7 @@ export default function TripDetail() {
     }
   }, [tripId, userId]);
 
-  useEffect(() => {
-    if (tripId) {
-      loadTripData();
-      loadTripBuddies();
-    }
-  }, [tripId, loadTripData, loadTripBuddies]);
-
+  // 函數定義前置 - 遵循依賴順序
   const loadTripBuddies = useCallback(async () => {
     if (!tripId) return;
 
@@ -75,6 +69,14 @@ export default function TripDetail() {
       setLoadingBuddies(false);
     }
   }, [tripId]);
+
+  // 效果執行 - 依賴明確
+  useEffect(() => {
+    if (tripId) {
+      loadTripData();
+      loadTripBuddies();
+    }
+  }, [tripId, loadTripData, loadTripBuddies]);
 
   const handleUpdateTrip = async (tripId: string, data: TripUpdate) => {
     if (!userId) return;

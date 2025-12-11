@@ -1,24 +1,12 @@
 /**
- * Router Configuration
- * 路由配置
+ * Router Configuration - 純路由配置
+ * 遵循關注點分離原則
  */
 import { createBrowserRouter } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
 import RootLayout from '@/shell/RootLayout';
 import AdminRoute from '@/shared/components/auth/AdminRoute';
-import PageLoader from '@/shared/components/PageLoader';
 import PageError from '@/shared/components/PageError';
-
-// Lazy load with retry
-const lazyWithRetry = (importFn: () => Promise<{ default: React.ComponentType<unknown> }>) => {
-  return lazy(() =>
-    importFn().catch(() => {
-      // If import fails, reload the page to get fresh chunks
-      window.location.reload();
-      return new Promise(() => {});
-    })
-  );
-};
+import { lazyWithRetry, withSuspense } from './utils';
 
 // Lazy load pages for code splitting
 const ResortList = lazyWithRetry(() => import('@/features/course-tracking/pages/ResortList'));
@@ -46,13 +34,7 @@ const SnowbuddyBoard = lazyWithRetry(() => import('@/features/snowbuddy/pages/Sn
 const SmartMatchingPage = lazyWithRetry(() => import('@/features/snowbuddy/pages/SmartMatchingPage'));
 const MatchRequestsPage = lazyWithRetry(() => import('@/features/snowbuddy/pages/MatchRequestsPage'));
 
-// Wrapper for lazy components
-const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<unknown>>) => (
-  <Suspense fallback={<PageLoader />}>
-    <Component />
-  </Suspense>
-);
-
+// 路由配置 - 純配置，無邏輯
 export const router = createBrowserRouter([
   {
     path: '/login',

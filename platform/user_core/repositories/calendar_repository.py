@@ -62,6 +62,25 @@ class CalendarTripRepository:
         )
         return [_to_domain_trip(m) for m in models]
 
+    def update(self, trip: Trip) -> Trip:
+        model = self.db.query(CalendarTrip).filter(CalendarTrip.id == trip.id).first()
+        if not model:
+            raise ValueError("Trip not found")
+        model.title = trip.title
+        model.start_date = trip.start_date
+        model.end_date = trip.end_date
+        model.timezone = trip.timezone
+        model.visibility = trip.visibility
+        model.status = trip.status
+        model.resort_id = trip.resort_id
+        model.resort_name = trip.resort_name
+        model.region = trip.region
+        model.people_count = trip.people_count
+        model.note = trip.note
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_trip(model)
+
 
 def _to_domain_trip(model: CalendarTrip) -> Trip:
     return Trip.from_persistence(

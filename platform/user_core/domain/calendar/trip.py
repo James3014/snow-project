@@ -104,3 +104,40 @@ class Trip:
             visibility=visibility,
             status=status,
         )
+
+    def update(
+        self,
+        *,
+        title: str | None = None,
+        start_date: dt.datetime | None = None,
+        end_date: dt.datetime | None = None,
+        timezone: str | None = None,
+        visibility: TripVisibility | None = None,
+        status: TripStatus | None = None,
+        resort_id: str | None = None,
+        resort_name: str | None = None,
+        region: str | None = None,
+        people_count: int | None = None,
+        note: str | None = None,
+    ) -> "Trip":
+        new_start = start_date or self.start_date
+        new_end = end_date or self.end_date
+        if new_end < new_start:
+            raise ValueError("end_date must be >= start_date")
+        return Trip(
+            id=self.id,
+            user_id=self.user_id,
+            title=title or self.title,
+            start_date=new_start,
+            end_date=new_end,
+            timezone=timezone or self.timezone,
+            visibility=visibility or self.visibility,
+            status=status or self.status,
+            resort_id=resort_id if resort_id is not None else self.resort_id,
+            resort_name=resort_name if resort_name is not None else self.resort_name,
+            region=region if region is not None else self.region,
+            people_count=people_count if people_count is not None else self.people_count,
+            note=note if note is not None else self.note,
+            max_buddies=self.max_buddies,
+            current_buddies=self.current_buddies,
+        )
