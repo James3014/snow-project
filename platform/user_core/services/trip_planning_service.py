@@ -29,8 +29,6 @@ from services.trip_service import (
 
 # 移除對已刪除 buddy_service 的引用
 # 這些功能現在由獨立的 Snowbuddy Service 提供
-    BuddyRequestError
-)
 
 
 class TripPlanningError(Exception):
