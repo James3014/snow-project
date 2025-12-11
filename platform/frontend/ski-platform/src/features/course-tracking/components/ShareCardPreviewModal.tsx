@@ -159,8 +159,8 @@ export default function ShareCardPreviewModal({
                 <div className="absolute inset-0 border-4 border-purple-200 rounded-full"></div>
                 <div className="absolute inset-0 border-4 border-purple-600 rounded-full border-t-transparent animate-spin"></div>
               </div>
-              <p className="text-gray-600 font-medium">🎨 AI 正在創作中...</p>
-              <p className="text-sm text-gray-500 mt-2">使用 Google Imagen 3 生成</p>
+              <p className="text-gray-800 font-medium">🎨 AI 正在創作中...</p>
+              <p className="text-sm text-gray-700 mt-2">使用 Google Imagen 3 生成</p>
             </div>
           )}
 
@@ -193,7 +193,7 @@ export default function ShareCardPreviewModal({
               {/* Share Text Preview */}
               <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
                 <p className="text-xs text-blue-600 font-semibold mb-2">📝 分享文字</p>
-                <p className="text-sm text-gray-700 whitespace-pre-line">{getShareText()}</p>
+                <p className="text-sm text-gray-900 whitespace-pre-line">{getShareText()}</p>
               </div>
 
               {/* Action Buttons */}

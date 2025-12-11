@@ -127,7 +127,7 @@ export default function NotificationDropdown() {
       {/* 通知按鈕 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-primary-600 transition-colors"
+        className="relative p-2 text-gray-800 hover:text-primary-600 transition-colors"
         aria-label="通知"
       >
         <span className="text-xl">🔔</span>
@@ -153,11 +153,11 @@ export default function NotificationDropdown() {
             {loading ? (
               <div className="px-4 py-8 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
-                <p className="mt-2 text-sm text-gray-500">載入中...</p>
+                <p className="mt-2 text-sm text-gray-700">載入中...</p>
               </div>
             ) : requests.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <p className="text-sm text-gray-500">暫無待處理的申請</p>
+                <p className="text-sm text-gray-700">暫無待處理的申請</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
@@ -169,7 +169,7 @@ export default function NotificationDropdown() {
                         <p className="text-sm font-medium text-gray-900">
                           👤 {request.user_display_name}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-700 mt-1">
                           {new Date(request.requested_at).toLocaleDateString('zh-TW', {
                             month: '2-digit',
                             day: '2-digit',
@@ -188,10 +188,10 @@ export default function NotificationDropdown() {
                         setIsOpen(false);
                       }}
                     >
-                      <p className="text-xs text-gray-600 line-clamp-1">
+                      <p className="text-xs text-gray-800 line-clamp-1">
                         📍 {request.trip_title}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-700">
                         📅 {new Date(request.start_date).toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' })} - {new Date(request.end_date).toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' })}
                       </p>
                     </div>

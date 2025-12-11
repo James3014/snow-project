@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { registerThunk, clearError } from '@/store/slices/authSlice';
+import { TurnstileWidget } from '@/shared/components/TurnstileWidget';
 
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
@@ -26,6 +27,8 @@ export default function RegisterPage() {
   const [validationError, setValidationError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
 
   const getPasswordStrength = (password: string): { level: 'weak' | 'medium' | 'strong'; text: string; colorClass: string } => {
     if (password.length < 6) return { level: 'weak', text: '弱', colorClass: 'text-neon-pink' };
@@ -67,7 +70,7 @@ export default function RegisterPage() {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmPassword, ...registrationData } = formData;
-    dispatch(registerThunk(registrationData));
+    dispatch(registerThunk({ ...registrationData, captcha_token: captchaToken || undefined }));
   };
 
   return (
@@ -264,6 +267,13 @@ export default function RegisterPage() {
                 <p className="mt-2 text-sm text-green-400">✓ 密碼一致</p>
               )}
             </div>
+
+            {/* Bot Protection */}
+            {turnstileSiteKey && (
+              <div className="pt-2">
+                <TurnstileWidget siteKey={turnstileSiteKey} onToken={setCaptchaToken} />
+              </div>
+            )}
 
             {/* Experience Level */}
             <div>

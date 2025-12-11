@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+import logging
+import os
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from services import db, course_tracking_service
 from models import (
@@ -13,6 +16,22 @@ from api import (
     course_tracking as course_tracking_api, share_cards,
     social as social_api, ski_map, trip_planning, gear
 )
+
+try:
+    import sentry_sdk
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+except ImportError:
+    sentry_sdk = None  # Optional dependency; skip if not installed
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("user_core")
+
+if sentry_sdk and os.getenv("SENTRY_DSN"):
+    sentry_sdk.init(
+        dsn=os.getenv("SENTRY_DSN"),
+        integrations=[FastApiIntegration()],
+        traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.05")),
+    )
 
 # Create all tables (for development only)
 user_profile.Base.metadata.create_all(bind=db.engine)
@@ -61,6 +80,17 @@ app.include_router(ski_map.router, prefix="/ski-map", tags=["Ski Map"])
 app.include_router(trip_planning.router, prefix="/trip-planning", tags=["Trip Planning"])
 # Gear operations
 app.include_router(gear.router, prefix="/api", tags=["Gear Operations"])
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    """Return sanitized error responses and log details."""
+    logger.exception("Unhandled error", extra={"path": request.url.path})
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"},
+    )
+
 
 @app.on_event("startup")
 def startup_event():

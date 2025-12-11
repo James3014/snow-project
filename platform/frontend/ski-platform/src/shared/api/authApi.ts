@@ -10,11 +10,13 @@ export interface RegisterRequest {
   display_name: string;
   preferred_language?: string;
   experience_level?: string;
+  captcha_token?: string;
 }
 
 export interface LoginRequest {
   email: string;
   password: string;
+  captcha_token?: string;
 }
 
 export interface AuthResponse {

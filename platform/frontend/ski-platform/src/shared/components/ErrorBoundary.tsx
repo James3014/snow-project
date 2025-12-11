@@ -26,7 +26,9 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    // TODO: hook to monitoring service (e.g., Sentry) once DSN is provided
+    void error;
+    void errorInfo;
   }
 
   render() {
@@ -41,7 +43,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             <div className="bg-white rounded-lg shadow-lg p-6 text-center">
               <div className="text-6xl mb-4">⚠️</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">出错了</h2>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-800 mb-4">
                 {this.state.error?.message || '应用遇到了一个错误'}
               </p>
               <button

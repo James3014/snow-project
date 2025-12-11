@@ -29,13 +29,13 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, onLike, onComment }) => {
             {item.content_json.rating && (
               <div className="mt-2 flex items-center gap-1">
                 {'⭐'.repeat(item.content_json.rating)}
-                <span className="text-sm text-gray-600 ml-2">
+                <span className="text-sm text-gray-800 ml-2">
                   {item.content_json.rating}/5
                 </span>
               </div>
             )}
             {item.content_json.snow_condition && (
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-800 mt-1">
                 雪況：{item.content_json.snow_condition}
               </p>
             )}
@@ -52,7 +52,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, onLike, onComment }) => {
               </span>
             </p>
             {item.content_json.points && (
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-800 mt-1">
                 獲得 {item.content_json.points} 積分
               </p>
             )}
@@ -69,7 +69,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, onLike, onComment }) => {
               </span>
             </p>
             {item.content_json.reason && (
-              <blockquote className="mt-2 pl-3 border-l-2 border-gray-300 text-gray-600 italic">
+              <blockquote className="mt-2 pl-3 border-l-2 border-gray-300 text-gray-800 italic">
                 "{item.content_json.reason}"
               </blockquote>
             )}
@@ -108,12 +108,12 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, onLike, onComment }) => {
           <p className="font-semibold text-gray-900">
             {item.user?.display_name || '匿名用戶'}
           </p>
-          <p className="text-sm text-gray-500">{formatTime(item.created_at)}</p>
+          <p className="text-sm text-gray-700">{formatTime(item.created_at)}</p>
         </div>
 
         {/* 隱私標記 */}
         {item.visibility === 'followers' && (
-          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+          <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
             🔒 僅關注者
           </span>
         )}
@@ -123,7 +123,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, onLike, onComment }) => {
       <div className="mb-3">{renderContent()}</div>
 
       {/* 互動按鈕 */}
-      <div className="flex gap-4 text-gray-600 border-t pt-3">
+      <div className="flex gap-4 text-gray-800 border-t pt-3">
         <button
           onClick={() => onLike(item.id)}
           className={`flex items-center gap-1 hover:text-red-500 transition-colors ${
@@ -151,7 +151,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, onLike, onComment }) => {
       {/* 評論區（展開後顯示） */}
       {showComments && (
         <div className="mt-4 pt-4 border-t">
-          <p className="text-sm text-gray-500">評論功能開發中...</p>
+          <p className="text-sm text-gray-700">評論功能開發中...</p>
         </div>
       )}
     </div>

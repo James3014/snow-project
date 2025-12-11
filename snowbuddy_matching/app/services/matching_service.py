@@ -1,12 +1,12 @@
-"""
-Matching service - orchestrates the matching process.
-"""
-from typing import List, Dict, Any
+"""Matching service - orchestrates the matching process."""
+from typing import List, Dict, Any, Optional
 
 from ..models.matching import MatchSummary, MatchingPreference
 from ..core.matching_logic import calculate_total_match_score, filter_candidates
 from ..clients import user_core_client, resort_services_client, knowledge_engagement_client
 from .redis_repository import get_redis_repository
+from .workflow_clients import get_matching_workflow_client
+from .matching_notifications import MatchingNotificationDispatcher
 
 
 class MatchingService:
@@ -14,11 +14,14 @@ class MatchingService:
     
     def __init__(self):
         self._redis = get_redis_repository()
+        self._workflow_client = get_matching_workflow_client()
+        self._notifier = MatchingNotificationDispatcher()
     
     async def run_matching(self, search_id: str, seeker_id: str, seeker_prefs: MatchingPreference) -> None:
         """Execute the full matching process."""
-        # 1. Mark as processing
-        self._redis.set_processing(search_id)
+        # 1. Mark as processing when running locally
+        if not self._workflow_client:
+            self._redis.set_processing(search_id)
         
         # 2. Fetch external data
         all_users = await user_core_client.get_users()
@@ -45,7 +48,14 @@ class MatchingService:
         )
         
         # 6. Store results
-        self._redis.set_completed(search_id, [r.model_dump() for r in scored])
+        payload = [r.model_dump() for r in scored]
+        if not self._workflow_client:
+            self._redis.set_completed(search_id, payload)
+        await self._notifier.notify_completion(
+            search_id=search_id,
+            seeker_id=seeker_id,
+            results=payload,
+        )
     
     def _score_candidates(
         self,
@@ -71,8 +81,13 @@ class MatchingService:
         scored.sort(key=lambda x: x.match_score, reverse=True)
         return scored
     
-    def get_results(self, search_id: str) -> Dict[str, Any]:
-        """Get search results."""
+    async def get_results(self, search_id: str) -> Optional[Dict[str, Any]]:
+        """Get search results from workflow state or Redis."""
+        if self._workflow_client:
+            return await self._workflow_client.get_search_status(
+                search_id,
+                include_candidates=True,
+            )
         return self._redis.get_results(search_id)
 
 

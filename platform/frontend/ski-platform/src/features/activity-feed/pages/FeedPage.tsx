@@ -51,8 +51,8 @@ const FeedPage: React.FC = () => {
   );
 
   // 處理評論點擊
-  const handleComment = useCallback((activityId: string) => {
-    console.log('打開評論:', activityId);
+  const handleComment = useCallback((_activityId: string) => {
+    // Intentionally no-op: modal handling is deferred to parent for security/log cleanliness
   }, []);
 
   return (

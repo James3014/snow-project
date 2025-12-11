@@ -115,7 +115,7 @@ export default function QuickCourseRecordFlow({
         <div className="bg-white rounded-lg p-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">載入雪場資料...</p>
+            <p className="text-gray-800">載入雪場資料...</p>
           </div>
         </div>
       </div>
@@ -183,7 +183,7 @@ export default function QuickCourseRecordFlow({
         {/* Content */}
         <div className="p-6 max-h-[60vh] overflow-y-auto">
           <div className="mb-6">
-            <p className="text-gray-700 mb-2">
+            <p className="text-gray-900 mb-2">
               選擇這次行程滑過的雪道（可多選）
             </p>
             {selectedCourses.size > 0 && (
@@ -223,7 +223,7 @@ export default function QuickCourseRecordFlow({
                               <div className="font-medium text-gray-900 text-sm">
                                 {course.name}
                               </div>
-                              <div className="text-xs text-gray-500 mt-1">
+                              <div className="text-xs text-gray-700 mt-1">
                                 平均坡度 {course.avg_slope}° · 最大 {course.max_slope}°
                               </div>
                             </div>
@@ -241,7 +241,7 @@ export default function QuickCourseRecordFlow({
           </div>
 
           {resort.courses.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-700">
               此雪場尚無雪道資料
             </div>
           )}
@@ -251,7 +251,7 @@ export default function QuickCourseRecordFlow({
         <div className="border-t p-6 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            className="flex-1 px-6 py-3 border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50 transition-colors font-medium"
           >
             稍後再說
           </button>

@@ -67,25 +67,12 @@ export default function ResortDetail() {
       try {
         setResortLoading(true);
         setResortError(null);
-        console.log('正在載入雪場:', resortId);
         const resort = await resortApiService.getResort(resortId);
-        console.log('雪場載入成功:', resort);
         setResort(resort);
       } catch (err: unknown) {
-        console.error('載入雪場失敗 - resortId:', resortId);
-        console.error('錯誤詳情:', err);
-        if (err && typeof err === 'object' && 'response' in err) {
-          const axiosErr = err as { response?: { status?: number; data?: unknown } };
-          console.error('錯誤狀態碼:', axiosErr.response?.status);
-          console.error('錯誤訊息:', axiosErr.response?.data);
-        }
-
-        // 無論什麼錯誤，都不阻擋用戶，只在控制台紀錄
-        // 暫時不設置錯誤，讓頁面繼續載入
         setResortError(null);
 
         // 如果是網絡問題或 API 暫時無法使用，創建一個基本的降級雪場對象
-        console.warn('API 暫時無法載入雪場資料，使用降級模式');
         const fallbackResort = {
           resort_id: resortId,
           names: {

@@ -1,0 +1,17 @@
+# Allow all by default
+User-agent: *
+Disallow:
+
+# Block sensitive areas
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /account
+Disallow: /settings
+Disallow: /paywall
+
+# Explicitly avoid indexing preview or staging paths
+Disallow: /preview
+Disallow: /staging
+
+# Replace with production domain sitemap
+Sitemap: https://your-production-domain.example/sitemap.xml

@@ -3,8 +3,9 @@ Share Card API endpoints.
 
 Generate beautiful share card images for social media.
 """
-from fastapi import APIRouter, Depends, HTTPException, Response
-from fastapi.responses import StreamingResponse
+import time
+from collections import defaultdict
+from fastapi import APIRouter, Depends, HTTPException, Response, Request, Header
 from sqlalchemy.orm import Session
 from typing import Optional
 from pydantic import BaseModel, UUID4
@@ -16,6 +17,71 @@ from services import db
 from services.imagen_service import get_imagen_service
 from models.course_tracking import CourseVisit
 from models.user_profile import UserProfile
+from services.auth_dependencies import get_current_user
+from config.settings import settings
+from services.bot_protection import verify_captcha
+
+try:
+    import redis
+    _redis_client = redis.Redis.from_url(settings.redis_url, decode_responses=True)
+    _redis_available = True
+except Exception:
+    _redis_client = None
+    _redis_available = False
+
+# Simple in-memory rate limiter to prevent abuse of costly image generation endpoints
+_REQUEST_HISTORY = defaultdict(list)
+RATE_LIMIT_WINDOW_SECONDS = 60
+RATE_LIMIT_MAX_REQUESTS = 10
+
+
+def _check_rate_limit(key: str) -> None:
+    """Enforce a sliding-window rate limit by key (user or IP)."""
+    if _redis_available:
+        now_ms = int(time.time() * 1000)
+        window_ms = RATE_LIMIT_WINDOW_SECONDS * 1000
+        key_name = f"sharecard:rl:{key}"
+        try:
+            pipeline = _redis_client.pipeline()
+            pipeline.zremrangebyscore(key_name, 0, now_ms - window_ms)
+            pipeline.zcard(key_name)
+            pipeline.zadd(key_name, {str(now_ms): now_ms})
+            pipeline.expire(key_name, RATE_LIMIT_WINDOW_SECONDS)
+            _, count, _, _ = pipeline.execute()
+            if count >= RATE_LIMIT_MAX_REQUESTS:
+                raise HTTPException(
+                    status_code=429,
+                    detail="Rate limit exceeded for share card generation"
+                )
+            return
+        except Exception:
+            # Fallback to in-memory on Redis errors
+            pass
+
+    now = time.time()
+    window_start = now - RATE_LIMIT_WINDOW_SECONDS
+    recent = _REQUEST_HISTORY[key]
+    while recent and recent[0] < window_start:
+        recent.pop(0)
+    if len(recent) >= RATE_LIMIT_MAX_REQUESTS:
+        raise HTTPException(
+            status_code=429,
+            detail="Rate limit exceeded for share card generation"
+        )
+    recent.append(now)
+
+
+def _guard_request(request: Request, user: Optional[UserProfile], api_key: Optional[str]) -> None:
+    """Apply auth-aware rate limit keyed by user ID, fallback to client IP, and enforce API key if configured."""
+    if settings.user_core_api_key:
+        if not api_key or api_key != settings.user_core_api_key:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid or missing API key"
+            )
+
+    key = f"user:{user.user_id}" if user else f"ip:{request.client.host if request.client else 'unknown'}"
+    _check_rate_limit(key)
 
 router = APIRouter()
 
@@ -53,6 +119,10 @@ class ProgressMilestoneCardRequest(BaseModel):
 )
 async def generate_course_completion_card(
     request: CourseCompletionCardRequest,
+    http_request: Request,
+    x_api_key: Optional[str] = Header(None, alias="X-API-Key"),
+    captcha_token: Optional[str] = Header(None, alias="X-Captcha-Token"),
+    current_user: UserProfile = Depends(get_current_user),
     db_session: Session = Depends(db.get_db)
 ):
     """
@@ -60,6 +130,8 @@ async def generate_course_completion_card(
 
     Returns PNG image that can be shared on social media.
     """
+    _guard_request(http_request, current_user, x_api_key)
+    await verify_captcha(captcha_token, client_ip=http_request.client.host if http_request.client else None)
     # Get visit details
     visit = db_session.query(CourseVisit).filter(
         CourseVisit.id == request.visit_id
@@ -109,10 +181,10 @@ async def generate_course_completion_card(
             }
         )
 
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to generate image: {str(e)}"
+            detail="Failed to generate image"
         )
 
 
@@ -128,6 +200,10 @@ async def generate_course_completion_card(
 )
 async def generate_achievement_card(
     request: AchievementCardRequest,
+    http_request: Request,
+    x_api_key: Optional[str] = Header(None, alias="X-API-Key"),
+    captcha_token: Optional[str] = Header(None, alias="X-Captcha-Token"),
+    current_user: UserProfile = Depends(get_current_user),
     db_session: Session = Depends(db.get_db)
 ):
     """
@@ -136,6 +212,9 @@ async def generate_achievement_card(
     Returns PNG image that can be shared on social media.
     """
     from models.course_tracking import UserAchievement, AchievementDefinition
+
+    _guard_request(http_request, current_user, x_api_key)
+    await verify_captcha(captcha_token, client_ip=http_request.client.host if http_request.client else None)
 
     # Get achievement details
     achievement = db_session.query(
@@ -171,10 +250,10 @@ async def generate_achievement_card(
             }
         )
 
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to generate image: {str(e)}"
+            detail="Failed to generate image"
         )
 
 
@@ -190,6 +269,10 @@ async def generate_achievement_card(
 )
 async def generate_progress_milestone_card(
     request: ProgressMilestoneCardRequest,
+    http_request: Request,
+    x_api_key: Optional[str] = Header(None, alias="X-API-Key"),
+    captcha_token: Optional[str] = Header(None, alias="X-Captcha-Token"),
+    current_user: UserProfile = Depends(get_current_user),
     db_session: Session = Depends(db.get_db)
 ):
     """
@@ -197,6 +280,9 @@ async def generate_progress_milestone_card(
 
     Returns PNG image that can be shared on social media.
     """
+    _guard_request(http_request, current_user, x_api_key)
+    await verify_captcha(captcha_token, client_ip=http_request.client.host if http_request.client else None)
+
     # Calculate progress
     completed_courses = db_session.query(CourseVisit).filter(
         CourseVisit.user_id == request.user_id,
@@ -245,8 +331,8 @@ async def generate_progress_milestone_card(
             }
         )
 
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to generate image: {str(e)}"
+            detail="Failed to generate image"
         )

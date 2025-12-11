@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loginThunk, clearError } from '@/store/slices/authSlice';
+import { TurnstileWidget } from '@/shared/components/TurnstileWidget';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -18,8 +19,10 @@ export default function LoginPage() {
     email: '',
     password: '',
   });
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
 
   useEffect(() => {
     dispatch(clearError());
@@ -42,7 +45,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(loginThunk(formData));
+    dispatch(loginThunk({ ...formData, captcha_token: captchaToken || undefined }));
   };
 
   return (
@@ -168,6 +171,13 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
+
+            {/* Bot Protection */}
+            {turnstileSiteKey && (
+              <div className="pt-2">
+                <TurnstileWidget siteKey={turnstileSiteKey} onToken={setCaptchaToken} />
+              </div>
+            )}
 
             {/* Submit Button */}
             <button

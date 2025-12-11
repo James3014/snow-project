@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { adminApi } from '@/shared/api/adminApi';
 import type { UserDetail } from '@/shared/api/adminApi';
+import { NoIndex } from '@/shared/seo/noindex';
 
 export default function UserDetailPage() {
   const { userId } = useParams<{ userId: string }>();
@@ -100,7 +101,7 @@ export default function UserDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">載入中...</div>
+        <div className="text-gray-700">載入中...</div>
       </div>
     );
   }
@@ -123,11 +124,12 @@ export default function UserDetailPage() {
 
   return (
     <div className="space-y-6">
+      <NoIndex />
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">用戶詳情</h1>
         <Link
           to="/admin/users"
-          className="text-sm text-gray-600 hover:text-primary-600"
+          className="text-sm text-gray-800 hover:text-primary-600"
         >
           ← 返回用戶列表
         </Link>
@@ -164,21 +166,21 @@ export default function UserDetailPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               用戶 ID
             </label>
             <div className="text-gray-900">{user.user_id}</div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               電子郵件
             </label>
             <div className="text-gray-900">{user.email}</div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               顯示名稱
             </label>
             {isEditing ? (
@@ -196,7 +198,7 @@ export default function UserDetailPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               狀態
             </label>
             <span
@@ -211,7 +213,7 @@ export default function UserDetailPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               偏好語言
             </label>
             {isEditing ? (
@@ -233,7 +235,7 @@ export default function UserDetailPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               滑雪程度
             </label>
             {isEditing ? (
@@ -255,7 +257,7 @@ export default function UserDetailPage() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               個人簡介
             </label>
             {isEditing ? (
@@ -271,7 +273,7 @@ export default function UserDetailPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               註冊時間
             </label>
             <div className="text-gray-900">
@@ -280,7 +282,7 @@ export default function UserDetailPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               最後更新
             </label>
             <div className="text-gray-900">

@@ -9,6 +9,7 @@ from models.trip_planning import Trip, TripBuddy
 from models.user_profile import UserProfile
 from models.enums import TripVisibility, BuddyRole, BuddyStatus, TripFlexibility
 from schemas.trip_planning import MatchScore
+from services.workflow_dispatchers import get_tripbuddy_workflow_dispatcher
 
 
 class BuddyRequestError(Exception):
@@ -54,6 +55,8 @@ def request_to_join_trip(
     db.add(buddy)
     db.commit()
     db.refresh(buddy)
+    dispatcher = get_tripbuddy_workflow_dispatcher()
+    dispatcher.notify_request_created(buddy, trip.user_id)
     return buddy
 
 
@@ -90,6 +93,8 @@ def respond_to_buddy_request(
     db.commit()
     db.refresh(buddy)
     db.refresh(trip)
+    dispatcher = get_tripbuddy_workflow_dispatcher()
+    dispatcher.notify_request_updated(buddy)
     return buddy
 
 
@@ -111,6 +116,8 @@ def cancel_buddy_request(
         raise BuddyRequestError("Can only cancel pending requests")
     db.delete(buddy)
     db.commit()
+    dispatcher = get_tripbuddy_workflow_dispatcher()
+    dispatcher.notify_request_cancelled(buddy_id)
 
 
 def get_trip_buddies(db: Session, trip_id: uuid.UUID) -> List[TripBuddy]:

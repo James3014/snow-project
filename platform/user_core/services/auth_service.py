@@ -1,16 +1,15 @@
 """
-Authentication service with support for both simple tokens and JWT.
-
-This provides a unified authentication interface that can be easily upgraded
-from development mode (user_id as token) to production mode (proper JWT).
+Authentication service with JWT issuance and verification.
 """
-from fastapi import Header, HTTPException, status, Depends
-from sqlalchemy.orm import Session
+from datetime import datetime, timedelta, timezone
+from fastapi import Header, HTTPException, status
 from typing import Optional
 import uuid
 import os
 
-from services import db
+from jose import JWTError, jwt
+
+from config.settings import settings
 
 
 class AuthenticationError(Exception):
@@ -18,71 +17,90 @@ class AuthenticationError(Exception):
     pass
 
 
+def create_access_token(user_id: uuid.UUID, expires_delta: Optional[timedelta] = None) -> str:
+    """Generate a signed JWT for the given user."""
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=settings.jwt_expire_minutes))
+    to_encode = {
+        "sub": str(user_id),
+        "exp": expire,
+        "iss": settings.app_name,
+        "aud": "user_core",
+    }
+    try:
+        return jwt.encode(to_encode, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+    except Exception as exc:  # pragma: no cover
+        raise AuthenticationError(f"Failed to create token: {exc}")
+
+
+def verify_token(token: str) -> uuid.UUID:
+    """Verify and decode JWT token with optional fallback secret for rotation."""
+    secrets_to_try = [settings.jwt_secret_key]
+    if settings.jwt_fallback_secret:
+        secrets_to_try.append(settings.jwt_fallback_secret)
+
+    last_error: Optional[Exception] = None
+    for secret in secrets_to_try:
+        try:
+            payload = jwt.decode(
+                token,
+                secret,
+                algorithms=[settings.jwt_algorithm],
+                audience="user_core",
+                options={"verify_aud": True},
+                issuer=settings.app_name,
+            )
+            user_id_str: str = payload.get("sub")
+            if not user_id_str:
+                raise AuthenticationError("Invalid token payload")
+            return uuid.UUID(user_id_str)
+        except Exception as exc:
+            last_error = exc
+            continue
+
+    raise AuthenticationError(f"Could not validate credentials: {last_error}")
+
+
+def _allow_dev_header() -> bool:
+    return os.getenv("ENV") != "production"
+
+
 def get_current_user_id(
     authorization: Optional[str] = Header(None),
     x_user_id: Optional[str] = Header(None, alias="X-User-Id")
 ) -> uuid.UUID:
     """
-    Extract and validate user ID from request headers.
-
-    Supports two authentication modes:
-    1. Development mode: X-User-Id header (for testing)
-    2. Production mode: Authorization: Bearer <token> header
-
-    In development, the token is just the user_id.
-    In production, this should validate a proper JWT token.
-
-    Args:
-        authorization: Authorization header (Bearer token)
-        x_user_id: Direct user ID header (dev mode only)
-
-    Returns:
-        UUID: Validated user ID
-
-    Raises:
-        HTTPException: If authentication fails
+    Extract and validate user ID from headers using JWT.
+    In non-production, X-User-Id is allowed for convenience.
     """
-    # Mode 1: Development mode with X-User-Id header
-    if x_user_id:
-        if os.getenv("ENV") != "production":
-            try:
-                return uuid.UUID(x_user_id)
-            except ValueError:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid X-User-Id header format"
-                )
-        else:
+    # Dev-mode direct header
+    if x_user_id and _allow_dev_header():
+        try:
+            return uuid.UUID(x_user_id)
+        except ValueError:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="X-User-Id header not allowed in production"
+                detail="Invalid X-User-Id header format"
             )
-
-    # Mode 2: Authorization Bearer token
-    if not authorization:
+    elif x_user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing authorization header",
+            detail="X-User-Id header not allowed in production"
+        )
+
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing or invalid authorization header",
             headers={"WWW-Authenticate": "Bearer"}
         )
 
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authorization header format. Use: Bearer <token>"
-        )
-
     token = authorization.replace("Bearer ", "")
-
-    # TODO: Replace this with proper JWT validation in production
-    # For now, treat token as user_id (development mode)
     try:
-        user_id = uuid.UUID(token)
-        return user_id
-    except ValueError:
+        return verify_token(token)
+    except AuthenticationError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token format"
+            detail=str(exc)
         )
 
 
@@ -90,60 +108,10 @@ def get_current_user_id_optional(
     authorization: Optional[str] = Header(None),
     x_user_id: Optional[str] = Header(None, alias="X-User-Id")
 ) -> Optional[uuid.UUID]:
-    """
-    Optional authentication - returns None if no credentials provided.
-
-    Useful for endpoints that work both for authenticated and anonymous users.
-    """
+    """Optional authentication - returns None if not provided/invalid."""
     if not authorization and not x_user_id:
         return None
-
     try:
         return get_current_user_id(authorization, x_user_id)
     except HTTPException:
         return None
-
-
-# ==================== Future JWT Implementation ====================
-#
-# When ready to upgrade to JWT, replace the token validation logic above
-# with the following (requires `python-jose` package):
-#
-# ```python
-# from jose import JWTError, jwt
-# from datetime import datetime, timedelta
-#
-# SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key")
-# ALGORITHM = "HS256"
-# ACCESS_TOKEN_EXPIRE_MINUTES = 30
-#
-# def create_access_token(user_id: uuid.UUID, expires_delta: Optional[timedelta] = None):
-#     """Generate a JWT access token."""
-#     to_encode = {"sub": str(user_id)}
-#
-#     if expires_delta:
-#         expire = datetime.utcnow() + expires_delta
-#     else:
-#         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-#
-#     to_encode.update({"exp": expire})
-#     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-#     return encoded_jwt
-#
-#
-# def verify_token(token: str) -> uuid.UUID:
-#     """Verify and decode JWT token."""
-#     try:
-#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-#         user_id_str: str = payload.get("sub")
-#
-#         if user_id_str is None:
-#             raise AuthenticationError("Invalid token payload")
-#
-#         return uuid.UUID(user_id_str)
-#
-#     except JWTError:
-#         raise AuthenticationError("Could not validate credentials")
-# ```
-#
-# Then update `get_current_user_id()` to call `verify_token(token)` instead.

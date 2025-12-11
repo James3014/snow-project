@@ -22,10 +22,7 @@ export const useFeedPolling = ({
     }
 
     // 設置輪詢
-    timerRef.current = setInterval(() => {
-      console.log('[Polling] 刷新動態牆...');
-      onRefresh();
-    }, interval);
+    timerRef.current = setInterval(onRefresh, interval);
 
     // 清理
     return () => {

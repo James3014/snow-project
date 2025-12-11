@@ -9,6 +9,7 @@ import Card from '@/shared/components/Card';
 import Button from '@/shared/components/Button';
 import Badge from '@/shared/components/Badge';
 import type { UserListResponse, UserListItem } from '@/shared/api/adminApi';
+import { NoIndex } from '@/shared/seo/noindex';
 
 export default function UserListPage() {
   const [data, setData] = useState<UserListResponse | null>(null);
@@ -94,6 +95,7 @@ export default function UserListPage() {
 
   return (
     <div className="min-h-screen pb-20">
+      <NoIndex />
       {/* Hero Header */}
       <div className="relative overflow-hidden px-4 pt-8 pb-12 mb-6">
         <div className="absolute inset-0 bg-gradient-to-b from-ice-primary/10 to-transparent opacity-50" />

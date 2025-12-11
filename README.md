@@ -10,9 +10,11 @@ SnowTrace 是一個全面性的滑雪運動愛好者平台，採用微服務架�
 - **user-core**：使用者身份和核心資料服務，作為所有使用者資料的單一真實來源
 - **resort-services**：雪場資訊服務，管理 43 個日本滑雪場的詳細資料
 - **snowbuddy-matching**：智慧雪伴匹配引擎，幫助使用者找到最適合的滑雪夥伴
+- **trip-planner API（tour）**：Next.js Route Handlers + Prisma，為行程規劃器提供 Trip/Day/Item CRUD、Checklist/Packing 勾選與雪場資料整合；依賴 user-core（認證）與 resort-services（雪場資料）
 
 ### 前端應用
 - **ski-platform**：React + TypeScript Web 應用，提供完整的用戶界面和互動體驗
+- **trip-planner（tour）**：Next.js 15 + Tailwind 行程規劃器，主打模板化 Trip 建立、Day/Item 編輯、Checklist/Packing 清單與即時樂觀更新體驗，未來將嵌入 ski-platform
 
 ## 功能特性
 
@@ -197,7 +199,70 @@ SnowTrace 是一個全面性的滑雪運動愛好者平台，採用微服務架�
   - `practice_start/complete`：練習完成率和有效度
 
 - **管理功能**
-  - 用戶管理：搜尋用戶、手動開通訂閱
+- 用戶管理：搜尋用戶、手動開通訂閱
+
+## Trip Planner（tour）整合說明
+
+### 角色定位
+- **服務邊界**：負責 Trip/Day/Item/Checklist/Packing 的整體生命週期，其他服務僅透過 API 消費資料或提供輔助資訊（例如 resort-services 提供雪場資料）。
+- **資料依賴**：
+  - Trip Planner 採 Prisma/PostgreSQL 儲存，Trip 內會引用 `user-core` 的 user_id，並綁定 `resort-services` 的 `resort_id`
+  - 與 `user-core` 的 `POST /users/{user_id}/ski-preferences` API 整合，行程建立/更新即時同步使用者偏好雪場
+  - 與 `snowbuddy-matching` 的 `/matching/searches` + `/matching/searches/{id}` 串接，Trip Header 顯示 AI 推薦雪友
+- **部署型態**：Next.js 15 App Router + Route Handlers，既是前端 UI 也是後端 API；可獨立部署於 Vercel / Zeabur / Docker。
+
+### 環境變數與 Prisma DB 需求
+在 `tour/.env`（或環境變數）設定：
+
+```
+DATABASE_URL=postgresql://snowtrace_trip:snowtrace_trip@localhost:5450/trip_planner
+NODE_ENV=development
+RESORT_API_BASE_URL=http://localhost:8000
+USER_CORE_API_URL=http://localhost:8001
+SNOWBUDDY_API_URL=http://localhost:8002
+```
+
+- `DATABASE_URL`：必要。Prisma 會依此連接資料庫並建立 `Trip/Day/Item/ChecklistItem/PackingItem` 五張表。
+- 建議獨立資料庫（`trip_planner`），避免與 user-core 共用 schema。
+- 本地初始化流程：
+  1. `cd tour`
+  2. `npm install`
+  3. `npx prisma migrate dev`
+  4. `npm run dev`
+
+### docker-compose 服務建議
+Trip Planner 預計以兩個服務加入 `docker-compose.yml`：
+
+```yaml
+trip-planner-db:
+  image: postgres:15-alpine
+  environment:
+    - POSTGRES_USER=snowtrace_trip
+    - POSTGRES_PASSWORD=snowtrace_trip
+    - POSTGRES_DB=trip_planner
+  volumes:
+    - trip_planner_data:/var/lib/postgresql/data/
+
+trip-planner:
+  build:
+    context: ./tour
+    dockerfile: Dockerfile
+  environment:
+    - DATABASE_URL=postgresql://snowtrace_trip:snowtrace_trip@trip-planner-db:5432/trip_planner
+    - RESORT_API_BASE_URL=http://resort-api:8000
+    - USER_CORE_API_URL=http://user-core:8001
+    - SNOWBUDDY_API_URL=http://snowbuddy-matching:8002
+  ports:
+    - "3010:3000"
+  depends_on:
+    - trip-planner-db
+    - resort-api
+    - user-core
+```
+
+- 可以與既有 `db`、`frontend` 服務並行啟動，對其他服務僅為 read-only 消費者。
+- 若僅需本地前端 UI，可跳過 Docker，直接使用 `npm run dev`，但仍需 PostgreSQL。
+
   - 回報管理：查看/篩選用戶回報
   - 課程分析：熱門/有效度/健康度/熱力圖
   - 付費分析：轉換率、方案分布、漏斗

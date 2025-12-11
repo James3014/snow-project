@@ -8,6 +8,7 @@ import { adminApi } from '@/shared/api/adminApi';
 import Card from '@/shared/components/Card';
 import Badge from '@/shared/components/Badge';
 import type { Statistics } from '@/shared/api/adminApi';
+import { NoIndex } from '@/shared/seo/noindex';
 
 export default function AdminDashboard() {
   const [statistics, setStatistics] = useState<Statistics | null>(null);
@@ -58,6 +59,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen pb-20">
+      <NoIndex />
       {/* Hero Header */}
       <div className="relative overflow-hidden px-4 pt-8 pb-12 mb-6">
         <div className="absolute inset-0 bg-gradient-to-b from-neon-purple/10 to-transparent opacity-50" />

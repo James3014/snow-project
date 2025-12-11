@@ -26,7 +26,7 @@ const initialState: AuthState = {
 // Async thunks
 export const loginThunk = createAsyncThunk(
   'auth/login',
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+  async (credentials: { email: string; password: string; captcha_token?: string }, { rejectWithValue }) => {
     try {
       const response = await authApi.login(credentials);
       localStorage.setItem('auth_token', response.access_token);
@@ -67,6 +67,7 @@ export const registerThunk = createAsyncThunk(
       display_name: string;
       preferred_language?: string;
       experience_level?: string;
+      captcha_token?: string;
     },
     { rejectWithValue }
   ) => {

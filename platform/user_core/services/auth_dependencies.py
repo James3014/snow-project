@@ -5,7 +5,8 @@ Authentication Dependencies
 from fastapi import Header, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from typing import Dict
-import uuid
+
+from services.auth_service import verify_token
 
 from services import db
 from models.user_profile import UserProfile
@@ -36,10 +37,8 @@ async def get_current_user(
 
     token = authorization.replace("Bearer ", "")
 
-    # TODO: Implement proper JWT validation in production
-    # For now, validate token as user_id
     try:
-        user_id = uuid.UUID(token)
+        user_id = verify_token(token)
 
         # Verify user exists
         user = db_session.query(UserProfile).filter(
@@ -54,10 +53,10 @@ async def get_current_user(
 
         return user
 
-    except ValueError:
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token format"
+            detail="Invalid token"
         )
 
 

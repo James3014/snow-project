@@ -2,10 +2,12 @@
 Resort routes - listing, detail, and share card endpoints.
 """
 import io
+import time
+from collections import defaultdict
 from typing import Optional
 from datetime import date
 
-from fastapi import APIRouter, Query, Depends
+from fastapi import APIRouter, Query, Depends, Header, HTTPException
 from fastapi.responses import StreamingResponse
 
 from ..models import Resort, ResortList
@@ -14,6 +16,42 @@ from ..db import get_resorts_db
 from ..card_generator import generate_resort_card
 from ..exceptions import ResortNotFoundError
 from ..auth_utils import get_optional_user_id
+from ..config import get_settings
+from ..bot_protection import verify_captcha
+
+settings = get_settings()
+_REQUEST_HISTORY = defaultdict(list)
+try:
+    import redis
+    _redis_client = redis.Redis.from_url(settings.redis_url, decode_responses=True) if settings.redis_url else None
+except Exception:
+    _redis_client = None
+
+
+def _rate_limit(key: str) -> None:
+    now = time.time()
+    window_start = now - settings.rate_limit_window
+    if _redis_client:
+        try:
+            key_name = f"resort:rl:{key}"
+            pipeline = _redis_client.pipeline()
+            pipeline.zremrangebyscore(key_name, 0, int((now - settings.rate_limit_window) * 1000))
+            pipeline.zcard(key_name)
+            pipeline.zadd(key_name, {str(int(now * 1000)): int(now * 1000)})
+            pipeline.expire(key_name, settings.rate_limit_window)
+            _, count, _, _ = pipeline.execute()
+            if count >= settings.rate_limit_max_requests:
+                raise HTTPException(status_code=429, detail="Rate limit exceeded")
+            return
+        except Exception:
+            pass
+
+    recent = _REQUEST_HISTORY[key]
+    while recent and recent[0] < window_start:
+        recent.pop(0)
+    if len(recent) >= settings.rate_limit_max_requests:
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+    recent.append(now)
 
 router = APIRouter(prefix="/resorts", tags=["resorts"])
 
@@ -59,9 +97,21 @@ async def get_share_card(
     user_name: Optional[str] = Query(None),
     activity_date: Optional[date] = Query(None),
     service: ResortService = Depends(get_resort_service),
-    authenticated_user_id: Optional[str] = Depends(get_optional_user_id)
+    authenticated_user_id: Optional[str] = Depends(get_optional_user_id),
+    x_api_key: Optional[str] = Header(None, alias="X-API-Key"),
+    captcha_token: Optional[str] = Header(None, alias="X-Captcha-Token")
 ):
     """Generate a shareable image card for a resort."""
+    if settings.require_api_key:
+        if not settings.api_key:
+            raise HTTPException(status_code=401, detail="API key not configured")
+        if not x_api_key or x_api_key != settings.api_key:
+            raise HTTPException(status_code=401, detail="Invalid or missing API key")
+
+    caller = authenticated_user_id or "anon"
+    _rate_limit(f"user:{caller}")
+    await verify_captcha(captcha_token)
+
     resort = service.get_by_id(resort_id)
     if not resort:
         raise ResortNotFoundError(resort_id)

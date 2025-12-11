@@ -11,6 +11,7 @@ from models.course_tracking import CourseRecommendation
 from models.user_profile import UserProfile
 from schemas.course_tracking import CourseRecommendationCreate, CourseRecommendationUpdate
 from exceptions.domain import RecommendationLimitError, UserNotFoundError
+from services.workflow_dispatchers import get_course_recommendation_workflow_dispatcher
 
 
 MAX_RECOMMENDATIONS_PER_RESORT = 3
@@ -43,6 +44,8 @@ def create(db: Session, user_id: uuid.UUID, recommendation: CourseRecommendation
         db.add(db_rec)
         db.commit()
         db.refresh(db_rec)
+        dispatcher = get_course_recommendation_workflow_dispatcher()
+        dispatcher.notify_submitted(db_rec)
         return db_rec
     except IntegrityError as e:
         db.rollback()
@@ -119,4 +122,6 @@ def moderate(db: Session, recommendation_id: uuid.UUID, reviewer_id: uuid.UUID, 
     
     db.commit()
     db.refresh(rec)
+    dispatcher = get_course_recommendation_workflow_dispatcher()
+    dispatcher.notify_moderated(rec)
     return rec

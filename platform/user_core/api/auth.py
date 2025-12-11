@@ -6,17 +6,63 @@ Provides:
 - User login (email + password)
 - Token validation
 """
-from fastapi import APIRouter, Header, HTTPException, status, Depends
+import time
+from collections import defaultdict
+from typing import Dict, Any
+from fastapi import APIRouter, Header, HTTPException, status, Depends, Request
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr, Field
-from typing import Dict, Any
 import uuid
+import os
 
 from services import db
 from models.user_profile import UserProfile
 from services import password_service
+from services.bot_protection import verify_captcha
+from services.auth_service import create_access_token, verify_token
+from config.settings import settings
+
+try:
+    import redis
+    _redis = redis.Redis.from_url(settings.redis_url, decode_responses=True)
+    _redis_available = True
+except Exception:
+    _redis = None
+    _redis_available = False
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+_REQUEST_HISTORY = defaultdict(list)
+AUTH_RL_WINDOW = 60  # seconds
+AUTH_RL_MAX = 15
+
+
+def _rate_limit(key: str) -> None:
+    """Apply a simple sliding window rate limit."""
+    if _redis_available:
+        now_ms = int(time.time() * 1000)
+        window_ms = AUTH_RL_WINDOW * 1000
+        key_name = f"auth:rl:{key}"
+        try:
+            pipeline = _redis.pipeline()
+            pipeline.zremrangebyscore(key_name, 0, now_ms - window_ms)
+            pipeline.zcard(key_name)
+            pipeline.zadd(key_name, {str(now_ms): now_ms})
+            pipeline.expire(key_name, AUTH_RL_WINDOW)
+            _, count, _, _ = pipeline.execute()
+            if count >= AUTH_RL_MAX:
+                raise HTTPException(status_code=429, detail="Too many requests")
+            return
+        except Exception:
+            pass
+
+    now = time.time()
+    window_start = now - AUTH_RL_WINDOW
+    recent = _REQUEST_HISTORY[key]
+    while recent and recent[0] < window_start:
+        recent.pop(0)
+    if len(recent) >= AUTH_RL_MAX:
+        raise HTTPException(status_code=429, detail="Too many requests")
+    recent.append(now)
 
 
 # ==================== Schemas ====================
@@ -28,12 +74,14 @@ class RegisterRequest(BaseModel):
     display_name: str = Field(..., min_length=2, max_length=100)
     preferred_language: str = Field(default="zh-TW")
     experience_level: str = Field(default="beginner")
+    captcha_token: str | None = Field(default=None, description="Turnstile/reCAPTCHA token")
 
 
 class LoginRequest(BaseModel):
     """User login request."""
     email: EmailStr
     password: str
+    captcha_token: str | None = Field(default=None, description="Turnstile/reCAPTCHA token")
 
 
 class AuthResponse(BaseModel):
@@ -50,6 +98,7 @@ class AuthResponse(BaseModel):
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
 async def register(
     request: RegisterRequest,
+    http_request: Request,
     db_session: Session = Depends(db.get_db)
 ) -> AuthResponse:
     """
@@ -61,6 +110,9 @@ async def register(
     Raises:
         400: Email already registered
     """
+    _rate_limit(f"register:{http_request.client.host if http_request.client else 'unknown'}")
+    await verify_captcha(request.captcha_token, client_ip=http_request.client.host if http_request.client else None)
+
     # Check if email already exists
     existing_user = db_session.query(UserProfile).filter(
         UserProfile.email == request.email
@@ -96,9 +148,7 @@ async def register(
     db_session.commit()
     db_session.refresh(new_user)
 
-    # Generate token (in production, use JWT)
-    # For now, use user_id as token
-    access_token = str(new_user.user_id)
+    access_token = create_access_token(new_user.user_id)
 
     return AuthResponse(
         access_token=access_token,
@@ -112,6 +162,7 @@ async def register(
 @router.post("/login", response_model=AuthResponse)
 async def login(
     request: LoginRequest,
+    http_request: Request,
     db_session: Session = Depends(db.get_db)
 ) -> AuthResponse:
     """
@@ -123,6 +174,9 @@ async def login(
     Raises:
         401: Invalid credentials
     """
+    _rate_limit(f"login:{http_request.client.host if http_request.client else 'unknown'}")
+    await verify_captcha(request.captcha_token, client_ip=http_request.client.host if http_request.client else None)
+
     # Find user by email
     user = db_session.query(UserProfile).filter(
         UserProfile.email == request.email
@@ -141,9 +195,7 @@ async def login(
             detail="Invalid email or password"
         )
 
-    # Generate token (in production, use JWT)
-    # For now, use user_id as token
-    access_token = str(user.user_id)
+    access_token = create_access_token(user.user_id)
 
     return AuthResponse(
         access_token=access_token,
@@ -162,9 +214,6 @@ async def validate_token(
     """
     Validate a bearer token and return user information.
 
-    In production, this would verify JWT signature and expiration.
-    For development, we validate the token as a user_id.
-
     Returns:
         Dict with user_id and status
 
@@ -179,34 +228,30 @@ async def validate_token(
 
     token = authorization.replace("Bearer ", "")
 
-    # TODO: Implement proper JWT validation in production
-    # For now, validate token as user_id
     try:
-        user_id = uuid.UUID(token)
-
-        # Verify user exists
-        user = db_session.query(UserProfile).filter(
-            UserProfile.user_id == user_id
-        ).first()
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found"
-            )
-
-        return {
-            "user_id": str(user.user_id),
-            "email": user.email,
-            "display_name": user.display_name or user.email.split('@')[0],
-            "status": "valid"
-        }
-
-    except ValueError:
+        user_id = verify_token(token)
+    except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token format"
+            detail=str(exc)
         )
+
+    user = db_session.query(UserProfile).filter(
+        UserProfile.user_id == user_id
+    ).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found"
+        )
+
+    return {
+        "user_id": str(user.user_id),
+        "email": user.email,
+        "display_name": user.display_name or user.email.split('@')[0],
+        "status": "valid"
+    }
 
 
 @router.get("/me")

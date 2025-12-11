@@ -5,6 +5,7 @@
 import { useState, useEffect } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { resortApiService } from '@/shared/api/resortApi';
+import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { calculateSeasonId } from '../utils/seasonUtils';
 import QuickCourseRecordFlow from './QuickCourseRecordFlow';
 import type { TripCreate, TripStatus, FlightStatus, AccommodationStatus } from '../types';
@@ -12,7 +13,7 @@ import type { Resort } from '@/shared/data/resorts';
 
 interface TripCreateModalProps {
   onClose: () => void;
-  onCreate: (trips: TripCreate[]) => void;
+  onCreate: (trips: TripCreate[]) => Promise<void> | void;
 }
 
 export default function TripCreateModal({ onClose, onCreate }: TripCreateModalProps) {
@@ -22,6 +23,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
   const [shouldRecordAfterSave, setShouldRecordAfterSave] = useState(false);
   const [availableResorts, setAvailableResorts] = useState<Resort[]>([]);
   const [resortsLoading, setResortsLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const userId = useAppSelector((state) => state.auth.user?.user_id);
 
   const [formData, setFormData] = useState<Omit<TripCreate, 'season_id'>>({
@@ -56,28 +58,75 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
     loadResorts();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const getSeasonRange = (seasonName: string) => {
+    const [startYear, endYear] = seasonName.split('-').map(Number);
+    return {
+      start: `${startYear}-11-01`,
+      end: `${endYear}-04-30`,
+      label: `${startYear}-${endYear} 滑雪季`,
+    };
+  };
+
+  const ensureSeasonId = async (seasonName: string) => {
+    if (!userId) throw new Error('請先登入後再建立行程');
+
+    const seasons = await tripPlanningApi.getSeasons(userId);
+    const existingSeason = seasons.find(s => s.title === seasonName);
+    if (existingSeason) return existingSeason.season_id;
+
+    const { start, end, label } = getSeasonRange(seasonName);
+    const newSeason = await tripPlanningApi.createSeason(userId, {
+      title: seasonName,
+      description: label,
+      start_date: start,
+      end_date: end,
+    });
+    return newSeason.season_id;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 自動計算雪季 ID
-    const seasonId = calculateSeasonId(formData.start_date);
+    if (submitting) return;
+    if (!formData.resort_id || !formData.start_date || !formData.end_date) {
+      alert('請先選擇雪場與日期');
+      return;
+    }
+    if (!userId) {
+      alert('請先登入後再建立行程');
+      return;
+    }
+
+    setSubmitting(true);
+
+    // 自動計算雪季 ID（並確保後端已存在）
+    const seasonName = calculateSeasonId(formData.start_date);
 
     // 加上 season_id
-    const tripWithSeason: TripCreate = {
-      ...formData,
-      season_id: seasonId,
-    };
+    try {
+      const seasonId = await ensureSeasonId(seasonName);
+      const tripWithSeason: TripCreate = {
+        ...formData,
+        season_id: seasonId,
+      };
 
-    // 如果狀態是「已完成」且用戶選擇立即紀錄
-    const shouldRecordCourses = formData.trip_status === 'completed' && shouldRecordAfterSave;
+      // 如果狀態是「已完成」且用戶選擇立即紀錄
+      const shouldRecordCourses = formData.trip_status === 'completed' && shouldRecordAfterSave;
 
-    onCreate([tripWithSeason]);
+      await onCreate([tripWithSeason]);
 
-    // 如果需要紀錄雪道，顯示快速紀錄界面
-    if (shouldRecordCourses && userId) {
-      setShowQuickRecord(true);
-    } else {
-      onClose();
+      // 如果需要紀錄雪道，顯示快速紀錄界面
+      if (shouldRecordCourses && userId) {
+        setShowQuickRecord(true);
+      } else {
+        onClose();
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '創建行程失敗，請重試';
+      console.error('創建行程失敗:', error);
+      alert(message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -102,7 +151,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
           <div className="space-y-6">
             {/* 雪場選擇 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 🏔️ 雪場 <span className="text-red-500">*</span>
               </label>
               <select
@@ -127,7 +176,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                 <option value="__new__">➕ 新增其他雪場...</option>
               </select>
               {resortsLoading && (
-                <p className="text-xs text-gray-500 mt-1">⏳ 正在載入雪場列表...</p>
+                <p className="text-xs text-gray-700 mt-1">⏳ 正在載入雪場列表...</p>
               )}
               {!resortsLoading && availableResorts.length === 0 && (
                 <p className="text-xs text-red-500 mt-1">⚠️ 無法載入雪場列表，請重新整理頁面</p>
@@ -137,7 +186,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
             {/* 日期範圍 */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   📅 開始日期 <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -160,7 +209,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   📅 結束日期 <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -176,14 +225,14 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
 
             {/* 顯示天數 */}
             {calculateDays() > 0 && (
-              <div className="text-sm text-gray-600 -mt-4">
+              <div className="text-sm text-gray-800 -mt-4">
                 ⏱️ 共 {calculateDays()} 天
               </div>
             )}
 
             {/* 行程狀態 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 📋 狀態 <span className="text-red-500">*</span>
               </label>
               <select
@@ -240,7 +289,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
 
             {/* 備註 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 📝 備註
               </label>
               <textarea
@@ -259,9 +308,9 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                 onClick={() => setShowMoreOptions(!showMoreOptions)}
                 className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <span className="font-medium text-gray-700">⚙️ 更多選項</span>
+                <span className="font-medium text-gray-900">⚙️ 更多選項</span>
                 <svg
-                  className={`w-5 h-5 text-gray-500 transition-transform ${showMoreOptions ? 'rotate-180' : ''}`}
+                  className={`w-5 h-5 text-gray-700 transition-transform ${showMoreOptions ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -274,7 +323,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                 <div className="mt-4 space-y-4 p-4 bg-gray-50 rounded-lg">
                   {/* 行程標題 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       ✏️ 行程標題（選填）
                     </label>
                     <input
@@ -289,7 +338,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                   {/* 機票和住宿狀態 */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-900 mb-2">
                         ✈️ 機票狀態
                       </label>
                       <select
@@ -306,7 +355,7 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-900 mb-2">
                         🏨 住宿狀態
                       </label>
                       <select
@@ -325,10 +374,10 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
 
                   {/* 同行夥伴（預留） */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       👥 同行夥伴（開發中）
                     </label>
-                    <div className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 text-sm">
+                    <div className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-700 text-sm">
                       此功能開發中，未來可以邀請其他用戶一起規劃行程
                     </div>
                   </div>
@@ -342,15 +391,17 @@ export default function TripCreateModal({ onClose, onCreate }: TripCreateModalPr
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              className="flex-1 px-6 py-3 border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              disabled={submitting}
             >
               取消
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              disabled={submitting}
+              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors font-medium"
             >
-              儲存
+              {submitting ? '建立中...' : '儲存'}
             </button>
           </div>
         </form>
@@ -423,7 +474,7 @@ function NewResortModal({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
               雪場名稱 <span className="text-red-500">*</span>
             </label>
             <input
@@ -437,7 +488,7 @@ function NewResortModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
               所在國家/地區
             </label>
             <select
@@ -464,7 +515,7 @@ function NewResortModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50 transition-colors"
             >
               取消
             </button>

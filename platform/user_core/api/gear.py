@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 
 from services import db
 from services.auth_service import get_current_user_id
+from services.workflow_dispatchers import get_gear_reminder_workflow_dispatcher
 from models import GearItem, GearInspection, GearReminder
 from schemas.gear import (
     GearItemCreate, GearItemUpdate, GearItemRead,
@@ -148,7 +149,7 @@ def _create_reminder_for_inspection(
     db_session: Session,
     gear_item_id: UUID,
     next_inspection_date: datetime
-):
+) -> GearReminder:
     """建立檢查提醒（內部函數）"""
     reminder = GearReminder(
         gear_item_id=gear_item_id,
@@ -157,6 +158,7 @@ def _create_reminder_for_inspection(
         message="Time for your gear inspection"
     )
     db_session.add(reminder)
+    return reminder
 
 
 @router.post("/items/{item_id}/inspections", response_model=GearInspectionRead, status_code=status.HTTP_201_CREATED)
@@ -206,11 +208,16 @@ def create_inspection(
     db_session.add(inspection)
 
     # 如果有 next_inspection_date，自動建立提醒
+    reminder = None
     if next_inspection_date:
-        _create_reminder_for_inspection(db_session, item_id, next_inspection_date)
+        reminder = _create_reminder_for_inspection(db_session, item_id, next_inspection_date)
 
     db_session.commit()
     db_session.refresh(inspection)
+    if reminder:
+        db_session.refresh(reminder)
+        dispatcher = get_gear_reminder_workflow_dispatcher()
+        dispatcher.schedule(reminder)
     return inspection
 
 
@@ -313,6 +320,8 @@ def create_reminder(
     db_session.add(reminder)
     db_session.commit()
     db_session.refresh(reminder)
+    dispatcher = get_gear_reminder_workflow_dispatcher()
+    dispatcher.schedule(reminder)
     return reminder
 
 
@@ -343,6 +352,8 @@ def cancel_reminder(
     reminder.status = REMINDER_STATUS_CANCELLED
     db_session.commit()
     db_session.refresh(reminder)
+    dispatcher = get_gear_reminder_workflow_dispatcher()
+    dispatcher.cancel(reminder.id)
     return reminder
 
 

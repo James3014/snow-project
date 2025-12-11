@@ -46,8 +46,8 @@ const FeedList: React.FC<FeedListProps> = ({
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center">
         <div className="text-4xl mb-4">📭</div>
-        <p className="text-gray-600">還沒有動態</p>
-        <p className="text-sm text-gray-500 mt-2">紀錄你的滑雪活動，分享給雪友吧！</p>
+        <p className="text-gray-800">還沒有動態</p>
+        <p className="text-sm text-gray-700 mt-2">紀錄你的滑雪活動，分享給雪友吧！</p>
       </div>
     );
   }
@@ -81,7 +81,7 @@ const FeedList: React.FC<FeedListProps> = ({
 
       {/* 沒有更多了 */}
       {!hasMore && items.length > 0 && (
-        <div className="mt-6 text-center text-gray-500 text-sm">
+        <div className="mt-6 text-center text-gray-700 text-sm">
           沒有更多動態了 🎿
         </div>
       )}

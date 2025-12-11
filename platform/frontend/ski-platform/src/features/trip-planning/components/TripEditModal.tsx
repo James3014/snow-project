@@ -93,7 +93,7 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
           <div className="space-y-6">
             {/* 雪場選擇 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 🏔️ 雪場 <span className="text-red-500">*</span>
               </label>
               <select
@@ -115,7 +115,7 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
             {/* 日期範圍 */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   📅 開始日期 <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -127,7 +127,7 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   📅 結束日期 <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -143,14 +143,14 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
 
             {/* 顯示天數 */}
             {calculateDays() > 0 && (
-              <div className="text-sm text-gray-600 -mt-4">
+              <div className="text-sm text-gray-800 -mt-4">
                 ⏱️ 共 {calculateDays()} 天
               </div>
             )}
 
             {/* 行程狀態 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 📋 狀態 <span className="text-red-500">*</span>
               </label>
               <select
@@ -168,7 +168,7 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
 
             {/* 備註 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 📝 備註
               </label>
               <textarea
@@ -187,9 +187,9 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
                 onClick={() => setShowMoreOptions(!showMoreOptions)}
                 className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <span className="font-medium text-gray-700">⚙️ 更多選項</span>
+                <span className="font-medium text-gray-900">⚙️ 更多選項</span>
                 <svg
-                  className={`w-5 h-5 text-gray-500 transition-transform ${showMoreOptions ? 'rotate-180' : ''}`}
+                  className={`w-5 h-5 text-gray-700 transition-transform ${showMoreOptions ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -202,7 +202,7 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
                 <div className="mt-4 space-y-4 p-4 bg-gray-50 rounded-lg">
                   {/* 行程標題 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       ✏️ 行程標題（選填）
                     </label>
                     <input
@@ -217,7 +217,7 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
                   {/* 機票和住宿狀態 */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-900 mb-2">
                         ✈️ 機票狀態
                       </label>
                       <select
@@ -234,7 +234,7 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-900 mb-2">
                         🏨 住宿狀態
                       </label>
                       <select
@@ -253,7 +253,7 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
 
                   {/* 同行夥伴上限 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       👥 同行夥伴人數上限
                     </label>
                     <input
@@ -276,7 +276,7 @@ export default function TripEditModal({ trip, onClose, onUpdate }: TripEditModal
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50"
+              className="flex-1 px-6 py-3 border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50"
             >
               取消
             </button>

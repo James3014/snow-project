@@ -130,7 +130,7 @@ export default function EnhancedCourseRecordModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white text-slate-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-t-2xl">
           <h2 className="text-2xl font-bold">{mode === 'edit' ? '編輯雪道體驗' : '紀錄雪道體驗'}</h2>
@@ -140,7 +140,7 @@ export default function EnhancedCourseRecordModal({
         <div className="p-6 space-y-6">
           {/* Rating */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-gray-900 mb-3">
               ⭐ 整體評分（選填）
             </label>
             <div className="flex gap-1">
@@ -158,13 +158,13 @@ export default function EnhancedCourseRecordModal({
               ))}
             </div>
             {rating > 0 && (
-              <p className="text-sm text-gray-600 mt-2">已選擇 {rating} 星</p>
+              <p className="text-sm text-gray-800 mt-2">已選擇 {rating} 星</p>
             )}
           </div>
 
           {/* Snow Condition */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-gray-900 mb-3">
               ❄️ 雪況（選填）
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -173,7 +173,7 @@ export default function EnhancedCourseRecordModal({
                   key={condition.value}
                   type="button"
                   onClick={() => setSnowCondition(condition.value)}
-                  className={`p-3 rounded-xl border-2 transition-all text-center ${
+                  className={`p-3 rounded-xl border-2 transition-all text-center text-slate-900 ${
                     snowCondition === condition.value
                       ? 'border-primary-500 bg-primary-50 shadow-md scale-105'
                       : 'border-gray-200 hover:border-primary-300'
@@ -181,7 +181,7 @@ export default function EnhancedCourseRecordModal({
                 >
                   <div className="text-2xl mb-1">{condition.emoji}</div>
                   <div className="text-sm font-medium">{condition.value}</div>
-                  <div className="text-xs text-gray-500">{condition.desc}</div>
+                  <div className="text-xs text-gray-700">{condition.desc}</div>
                 </button>
               ))}
             </div>
@@ -189,7 +189,7 @@ export default function EnhancedCourseRecordModal({
 
           {/* Weather */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-gray-900 mb-3">
               🌤️ 天氣（選填）
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -198,7 +198,7 @@ export default function EnhancedCourseRecordModal({
                   key={option.value}
                   type="button"
                   onClick={() => setWeather(option.value)}
-                  className={`p-3 rounded-xl border-2 transition-all text-center ${
+                  className={`p-3 rounded-xl border-2 transition-all text-center text-slate-900 ${
                     weather === option.value
                       ? 'border-primary-500 bg-primary-50 shadow-md scale-105'
                       : 'border-gray-200 hover:border-primary-300'
@@ -213,7 +213,7 @@ export default function EnhancedCourseRecordModal({
 
           {/* Difficulty Feeling */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-gray-900 mb-3">
               💪 難度感受（選填）
             </label>
             <div className="grid grid-cols-3 gap-3">
@@ -222,7 +222,7 @@ export default function EnhancedCourseRecordModal({
                   key={feeling.value}
                   type="button"
                   onClick={() => setDifficultyFeeling(feeling.value)}
-                  className={`p-3 rounded-xl border-2 transition-all text-center ${
+                  className={`p-3 rounded-xl border-2 transition-all text-center text-slate-900 ${
                     difficultyFeeling === feeling.value
                       ? 'border-primary-500 bg-primary-50 shadow-md scale-105'
                       : 'border-gray-200 hover:border-primary-300'
@@ -239,7 +239,7 @@ export default function EnhancedCourseRecordModal({
 
           {/* Mood Tags */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-gray-900 mb-3">
               😊 心情標籤（可多選，選填）
             </label>
             <div className="flex flex-wrap gap-2">
@@ -251,7 +251,7 @@ export default function EnhancedCourseRecordModal({
                   className={`px-4 py-2 rounded-full border-2 transition-all inline-flex items-center gap-2 ${
                     moodTags.includes(tag.value)
                       ? 'border-primary-500 bg-primary-500 text-white shadow-md'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-primary-300'
+                      : 'border-gray-200 bg-white text-gray-900 hover:border-primary-300'
                   }`}
                 >
                   <span>{tag.emoji}</span>
@@ -263,7 +263,7 @@ export default function EnhancedCourseRecordModal({
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-gray-900 mb-3">
               📝 心得筆記（選填，最多 200 字）
             </label>
             <textarea
@@ -273,7 +273,7 @@ export default function EnhancedCourseRecordModal({
               rows={4}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
             />
-            <div className="text-xs text-gray-500 text-right mt-1">
+            <div className="text-xs text-gray-700 text-right mt-1">
               {notes.length} / 200
             </div>
           </div>
