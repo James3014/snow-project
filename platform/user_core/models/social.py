@@ -13,6 +13,31 @@ from datetime import datetime, UTC
 from .user_profile import Base
 
 
+class Friendship(Base):
+    """Friendship relationships between users."""
+    __tablename__ = 'friendships'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('user_profiles.user_id'), nullable=False)
+    friend_id = Column(UUID(as_uuid=True), ForeignKey('user_profiles.user_id'), nullable=False)
+    status = Column(String(20), default='pending', nullable=False)  # 'pending', 'accepted', 'declined'
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC),
+                       onupdate=lambda: datetime.now(UTC), nullable=False)
+
+    # Relationships
+    user = relationship("UserProfile", foreign_keys=[user_id])
+    friend = relationship("UserProfile", foreign_keys=[friend_id])
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'friend_id', name='uq_user_friend'),
+        CheckConstraint('user_id != friend_id', name='check_no_self_friend'),
+        Index('idx_friendship_user', 'user_id'),
+        Index('idx_friendship_friend', 'friend_id'),
+        Index('idx_friendship_status', 'status'),
+    )
+
+
 class UserFollow(Base):
     """User follow relationships."""
     __tablename__ = 'user_follows'
