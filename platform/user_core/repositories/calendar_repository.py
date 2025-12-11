@@ -83,6 +83,8 @@ class CalendarTripRepository:
         model.region = trip.region
         model.people_count = trip.people_count
         model.note = trip.note
+        model.max_buddies = trip.max_buddies
+        model.current_buddies = trip.current_buddies
         self.db.commit()
         self.db.refresh(model)
         return _to_domain_trip(model)

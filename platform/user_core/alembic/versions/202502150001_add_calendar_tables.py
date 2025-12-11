@@ -30,6 +30,7 @@ def upgrade():
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True, nullable=False),
         sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("user_profiles.user_id"), nullable=False),
         sa.Column("title", sa.String(length=200), nullable=False),
+        sa.Column("template_id", sa.String(length=100)),
         sa.Column("start_date", sa.DateTime(timezone=True), nullable=False),
         sa.Column("end_date", sa.DateTime(timezone=True), nullable=False),
         sa.Column("timezone", sa.String(length=64), nullable=False, server_default="Asia/Taipei"),
