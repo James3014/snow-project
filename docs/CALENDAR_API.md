@@ -28,5 +28,5 @@
   - List matching requests & results for trip.
 - `PATCH /calendar/trips/{trip_id}` 更新行程資訊。
 - `POST /calendar/trips/{trip_id}/days` / `GET /calendar/trips/{trip_id}/days`
-- `POST /calendar/items` 新增行程項目。
+- `POST /calendar/items` / `GET /calendar/days/{day_id}/items`
 - **權限/限流**：所有路由需 Bearer token；行程/事件/媒合操作套用簡易速率限制；媒合需 `X-Captcha-Token`。

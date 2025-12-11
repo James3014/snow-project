@@ -236,6 +236,24 @@ class CalendarEventRepository:
         )
         return [_to_domain_event(m) for m in models]
 
+    def get(self, event_id: UUID) -> CalendarEvent | None:
+        model = self.db.query(EventModel).filter(EventModel.id == event_id).first()
+        return _to_domain_event(model) if model else None
+
+    def update(self, event: CalendarEvent) -> CalendarEvent:
+        model = self.db.query(EventModel).filter(EventModel.id == event.id).first()
+        if not model:
+            raise ValueError("Event not found")
+        model.title = event.title
+        model.description = event.description
+        model.start_date = event.start_date
+        model.end_date = event.end_date
+        model.all_day = event.all_day
+        model.reminders = list(event.reminders)
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_event(model)
+
 
 def _to_domain_event(model: EventModel) -> CalendarEvent:
     return CalendarEvent(

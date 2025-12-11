@@ -236,6 +236,32 @@ def list_events(
     ]
 
 
+@router.patch("/events/{event_id}", response_model=EventResponse)
+def update_event(
+    event_id: str,
+    request: EventUpdateRequest,
+    current_user = Depends(get_current_user),
+    service: CalendarEventService = Depends(get_event_service),
+):
+    event = service.update_event(
+        UUID(event_id),
+        user_id=current_user.user_id,
+        title=request.title,
+        start_date=request.start_date,
+        end_date=request.end_date,
+        description=request.description,
+        reminders=request.reminders,
+    )
+    return EventResponse(
+        id=str(event.id),
+        type=event.type,
+        title=event.title,
+        start_date=event.start_date,
+        end_date=event.end_date,
+        all_day=event.all_day,
+    )
+
+
 @router.patch("/trips/{trip_id}", response_model=TripResponse)
 def update_trip(
     trip_id: str,
@@ -324,6 +350,15 @@ def add_item(
     return ItemResponse(id=str(item.id), title=item.title, type=item.type)
 
 
+@router.get("/days/{day_id}/items", response_model=List[ItemResponse])
+def list_items(
+    day_id: str,
+    service: TripService = Depends(get_trip_service),
+):
+    items = service.list_items(UUID(day_id))
+    return [ItemResponse(id=str(i.id), title=i.title, type=i.type) for i in items]
+
+
 @router.post("/trips/{trip_id}/buddies", response_model=BuddyResponse, status_code=201)
 def invite_trip_buddy(
     trip_id: str,
@@ -386,6 +421,13 @@ def list_matching_requests(
     reqs = service.list_requests(UUID(trip_id))
     return [MatchingResponse(id=str(r.id), status=r.status.value, results=r.results) for r in reqs]
 from services.bot_protection import verify_captcha
+from config.settings import settings
+
+try:
+    import redis
+    _RL_CLIENT = redis.Redis.from_url(settings.redis_url, decode_responses=True) if settings.redis_url else None
+except Exception:
+    _RL_CLIENT = None
 class DayCreateRequest(BaseModel):
     day_index: int
     label: str
@@ -420,3 +462,9 @@ class ItemResponse(BaseModel):
     id: str
     title: str
     type: str
+class EventUpdateRequest(BaseModel):
+    title: str | None = None
+    start_date: dt.datetime | None = None
+    end_date: dt.datetime | None = None
+    description: str | None = None
+    reminders: List[dict] | None = None

@@ -2,7 +2,7 @@
  * 通知下拉選單組件
  * 顯示所有待處理的雪伴申請
  */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { useAppSelector } from '@/store/hooks';

@@ -147,6 +147,29 @@ class CalendarEventService:
     def list_events(self, *, user_id: UUID) -> list[CalendarEvent]:
         return self.repo.list_for_user(user_id)
 
+    def update_event(
+        self,
+        event_id: UUID,
+        *,
+        user_id: UUID,
+        title: str | None = None,
+        start_date: dt.datetime | None = None,
+        end_date: dt.datetime | None = None,
+        description: str | None = None,
+        reminders: list[dict] | None = None,
+    ) -> CalendarEvent:
+        event = self.repo.get(event_id)
+        if not event or event.user_id != user_id:
+            raise ValueError("Event not found")
+        updated = event.update(
+            title=title,
+            start_date=start_date,
+            end_date=end_date,
+            description=description,
+            reminders=tuple(reminders) if reminders is not None else None,
+        )
+        return self.repo.update(updated)
+
 
 class TripBuddyService:
     """Manage trip buddies."""

@@ -14,12 +14,13 @@
    - [x] CalendarEventService（create/list）。
    - [x] TripBuddyService（invite/accept/decline + TDD）。
    - [x] MatchingService（create/list + TDD）。
-   - [ ] 進階功能：Day/Item 管理、Trip 更新、Event reminders。
+   - [x] Day/Item 管理、Trip 更新。
+   - [ ] Event reminders / notifications。
 
 4. API layer
-   - [x] /calendar/trips, /calendar/events, /trips/{id}/buddies, /trips/{id}/matching (create/list)。
+   - [x] /calendar/trips, /calendar/events, /trips/{id}/buddies, /trips/{id}/matching (create/list)，Day/Item create/list。
    - [x] Trip/Event/Buddy/Matching schema + TestClient tests。
-   - [ ] 權限/限流/bot protection for新路由（待補）。
+   - [ ] 權限/限流/bot protection for新路由（需 Edge/Redis 落地）。
 
 5. Integration/safety
    - [x] Apply auth to /calendar/trips；rate-limit/bot-protection for其他端點待擴充。

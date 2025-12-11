@@ -103,3 +103,26 @@ def test_add_day_api():
     response = client.post(f"/calendar/trips/{trip_id}/days", json={"day_index": 0, "label": "Day 1"})
     assert response.status_code == 201
     assert response.json()["label"] == "Day 1"
+
+
+def test_add_item_api():
+    trip_resp = client.post(
+        "/calendar/trips",
+        json={
+            "title": "Trip2",
+            "start_date": dt.datetime(2025, 3, 1, tzinfo=dt.timezone.utc).isoformat(),
+            "end_date": dt.datetime(2025, 3, 2, tzinfo=dt.timezone.utc).isoformat(),
+        },
+    ).json()
+    trip_id = trip_resp["id"]
+    day_resp = client.post(f"/calendar/trips/{trip_id}/days", json={"day_index": 0, "label": "Day 1"}).json()
+    payload = {
+        "trip_id": trip_id,
+        "day_id": day_resp["id"],
+        "type": "ski",
+        "title": "Day item",
+    }
+    response = client.post("/calendar/items", json=payload)
+    assert response.status_code == 201
+    items_resp = client.get(f"/calendar/days/{day_resp['id']}/items")
+    assert items_resp.status_code == 200

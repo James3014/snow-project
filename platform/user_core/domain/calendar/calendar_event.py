@@ -56,3 +56,35 @@ class CalendarEvent:
             reminders=reminders,
             **kwargs,
         )
+
+    def update(
+        self,
+        *,
+        title: str | None = None,
+        start_date: dt.datetime | None = None,
+        end_date: dt.datetime | None = None,
+        description: str | None = None,
+        reminders: tuple[dict, ...] | None = None,
+    ) -> "CalendarEvent":
+        new_start = start_date or self.start_date
+        new_end = end_date or self.end_date
+        if new_end < new_start:
+            raise ValueError("end_date must be >= start_date")
+        return CalendarEvent(
+            id=self.id,
+            user_id=self.user_id,
+            type=self.type,
+            title=title or self.title,
+            start_date=new_start,
+            end_date=new_end,
+            description=description if description is not None else self.description,
+            all_day=self.all_day,
+            timezone=self.timezone,
+            trip_id=self.trip_id,
+            resort_id=self.resort_id,
+            google_event_id=self.google_event_id,
+            outlook_event_id=self.outlook_event_id,
+            matching_id=self.matching_id,
+            participants=self.participants,
+            reminders=reminders if reminders is not None else self.reminders,
+        )
