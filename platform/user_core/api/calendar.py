@@ -522,3 +522,167 @@ def list_matching_requests(
 ):
     reqs = service.list_requests(UUID(trip_id))
     return [MatchingResponse(id=str(r.id), status=r.status.value, results=r.results) for r in reqs]
+
+
+# ============ 公開行程 & 共享行事曆 ============
+
+class PublicTripResponse(BaseModel):
+    id: str
+    title: str
+    start_date: dt.datetime
+    end_date: dt.datetime
+    resort_id: Optional[str]
+    resort_name: Optional[str]
+    region: Optional[str]
+    people_count: Optional[int]
+    max_buddies: int
+    current_buddies: int
+    owner_id: str
+
+    class Config:
+        from_attributes = True
+
+
+class SharedCalendarResponse(BaseModel):
+    trips: List[TripResponse]
+    events: List[EventResponse]
+
+
+@router.get("/public/trips", response_model=List[PublicTripResponse])
+def list_public_trips(
+    resort_id: Optional[str] = None,
+    region: Optional[str] = None,
+    start_after: Optional[dt.datetime] = None,
+    db_session: Session = Depends(db.get_db),
+):
+    """列出所有公開行程（可篩選雪場/地區/日期）"""
+    from models.calendar import CalendarTrip
+    from domain.calendar.enums import TripVisibility
+    
+    query = db_session.query(CalendarTrip).filter(
+        CalendarTrip.visibility == TripVisibility.PUBLIC,
+        CalendarTrip.status != "cancelled",
+    )
+    
+    if resort_id:
+        query = query.filter(CalendarTrip.resort_id == resort_id)
+    if region:
+        query = query.filter(CalendarTrip.region == region)
+    if start_after:
+        query = query.filter(CalendarTrip.start_date >= start_after)
+    else:
+        query = query.filter(CalendarTrip.start_date >= dt.datetime.now(dt.timezone.utc))
+    
+    trips = query.order_by(CalendarTrip.start_date.asc()).limit(50).all()
+    
+    return [
+        PublicTripResponse(
+            id=str(t.id),
+            title=t.title,
+            start_date=t.start_date,
+            end_date=t.end_date,
+            resort_id=t.resort_id,
+            resort_name=t.resort_name,
+            region=t.region,
+            people_count=t.people_count,
+            max_buddies=t.max_buddies,
+            current_buddies=t.current_buddies,
+            owner_id=str(t.user_id),
+        )
+        for t in trips
+    ]
+
+
+@router.get("/shared", response_model=SharedCalendarResponse)
+def get_shared_calendar(
+    current_user = Depends(get_current_user),
+    service: TripService = Depends(get_trip_service),
+    event_service: CalendarEventService = Depends(get_event_service),
+    buddy_service: TripBuddyService = Depends(get_buddy_service),
+    db_session: Session = Depends(db.get_db),
+):
+    """取得共享行事曆（自己的行程 + 已加入的雪伴行程）"""
+    from models.calendar import CalendarTrip, CalendarTripBuddy
+    from domain.calendar.enums import BuddyStatus
+    
+    # 自己的行程
+    my_trips = service.list_trips(user_id=current_user.user_id)
+    
+    # 已加入的雪伴行程
+    buddy_records = db_session.query(CalendarTripBuddy).filter(
+        CalendarTripBuddy.user_id == current_user.user_id,
+        CalendarTripBuddy.status == BuddyStatus.ACCEPTED,
+    ).all()
+    
+    buddy_trip_ids = [b.trip_id for b in buddy_records]
+    buddy_trips = []
+    if buddy_trip_ids:
+        buddy_trip_models = db_session.query(CalendarTrip).filter(
+            CalendarTrip.id.in_(buddy_trip_ids)
+        ).all()
+        for t in buddy_trip_models:
+            buddy_trips.append(Trip.from_persistence(
+                id=t.id, user_id=t.user_id, title=t.title,
+                start_date=t.start_date, end_date=t.end_date,
+                timezone=t.timezone, visibility=t.visibility, status=t.status,
+                template_id=t.template_id, resort_id=t.resort_id,
+                resort_name=t.resort_name, region=t.region,
+                people_count=t.people_count, note=t.note,
+                max_buddies=t.max_buddies, current_buddies=t.current_buddies,
+            ))
+    
+    all_trips = my_trips + buddy_trips
+    
+    # 自己的事件
+    my_events = event_service.list_events(user_id=current_user.user_id)
+    
+    return SharedCalendarResponse(
+        trips=[
+            TripResponse(
+                id=str(t.id), title=t.title,
+                start_date=t.start_date, end_date=t.end_date,
+                timezone=t.timezone, visibility=t.visibility, status=t.status,
+            )
+            for t in all_trips
+        ],
+        events=[
+            EventResponse(
+                id=str(e.id), type=e.type, title=e.title,
+                start_date=e.start_date, end_date=e.end_date, all_day=e.all_day,
+            )
+            for e in my_events
+        ],
+    )
+
+
+@router.post("/public/trips/{trip_id}/join", response_model=BuddyResponse, status_code=201)
+def join_public_trip(
+    trip_id: str,
+    message: Optional[str] = None,
+    current_user = Depends(get_current_user),
+    service: TripBuddyService = Depends(get_buddy_service),
+    db_session: Session = Depends(db.get_db),
+):
+    """申請加入公開行程"""
+    from models.calendar import CalendarTrip
+    from domain.calendar.enums import TripVisibility
+    
+    _rate_limit(f"join:{current_user.user_id}")
+    
+    trip = db_session.query(CalendarTrip).filter(CalendarTrip.id == UUID(trip_id)).first()
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found")
+    if trip.visibility != TripVisibility.PUBLIC:
+        raise HTTPException(status_code=403, detail="Trip is not public")
+    if trip.user_id == current_user.user_id:
+        raise HTTPException(status_code=400, detail="Cannot join your own trip")
+    if trip.current_buddies >= trip.max_buddies:
+        raise HTTPException(status_code=400, detail="Trip is full")
+    
+    buddy = service.invite(
+        trip_id=UUID(trip_id),
+        inviter_id=current_user.user_id,  # 自己申請
+        user_id=current_user.user_id,
+        message=message,
+    )
+    return BuddyResponse(id=str(buddy.id), user_id=str(buddy.user_id), status=buddy.status.value)
