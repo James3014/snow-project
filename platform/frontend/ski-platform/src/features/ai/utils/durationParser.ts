@@ -59,8 +59,8 @@ export function extractDuration(input: string): number | null {
   // 先移除日期部分，避免誤判
   let text = input.replace(/\d{4}[/-]\d{1,2}[/-]\d{1,2}/g, '');
   // 移除日期範圍格式（如：12月3-12日、12-22到26）
-  text = text.replace(/\d{1,2}月\d{1,2}[日號]?[\s]*[到至~－─|\-]\s*\d{1,2}[日號]?/g, '');
-  text = text.replace(/\d{1,2}[/-]\d{1,2}[日號]?[\s]*[到至~－─|\-]\s*\d{1,2}[日號]?/g, '');
+  text = text.replace(/\d{1,2}月\d{1,2}[日號]?[\s]*[到至~－─|-]\s*\d{1,2}[日號]?/g, '');
+  text = text.replace(/\d{1,2}[/-]\d{1,2}[日號]?[\s]*[到至~－─|-]\s*\d{1,2}[日號]?/g, '');
   // 移除單獨的日期（如：12月3日）
   text = text.replace(/\d{1,2}[/-月]\d{1,2}[日號]?/g, '');
 

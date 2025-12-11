@@ -8,6 +8,14 @@ from .social import UserFollow, ActivityFeedItem, ActivityLike, ActivityComment
 from .trip_planning import Season, Trip, TripBuddy, TripShare
 from .ski_preference import SkiPreference
 from .gear import GearItem, GearInspection, GearReminder
+from .calendar import (
+    CalendarTrip,
+    CalendarDay,
+    CalendarItem,
+    CalendarEvent,
+    CalendarTripBuddy,
+    CalendarMatchingRequest,
+)
 from .enums import (
     UserStatus, NotificationStatus, LocaleVerificationStatus, NotificationFrequency,
     TripFlexibility, FlightStatus, AccommodationStatus, TripStatus,
@@ -37,6 +45,12 @@ __all__ = [
     'GearItem',
     'GearInspection',
     'GearReminder',
+    'CalendarTrip',
+    'CalendarDay',
+    'CalendarItem',
+    'CalendarEvent',
+    'CalendarTripBuddy',
+    'CalendarMatchingRequest',
     'UserStatus',
     'NotificationStatus',
     'LocaleVerificationStatus',

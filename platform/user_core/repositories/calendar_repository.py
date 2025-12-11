@@ -1,0 +1,268 @@
+"""
+Repositories for calendar domain.
+"""
+from __future__ import annotations
+
+from typing import Iterable
+from uuid import UUID
+
+from sqlalchemy.orm import Session
+
+from platform.user_core.domain.calendar.trip import Trip
+from platform.user_core.domain.calendar.calendar_event import CalendarEvent
+from platform.user_core.domain.calendar.trip_buddy import TripBuddy
+from platform.user_core.domain.calendar.matching_request import MatchingRequest
+from platform.user_core.models.calendar import (
+    CalendarTrip,
+    CalendarEvent as EventModel,
+    CalendarTripBuddy as TripBuddyModel,
+    CalendarMatchingRequest as MatchingModel,
+)
+
+
+class CalendarTripRepository:
+    """Persist calendar trips."""
+
+    def __init__(self, db: Session):
+        self.db = db
+
+    def add(self, trip: Trip) -> Trip:
+        model = CalendarTrip(
+            id=trip.id,
+            user_id=trip.user_id,
+            title=trip.title,
+            start_date=trip.start_date,
+            end_date=trip.end_date,
+            timezone=trip.timezone,
+            visibility=trip.visibility,
+            status=trip.status,
+            resort_id=trip.resort_id,
+            resort_name=trip.resort_name,
+            region=trip.region,
+            people_count=trip.people_count,
+            note=trip.note,
+            max_buddies=trip.max_buddies,
+            current_buddies=trip.current_buddies,
+        )
+        self.db.add(model)
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_trip(model)
+
+    def get(self, trip_id: UUID) -> Trip | None:
+        model = self.db.query(CalendarTrip).filter(CalendarTrip.id == trip_id).first()
+        return _to_domain_trip(model) if model else None
+
+    def list_for_user(self, user_id: UUID) -> list[Trip]:
+        models = (
+            self.db.query(CalendarTrip)
+            .filter(CalendarTrip.user_id == user_id)
+            .order_by(CalendarTrip.start_date.asc())
+            .all()
+        )
+        return [_to_domain_trip(m) for m in models]
+
+
+def _to_domain_trip(model: CalendarTrip) -> Trip:
+    return Trip.from_persistence(
+        id=model.id,
+        user_id=model.user_id,
+        title=model.title,
+        start_date=model.start_date,
+        end_date=model.end_date,
+        timezone=model.timezone,
+        visibility=model.visibility,
+        status=model.status,
+        resort_id=model.resort_id,
+        resort_name=model.resort_name,
+        region=model.region,
+        people_count=model.people_count,
+        note=model.note,
+        max_buddies=model.max_buddies,
+        current_buddies=model.current_buddies,
+    )
+
+
+class CalendarEventRepository:
+    """Persist calendar events."""
+
+    def __init__(self, db: Session):
+        self.db = db
+
+    def add(self, event: CalendarEvent) -> CalendarEvent:
+        model = EventModel(
+            id=event.id,
+            user_id=event.user_id,
+            type=event.type,
+            title=event.title,
+            description=event.description,
+            start_date=event.start_date,
+            end_date=event.end_date,
+            all_day=event.all_day,
+            timezone=event.timezone,
+            trip_id=event.trip_id,
+            resort_id=event.resort_id,
+            google_event_id=event.google_event_id,
+            outlook_event_id=event.outlook_event_id,
+            matching_id=event.matching_id,
+            participants=list(event.participants),
+            reminders=list(event.reminders),
+        )
+        self.db.add(model)
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_event(model)
+
+    def list_for_user(self, user_id: UUID) -> list[CalendarEvent]:
+        models = (
+            self.db.query(EventModel)
+            .filter(EventModel.user_id == user_id)
+            .order_by(EventModel.start_date.asc())
+            .all()
+        )
+        return [_to_domain_event(m) for m in models]
+
+
+def _to_domain_event(model: EventModel) -> CalendarEvent:
+    return CalendarEvent(
+        id=model.id,
+        user_id=model.user_id,
+        type=model.type,
+        title=model.title,
+        description=model.description,
+        start_date=model.start_date,
+        end_date=model.end_date,
+        all_day=model.all_day,
+        timezone=model.timezone,
+        trip_id=model.trip_id,
+        resort_id=model.resort_id,
+        google_event_id=model.google_event_id,
+        outlook_event_id=model.outlook_event_id,
+        matching_id=model.matching_id,
+        participants=tuple(model.participants or []),
+        reminders=tuple(model.reminders or []),
+    )
+
+
+class CalendarTripBuddyRepository:
+    """Persist trip buddies."""
+
+    def __init__(self, db: Session):
+        self.db = db
+
+    def add(self, buddy: TripBuddy) -> TripBuddy:
+        model = TripBuddyModel(
+            id=buddy.id,
+            trip_id=buddy.trip_id,
+            user_id=buddy.user_id,
+            inviter_id=buddy.inviter_id,
+            status=buddy.status,
+            role=buddy.role,
+            request_message=buddy.request_message,
+            response_message=buddy.response_message,
+            requested_at=buddy.requested_at,
+            responded_at=buddy.responded_at,
+            joined_at=buddy.joined_at,
+        )
+        self.db.add(model)
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_buddy(model)
+
+    def update(self, buddy: TripBuddy) -> TripBuddy:
+        model = self.db.query(TripBuddyModel).filter(TripBuddyModel.id == buddy.id).first()
+        if not model:
+            raise ValueError("Buddy not found")
+        model.status = buddy.status
+        model.role = buddy.role
+        model.request_message = buddy.request_message
+        model.response_message = buddy.response_message
+        model.requested_at = buddy.requested_at
+        model.responded_at = buddy.responded_at
+        model.joined_at = buddy.joined_at
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_buddy(model)
+
+    def get(self, buddy_id: UUID) -> TripBuddy | None:
+        model = self.db.query(TripBuddyModel).filter(TripBuddyModel.id == buddy_id).first()
+        return _to_domain_buddy(model) if model else None
+
+    def list_for_trip(self, trip_id: UUID) -> list[TripBuddy]:
+        models = (
+            self.db.query(TripBuddyModel)
+            .filter(TripBuddyModel.trip_id == trip_id)
+            .all()
+        )
+        return [_to_domain_buddy(m) for m in models]
+
+
+def _to_domain_buddy(model: TripBuddyModel) -> TripBuddy:
+    return TripBuddy(
+        id=model.id,
+        trip_id=model.trip_id,
+        user_id=model.user_id,
+        inviter_id=model.inviter_id,
+        status=model.status,
+        role=model.role,
+        request_message=model.request_message,
+        response_message=model.response_message,
+        requested_at=model.requested_at,
+        responded_at=model.responded_at,
+        joined_at=model.joined_at,
+    )
+
+
+class CalendarMatchingRequestRepository:
+    """Persist matching requests."""
+
+    def __init__(self, db: Session):
+        self.db = db
+
+    def add(self, req: MatchingRequest) -> MatchingRequest:
+        model = MatchingModel(
+            id=req.id,
+            trip_id=req.trip_id,
+            requester_id=req.requester_id,
+            preferences=req.preferences,
+            status=req.status,
+            results=req.results,
+            created_at=req.created_at,
+            completed_at=req.completed_at,
+        )
+        self.db.add(model)
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_matching(model)
+
+    def update(self, req: MatchingRequest) -> MatchingRequest:
+        model = self.db.query(MatchingModel).filter(MatchingModel.id == req.id).first()
+        if not model:
+            raise ValueError("Matching request not found")
+        model.status = req.status
+        model.results = req.results
+        model.completed_at = req.completed_at
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_matching(model)
+
+    def list_for_trip(self, trip_id: UUID) -> list[MatchingRequest]:
+        models = self.db.query(MatchingModel).filter(MatchingModel.trip_id == trip_id).all()
+        return [_to_domain_matching(m) for m in models]
+
+    def get(self, request_id: UUID) -> MatchingRequest | None:
+        model = self.db.query(MatchingModel).filter(MatchingModel.id == request_id).first()
+        return _to_domain_matching(model) if model else None
+
+
+def _to_domain_matching(model: MatchingModel) -> MatchingRequest:
+    return MatchingRequest(
+        id=model.id,
+        trip_id=model.trip_id,
+        requester_id=model.requester_id,
+        preferences=model.preferences,
+        status=model.status,
+        results=model.results,
+        created_at=model.created_at,
+        completed_at=model.completed_at,
+    )

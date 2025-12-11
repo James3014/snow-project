@@ -14,7 +14,7 @@ from models import (
 from api import (
     user_profiles, behavior_events, notification_preferences, auth, admin,
     course_tracking as course_tracking_api, share_cards,
-    social as social_api, ski_map, trip_planning, gear
+    social as social_api, ski_map, trip_planning, gear, calendar
 )
 
 try:
@@ -80,6 +80,8 @@ app.include_router(ski_map.router, prefix="/ski-map", tags=["Ski Map"])
 app.include_router(trip_planning.router, prefix="/trip-planning", tags=["Trip Planning"])
 # Gear operations
 app.include_router(gear.router, prefix="/api", tags=["Gear Operations"])
+# Calendar
+app.include_router(calendar.router)
 
 
 @app.exception_handler(Exception)
