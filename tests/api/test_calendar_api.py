@@ -7,6 +7,8 @@ from platform.user_core.api.main import app
 from platform.user_core.api.calendar import get_trip_service
 from platform.user_core.services.calendar_service import TripService
 from platform.user_core.domain.calendar.trip import Trip
+from platform.user_core.domain.calendar.day import Day
+from platform.user_core.domain.calendar.item import Item
 from platform.user_core.services.auth_dependencies import get_current_user as real_get_current_user
 
 
@@ -22,8 +24,34 @@ class FakeTripRepo:
         return [t for t in self.storage if t.user_id == user_id]
 
 
+class FakeDayRepo:
+    def __init__(self):
+        self.storage = []
+
+    def add(self, day: Day) -> Day:
+        self.storage.append(day)
+        return day
+
+    def list_for_trip(self, trip_id: uuid.UUID):
+        return [d for d in self.storage if d.trip_id == trip_id]
+
+
+class FakeItemRepo:
+    def __init__(self):
+        self.storage = []
+
+    def add(self, item: Item) -> Item:
+        self.storage.append(item)
+        return item
+
+    def list_for_day(self, day_id: uuid.UUID):
+        return [i for i in self.storage if i.day_id == day_id]
+
+
 fake_repo = FakeTripRepo()
-fake_service = TripService(fake_repo)
+fake_day_repo = FakeDayRepo()
+fake_item_repo = FakeItemRepo()
+fake_service = TripService(fake_repo, day_repo=fake_day_repo, item_repo=fake_item_repo)
 fake_user_id = uuid.uuid4()
 
 
@@ -60,3 +88,18 @@ def test_list_trips_api():
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
+
+
+def test_add_day_api():
+    trip_response = client.post(
+        "/calendar/trips",
+        json={
+            "title": "Trip",
+            "start_date": dt.datetime(2025, 2, 1, tzinfo=dt.timezone.utc).isoformat(),
+            "end_date": dt.datetime(2025, 2, 2, tzinfo=dt.timezone.utc).isoformat(),
+        },
+    ).json()
+    trip_id = trip_response["id"]
+    response = client.post(f"/calendar/trips/{trip_id}/days", json={"day_index": 0, "label": "Day 1"})
+    assert response.status_code == 201
+    assert response.json()["label"] == "Day 1"

@@ -18,6 +18,8 @@ from repositories.calendar_repository import (
     CalendarEventRepository,
     CalendarTripBuddyRepository,
     CalendarMatchingRequestRepository,
+    CalendarDayRepository,
+    CalendarItemRepository,
 )
 from services.auth_dependencies import get_current_user
 from domain.calendar.enums import TripVisibility, TripStatus, EventType
@@ -116,7 +118,9 @@ class MatchingResponse(BaseModel):
 
 def get_trip_service(db_session: Session = Depends(db.get_db)) -> TripService:
     repo = CalendarTripRepository(db_session)
-    return TripService(repo)
+    day_repo = CalendarDayRepository(db_session)
+    item_repo = CalendarItemRepository(db_session)
+    return TripService(repo, day_repo=day_repo, item_repo=item_repo)
 
 
 def get_event_service(db_session: Session = Depends(db.get_db)) -> CalendarEventService:
@@ -232,6 +236,94 @@ def list_events(
     ]
 
 
+@router.patch("/trips/{trip_id}", response_model=TripResponse)
+def update_trip(
+    trip_id: str,
+    request: TripCreateRequest,
+    current_user = Depends(get_current_user),
+    service: TripService = Depends(get_trip_service),
+):
+    trip = service.get_trip(UUID(trip_id))
+    if not trip or trip.user_id != current_user.user_id:
+        raise HTTPException(status_code=404, detail="Trip not found")
+    updated = service.update_trip(
+        trip,
+        title=request.title,
+        start_date=request.start_date,
+        end_date=request.end_date,
+        timezone=request.timezone,
+        visibility=request.visibility,
+        status=request.status,
+        resort_id=request.resort_id,
+        resort_name=request.resort_name,
+        region=request.region,
+        people_count=request.people_count,
+        note=request.note,
+    )
+    return TripResponse(
+        id=str(updated.id),
+        title=updated.title,
+        start_date=updated.start_date,
+        end_date=updated.end_date,
+        timezone=updated.timezone,
+        visibility=updated.visibility,
+        status=updated.status,
+    )
+
+
+@router.post("/trips/{trip_id}/days", response_model=DayResponse, status_code=201)
+def add_day(
+    trip_id: str,
+    request: DayCreateRequest,
+    current_user = Depends(get_current_user),
+    service: TripService = Depends(get_trip_service),
+):
+    _rate_limit(f"day:{current_user.user_id}")
+    day = service.add_day(
+        trip_id=UUID(trip_id),
+        day_index=request.day_index,
+        label=request.label,
+        city=request.city,
+        resort_id=request.resort_id,
+        resort_name=request.resort_name,
+        region=request.region,
+        is_ski_day=request.is_ski_day,
+    )
+    return DayResponse(id=str(day.id), day_index=day.day_index, label=day.label)
+
+
+@router.get("/trips/{trip_id}/days", response_model=List[DayResponse])
+def list_days(
+    trip_id: str,
+    service: TripService = Depends(get_trip_service),
+):
+    days = service.list_days(UUID(trip_id))
+    return [DayResponse(id=str(d.id), day_index=d.day_index, label=d.label) for d in days]
+
+
+@router.post("/items", response_model=ItemResponse, status_code=201)
+def add_item(
+    request: ItemCreateRequest,
+    current_user = Depends(get_current_user),
+    service: TripService = Depends(get_trip_service),
+):
+    _rate_limit(f"item:{current_user.user_id}")
+    item = service.add_item(
+        trip_id=UUID(request.trip_id),
+        day_id=UUID(request.day_id),
+        type=request.type,
+        title=request.title,
+        start_time=request.start_time,
+        end_time=request.end_time,
+        time_hint=request.time_hint,
+        location=request.location,
+        resort_id=request.resort_id,
+        resort_name=request.resort_name,
+        note=request.note,
+    )
+    return ItemResponse(id=str(item.id), title=item.title, type=item.type)
+
+
 @router.post("/trips/{trip_id}/buddies", response_model=BuddyResponse, status_code=201)
 def invite_trip_buddy(
     trip_id: str,
@@ -294,3 +386,37 @@ def list_matching_requests(
     reqs = service.list_requests(UUID(trip_id))
     return [MatchingResponse(id=str(r.id), status=r.status.value, results=r.results) for r in reqs]
 from services.bot_protection import verify_captcha
+class DayCreateRequest(BaseModel):
+    day_index: int
+    label: str
+    city: str | None = None
+    resort_id: str | None = None
+    resort_name: str | None = None
+    region: str | None = None
+    is_ski_day: bool = False
+
+
+class DayResponse(BaseModel):
+    id: str
+    day_index: int
+    label: str
+
+
+class ItemCreateRequest(BaseModel):
+    trip_id: str
+    day_id: str
+    type: str
+    title: str
+    start_time: dt.datetime | None = None
+    end_time: dt.datetime | None = None
+    time_hint: str | None = None
+    location: str | None = None
+    resort_id: str | None = None
+    resort_name: str | None = None
+    note: str | None = None
+
+
+class ItemResponse(BaseModel):
+    id: str
+    title: str
+    type: str

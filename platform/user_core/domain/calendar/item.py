@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 @dataclass(frozen=True)
 class Item:
     day_id: uuid.UUID
+    trip_id: uuid.UUID
     type: str
     title: str
     start_time: dt.datetime | None = None
@@ -23,6 +24,7 @@ class Item:
     def create(
         cls,
         day_id: uuid.UUID,
+        trip_id: uuid.UUID,
         type: str,
         title: str,
         start_time: dt.datetime | None = None,
@@ -35,4 +37,4 @@ class Item:
             raise ValueError("end_time must be timezone-aware")
         if start_time and end_time and end_time < start_time:
             raise ValueError("end_time must be >= start_time")
-        return cls(day_id=day_id, type=type, title=title, start_time=start_time, end_time=end_time, **kwargs)
+        return cls(day_id=day_id, trip_id=trip_id, type=type, title=title, start_time=start_time, end_time=end_time, **kwargs)

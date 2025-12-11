@@ -12,8 +12,12 @@ from platform.user_core.domain.calendar.trip import Trip
 from platform.user_core.domain.calendar.calendar_event import CalendarEvent
 from platform.user_core.domain.calendar.trip_buddy import TripBuddy
 from platform.user_core.domain.calendar.matching_request import MatchingRequest
+from platform.user_core.domain.calendar.day import Day
+from platform.user_core.domain.calendar.item import Item
 from platform.user_core.models.calendar import (
     CalendarTrip,
+    CalendarDay as DayModel,
+    CalendarItem as ItemModel,
     CalendarEvent as EventModel,
     CalendarTripBuddy as TripBuddyModel,
     CalendarMatchingRequest as MatchingModel,
@@ -99,6 +103,97 @@ def _to_domain_trip(model: CalendarTrip) -> Trip:
         note=model.note,
         max_buddies=model.max_buddies,
         current_buddies=model.current_buddies,
+    )
+
+
+class CalendarDayRepository:
+    def __init__(self, db: Session):
+        self.db = db
+
+    def add(self, day: Day) -> Day:
+        model = DayModel(
+            id=day.id,
+            trip_id=day.trip_id,
+            day_index=day.day_index,
+            label=day.label,
+            city=day.city,
+            resort_id=day.resort_id,
+            resort_name=day.resort_name,
+            region=day.region,
+            is_ski_day=day.is_ski_day,
+        )
+        self.db.add(model)
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_day(model)
+
+    def list_for_trip(self, trip_id: UUID) -> list[Day]:
+        models = self.db.query(DayModel).filter(DayModel.trip_id == trip_id).order_by(DayModel.day_index.asc()).all()
+        return [_to_domain_day(m) for m in models]
+
+
+def _to_domain_day(model: DayModel) -> Day:
+    return Day(
+        id=model.id,
+        trip_id=model.trip_id,
+        day_index=model.day_index,
+        label=model.label,
+        city=model.city,
+        resort_id=model.resort_id,
+        resort_name=model.resort_name,
+        region=model.region,
+        is_ski_day=model.is_ski_day,
+    )
+
+
+class CalendarItemRepository:
+    def __init__(self, db: Session):
+        self.db = db
+
+    def add(self, item: Item) -> Item:
+        model = ItemModel(
+            id=item.id,
+            trip_id=item.trip_id,
+            day_id=item.day_id,
+            type=item.type,
+            title=item.title,
+            start_time=item.start_time,
+            end_time=item.end_time,
+            time_hint=item.time_hint,
+            location=item.location,
+            resort_id=item.resort_id,
+            resort_name=item.resort_name,
+            note=item.note,
+        )
+        self.db.add(model)
+        self.db.commit()
+        self.db.refresh(model)
+        return _to_domain_item(model)
+
+    def list_for_day(self, day_id: UUID) -> list[Item]:
+        models = (
+            self.db.query(ItemModel)
+            .filter(ItemModel.day_id == day_id)
+            .order_by(ItemModel.start_time.asc())
+            .all()
+        )
+        return [_to_domain_item(m) for m in models]
+
+
+def _to_domain_item(model: ItemModel) -> Item:
+    return Item(
+        id=model.id,
+        day_id=model.day_id,
+        trip_id=model.trip_id,
+        type=model.type,
+        title=model.title,
+        start_time=model.start_time,
+        end_time=model.end_time,
+        time_hint=model.time_hint,
+        location=model.location,
+        resort_id=model.resort_id,
+        resort_name=model.resort_name,
+        note=model.note,
     )
 
 

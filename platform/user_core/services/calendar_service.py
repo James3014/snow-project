@@ -8,22 +8,28 @@ from uuid import UUID
 
 from platform.user_core.domain.calendar.trip import Trip
 from platform.user_core.domain.calendar.calendar_event import CalendarEvent
+from platform.user_core.domain.calendar.day import Day
+from platform.user_core.domain.calendar.item import Item
 from platform.user_core.domain.calendar.trip_buddy import TripBuddy
-from platform.user_core.domain.calendar.matching_request import MatchingRequest, MatchingStatus
+from platform.user_core.domain.calendar.matching_request import MatchingRequest
 from platform.user_core.domain.calendar.enums import TripVisibility, TripStatus, EventType
 from platform.user_core.repositories.calendar_repository import (
     CalendarTripRepository,
     CalendarEventRepository,
     CalendarTripBuddyRepository,
     CalendarMatchingRequestRepository,
+    CalendarDayRepository,
+    CalendarItemRepository,
 )
 
 
 class TripService:
     """Use cases for trips."""
 
-    def __init__(self, repo: CalendarTripRepository):
+    def __init__(self, repo: CalendarTripRepository, day_repo: CalendarDayRepository | None = None, item_repo: CalendarItemRepository | None = None):
         self.repo = repo
+        self.day_repo = day_repo
+        self.item_repo = item_repo
 
     def create_trip(
         self,
@@ -59,6 +65,53 @@ class TripService:
 
     def list_trips(self, *, user_id: UUID) -> list[Trip]:
         return self.repo.list_for_user(user_id)
+
+    def get_trip(self, trip_id: UUID) -> Trip | None:
+        return self.repo.get(trip_id)
+
+    def update_trip(self, trip: Trip, **kwargs) -> Trip:
+        updated = trip.update(**kwargs)
+        return self.repo.update(updated)
+
+    def add_day(self, *, trip_id: UUID, day_index: int, label: str, **kwargs) -> Day:
+        if not self.day_repo:
+            raise RuntimeError("Day repository not configured")
+        day = Day.create(trip_id=trip_id, day_index=day_index, label=label, **kwargs)
+        return self.day_repo.add(day)
+
+    def list_days(self, trip_id: UUID) -> list[Day]:
+        if not self.day_repo:
+            raise RuntimeError("Day repository not configured")
+        return self.day_repo.list_for_trip(trip_id)
+
+    def add_item(
+        self,
+        *,
+        trip_id: UUID,
+        day_id: UUID,
+        type: str,
+        title: str,
+        start_time: dt.datetime | None = None,
+        end_time: dt.datetime | None = None,
+        **kwargs,
+    ) -> Item:
+        if not self.item_repo:
+            raise RuntimeError("Item repository not configured")
+        item = Item.create(
+            trip_id=trip_id,
+            day_id=day_id,
+            type=type,
+            title=title,
+            start_time=start_time,
+            end_time=end_time,
+            **kwargs,
+        )
+        return self.item_repo.add(item)
+
+    def list_items(self, day_id: UUID) -> list[Item]:
+        if not self.item_repo:
+            raise RuntimeError("Item repository not configured")
+        return self.item_repo.list_for_day(day_id)
 
 
 class CalendarEventService:

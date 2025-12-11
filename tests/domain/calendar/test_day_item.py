@@ -14,9 +14,11 @@ def test_day_requires_nonnegative_index():
 
 def test_item_validates_times():
     day_id = uuid.uuid4()
+    trip_id = uuid.uuid4()
     with pytest.raises(ValueError):
         Item.create(
             day_id=day_id,
+            trip_id=trip_id,
             type="ski",
             title="invalid",
             start_time=dt.datetime(2025, 1, 1, 10, tzinfo=dt.timezone.utc),
