@@ -10,6 +10,8 @@
 - Repository: 基本 CRUD
 - Migration: 202502150001_add_calendar_tables.py
 - **Phase 1 Domain 測試: 32 passed**
+- **Phase 2 Repository 測試: 28 passed**
+- **總計: 60 tests passed**
 
 ---
 
@@ -22,11 +24,11 @@
 - [x] **TODO-CAL-003**: TripBuddy Domain 測試 (10 tests)
 - [x] **TODO-CAL-004**: Day/Item Domain 測試 (已有基本實作)
 
-### Phase 2: Repository 測試 (需要 DB)
+### Phase 2: Repository 測試 ✅ 完成
 
-- [ ] **TODO-CAL-005**: CalendarTripRepository 測試
-- [ ] **TODO-CAL-006**: CalendarEventRepository 測試
-- [ ] **TODO-CAL-007**: CalendarTripBuddyRepository 測試
+- [x] **TODO-CAL-005**: CalendarTripRepository 測試 (10 tests)
+- [x] **TODO-CAL-006**: CalendarEventRepository 測試 (9 tests)
+- [x] **TODO-CAL-007**: CalendarTripBuddyRepository 測試 (9 tests)
 
 ### Phase 3: Service 層
 
@@ -50,3 +52,27 @@
 - 建立 tests/domain/test_calendar_event.py (10 tests)
 - 建立 tests/domain/test_trip_buddy.py (10 tests)
 - **總計: 32 tests passed**
+
+#### Phase 2 完成
+- 建立 tests/repositories/conftest.py（SQLite + ARRAY 類型 patch）
+- 建立 tests/repositories/test_calendar_trip_repository.py (10 tests)
+- 建立 tests/repositories/test_calendar_event_repository.py (9 tests)
+- 建立 tests/repositories/test_calendar_buddy_repository.py (9 tests)
+- **總計: 28 tests passed**
+
+---
+
+## 測試執行命令
+
+```bash
+# 執行所有 Calendar 測試
+cd /Users/jameschen/Downloads/diyski/project
+source platform/user_core/venv/bin/activate
+python3 -m pytest tests/domain/ tests/repositories/ -v
+
+# 只執行 Domain 測試
+python3 -m pytest tests/domain/ -v
+
+# 只執行 Repository 測試
+python3 -m pytest tests/repositories/ -v
+```
