@@ -19,6 +19,8 @@ class Settings:
     user_core_api_url: str = "http://localhost:8001"
     resort_services_api_url: str = "http://localhost:8000"
     knowledge_engagement_api_url: str = "http://localhost:8003"
+    ski_platform_api_url: str = "http://localhost:5173"  # 前端 API
+    service_token: Optional[str] = None  # 服務間認證 token
     matching_workflow_url: Optional[str] = None
     matching_workflow_api_key: Optional[str] = None
     matching_workflow_api_key_header: str = "X-API-Key"

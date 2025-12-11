@@ -101,6 +101,28 @@ class TripUpdate(BaseModel):
     notes: Optional[str] = None
 
 
+class CalendarEventSchema(BaseModel):
+    """Schema for calendar event."""
+    id: str = Field(..., description="Event ID")
+    type: str = Field(..., description="Event type")
+    title: str = Field(..., description="Event title")
+    start_date: str = Field(..., description="Event start date (ISO format)")
+    end_date: str = Field(..., description="Event end date (ISO format)")
+    all_day: bool = Field(..., description="Whether this is an all-day event")
+    timezone: str = Field(..., description="Event timezone")
+    source_app: str = Field(..., description="Source application")
+    source_id: str = Field(..., description="Source application ID")
+    related_trip_id: Optional[str] = Field(None, description="Related trip ID")
+    resort_id: Optional[str] = Field(None, description="Resort ID")
+    description: Optional[str] = Field(None, description="Event description")
+
+
+class TripWithEvents(BaseModel):
+    """Schema for trip with calendar events."""
+    trip: Trip
+    events: List[CalendarEventSchema]
+
+
 class Trip(TripBase):
     """Schema for trip response."""
     trip_id: UUID4

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from api import (
     user_profiles, behavior_events, notification_preferences, auth, admin,
     course_tracking as course_tracking_api, share_cards,
-    social as social_api, ski_map, trip_planning, ski_preferences
+    social as social_api, ski_map, trip_planning, ski_preferences, calendar
 )
 
 
@@ -29,3 +29,4 @@ def register_routes(app: FastAPI) -> None:
     app.include_router(social_api.router, prefix="/social", tags=["Social Features"])
     app.include_router(ski_map.router, prefix="/ski-map", tags=["Ski Map"])
     app.include_router(trip_planning.router, prefix="/trip-planning", tags=["Trip Planning"])
+    app.include_router(calendar.router, tags=["Calendar"])

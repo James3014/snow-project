@@ -1,4 +1,4 @@
-"""Calendar API endpoints (minimal)."""
+"""Shared Calendar Infrastructure API endpoints."""
 from __future__ import annotations
 
 import datetime as dt
@@ -10,24 +10,12 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from config.settings import settings
-from domain.calendar.enums import EventType, TripStatus, TripVisibility
-from repositories.calendar_repository import (
-    CalendarDayRepository,
-    CalendarEventRepository,
-    CalendarItemRepository,
-    CalendarMatchingRequestRepository,
-    CalendarTripBuddyRepository,
-    CalendarTripRepository,
-)
+from domain.calendar.enums import EventType
+from repositories.calendar_repository import CalendarEventRepository
 from services import db
 from services.auth_dependencies import get_current_user
 from services.bot_protection import verify_captcha
-from services.calendar_service import (
-    CalendarEventService,
-    MatchingService,
-    TripBuddyService,
-    TripService,
-)
+from services.calendar_service import CalendarService
 
 try:  # pragma: no cover - optional dependency
     import redis
@@ -75,234 +63,121 @@ def _rate_limit(key: str) -> None:
     entries.append(now)
 
 
-class TripCreateRequest(BaseModel):
-    title: str
-    start_date: dt.datetime
-    end_date: dt.datetime
-    timezone: str | None = Field(default="Asia/Taipei")
-    visibility: TripVisibility = TripVisibility.PRIVATE
-    status: TripStatus = TripStatus.PLANNING
-    resort_id: Optional[str] = None
-    resort_name: Optional[str] = None
-    region: Optional[str] = None
-    people_count: Optional[int] = None
-    note: Optional[str] = None
-
-
-class TripUpdateRequest(BaseModel):
-    title: Optional[str] = None
-    start_date: Optional[dt.datetime] = None
-    end_date: Optional[dt.datetime] = None
-    timezone: Optional[str] = None
-    visibility: Optional[TripVisibility] = None
-    status: Optional[TripStatus] = None
-    resort_id: Optional[str] = None
-    resort_name: Optional[str] = None
-    region: Optional[str] = None
-    people_count: Optional[int] = None
-    note: Optional[str] = None
-
-
-class TripResponse(BaseModel):
-    id: str
-    title: str
-    start_date: dt.datetime
-    end_date: dt.datetime
-    timezone: str
-    visibility: TripVisibility
-    status: TripStatus
-
-    class Config:
-        from_attributes = True
-
-
-class DayCreateRequest(BaseModel):
-    day_index: int
-    label: str
-    city: str | None = None
-    resort_id: str | None = None
-    resort_name: str | None = None
-    region: str | None = None
-    is_ski_day: bool = False
-
-
-class DayResponse(BaseModel):
-    id: str
-    day_index: int
-    label: str
-
-
-class ItemCreateRequest(BaseModel):
-    trip_id: str
-    day_id: str
-    type: str
-    title: str
-    start_time: dt.datetime | None = None
-    end_time: dt.datetime | None = None
-    time_hint: str | None = None
-    location: str | None = None
-    resort_id: str | None = None
-    resort_name: str | None = None
-    note: str | None = None
-
-
-class ItemResponse(BaseModel):
-    id: str
-    title: str
-    type: str
-
+# ==================== Request/Response Models ====================
 
 class EventCreateRequest(BaseModel):
+    """Request model for creating a calendar event."""
     type: EventType
     title: str
     start_date: dt.datetime
     end_date: dt.datetime
     all_day: bool = False
-    description: str | None = None
-    trip_id: str | None = None
+    description: Optional[str] = None
+    timezone: str = Field(default="Asia/Taipei")
+    
+    # Source tracking
+    source_app: str = Field(..., min_length=1, max_length=50)
+    source_id: str = Field(..., min_length=1, max_length=100)
+    
+    # Optional relations
+    related_trip_id: Optional[str] = None
+    resort_id: Optional[str] = None
+    
+    # External calendar sync
+    google_event_id: Optional[str] = None
+    outlook_event_id: Optional[str] = None
+    
+    # Matching related
+    matching_id: Optional[str] = None
+    participants: Optional[List[str]] = None
+    
+    # Reminders
+    reminders: Optional[List[dict]] = None
 
 
 class EventUpdateRequest(BaseModel):
-    title: str | None = None
-    start_date: dt.datetime | None = None
-    end_date: dt.datetime | None = None
-    description: str | None = None
-    reminders: List[dict] | None = None
+    """Request model for updating a calendar event."""
+    title: Optional[str] = None
+    start_date: Optional[dt.datetime] = None
+    end_date: Optional[dt.datetime] = None
+    description: Optional[str] = None
+    all_day: Optional[bool] = None
+    timezone: Optional[str] = None
+    related_trip_id: Optional[str] = None
+    resort_id: Optional[str] = None
+    google_event_id: Optional[str] = None
+    outlook_event_id: Optional[str] = None
+    matching_id: Optional[str] = None
+    participants: Optional[List[str]] = None
+    reminders: Optional[List[dict]] = None
 
 
 class EventResponse(BaseModel):
+    """Response model for calendar events."""
     id: str
     type: EventType
     title: str
     start_date: dt.datetime
     end_date: dt.datetime
     all_day: bool
+    timezone: str
+    source_app: str
+    source_id: str
+    related_trip_id: Optional[str]
+    resort_id: Optional[str]
+    google_event_id: Optional[str]
+    outlook_event_id: Optional[str]
+    matching_id: Optional[str]
+    participants: Optional[List[str]]
+    reminders: Optional[List[dict]]
+    created_at: dt.datetime
+    updated_at: dt.datetime
 
     class Config:
         from_attributes = True
 
 
-class BuddyInviteRequest(BaseModel):
-    user_id: str
-    message: str | None = None
+# ==================== Dependency Injection ====================
 
-
-class BuddyRespondRequest(BaseModel):
-    accept: bool
-    message: str | None = None
-
-
-class BuddyResponse(BaseModel):
-    id: str
-    user_id: str
-    status: str
-
-
-class MatchingCreateRequest(BaseModel):
-    preferences: dict
-
-
-class MatchingResponse(BaseModel):
-    id: str
-    status: str
-    results: list[dict] | None
-
-
-def get_trip_service(db_session: Session = Depends(db.get_db)) -> TripService:
-    repo = CalendarTripRepository(db_session)
-    day_repo = CalendarDayRepository(db_session)
-    item_repo = CalendarItemRepository(db_session)
-    return TripService(repo, day_repo=day_repo, item_repo=item_repo)
-
-
-def get_event_service(db_session: Session = Depends(db.get_db)) -> CalendarEventService:
+def get_calendar_service(db_session: Session = Depends(db.get_db)) -> CalendarService:
+    """Get calendar service with database session."""
     repo = CalendarEventRepository(db_session)
-    return CalendarEventService(repo)
+    return CalendarService(repo)
 
 
-def get_buddy_service(db_session: Session = Depends(db.get_db)) -> TripBuddyService:
-    repo = CalendarTripBuddyRepository(db_session)
-    return TripBuddyService(repo)
-
-
-def get_matching_service(db_session: Session = Depends(db.get_db)) -> MatchingService:
-    repo = CalendarMatchingRequestRepository(db_session)
-    return MatchingService(repo)
-
-
-@router.post("/trips", response_model=TripResponse, status_code=201)
-def create_trip(
-    request: TripCreateRequest,
-    current_user = Depends(get_current_user),
-    service: TripService = Depends(get_trip_service),
-    captcha_token: str | None = Header(None, alias="X-Captcha-Token"),
-):
-    _rate_limit(f"trip:{current_user.user_id}")
-    verify_captcha(captcha_token)
-    trip = service.create_trip(
-        user_id=current_user.user_id,
-        title=request.title,
-        start_date=request.start_date,
-        end_date=request.end_date,
-        timezone=request.timezone or "Asia/Taipei",
-        visibility=request.visibility,
-        status=request.status,
-        resort_id=request.resort_id,
-        resort_name=request.resort_name,
-        region=request.region,
-        people_count=request.people_count,
-        note=request.note,
-    )
-    return TripResponse(
-        id=str(trip.id),
-        title=trip.title,
-        start_date=trip.start_date,
-        end_date=trip.end_date,
-        timezone=trip.timezone,
-        visibility=trip.visibility,
-        status=trip.status,
-    )
-
-
-@router.get("/trips", response_model=List[TripResponse])
-def list_trips(
-    current_user = Depends(get_current_user),
-    service: TripService = Depends(get_trip_service),
-):
-    trips = service.list_trips(user_id=current_user.user_id)
-    return [
-        TripResponse(
-            id=str(trip.id),
-            title=trip.title,
-            start_date=trip.start_date,
-            end_date=trip.end_date,
-            timezone=trip.timezone,
-            visibility=trip.visibility,
-            status=trip.status,
-        )
-        for trip in trips
-    ]
-
+# ==================== API Endpoints ====================
 
 @router.post("/events", response_model=EventResponse, status_code=201)
 def create_event(
     request: EventCreateRequest,
     current_user = Depends(get_current_user),
-    service: CalendarEventService = Depends(get_event_service),
+    service: CalendarService = Depends(get_calendar_service),
     captcha_token: str | None = Header(None, alias="X-Captcha-Token"),
 ):
+    """Create a new calendar event."""
     _rate_limit(f"event:{current_user.user_id}")
     verify_captcha(captcha_token)
+    
     event = service.create_event(
-        user_id=current_user.user_id,
-        type=request.type,
+        user_id=UUID(current_user.user_id),
+        event_type=request.type,
         title=request.title,
         start_date=request.start_date,
         end_date=request.end_date,
-        all_day=request.all_day,
+        source_app=request.source_app,
+        source_id=request.source_id,
         description=request.description,
-        trip_id=UUID(request.trip_id) if request.trip_id else None,
+        all_day=request.all_day,
+        timezone=request.timezone,
+        related_trip_id=request.related_trip_id,
+        resort_id=request.resort_id,
+        google_event_id=request.google_event_id,
+        outlook_event_id=request.outlook_event_id,
+        matching_id=UUID(request.matching_id) if request.matching_id else None,
+        participants=request.participants,
+        reminders=request.reminders,
     )
+    
     return EventResponse(
         id=str(event.id),
         type=event.type,
@@ -310,26 +185,100 @@ def create_event(
         start_date=event.start_date,
         end_date=event.end_date,
         all_day=event.all_day,
+        timezone=event.timezone,
+        source_app=event.source_app,
+        source_id=event.source_id,
+        related_trip_id=event.related_trip_id,
+        resort_id=event.resort_id,
+        google_event_id=event.google_event_id,
+        outlook_event_id=event.outlook_event_id,
+        matching_id=str(event.matching_id) if event.matching_id else None,
+        participants=list(event.participants) if event.participants else None,
+        reminders=list(event.reminders) if event.reminders else None,
+        created_at=event.created_at if hasattr(event, 'created_at') else dt.datetime.now(dt.timezone.utc),
+        updated_at=event.updated_at if hasattr(event, 'updated_at') else dt.datetime.now(dt.timezone.utc),
     )
 
 
 @router.get("/events", response_model=List[EventResponse])
 def list_events(
     current_user = Depends(get_current_user),
-    service: CalendarEventService = Depends(get_event_service),
+    service: CalendarService = Depends(get_calendar_service),
+    start_date: Optional[dt.datetime] = None,
+    end_date: Optional[dt.datetime] = None,
+    event_type: Optional[str] = None,
+    source_app: Optional[str] = None,
 ):
-    events = service.list_events(user_id=current_user.user_id)
+    """List calendar events for the current user."""
+    events = service.list_events(
+        user_id=UUID(current_user.user_id),
+        start_date=start_date,
+        end_date=end_date,
+        event_type=event_type,
+        source_app=source_app,
+    )
+    
     return [
         EventResponse(
-            id=str(event.id),
-            type=event.type,
-            title=event.title,
-            start_date=event.start_date,
-            end_date=event.end_date,
-            all_day=event.all_day,
+            id=str(e.id),
+            type=e.type,
+            title=e.title,
+            start_date=e.start_date,
+            end_date=e.end_date,
+            all_day=e.all_day,
+            timezone=e.timezone,
+            source_app=e.source_app,
+            source_id=e.source_id,
+            related_trip_id=e.related_trip_id,
+            resort_id=e.resort_id,
+            google_event_id=e.google_event_id,
+            outlook_event_id=e.outlook_event_id,
+            matching_id=str(e.matching_id) if e.matching_id else None,
+            participants=list(e.participants) if e.participants else None,
+            reminders=list(e.reminders) if e.reminders else None,
+            created_at=e.created_at if hasattr(e, 'created_at') else dt.datetime.now(dt.timezone.utc),
+            updated_at=e.updated_at if hasattr(e, 'updated_at') else dt.datetime.now(dt.timezone.utc),
         )
-        for event in events
+        for e in events
     ]
+
+
+@router.get("/events/{event_id}", response_model=EventResponse)
+def get_event(
+    event_id: str,
+    current_user = Depends(get_current_user),
+    service: CalendarService = Depends(get_calendar_service),
+):
+    """Get a specific calendar event."""
+    event = service.get_event(UUID(event_id))
+    
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    # Verify ownership
+    if str(event.user_id) != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this event")
+    
+    return EventResponse(
+        id=str(event.id),
+        type=event.type,
+        title=event.title,
+        start_date=event.start_date,
+        end_date=event.end_date,
+        all_day=event.all_day,
+        timezone=event.timezone,
+        source_app=event.source_app,
+        source_id=event.source_id,
+        related_trip_id=event.related_trip_id,
+        resort_id=event.resort_id,
+        google_event_id=event.google_event_id,
+        outlook_event_id=event.outlook_event_id,
+        matching_id=str(event.matching_id) if event.matching_id else None,
+        participants=list(event.participants) if event.participants else None,
+        reminders=list(event.reminders) if event.reminders else None,
+        created_at=event.created_at if hasattr(event, 'created_at') else dt.datetime.now(dt.timezone.utc),
+        updated_at=event.updated_at if hasattr(event, 'updated_at') else dt.datetime.now(dt.timezone.utc),
+    )
 
 
 @router.patch("/events/{event_id}", response_model=EventResponse)
@@ -337,352 +286,119 @@ def update_event(
     event_id: str,
     request: EventUpdateRequest,
     current_user = Depends(get_current_user),
-    service: CalendarEventService = Depends(get_event_service),
+    service: CalendarService = Depends(get_calendar_service),
 ):
-    event = service.update_event(
-        UUID(event_id),
-        user_id=current_user.user_id,
+    """Update a calendar event."""
+    # Get existing event
+    event = service.get_event(UUID(event_id))
+    
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    # Verify ownership
+    if str(event.user_id) != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this event")
+    
+    # Update event
+    updated_event = service.update_event(
+        event_id=UUID(event_id),
         title=request.title,
         start_date=request.start_date,
         end_date=request.end_date,
         description=request.description,
+        all_day=request.all_day,
+        timezone=request.timezone,
+        related_trip_id=request.related_trip_id,
+        resort_id=request.resort_id,
+        google_event_id=request.google_event_id,
+        outlook_event_id=request.outlook_event_id,
+        matching_id=UUID(request.matching_id) if request.matching_id else None,
+        participants=request.participants,
         reminders=request.reminders,
     )
+    
     return EventResponse(
-        id=str(event.id),
-        type=event.type,
-        title=event.title,
-        start_date=event.start_date,
-        end_date=event.end_date,
-        all_day=event.all_day,
+        id=str(updated_event.id),
+        type=updated_event.type,
+        title=updated_event.title,
+        start_date=updated_event.start_date,
+        end_date=updated_event.end_date,
+        all_day=updated_event.all_day,
+        timezone=updated_event.timezone,
+        source_app=updated_event.source_app,
+        source_id=updated_event.source_id,
+        related_trip_id=updated_event.related_trip_id,
+        resort_id=updated_event.resort_id,
+        google_event_id=updated_event.google_event_id,
+        outlook_event_id=updated_event.outlook_event_id,
+        matching_id=str(updated_event.matching_id) if updated_event.matching_id else None,
+        participants=list(updated_event.participants) if updated_event.participants else None,
+        reminders=list(updated_event.reminders) if updated_event.reminders else None,
+        created_at=updated_event.created_at if hasattr(updated_event, 'created_at') else dt.datetime.now(dt.timezone.utc),
+        updated_at=updated_event.updated_at if hasattr(updated_event, 'updated_at') else dt.datetime.now(dt.timezone.utc),
     )
 
 
-@router.patch("/trips/{trip_id}", response_model=TripResponse)
-def update_trip(
-    trip_id: str,
-    request: TripUpdateRequest,
+@router.delete("/events/{event_id}", status_code=204)
+def delete_event(
+    event_id: str,
     current_user = Depends(get_current_user),
-    service: TripService = Depends(get_trip_service),
+    service: CalendarService = Depends(get_calendar_service),
 ):
-    trip = service.get_trip(UUID(trip_id))
-    if not trip or trip.user_id != current_user.user_id:
-        raise HTTPException(status_code=404, detail="Trip not found")
-    updated = service.update_trip(
-        trip,
-        title=request.title,
-        start_date=request.start_date,
-        end_date=request.end_date,
-        timezone=request.timezone,
-        visibility=request.visibility,
-        status=request.status,
-        resort_id=request.resort_id,
-        resort_name=request.resort_name,
-        region=request.region,
-        people_count=request.people_count,
-        note=request.note,
-    )
-    return TripResponse(
-        id=str(updated.id),
-        title=updated.title,
-        start_date=updated.start_date,
-        end_date=updated.end_date,
-        timezone=updated.timezone,
-        visibility=updated.visibility,
-        status=updated.status,
-    )
-
-
-@router.post("/trips/{trip_id}/days", response_model=DayResponse, status_code=201)
-def add_day(
-    trip_id: str,
-    request: DayCreateRequest,
-    current_user = Depends(get_current_user),
-    service: TripService = Depends(get_trip_service),
-):
-    _rate_limit(f"day:{current_user.user_id}")
-    trip = service.get_trip(UUID(trip_id))
-    if not trip or trip.user_id != current_user.user_id:
-        raise HTTPException(status_code=404, detail="Trip not found")
-    day = service.add_day(
-        trip_id=UUID(trip_id),
-        day_index=request.day_index,
-        label=request.label,
-        city=request.city,
-        resort_id=request.resort_id,
-        resort_name=request.resort_name,
-        region=request.region,
-        is_ski_day=request.is_ski_day,
-    )
-    return DayResponse(id=str(day.id), day_index=day.day_index, label=day.label)
-
-
-@router.get("/trips/{trip_id}/days", response_model=List[DayResponse])
-def list_days(
-    trip_id: str,
-    service: TripService = Depends(get_trip_service),
-):
-    days = service.list_days(UUID(trip_id))
-    return [DayResponse(id=str(d.id), day_index=d.day_index, label=d.label) for d in days]
-
-
-@router.post("/items", response_model=ItemResponse, status_code=201)
-def add_item(
-    request: ItemCreateRequest,
-    current_user = Depends(get_current_user),
-    service: TripService = Depends(get_trip_service),
-):
-    _rate_limit(f"item:{current_user.user_id}")
-    trip = service.get_trip(UUID(request.trip_id))
-    if not trip or trip.user_id != current_user.user_id:
-        raise HTTPException(status_code=404, detail="Trip not found")
-    item = service.add_item(
-        trip_id=UUID(request.trip_id),
-        day_id=UUID(request.day_id),
-        type=request.type,
-        title=request.title,
-        start_time=request.start_time,
-        end_time=request.end_time,
-        time_hint=request.time_hint,
-        location=request.location,
-        resort_id=request.resort_id,
-        resort_name=request.resort_name,
-        note=request.note,
-    )
-    return ItemResponse(id=str(item.id), title=item.title, type=item.type)
-
-
-@router.get("/days/{day_id}/items", response_model=List[ItemResponse])
-def list_items(
-    day_id: str,
-    service: TripService = Depends(get_trip_service),
-):
-    items = service.list_items(UUID(day_id))
-    return [ItemResponse(id=str(i.id), title=i.title, type=i.type) for i in items]
-
-
-@router.post("/trips/{trip_id}/buddies", response_model=BuddyResponse, status_code=201)
-def invite_trip_buddy(
-    trip_id: str,
-    request: BuddyInviteRequest,
-    current_user = Depends(get_current_user),
-    service: TripBuddyService = Depends(get_buddy_service),
-):
-    _rate_limit(f"buddy:{current_user.user_id}")
-    buddy = service.invite(
-        trip_id=UUID(trip_id),
-        inviter_id=current_user.user_id,
-        user_id=UUID(request.user_id),
-        message=request.message,
-    )
-    return BuddyResponse(id=str(buddy.id), user_id=str(buddy.user_id), status=buddy.status.value)
-
-
-@router.post("/trip-buddies/{buddy_id}/respond", response_model=BuddyResponse)
-def respond_trip_buddy(
-    buddy_id: str,
-    request: BuddyRespondRequest,
-    service: TripBuddyService = Depends(get_buddy_service),
-):
-    buddy = service.respond(UUID(buddy_id), request.accept, request.message)
-    return BuddyResponse(id=str(buddy.id), user_id=str(buddy.user_id), status=buddy.status.value)
-
-
-@router.get("/trips/{trip_id}/buddies", response_model=List[BuddyResponse])
-def list_trip_buddies(
-    trip_id: str,
-    service: TripBuddyService = Depends(get_buddy_service),
-):
-    buddies = service.list_buddies(UUID(trip_id))
-    return [BuddyResponse(id=str(b.id), user_id=str(b.user_id), status=b.status.value) for b in buddies]
-
-
-@router.post("/trips/{trip_id}/matching", response_model=MatchingResponse, status_code=201)
-def create_matching_request(
-    trip_id: str,
-    request: MatchingCreateRequest,
-    current_user = Depends(get_current_user),
-    service: MatchingService = Depends(get_matching_service),
-    captcha_token: str | None = Header(None, alias="X-Captcha-Token"),
-):
-    _rate_limit(f"matching:{current_user.user_id}")
-    verify_captcha(captcha_token)
-    req = service.create_request(
-        trip_id=UUID(trip_id),
-        requester_id=current_user.user_id,
-        preferences=request.preferences,
-    )
-    return MatchingResponse(id=str(req.id), status=req.status.value, results=req.results)
-
-
-@router.get("/trips/{trip_id}/matching", response_model=List[MatchingResponse])
-def list_matching_requests(
-    trip_id: str,
-    service: MatchingService = Depends(get_matching_service),
-):
-    reqs = service.list_requests(UUID(trip_id))
-    return [MatchingResponse(id=str(r.id), status=r.status.value, results=r.results) for r in reqs]
-
-
-# ============ 公開行程 & 共享行事曆 ============
-
-class PublicTripResponse(BaseModel):
-    id: str
-    title: str
-    start_date: dt.datetime
-    end_date: dt.datetime
-    resort_id: Optional[str]
-    resort_name: Optional[str]
-    region: Optional[str]
-    people_count: Optional[int]
-    max_buddies: int
-    current_buddies: int
-    owner_id: str
-
-    class Config:
-        from_attributes = True
-
-
-class SharedCalendarResponse(BaseModel):
-    trips: List[TripResponse]
-    events: List[EventResponse]
-
-
-@router.get("/public/trips", response_model=List[PublicTripResponse])
-def list_public_trips(
-    resort_id: Optional[str] = None,
-    region: Optional[str] = None,
-    start_after: Optional[dt.datetime] = None,
-    db_session: Session = Depends(db.get_db),
-):
-    """列出所有公開行程（可篩選雪場/地區/日期）"""
-    from models.calendar import CalendarTrip
-    from domain.calendar.enums import TripVisibility
+    """Delete a calendar event."""
+    # Get existing event
+    event = service.get_event(UUID(event_id))
     
-    query = db_session.query(CalendarTrip).filter(
-        CalendarTrip.visibility == TripVisibility.PUBLIC,
-        CalendarTrip.status != "cancelled",
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    # Verify ownership
+    if str(event.user_id) != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this event")
+    
+    # Delete event
+    success = service.delete_event(UUID(event_id))
+    
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to delete event")
+
+
+@router.get("/events/source/{source_app}/{source_id}", response_model=List[EventResponse])
+def list_events_for_source(
+    source_app: str,
+    source_id: str,
+    current_user = Depends(get_current_user),
+    service: CalendarService = Depends(get_calendar_service),
+):
+    """List calendar events for a specific source."""
+    events = service.list_events_for_source(
+        source_app=source_app,
+        source_id=source_id,
     )
     
-    if resort_id:
-        query = query.filter(CalendarTrip.resort_id == resort_id)
-    if region:
-        query = query.filter(CalendarTrip.region == region)
-    if start_after:
-        query = query.filter(CalendarTrip.start_date >= start_after)
-    else:
-        query = query.filter(CalendarTrip.start_date >= dt.datetime.now(dt.timezone.utc))
-    
-    trips = query.order_by(CalendarTrip.start_date.asc()).limit(50).all()
+    # Filter by current user
+    user_events = [e for e in events if str(e.user_id) == current_user.user_id]
     
     return [
-        PublicTripResponse(
-            id=str(t.id),
-            title=t.title,
-            start_date=t.start_date,
-            end_date=t.end_date,
-            resort_id=t.resort_id,
-            resort_name=t.resort_name,
-            region=t.region,
-            people_count=t.people_count,
-            max_buddies=t.max_buddies,
-            current_buddies=t.current_buddies,
-            owner_id=str(t.user_id),
+        EventResponse(
+            id=str(e.id),
+            type=e.type,
+            title=e.title,
+            start_date=e.start_date,
+            end_date=e.end_date,
+            all_day=e.all_day,
+            timezone=e.timezone,
+            source_app=e.source_app,
+            source_id=e.source_id,
+            related_trip_id=e.related_trip_id,
+            resort_id=e.resort_id,
+            google_event_id=e.google_event_id,
+            outlook_event_id=e.outlook_event_id,
+            matching_id=str(e.matching_id) if e.matching_id else None,
+            participants=list(e.participants) if e.participants else None,
+            reminders=list(e.reminders) if e.reminders else None,
+            created_at=e.created_at if hasattr(e, 'created_at') else dt.datetime.now(dt.timezone.utc),
+            updated_at=e.updated_at if hasattr(e, 'updated_at') else dt.datetime.now(dt.timezone.utc),
         )
-        for t in trips
+        for e in user_events
     ]
-
-
-@router.get("/shared", response_model=SharedCalendarResponse)
-def get_shared_calendar(
-    current_user = Depends(get_current_user),
-    service: TripService = Depends(get_trip_service),
-    event_service: CalendarEventService = Depends(get_event_service),
-    buddy_service: TripBuddyService = Depends(get_buddy_service),
-    db_session: Session = Depends(db.get_db),
-):
-    """取得共享行事曆（自己的行程 + 已加入的雪伴行程）"""
-    from models.calendar import CalendarTrip, CalendarTripBuddy
-    from domain.calendar.enums import BuddyStatus
-    
-    # 自己的行程
-    my_trips = service.list_trips(user_id=current_user.user_id)
-    
-    # 已加入的雪伴行程
-    buddy_records = db_session.query(CalendarTripBuddy).filter(
-        CalendarTripBuddy.user_id == current_user.user_id,
-        CalendarTripBuddy.status == BuddyStatus.ACCEPTED,
-    ).all()
-    
-    buddy_trip_ids = [b.trip_id for b in buddy_records]
-    buddy_trips = []
-    if buddy_trip_ids:
-        buddy_trip_models = db_session.query(CalendarTrip).filter(
-            CalendarTrip.id.in_(buddy_trip_ids)
-        ).all()
-        for t in buddy_trip_models:
-            buddy_trips.append(Trip.from_persistence(
-                id=t.id, user_id=t.user_id, title=t.title,
-                start_date=t.start_date, end_date=t.end_date,
-                timezone=t.timezone, visibility=t.visibility, status=t.status,
-                template_id=t.template_id, resort_id=t.resort_id,
-                resort_name=t.resort_name, region=t.region,
-                people_count=t.people_count, note=t.note,
-                max_buddies=t.max_buddies, current_buddies=t.current_buddies,
-            ))
-    
-    all_trips = my_trips + buddy_trips
-    
-    # 自己的事件
-    my_events = event_service.list_events(user_id=current_user.user_id)
-    
-    return SharedCalendarResponse(
-        trips=[
-            TripResponse(
-                id=str(t.id), title=t.title,
-                start_date=t.start_date, end_date=t.end_date,
-                timezone=t.timezone, visibility=t.visibility, status=t.status,
-            )
-            for t in all_trips
-        ],
-        events=[
-            EventResponse(
-                id=str(e.id), type=e.type, title=e.title,
-                start_date=e.start_date, end_date=e.end_date, all_day=e.all_day,
-            )
-            for e in my_events
-        ],
-    )
-
-
-@router.post("/public/trips/{trip_id}/join", response_model=BuddyResponse, status_code=201)
-def join_public_trip(
-    trip_id: str,
-    message: Optional[str] = None,
-    current_user = Depends(get_current_user),
-    service: TripBuddyService = Depends(get_buddy_service),
-    db_session: Session = Depends(db.get_db),
-):
-    """申請加入公開行程"""
-    from models.calendar import CalendarTrip
-    from domain.calendar.enums import TripVisibility
-    
-    _rate_limit(f"join:{current_user.user_id}")
-    
-    trip = db_session.query(CalendarTrip).filter(CalendarTrip.id == UUID(trip_id)).first()
-    if not trip:
-        raise HTTPException(status_code=404, detail="Trip not found")
-    if trip.visibility != TripVisibility.PUBLIC:
-        raise HTTPException(status_code=403, detail="Trip is not public")
-    if trip.user_id == current_user.user_id:
-        raise HTTPException(status_code=400, detail="Cannot join your own trip")
-    if trip.current_buddies >= trip.max_buddies:
-        raise HTTPException(status_code=400, detail="Trip is full")
-    
-    buddy = service.invite(
-        trip_id=UUID(trip_id),
-        inviter_id=current_user.user_id,  # 自己申請
-        user_id=current_user.user_id,
-        message=message,
-    )
-    return BuddyResponse(id=str(buddy.id), user_id=str(buddy.user_id), status=buddy.status.value)

@@ -69,5 +69,34 @@ services:
       timeout: 10s
       retries: 3
 
+  trip-planner-db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=snowtrace_trip
+      - POSTGRES_PASSWORD=snowtrace_trip
+      - POSTGRES_DB=trip_planner
+    volumes:
+      - trip_planner_data:/var/lib/postgresql/data/
+    ports:
+      - "5450:5432"
+
+  tour:
+    build:
+      context: ./tour
+      dockerfile: Dockerfile
+    ports:
+      - "3010:3000"
+    depends_on:
+      - trip-planner-db
+      - user-core
+      - resort-api
+    environment:
+      - DATABASE_URL=postgresql://snowtrace_trip:snowtrace_trip@trip-planner-db:5432/trip_planner
+      - NODE_ENV=production
+      - USER_CORE_API_URL=http://user-core:8001
+      - RESORT_API_BASE_URL=http://resort-api:8000
+      - SNOWBUDDY_API_URL=http://snowbuddy-matching:8002
+
 volumes:
   postgres_data:
+  trip_planner_data:

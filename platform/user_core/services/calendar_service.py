@@ -1,123 +1,26 @@
 """
-Calendar services (use cases) - built atop repositories.
+Shared calendar infrastructure services (use cases).
+
+This module provides the services for the shared calendar infrastructure.
+All applications (Trip Planning, Tour, Matching) use these services to create and query events.
 """
 from __future__ import annotations
 
 import datetime as dt
+from typing import Optional, List
 from uuid import UUID
 
-from domain.calendar.trip import Trip
 from domain.calendar.calendar_event import CalendarEvent
-from domain.calendar.day import Day
-from domain.calendar.item import Item
-from domain.calendar.trip_buddy import TripBuddy
-from domain.calendar.matching_request import MatchingRequest
-from domain.calendar.enums import TripVisibility, TripStatus, EventType
-from repositories.calendar_repository import (
-    CalendarTripRepository,
-    CalendarEventRepository,
-    CalendarTripBuddyRepository,
-    CalendarMatchingRequestRepository,
-    CalendarDayRepository,
-    CalendarItemRepository,
-)
+from domain.calendar.enums import EventType
+from repositories.calendar_repository import CalendarEventRepository
+from services.interfaces.calendar_service_interface import CalendarServiceInterface
 
 
-class TripService:
-    """Use cases for trips."""
-
-    def __init__(self, repo: CalendarTripRepository, day_repo: CalendarDayRepository | None = None, item_repo: CalendarItemRepository | None = None):
-        self.repo = repo
-        self.day_repo = day_repo
-        self.item_repo = item_repo
-
-    def create_trip(
-        self,
-        *,
-        user_id: UUID,
-        title: str,
-        start_date: dt.datetime,
-        end_date: dt.datetime,
-        timezone: str = "Asia/Taipei",
-        visibility: TripVisibility = TripVisibility.PRIVATE,
-        status: TripStatus = TripStatus.PLANNING,
-        resort_id: str | None = None,
-        resort_name: str | None = None,
-        region: str | None = None,
-        people_count: int | None = None,
-        note: str | None = None,
-    ) -> Trip:
-        trip = Trip.create(
-            user_id=user_id,
-            title=title,
-            start_date=start_date,
-            end_date=end_date,
-            timezone=timezone,
-            visibility=visibility,
-            status=status,
-            resort_id=resort_id,
-            resort_name=resort_name,
-            region=region,
-            people_count=people_count,
-            note=note,
-        )
-        return self.repo.add(trip)
-
-    def list_trips(self, *, user_id: UUID) -> list[Trip]:
-        return self.repo.list_for_user(user_id)
-
-    def get_trip(self, trip_id: UUID) -> Trip | None:
-        return self.repo.get(trip_id)
-    def get_trip(self, trip_id: UUID) -> Trip | None:
-        return self.repo.get(trip_id)
-
-    def update_trip(self, trip: Trip, **kwargs) -> Trip:
-        updated = trip.update(**kwargs)
-        return self.repo.update(updated)
-
-    def add_day(self, *, trip_id: UUID, day_index: int, label: str, **kwargs) -> Day:
-        if not self.day_repo:
-            raise RuntimeError("Day repository not configured")
-        day = Day.create(trip_id=trip_id, day_index=day_index, label=label, **kwargs)
-        return self.day_repo.add(day)
-
-    def list_days(self, trip_id: UUID) -> list[Day]:
-        if not self.day_repo:
-            raise RuntimeError("Day repository not configured")
-        return self.day_repo.list_for_trip(trip_id)
-
-    def add_item(
-        self,
-        *,
-        trip_id: UUID,
-        day_id: UUID,
-        type: str,
-        title: str,
-        start_time: dt.datetime | None = None,
-        end_time: dt.datetime | None = None,
-        **kwargs,
-    ) -> Item:
-        if not self.item_repo:
-            raise RuntimeError("Item repository not configured")
-        item = Item.create(
-            trip_id=trip_id,
-            day_id=day_id,
-            type=type,
-            title=title,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs,
-        )
-        return self.item_repo.add(item)
-
-    def list_items(self, day_id: UUID) -> list[Item]:
-        if not self.item_repo:
-            raise RuntimeError("Item repository not configured")
-        return self.item_repo.list_for_day(day_id)
-
-
-class CalendarEventService:
-    """Use cases for calendar events."""
+class CalendarService(CalendarServiceInterface):
+    """Use cases for shared calendar events.
+    
+    Concrete implementation of CalendarServiceInterface.
+    """
 
     def __init__(self, repo: CalendarEventRepository):
         self.repo = repo
@@ -126,112 +29,115 @@ class CalendarEventService:
         self,
         *,
         user_id: UUID,
-        type: EventType,
+        event_type: EventType,
         title: str,
         start_date: dt.datetime,
         end_date: dt.datetime,
+        source_app: str,
+        source_id: str,
+        description: Optional[str] = None,
         all_day: bool = False,
-        description: str | None = None,
-        trip_id: UUID | None = None,
+        timezone: str = "Asia/Taipei",
+        related_trip_id: Optional[str] = None,
+        resort_id: Optional[str] = None,
+        google_event_id: Optional[str] = None,
+        outlook_event_id: Optional[str] = None,
+        matching_id: Optional[UUID] = None,
+        participants: Optional[List[UUID]] = None,
+        reminders: Optional[List[dict]] = None,
     ) -> CalendarEvent:
+        """Create a new calendar event."""
         event = CalendarEvent.create(
             user_id=user_id,
-            type=type,
+            type=event_type,
             title=title,
             start_date=start_date,
             end_date=end_date,
-            all_day=all_day,
+            source_app=source_app,
+            source_id=source_id,
             description=description,
-            trip_id=trip_id,
+            all_day=all_day,
+            timezone=timezone,
+            related_trip_id=related_trip_id,
+            resort_id=resort_id,
+            google_event_id=google_event_id,
+            outlook_event_id=outlook_event_id,
+            matching_id=matching_id,
+            participants=participants or [],
+            reminders=reminders or [],
         )
         return self.repo.add(event)
 
-    def list_events(self, *, user_id: UUID) -> list[CalendarEvent]:
-        return self.repo.list_for_user(user_id)
+    def get_event(self, event_id: UUID) -> Optional[CalendarEvent]:
+        """Get a calendar event by ID."""
+        return self.repo.get(event_id)
+
+    def list_events(
+        self,
+        user_id: UUID,
+        start_date: Optional[dt.datetime] = None,
+        end_date: Optional[dt.datetime] = None,
+        event_type: Optional[str] = None,
+        source_app: Optional[str] = None,
+    ) -> List[CalendarEvent]:
+        """List calendar events for a user with optional filters."""
+        return self.repo.list_for_user(
+            user_id=user_id,
+            start_date=start_date,
+            end_date=end_date,
+            event_type=event_type,
+            source_app=source_app,
+        )
+
+    def list_events_for_source(
+        self,
+        source_app: str,
+        source_id: str,
+    ) -> List[CalendarEvent]:
+        """List calendar events for a specific source."""
+        return self.repo.list_for_source(
+            source_app=source_app,
+            source_id=source_id,
+        )
 
     def update_event(
         self,
         event_id: UUID,
         *,
-        user_id: UUID,
-        title: str | None = None,
-        start_date: dt.datetime | None = None,
-        end_date: dt.datetime | None = None,
-        description: str | None = None,
-        reminders: list[dict] | None = None,
+        title: Optional[str] = None,
+        start_date: Optional[dt.datetime] = None,
+        end_date: Optional[dt.datetime] = None,
+        description: Optional[str] = None,
+        all_day: Optional[bool] = None,
+        timezone: Optional[str] = None,
+        related_trip_id: Optional[str] = None,
+        resort_id: Optional[str] = None,
+        google_event_id: Optional[str] = None,
+        outlook_event_id: Optional[str] = None,
+        matching_id: Optional[UUID] = None,
+        participants: Optional[List[UUID]] = None,
+        reminders: Optional[List[dict]] = None,
     ) -> CalendarEvent:
+        """Update a calendar event."""
         event = self.repo.get(event_id)
-        if not event or event.user_id != user_id:
+        if not event:
             raise ValueError("Event not found")
+        
+        # Update fields
         updated = event.update(
             title=title,
             start_date=start_date,
             end_date=end_date,
             description=description,
-            reminders=tuple(reminders) if reminders is not None else None,
+            reminders=reminders,
         )
+        
         return self.repo.update(updated)
 
+    def delete_event(self, event_id: UUID) -> bool:
+        """Delete a calendar event."""
+        return self.repo.delete(event_id)
 
-class TripBuddyService:
-    """Manage trip buddies."""
-
-    def __init__(self, repo: CalendarTripBuddyRepository):
-        self.repo = repo
-
-    def invite(
-        self,
-        *,
-        trip_id: UUID,
-        inviter_id: UUID,
-        user_id: UUID,
-        message: str | None = None,
-    ) -> TripBuddy:
-        buddy = TripBuddy(
-            trip_id=trip_id,
-            user_id=user_id,
-            inviter_id=inviter_id,
-            request_message=message,
-        )
-        return self.repo.add(buddy)
-
-    def respond(self, buddy_id: UUID, accept: bool, message: str | None = None) -> TripBuddy:
-        buddy = self.repo.get(buddy_id)
-        if not buddy:
-            raise ValueError("Buddy not found")
-        updated = buddy.accept() if accept else buddy.decline(message)
-        return self.repo.update(updated)
-
-    def list_buddies(self, trip_id: UUID) -> list[TripBuddy]:
-        return self.repo.list_for_trip(trip_id)
-
-
-class MatchingService:
-    """Manage matching requests/results."""
-
-    def __init__(self, repo: CalendarMatchingRequestRepository):
-        self.repo = repo
-
-    def create_request(
-        self,
-        *,
-        trip_id: UUID,
-        requester_id: UUID,
-        preferences: dict,
-    ) -> MatchingRequest:
-        req = MatchingRequest(
-            trip_id=trip_id,
-            requester_id=requester_id,
-            preferences=preferences,
-        )
-        return self.repo.add(req)
-
-    def complete_request(self, request_id: UUID, results: list[dict]) -> MatchingRequest:
-        req = self.repo.get(request_id)
-        if not req:
-            raise ValueError("Matching request not found")
-        updated = req.mark_completed(results)
-        return self.repo.update(updated)
-
-    def list_requests(self, trip_id: UUID) -> list[MatchingRequest]:
-        return self.repo.list_for_trip(trip_id)
+    def delete_events_for_source(self, source_app: str, source_id: str) -> int:
+        """Delete all events for a specific source."""
+        return self.repo.delete_by_source(source_app, source_id)

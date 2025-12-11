@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from .exceptions import register_exception_handlers
-from .routers import search_router, requests_router, health_router
+from .routers import search_router, requests_router, health_router, trip_requests_router
 
 try:
     import sentry_sdk
@@ -37,6 +37,7 @@ register_exception_handlers(app)
 # Routers
 app.include_router(search_router)
 app.include_router(requests_router)
+app.include_router(trip_requests_router)
 app.include_router(health_router)
 
 

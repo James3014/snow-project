@@ -60,6 +60,38 @@ def calculate_role_score(seeker_pref: MatchingPreference, candidate: CandidatePr
     return 0.1
 
 
+def calculate_casi_skill_score(
+    seeker_casi: Optional[Dict[str, Any]], 
+    candidate_casi: Optional[Dict[str, Any]]
+) -> float:
+    """
+    基於 CASI 技能相似度計算評分
+    
+    使用 User Core 的 CASI API 資料進行精確技能匹配
+    """
+    if not seeker_casi or not candidate_casi:
+        return 0.5  # 預設中等評分
+    
+    if not seeker_casi.get("has_profile") or not candidate_casi.get("has_profile"):
+        return 0.5
+    
+    # 計算整體技能差異
+    seeker_skill = seeker_casi.get("overall_skill", 0.0)
+    candidate_skill = candidate_casi.get("overall_skill", 0.0)
+    
+    skill_diff = abs(seeker_skill - candidate_skill)
+    
+    # 技能差異越小，評分越高
+    if skill_diff <= 0.1:
+        return 1.0
+    elif skill_diff <= 0.2:
+        return 0.8
+    elif skill_diff <= 0.3:
+        return 0.6
+    else:
+        return 0.3
+
+
 def calculate_knowledge_score(
     seeker_profile: Optional[Dict[str, Any]],
     candidate_profile: Optional[Dict[str, Any]]

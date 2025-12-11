@@ -16,6 +16,8 @@ from datetime import date
 from services import trip_planning_service, db
 from schemas import trip_planning as tp_schemas
 from models.enums import SeasonStatus, TripStatus
+from models.trip_planning import Trip
+from auth_utils import get_current_user_id
 
 router = APIRouter()
 
@@ -159,7 +161,7 @@ def get_season_stats(
 
 @router.post(
     "/trips",
-    response_model=tp_schemas.Trip,
+    response_model=tp_schemas.TripWithEvents,
     summary="Create a new trip",
     status_code=201
 )
@@ -169,18 +171,31 @@ def create_trip(
     db_session: Session = Depends(db.get_db)
 ):
     """
-    Create a new trip within a season.
+    Create a new trip within a season and corresponding calendar event.
 
     - **season_id**: Season this trip belongs to
     - **resort_id**: Resort identifier
     - **start_date**: Trip start date
     - **end_date**: Trip end date
+    
+    Returns trip with calendar events.
     """
     try:
-        return trip_planning_service.create_trip(
+        created_trip = trip_planning_service.create_trip(
             db=db_session,
             user_id=user_id,
             trip_data=trip
+        )
+        
+        # Get trip with events
+        trip_with_events, events = trip_planning_service.get_trip(
+            db=db_session,
+            trip_id=created_trip.trip_id
+        )
+        
+        return tp_schemas.TripWithEvents(
+            trip=trip_with_events,
+            events=events
         )
     except trip_planning_service.SeasonNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
@@ -261,12 +276,17 @@ def get_trip(
     user_id: Optional[uuid.UUID] = Query(None, description="User ID"),
     db_session: Session = Depends(db.get_db)
 ):
-    """Get details of a specific trip."""
+    """Get details of a specific trip with calendar events."""
     try:
-        return trip_planning_service.get_trip(
+        trip, events = trip_planning_service.get_trip(
             db=db_session,
             trip_id=trip_id,
             user_id=user_id
+        )
+        
+        return tp_schemas.TripWithEvents(
+            trip=trip,
+            events=events
         )
     except trip_planning_service.TripNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
@@ -276,7 +296,7 @@ def get_trip(
 
 @router.patch(
     "/trips/{trip_id}",
-    response_model=tp_schemas.Trip,
+    response_model=tp_schemas.TripWithEvents,
     summary="Update a trip"
 )
 def update_trip(
@@ -285,13 +305,18 @@ def update_trip(
     user_id: uuid.UUID = Query(..., description="User ID"),
     db_session: Session = Depends(db.get_db)
 ):
-    """Update trip details."""
+    """Update trip details and corresponding calendar events."""
     try:
-        return trip_planning_service.update_trip(
+        trip, events = trip_planning_service.update_trip(
             db=db_session,
             trip_id=trip_id,
             user_id=user_id,
             updates=updates
+        )
+        
+        return tp_schemas.TripWithEvents(
+            trip=trip,
+            events=events
         )
     except trip_planning_service.TripNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
@@ -590,3 +615,181 @@ def get_year_overview(
         total_trips=total_trips,
         completed_trips=completed_trips
     )
+
+
+# ==================== Shared Calendar ====================
+
+@router.get(
+    "/calendar/shared",
+    response_model=tp_schemas.SharedCalendarResponse,
+    summary="Get shared calendar (own trips + joined buddy trips)"
+)
+def get_shared_calendar(
+    user_id: uuid.UUID = Query(..., description="User ID"),
+    db_session: Session = Depends(db.get_db)
+):
+    """Get shared calendar including own trips and trips joined as buddy."""
+    from models.trip import Trip, TripBuddy
+    from models.enums import BuddyRequestStatus
+    
+    # 自己的行程
+    my_trips = trip_planning_service.get_user_trips(db=db_session, user_id=user_id)
+    
+    # 已加入的雪伴行程 (accepted)
+    buddy_records = db_session.query(TripBuddy).filter(
+        TripBuddy.user_id == user_id,
+        TripBuddy.status == BuddyRequestStatus.ACCEPTED
+    ).all()
+    
+    buddy_trip_ids = [b.trip_id for b in buddy_records]
+    buddy_trips = []
+    if buddy_trip_ids:
+        buddy_trips = db_session.query(Trip).filter(Trip.trip_id.in_(buddy_trip_ids)).all()
+    
+    # 合併並轉換
+    all_trips = []
+    for t in my_trips:
+        all_trips.append(tp_schemas.SharedTrip(
+            trip_id=t.trip_id,
+            title=t.title,
+            start_date=t.start_date,
+            end_date=t.end_date,
+            resort_id=t.resort_id,
+            trip_status=t.trip_status,
+            is_owner=True,
+        ))
+    
+    for t in buddy_trips:
+        all_trips.append(tp_schemas.SharedTrip(
+            trip_id=t.trip_id,
+            title=t.title,
+            start_date=t.start_date,
+            end_date=t.end_date,
+            resort_id=t.resort_id,
+            trip_status=t.trip_status,
+            is_owner=False,
+        ))
+    
+    # 按日期排序
+    all_trips.sort(key=lambda x: x.start_date)
+    
+    return tp_schemas.SharedCalendarResponse(trips=all_trips)
+
+
+# ==================== Trip Application Endpoints ====================
+
+@router.post(
+    "/trips/{trip_id}/apply",
+    summary="Apply to join a trip",
+    status_code=202
+)
+async def apply_to_trip(
+    trip_id: str,
+    current_user_id: str = Depends(get_current_user_id),
+    db_session: Session = Depends(db.get_session)
+):
+    """Apply to join a public trip."""
+    # 檢查 trip 是否存在且為公開
+    trip = db_session.query(Trip).filter(Trip.trip_id == trip_id).first()
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found")
+    
+    if trip.visibility != "public":
+        raise HTTPException(status_code=403, detail="Trip is not public")
+    
+    if trip.user_id == current_user_id:
+        raise HTTPException(status_code=400, detail="Cannot apply to own trip")
+    
+    # 記錄申請事件
+    request_id = str(uuid.uuid4())
+    event_data = {
+        "user_id": current_user_id,
+        "source_project": "user-core",
+        "event_type": "trip.apply.sent",
+        "payload": {
+            "request_id": request_id,
+            "trip_id": trip_id,
+            "trip_owner_id": trip.user_id
+        }
+    }
+    
+    # TODO: 實際記錄到 BehaviorEvent
+    
+    return {"status": "application sent", "request_id": request_id}
+
+
+@router.put(
+    "/trips/{trip_id}/applications/{request_id}",
+    summary="Respond to trip application"
+)
+async def respond_to_trip_application(
+    trip_id: str,
+    request_id: str,
+    action: str,  # 'accept' or 'decline'
+    current_user_id: str = Depends(get_current_user_id),
+    db_session: Session = Depends(db.get_session)
+):
+    """Respond to a trip application (trip owner only)."""
+    # 檢查是否為 trip owner
+    trip = db_session.query(Trip).filter(
+        Trip.trip_id == trip_id,
+        Trip.user_id == current_user_id
+    ).first()
+    
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found or not authorized")
+    
+    if action not in ["accept", "decline"]:
+        raise HTTPException(status_code=400, detail="Invalid action")
+    
+    # 記錄回應事件
+    event_data = {
+        "user_id": current_user_id,
+        "source_project": "user-core",
+        "event_type": f"trip.apply.{action}ed",
+        "payload": {
+            "request_id": request_id,
+            "trip_id": trip_id
+        }
+    }
+    
+    # TODO: 實際記錄到 BehaviorEvent
+    # TODO: 如果 accept，需要建立 Calendar 事件
+    
+    return {"status": f"application {action}ed"}
+
+
+@router.delete(
+    "/trips/{trip_id}/participants/{user_id}",
+    summary="Remove participant from trip"
+)
+async def remove_trip_participant(
+    trip_id: str,
+    user_id: str,
+    current_user_id: str = Depends(get_current_user_id),
+    db_session: Session = Depends(db.get_session)
+):
+    """Remove a participant from trip (self or trip owner)."""
+    # 檢查權限：自己或 trip owner
+    trip = db_session.query(Trip).filter(Trip.trip_id == trip_id).first()
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found")
+    
+    if current_user_id != user_id and current_user_id != trip.user_id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    # 記錄離開事件
+    event_data = {
+        "user_id": current_user_id,
+        "source_project": "user-core",
+        "event_type": "trip.participant.removed",
+        "payload": {
+            "trip_id": trip_id,
+            "removed_user_id": user_id
+        }
+    }
+    
+    # TODO: 實際記錄到 BehaviorEvent
+    # TODO: 清理 Calendar 事件
+    
+    return {"status": "participant removed"}

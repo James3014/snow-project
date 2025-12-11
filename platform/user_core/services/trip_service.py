@@ -1,7 +1,8 @@
-"""Trip management service."""
+"""Trip management service with calendar integration."""
 from datetime import datetime, UTC
 from typing import List, Optional, Tuple
 import uuid
+from uuid import UUID
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
@@ -11,6 +12,9 @@ from models.course_tracking import CourseVisit
 from models.user_profile import UserProfile
 from models.enums import TripStatus, TripVisibility
 from schemas.trip_planning import TripCreate, TripUpdate, TripBase, TripSummary, UserInfo
+from domain.calendar.enums import EventType
+from services.calendar_service import CalendarService
+from repositories.calendar_repository import CalendarEventRepository
 
 
 class TripNotFoundError(Exception):
@@ -24,10 +28,11 @@ class UnauthorizedError(Exception):
 
 
 def create_trip(db: Session, user_id: uuid.UUID, trip_data: TripCreate) -> Trip:
-    """Create a new trip."""
+    """Create a new trip and corresponding calendar event."""
     from services.season_service import get_season
     get_season(db, trip_data.season_id, user_id)
     
+    # Create trip
     trip = Trip(
         season_id=trip_data.season_id,
         user_id=user_id,
@@ -46,6 +51,24 @@ def create_trip(db: Session, user_id: uuid.UUID, trip_data: TripCreate) -> Trip:
     db.add(trip)
     db.commit()
     db.refresh(trip)
+    
+    # Create calendar event
+    calendar_repo = CalendarEventRepository(db)
+    calendar_service = CalendarService(calendar_repo)
+    
+    calendar_service.create_event(
+        user_id=user_id,
+        event_type=EventType.TRIP,
+        title=trip_data.title or f"Trip to {trip_data.resort_id}",
+        start_date=trip_data.start_date,
+        end_date=trip_data.end_date,
+        source_app="trip_planning",
+        source_id=str(trip.trip_id),
+        description=trip_data.notes,
+        related_trip_id=str(trip.trip_id),
+        resort_id=trip_data.resort_id,
+    )
+    
     return trip
 
 
@@ -154,14 +177,42 @@ def get_public_trips_with_owner_info(
     return result
 
 
-def get_trip(db: Session, trip_id: uuid.UUID, user_id: Optional[uuid.UUID] = None) -> Trip:
-    """Get a specific trip by ID."""
+def get_trip(db: Session, trip_id: uuid.UUID, user_id: Optional[uuid.UUID] = None) -> Tuple[Trip, List[dict]]:
+    """Get a specific trip by ID with its calendar events."""
     trip = db.query(Trip).filter(Trip.trip_id == trip_id).first()
     if not trip:
         raise TripNotFoundError(f"Trip {trip_id} not found")
     if user_id and trip.user_id != user_id and trip.visibility == TripVisibility.PRIVATE:
         raise UnauthorizedError("You don't have permission to view this trip")
-    return trip
+    
+    # Get calendar events
+    calendar_repo = CalendarEventRepository(db)
+    calendar_service = CalendarService(calendar_repo)
+    
+    events = calendar_service.list_events_for_source(
+        source_app="trip_planning",
+        source_id=str(trip.trip_id)
+    )
+    
+    # Convert events to dict for JSON serialization
+    event_list = []
+    for event in events:
+        event_list.append({
+            "id": str(event.id),
+            "type": event.type.value,
+            "title": event.title,
+            "start_date": event.start_date.isoformat(),
+            "end_date": event.end_date.isoformat(),
+            "all_day": event.all_day,
+            "timezone": event.timezone,
+            "source_app": event.source_app,
+            "source_id": event.source_id,
+            "related_trip_id": event.related_trip_id,
+            "resort_id": event.resort_id,
+            "description": event.description,
+        })
+    
+    return trip, event_list
 
 
 def update_trip(
@@ -169,24 +220,50 @@ def update_trip(
     trip_id: uuid.UUID,
     user_id: uuid.UUID,
     updates: TripUpdate
-) -> Trip:
-    """Update a trip."""
-    trip = get_trip(db, trip_id)
+) -> Tuple[Trip, List[dict]]:
+    """Update a trip and its corresponding calendar event."""
+    trip, events = get_trip(db, trip_id)
     if trip.user_id != user_id:
         raise UnauthorizedError("You don't have permission to update this trip")
+    
+    # Update trip fields
     for field, value in updates.model_dump(exclude_unset=True).items():
         setattr(trip, field, value)
     trip.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(trip)
-    return trip
+    
+    # Update calendar event if it exists
+    if events:
+        calendar_repo = CalendarEventRepository(db)
+        calendar_service = CalendarService(calendar_repo)
+        
+        for event in events:
+            calendar_service.update_event(
+                event_id=UUID(event["id"]),
+                title=updates.title if updates.title else trip.title,
+                start_date=updates.start_date if updates.start_date else trip.start_date,
+                end_date=updates.end_date if updates.end_date else trip.end_date,
+                description=updates.notes if updates.notes else trip.notes,
+            )
+    
+    # Get updated events
+    updated_trip, updated_events = get_trip(db, trip_id)
+    return updated_trip, updated_events
 
 
 def delete_trip(db: Session, trip_id: uuid.UUID, user_id: uuid.UUID) -> bool:
-    """Delete a trip."""
-    trip = get_trip(db, trip_id)
+    """Delete a trip and its corresponding calendar events."""
+    trip, events = get_trip(db, trip_id)
     if trip.user_id != user_id:
         raise UnauthorizedError("You don't have permission to delete this trip")
+    
+    # Delete calendar events
+    calendar_repo = CalendarEventRepository(db)
+    calendar_service = CalendarService(calendar_repo)
+    calendar_service.delete_events_for_source("trip_planning", str(trip.trip_id))
+    
+    # Delete trip
     db.delete(trip)
     db.commit()
     return True

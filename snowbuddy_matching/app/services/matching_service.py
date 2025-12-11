@@ -1,5 +1,6 @@
-"""Matching service - orchestrates the matching process."""
+"""Matching service - orchestrates the matching process with calendar integration."""
 from typing import List, Dict, Any, Optional
+from datetime import datetime, timezone
 
 from ..models.matching import MatchSummary, MatchingPreference
 from ..core.matching_logic import calculate_total_match_score, filter_candidates
@@ -18,7 +19,7 @@ class MatchingService:
         self._notifier = MatchingNotificationDispatcher()
     
     async def run_matching(self, search_id: str, seeker_id: str, seeker_prefs: MatchingPreference) -> None:
-        """Execute the full matching process."""
+        """Execute the full matching process with calendar integration."""
         # 1. Mark as processing when running locally
         if not self._workflow_client:
             self._redis.set_processing(search_id)
@@ -26,6 +27,9 @@ class MatchingService:
         # 2. Fetch external data
         all_users = await user_core_client.get_users()
         all_resorts = await resort_services_client.get_resorts()
+        
+        # 3. 獲取 seeker 的 CASI 技能資料
+        seeker_casi = await user_core_client.get_casi_skills(seeker_id)
         
         # 3. Filter candidates
         candidates = filter_candidates(seeker_prefs, all_users, seeker_id)
@@ -56,6 +60,36 @@ class MatchingService:
             seeker_id=seeker_id,
             results=payload,
         )
+        
+        # 7. Create calendar event for matching request
+        await self._create_matching_calendar_event(search_id, seeker_id, seeker_prefs)
+    
+    async def _create_matching_calendar_event(
+        self,
+        search_id: str,
+        seeker_id: str,
+        seeker_prefs: MatchingPreference
+    ) -> None:
+        """Create a calendar event for the matching request."""
+        try:
+            # Create calendar event via user core API
+            event_payload = {
+                "type": "BUDDY_MATCHING",
+                "title": f"Snowbuddy Matching Request: {seeker_prefs.resort_id}",
+                "start_date": datetime.now(timezone.utc).isoformat(),
+                "end_date": datetime.now(timezone.utc).isoformat(),
+                "all_day": False,
+                "description": f"Matching request for {seeker_prefs.resort_id} from {seeker_prefs.start_date} to {seeker_prefs.end_date}",
+                "source_app": "matching",
+                "source_id": search_id,
+                "related_trip_id": seeker_prefs.trip_id,
+                "resort_id": seeker_prefs.resort_id,
+            }
+            
+            await user_core_client.create_calendar_event(event_payload)
+        except Exception as e:
+            # Log error but don't fail the matching process
+            print(f"Failed to create calendar event for matching {search_id}: {e}")
     
     def _score_candidates(
         self,

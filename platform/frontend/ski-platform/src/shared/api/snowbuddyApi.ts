@@ -27,6 +27,21 @@ export interface MatchResult {
   };
 }
 
+// Trip 申請相關介面
+export interface TripApplication {
+  request_id: string;
+  trip_id: string;
+  status: 'pending' | 'accepted' | 'declined';
+}
+
+export interface TripParticipant {
+  trip_id: string;
+  user_id: string;
+  joined_at: string;
+  status: string;
+  calendar_synced: boolean;
+}
+
 export interface SearchResult {
   status: 'pending' | 'completed' | 'failed';
   matches: MatchResult[];
@@ -128,9 +143,67 @@ export async function respondToRequest(
   return response.json();
 }
 
+// Trip 申請相關 API
+export async function applyToTrip(tripId: string, token: string): Promise<TripApplication> {
+  const response = await fetch(`${SNOWBUDDY_API_URL}/trips/${tripId}/apply`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to apply to trip: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function respondToTripApplication(
+  tripId: string, 
+  requestId: string, 
+  action: 'accept' | 'decline',
+  token: string
+): Promise<{ status: string; participant?: TripParticipant }> {
+  const response = await fetch(`${SNOWBUDDY_API_URL}/trips/${tripId}/applications/${requestId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ action }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to respond to application: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function leaveTrip(tripId: string, userId: string, token: string): Promise<{ status: string }> {
+  const response = await fetch(`${SNOWBUDDY_API_URL}/trips/${tripId}/participants/${userId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to leave trip: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
 export const snowbuddyApi = {
   startSearch,
   getSearchResults,
   sendMatchRequest,
   respondToRequest,
+  // Trip 相關 API
+  applyToTrip,
+  respondToTripApplication,
+  leaveTrip,
 };
