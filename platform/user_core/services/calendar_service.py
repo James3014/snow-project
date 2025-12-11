@@ -68,6 +68,8 @@ class TripService:
 
     def get_trip(self, trip_id: UUID) -> Trip | None:
         return self.repo.get(trip_id)
+    def get_trip(self, trip_id: UUID) -> Trip | None:
+        return self.repo.get(trip_id)
 
     def update_trip(self, trip: Trip, **kwargs) -> Trip:
         updated = trip.update(**kwargs)

@@ -28,4 +28,4 @@
 
 6. Documentation
    - [x] API spec snippet (`docs/CALENDAR_API.md`).
-    - [x] Notes on migration strategy (`docs/CALENDAR_MIGRATION.md`)。
+   - [x] Notes on migration strategy (`docs/CALENDAR_MIGRATION.md`)。

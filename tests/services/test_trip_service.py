@@ -21,7 +21,7 @@ class FakeTripRepo:
 
 class FakeDayRepo:
     def __init__(self):
-        self.storage = []
+        self.storage: list[Day] = []
 
     def add(self, day: Day) -> Day:
         self.storage.append(day)
@@ -33,7 +33,7 @@ class FakeDayRepo:
 
 class FakeItemRepo:
     def __init__(self):
-        self.storage = []
+        self.storage: list[Item] = []
 
     def add(self, item: Item) -> Item:
         self.storage.append(item)

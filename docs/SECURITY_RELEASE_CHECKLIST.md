@@ -13,7 +13,8 @@
 ## 部署必填
 - JWT：`JWT_SECRET_KEY` (+`JWT_FALLBACK_SECRET`)、`JWT_ALGORITHM=HS256`、`JWT_AUDIENCE=user_core`、`JWT_ISSUER=SnowTrace`。
 - Redis：`REDIS_URL`（或 `RESORT_API_REDIS_URL`）用於限流。
-- CAPTCHA：`TURNSTILE_SECRET` 或 `RECAPTCHA_SECRET`；前端 `VITE_TURNSTILE_SITE_KEY`；呼叫端傳 `X-Captcha-Token`。
+- CAPTCHA：`TURNSTILE_SECRET` 或 `RECAPTCHA_SECRET`；前端 `VITE_TURNSTILE_SITE_KEY`；呼叫端傳 `X-Captcha-Token`（smoke 測試可用 `CAPTCHA_TOKEN` 環境變數）。
+- Calendar 新路由：Trip/Event/Matching 皆套用 `X-Captcha-Token`。
 - API Key：`USER_CORE_API_KEY`、`RESORT_API_KEY`、`SNOWBUDDY_API_KEY`（可用 `*_REQUIRE_API_KEY=false` 放寬）。
 - Sentry：前端 `VITE_SENTRY_DSN`；後端 `SENTRY_DSN`（可選 `SENTRY_TRACES_SAMPLE_RATE`）。
 - robots.txt：替換 Sitemap 為正式域名。
