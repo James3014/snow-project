@@ -27,12 +27,8 @@ from services.trip_service import (
     UnauthorizedError
 )
 
-from services.buddy_service import (
-    request_to_join_trip,
-    respond_to_buddy_request,
-    cancel_buddy_request,
-    get_trip_buddies,
-    calculate_match_score,
+# 移除對已刪除 buddy_service 的引用
+# 這些功能現在由獨立的 Snowbuddy Service 提供
     BuddyRequestError
 )
 
@@ -69,8 +65,8 @@ __all__ = [
     'generate_share_link',
     'get_trip_by_share_token',
     # Buddy operations
-    'request_to_join_trip',
-    'respond_to_buddy_request',
+    # 'request_to_join_trip', - 現在由 Snowbuddy Service 提供
+    # 'respond_to_buddy_request', - 現在由 Snowbuddy Service 提供
     'cancel_buddy_request',
     'get_trip_buddies',
     'calculate_match_score',
