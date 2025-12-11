@@ -7,23 +7,7 @@ import { Suspense, lazy } from 'react';
 import RootLayout from '@/shell/RootLayout';
 import AdminRoute from '@/shared/components/auth/AdminRoute';
 import PageLoader from '@/shared/components/PageLoader';
-
-// Error component
-const PageError = () => (
-  <div className="min-h-screen flex items-center justify-center px-4">
-    <div className="text-center max-w-md">
-      <div className="text-6xl mb-4">❄️</div>
-      <h2 className="text-2xl font-bold text-frost-white mb-2">載入失敗</h2>
-      <p className="text-crystal-blue mb-6">頁面載入時發生錯誤，請重新整理頁面</p>
-      <button
-        onClick={() => window.location.reload()}
-        className="btn-neon px-6 py-3"
-      >
-        重新載入
-      </button>
-    </div>
-  </div>
-);
+import PageError from '@/shared/components/PageError';
 
 // Lazy load with retry
 const lazyWithRetry = (importFn: () => Promise<{ default: React.ComponentType<unknown> }>) => {

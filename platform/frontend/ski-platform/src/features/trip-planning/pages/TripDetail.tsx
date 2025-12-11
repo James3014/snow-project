@@ -60,9 +60,9 @@ export default function TripDetail() {
       loadTripData();
       loadTripBuddies();
     }
-  }, [tripId, loadTripData]);
+  }, [tripId, loadTripData, loadTripBuddies]);
 
-  const loadTripBuddies = async () => {
+  const loadTripBuddies = useCallback(async () => {
     if (!tripId) return;
 
     try {
@@ -74,7 +74,7 @@ export default function TripDetail() {
     } finally {
       setLoadingBuddies(false);
     }
-  };
+  }, [tripId]);
 
   const handleUpdateTrip = async (tripId: string, data: TripUpdate) => {
     if (!userId) return;
