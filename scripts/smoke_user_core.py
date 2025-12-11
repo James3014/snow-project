@@ -36,6 +36,23 @@ def check_validate() -> None:
     print("validate: ok")
 
 
+def check_calendar_trip():
+    if not TOKEN:
+        skip("TOKEN missing; skip calendar tests")
+        return
+    payload = {
+        "title": "Smoke trip",
+        "start_date": "2025-01-01T00:00:00+00:00",
+        "end_date": "2025-01-02T00:00:00+00:00",
+    }
+    headers = {"Authorization": f"Bearer {TOKEN}"}
+    resp = requests.post(f"{BASE_URL}/calendar/trips", json=payload, headers=headers, timeout=5)
+    resp.raise_for_status()
+    resp = requests.get(f"{BASE_URL}/calendar/trips", headers=headers, timeout=5)
+    resp.raise_for_status()
+    print("calendar trips: ok")
+
+
 def main() -> None:
     if not BASE_URL:
         skip("USER_CORE_BASE_URL not set")
@@ -43,8 +60,9 @@ def main() -> None:
     check_health()
     if TOKEN:
         check_validate()
+        check_calendar_trip()
     else:
-        skip("TOKEN not set; skipping /auth/validate")
+        skip("TOKEN not set; skipping auth/calendar tests")
 
 
 if __name__ == "__main__":

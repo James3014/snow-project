@@ -69,7 +69,7 @@ export default function ResortDetail() {
         setResortError(null);
         const resort = await resortApiService.getResort(resortId);
         setResort(resort);
-      } catch (err: unknown) {
+      } catch {
         setResortError(null);
 
         // 如果是網絡問題或 API 暫時無法使用，創建一個基本的降級雪場對象

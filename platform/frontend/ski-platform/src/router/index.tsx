@@ -6,16 +6,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import RootLayout from '@/shell/RootLayout';
 import AdminRoute from '@/shared/components/auth/AdminRoute';
-
-// Loading component
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-ice-primary"></div>
-      <p className="mt-4 text-crystal-blue">載入中...</p>
-    </div>
-  </div>
-);
+import PageLoader from '@/shared/components/PageLoader';
 
 // Error component
 const PageError = () => (

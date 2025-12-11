@@ -100,7 +100,7 @@ export default function NotificationDropdown() {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [userId]);
+  }, [userId, fetchPendingRequests]);
 
   // 點擊外部關閉下拉選單
   useEffect(() => {
@@ -118,7 +118,7 @@ export default function NotificationDropdown() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, fetchPendingRequests]);
 
   const pendingCount = requests.length;
 

@@ -26,5 +26,5 @@
    - [ ] Update smoke tests to hit new endpoints once available.
 
 6. Documentation
-   - [ ] API spec or README snippet for calendar endpoints.
-   - [ ] Notes on migration strategy (even if fresh start now).
+   - [x] API spec snippet (`docs/CALENDAR_API.md`).
+   - [ ] Notes on migration strategy (even if fresh start now)。
