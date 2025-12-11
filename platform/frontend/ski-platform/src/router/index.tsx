@@ -33,8 +33,6 @@ const MyGear = lazyWithRetry(() => import('@/features/gear/pages/MyGear'));
 const SnowbuddyBoard = lazyWithRetry(() => import('@/features/snowbuddy/pages/SnowbuddyBoard'));
 const SmartMatchingPage = lazyWithRetry(() => import('@/features/snowbuddy/pages/SmartMatchingPage'));
 const MatchRequestsPage = lazyWithRetry(() => import('@/features/snowbuddy/pages/MatchRequestsPage'));
-const PublicTripsPage = lazyWithRetry(() => import('@/features/trip-planning/pages/PublicTripsPage'));
-const SharedCalendarPage = lazyWithRetry(() => import('@/features/trip-planning/pages/SharedCalendarPage'));
 
 // 路由配置 - 純配置，無邏輯
 export const router = createBrowserRouter([
@@ -148,14 +146,6 @@ export const router = createBrowserRouter([
       {
         path: 'snowbuddy/requests',
         element: withSuspense(MatchRequestsPage),
-      },
-      {
-        path: 'calendar',
-        element: withSuspense(SharedCalendarPage),
-      },
-      {
-        path: 'calendar/public',
-        element: withSuspense(PublicTripsPage),
       },
     ],
   },
