@@ -1,37 +1,55 @@
-"""
-Calendar API endpoints (minimal).
-"""
+"""Calendar API endpoints (minimal)."""
 from __future__ import annotations
 
 import datetime as dt
 from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Header
+from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from services import db
-from services.calendar_service import TripService, CalendarEventService, TripBuddyService, MatchingService
+from config.settings import settings
+from domain.calendar.enums import EventType, TripStatus, TripVisibility
 from repositories.calendar_repository import (
-    CalendarTripRepository,
-    CalendarEventRepository,
-    CalendarTripBuddyRepository,
-    CalendarMatchingRequestRepository,
     CalendarDayRepository,
+    CalendarEventRepository,
     CalendarItemRepository,
+    CalendarMatchingRequestRepository,
+    CalendarTripBuddyRepository,
+    CalendarTripRepository,
 )
+from services import db
 from services.auth_dependencies import get_current_user
-from domain.calendar.enums import TripVisibility, TripStatus, EventType
-from domain.calendar.calendar_event import CalendarEvent
+from services.bot_protection import verify_captcha
+from services.calendar_service import (
+    CalendarEventService,
+    MatchingService,
+    TripBuddyService,
+    TripService,
+)
+
+try:  # pragma: no cover - optional dependency
+    import redis
+except Exception:  # pragma: no cover - redis import failure
+    redis = None  # type: ignore
+
 
 router = APIRouter(prefix="/calendar", tags=["Calendar"])
 _RATE_LIMIT: dict[str, list[dt.datetime]] = {}
 RATE_LIMIT_COUNT = 50
 RATE_LIMIT_WINDOW = dt.timedelta(minutes=1)
 
+if redis and settings.redis_url:
+    try:
+        _RL_CLIENT = redis.Redis.from_url(settings.redis_url, decode_responses=True)
+    except Exception:  # pragma: no cover - redis connection fallback
+        _RL_CLIENT = None
+else:
+    _RL_CLIENT = None
 
-def _rate_limit(key: str):
+
+def _rate_limit(key: str) -> None:
     now = dt.datetime.now(dt.timezone.utc)
     if _RL_CLIENT:
         window_ms = int(RATE_LIMIT_WINDOW.total_seconds() * 1000)
@@ -71,6 +89,20 @@ class TripCreateRequest(BaseModel):
     note: Optional[str] = None
 
 
+class TripUpdateRequest(BaseModel):
+    title: Optional[str] = None
+    start_date: Optional[dt.datetime] = None
+    end_date: Optional[dt.datetime] = None
+    timezone: Optional[str] = None
+    visibility: Optional[TripVisibility] = None
+    status: Optional[TripStatus] = None
+    resort_id: Optional[str] = None
+    resort_name: Optional[str] = None
+    region: Optional[str] = None
+    people_count: Optional[int] = None
+    note: Optional[str] = None
+
+
 class TripResponse(BaseModel):
     id: str
     title: str
@@ -84,6 +116,42 @@ class TripResponse(BaseModel):
         from_attributes = True
 
 
+class DayCreateRequest(BaseModel):
+    day_index: int
+    label: str
+    city: str | None = None
+    resort_id: str | None = None
+    resort_name: str | None = None
+    region: str | None = None
+    is_ski_day: bool = False
+
+
+class DayResponse(BaseModel):
+    id: str
+    day_index: int
+    label: str
+
+
+class ItemCreateRequest(BaseModel):
+    trip_id: str
+    day_id: str
+    type: str
+    title: str
+    start_time: dt.datetime | None = None
+    end_time: dt.datetime | None = None
+    time_hint: str | None = None
+    location: str | None = None
+    resort_id: str | None = None
+    resort_name: str | None = None
+    note: str | None = None
+
+
+class ItemResponse(BaseModel):
+    id: str
+    title: str
+    type: str
+
+
 class EventCreateRequest(BaseModel):
     type: EventType
     title: str
@@ -92,6 +160,14 @@ class EventCreateRequest(BaseModel):
     all_day: bool = False
     description: str | None = None
     trip_id: str | None = None
+
+
+class EventUpdateRequest(BaseModel):
+    title: str | None = None
+    start_date: dt.datetime | None = None
+    end_date: dt.datetime | None = None
+    description: str | None = None
+    reminders: List[dict] | None = None
 
 
 class EventResponse(BaseModel):
@@ -130,7 +206,6 @@ class MatchingResponse(BaseModel):
     id: str
     status: str
     results: list[dict] | None
-
 
 
 def get_trip_service(db_session: Session = Depends(db.get_db)) -> TripService:
@@ -447,63 +522,3 @@ def list_matching_requests(
 ):
     reqs = service.list_requests(UUID(trip_id))
     return [MatchingResponse(id=str(r.id), status=r.status.value, results=r.results) for r in reqs]
-from services.bot_protection import verify_captcha
-from config.settings import settings
-
-try:
-    import redis
-    _RL_CLIENT = redis.Redis.from_url(settings.redis_url, decode_responses=True) if settings.redis_url else None
-except Exception:
-    _RL_CLIENT = None
-class DayCreateRequest(BaseModel):
-    day_index: int
-    label: str
-    city: str | None = None
-    resort_id: str | None = None
-    resort_name: str | None = None
-    region: str | None = None
-    is_ski_day: bool = False
-
-
-class DayResponse(BaseModel):
-    id: str
-    day_index: int
-    label: str
-
-
-class ItemCreateRequest(BaseModel):
-    trip_id: str
-    day_id: str
-    type: str
-    title: str
-    start_time: dt.datetime | None = None
-    end_time: dt.datetime | None = None
-    time_hint: str | None = None
-    location: str | None = None
-    resort_id: str | None = None
-    resort_name: str | None = None
-    note: str | None = None
-
-
-class ItemResponse(BaseModel):
-    id: str
-    title: str
-    type: str
-class EventUpdateRequest(BaseModel):
-    title: str | None = None
-    start_date: dt.datetime | None = None
-    end_date: dt.datetime | None = None
-    description: str | None = None
-    reminders: List[dict] | None = None
-class TripUpdateRequest(BaseModel):
-    title: Optional[str] = None
-    start_date: Optional[dt.datetime] = None
-    end_date: Optional[dt.datetime] = None
-    timezone: Optional[str] = None
-    visibility: Optional[TripVisibility] = None
-    status: Optional[TripStatus] = None
-    resort_id: Optional[str] = None
-    resort_name: Optional[str] = None
-    region: Optional[str] = None
-    people_count: Optional[int] = None
-    note: Optional[str] = None

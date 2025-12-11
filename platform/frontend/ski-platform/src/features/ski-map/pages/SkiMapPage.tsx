@@ -14,8 +14,8 @@ const SkiMapPage: React.FC = () => {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const { mapData, isLoading, error } = useSkiMap(user?.user_id || '');
 
-  const handleRegionClick = () => {
-    // Region click interactions handled downstream; avoid logging sensitive nav intents
+  const handleRegionClick = (_region: string) => {
+    // TODO: 實作區域點擊導航
   };
 
   // Locked State for Unauthenticated Users
