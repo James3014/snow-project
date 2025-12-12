@@ -23,7 +23,7 @@ export default function GearReminders({ userId }: GearRemindersProps) {
       setLoading(true);
       setError(null);
       const data = await gearApi.getMyReminders();
-      setReminders(data);
+      setReminders(data.data || data); // 處理 AxiosResponse
     } catch (err) {
       console.error('載入提醒失敗:', err);
       setError('載入提醒失敗，請稍後重試');
@@ -46,7 +46,7 @@ export default function GearReminders({ userId }: GearRemindersProps) {
     switch (type) {
       case 'inspection': return '🔍';
       case 'maintenance': return '🛠️';
-      case 'trade_meeting': return '🤝';
+      case 'general': return '⏰';
       default: return '⏰';
     }
   };
@@ -55,7 +55,7 @@ export default function GearReminders({ userId }: GearRemindersProps) {
     switch (type) {
       case 'inspection': return '檢查提醒';
       case 'maintenance': return '維護提醒';
-      case 'trade_meeting': return '交易會面';
+      case 'general': return '一般提醒';
       default: return '提醒';
     }
   };
@@ -112,18 +112,18 @@ export default function GearReminders({ userId }: GearRemindersProps) {
         >
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-4 flex-1">
-              <div className="text-3xl">{getReminderIcon(reminder.type)}</div>
+              <div className="text-3xl">{getReminderIcon(reminder.reminder_type)}</div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-lg font-bold text-gradient-glacier">
-                    {getReminderTypeLabel(reminder.type)}
+                    {getReminderTypeLabel(reminder.reminder_type)}
                   </h3>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    reminder.status === 'active' 
+                    reminder.status === 'pending' 
                       ? 'bg-ice-accent/20 text-ice-accent' 
                       : 'bg-gray-500/20 text-gray-400'
                   }`}>
-                    {reminder.status === 'active' ? '啟用' : '已取消'}
+                    {reminder.status === 'pending' ? '待處理' : reminder.status === 'sent' ? '已發送' : '已取消'}
                   </span>
                 </div>
                 
@@ -139,7 +139,7 @@ export default function GearReminders({ userId }: GearRemindersProps) {
               </div>
             </div>
             
-            {reminder.status === 'active' && (
+            {reminder.status === 'pending' && (
               <button
                 onClick={() => handleCancelReminder(reminder.id)}
                 className="px-3 py-2 text-sm glass-card text-neon-pink hover:text-red-400 transition-colors font-medium"

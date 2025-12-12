@@ -181,7 +181,7 @@ export default function SmartMatchingPage() {
                           onClick={() => {
                             setSelectedMatch({
                               id: match.user_id,
-                              name: match.display_name || '匿名用戶'
+                              name: `用戶 ${match.user_id.slice(-4)}`
                             });
                             setShowScheduler(true);
                           }}

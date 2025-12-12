@@ -64,7 +64,22 @@ export function useSeasonDetail({ seasonId, userId }: UseSeasonDetailOptions) {
         return (tripStart <= monthEnd && tripEnd >= monthStart);
       });
       
-      setCalendarTrips(monthEvents);
+      // 轉換為本地 CalendarTrip 格式
+      const convertedTrips: CalendarTrip[] = monthEvents.map(trip => ({
+        trip_id: trip.id,
+        user_id: userId,
+        resort_id: '', // calendarApi 的 CalendarTrip 沒有 resort_id，使用空字符串
+        title: trip.title,
+        start_date: trip.start_date,
+        end_date: trip.end_date,
+        timezone: trip.timezone,
+        visibility: trip.visibility,
+        trip_status: trip.status,
+        current_buddies: 0,
+        max_buddies: 0
+      }));
+      
+      setCalendarTrips(convertedTrips);
     } catch (err) {
       console.error('載入統一行事曆資料失敗:', err);
       // 降級到原有 API
@@ -112,7 +127,7 @@ export function useSeasonDetail({ seasonId, userId }: UseSeasonDetailOptions) {
               source_id: trip.trip_id,
               related_trip_id: trip.trip_id,
               resort_id: trip.resort_id,
-              description: trip.note || '從 SnowTrace 平台創建的滑雪行程'
+              description: trip.notes || '從 SnowTrace 平台創建的滑雪行程'
             });
           } catch (calendarErr) {
             console.error('創建行事曆事件失敗:', calendarErr);
