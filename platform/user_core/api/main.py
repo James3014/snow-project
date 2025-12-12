@@ -56,12 +56,14 @@ app.add_middleware(
         "http://localhost:3000",  # Local production build
         "http://127.0.0.1:5173",  # Local Vite dev server (alternative)
         "https://ski-platform.zeabur.app",  # Production frontend
+        "https://*.zeabur.app",  # All Zeabur deployments
     ],
     allow_origin_regex=r"https://.*\.zeabur\.app",  # All Zeabur deployments
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["*"],
+    max_age=86400,  # 24 hours preflight cache
 )
 
 app.include_router(user_profiles.router, prefix="/users", tags=["User Profiles"])
