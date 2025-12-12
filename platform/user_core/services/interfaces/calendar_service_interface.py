@@ -1,102 +1,51 @@
 """
-Shared Calendar Infrastructure Service Interface.
-
-This module defines the abstract interface for the shared calendar service.
-All applications should depend on this interface, not the concrete implementation.
+Calendar Service 介面定義
+用於依賴注入和解耦
 """
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
+from datetime import date, datetime
 from typing import List, Optional
-from datetime import datetime
-from uuid import UUID
+from pydantic import BaseModel, field_validator
 
-from domain.calendar.calendar_event import CalendarEvent
-from domain.calendar.enums import EventType
-
+class CalendarEvent(BaseModel):
+    """行事曆事件模型"""
+    id: Optional[str] = None
+    user_id: str
+    title: str
+    description: Optional[str] = None
+    start_date: date
+    end_date: date
+    event_type: str = "general"
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    
+    @field_validator('end_date')
+    @classmethod
+    def validate_end_date(cls, v, info):
+        """驗證結束日期不能早於開始日期"""
+        if info.data and 'start_date' in info.data and v < info.data['start_date']:
+            raise ValueError('End date cannot be before start date')
+        return v
 
 class CalendarServiceInterface(ABC):
-    """Abstract interface for shared calendar services."""
-
+    """Calendar Service 抽象介面"""
+    
     @abstractmethod
-    def create_event(
-        self,
-        *,
-        user_id: UUID,
-        event_type: EventType,
-        title: str,
-        start_date: datetime,
-        end_date: datetime,
-        source_app: str,
-        source_id: str,
-        description: Optional[str] = None,
-        all_day: bool = False,
-        timezone: str = "Asia/Taipei",
-        related_trip_id: Optional[str] = None,
-        resort_id: Optional[str] = None,
-        google_event_id: Optional[str] = None,
-        outlook_event_id: Optional[str] = None,
-        matching_id: Optional[UUID] = None,
-        participants: Optional[List[UUID]] = None,
-        reminders: Optional[List[dict]] = None,
-    ) -> CalendarEvent:
-        """Create a new calendar event."""
+    async def create_event(self, event: CalendarEvent) -> CalendarEvent:
+        """建立行事曆事件"""
         pass
-
+    
     @abstractmethod
-    def get_event(self, event_id: UUID) -> Optional[CalendarEvent]:
-        """Get a calendar event by ID."""
+    async def get_events(self, user_id: str, start_date: Optional[date] = None, end_date: Optional[date] = None) -> List[CalendarEvent]:
+        """取得用戶行事曆事件"""
         pass
-
+    
     @abstractmethod
-    def list_events(
-        self,
-        user_id: UUID,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-        event_type: Optional[str] = None,
-        source_app: Optional[str] = None,
-    ) -> List[CalendarEvent]:
-        """List calendar events for a user with optional filters."""
+    async def update_event(self, event_id: str, event: CalendarEvent) -> CalendarEvent:
+        """更新行事曆事件"""
         pass
-
+    
     @abstractmethod
-    def list_events_for_source(
-        self,
-        source_app: str,
-        source_id: str,
-    ) -> List[CalendarEvent]:
-        """List calendar events for a specific source."""
-        pass
-
-    @abstractmethod
-    def update_event(
-        self,
-        event_id: UUID,
-        *,
-        title: Optional[str] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-        description: Optional[str] = None,
-        all_day: Optional[bool] = None,
-        timezone: Optional[str] = None,
-        related_trip_id: Optional[str] = None,
-        resort_id: Optional[str] = None,
-        google_event_id: Optional[str] = None,
-        outlook_event_id: Optional[str] = None,
-        matching_id: Optional[UUID] = None,
-        participants: Optional[List[UUID]] = None,
-        reminders: Optional[List[dict]] = None,
-    ) -> CalendarEvent:
-        """Update a calendar event."""
-        pass
-
-    @abstractmethod
-    def delete_event(self, event_id: UUID) -> bool:
-        """Delete a calendar event."""
-        pass
-
-    @abstractmethod
-    def delete_events_for_source(self, source_app: str, source_id: str) -> int:
-        """Delete all events for a specific source."""
+    async def delete_event(self, event_id: str, user_id: str) -> bool:
+        """刪除行事曆事件"""
         pass

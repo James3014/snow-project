@@ -51,8 +51,7 @@ services:
     ports:
       - "3000:80"
     depends_on:
-      - user-core
-      - resort-api
+      - api-gateway
 
   trip-planner-db:
     image: postgres:15-alpine
@@ -80,6 +79,58 @@ services:
       - USER_CORE_API_URL=http://user-core:8001
       - RESORT_API_BASE_URL=http://resort-api:8000
       - SNOWBUDDY_API_URL=http://snowbuddy-matching:8002
+
+  calendar-service:
+    build:
+      context: ./services/calendar-service
+    ports:
+      - "8003:8003"
+    environment:
+      - USER_CORE_URL=http://user-core:8001
+    depends_on:
+      - user-core
+
+  gear-service:
+    build:
+      context: ./services/gear-service
+    ports:
+      - "8004:8004"
+    environment:
+      - USER_CORE_URL=http://user-core:8001
+    depends_on:
+      - user-core
+
+  social-service:
+    build:
+      context: ./services/social-service
+    ports:
+      - "8005:8005"
+    environment:
+      - USER_CORE_URL=http://user-core:8001
+    depends_on:
+      - user-core
+
+  api-gateway:
+    build:
+      context: ./api_gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - USER_CORE_HOST=user-core
+      - RESORT_API_HOST=resort-api
+      - CALENDAR_SERVICE_HOST=calendar-service
+      - GEAR_SERVICE_HOST=gear-service
+      - SOCIAL_SERVICE_HOST=social-service
+      - SNOWBUDDY_HOST=snowbuddy-matching
+    depends_on:
+      - user-core
+      - resort-api
+      - calendar-service
+      - gear-service
+      - social-service
+      - snowbuddy-matching
+      - tour
 
 volumes:
   postgres_data:
