@@ -17,4 +17,5 @@ alembic upgrade head
 echo "✅ Database setup completed"
 
 echo "🌐 Starting uvicorn server..."
-exec uvicorn api.main:app --host 0.0.0.0 --port 8001
+PORT=${PORT:-8001}
+exec uvicorn api.main:app --host 0.0.0.0 --port $PORT

@@ -3,8 +3,7 @@
   "name": "user-core-api",
   "dockerfile": "Dockerfile",
   "buildCommand": "pip install -r requirements.txt",
-  "startCommand": "uvicorn api.main:app --host 0.0.0.0 --port 8001",
-  "ports": [8001],
+  "startCommand": "uvicorn api.main:app --host 0.0.0.0 --port $PORT",
   "env": {
     "PYTHONPATH": {
       "default": "/app"
