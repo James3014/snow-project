@@ -14,9 +14,8 @@
   # platform/user_core/services/analytics_events.py
   EVENT_CATEGORIES = {
       'user_lifecycle': ['registered', 'login', 'logout', 'profile_updated'],
-      'feature_usage': ['trip_created', 'buddy_matched', 'gear_added', 'lesson_viewed'],
+      'feature_usage': ['trip_created', 'buddy_matched', 'gear_added', 'resort_visited'],
       'engagement': ['search_performed', 'filter_applied', 'share_action'],
-      'conversion': ['subscription_started', 'payment_completed', 'trial_ended'],
       'errors': ['api_error', 'ui_error', 'timeout_error']
   }
   ```
@@ -125,7 +124,7 @@
   - [ ] Ski Platform 功能使用熱力圖
   - [ ] Tour 行程規劃流程分析
   - [ ] Snowbuddy 媒合成功率分析
-  - [ ] 單板教學學習路徑分析
+  - [ ] Resort Services 雪場瀏覽分析
 
 ### 📊 留存率深度分析
 - [ ] **留存分析引擎**

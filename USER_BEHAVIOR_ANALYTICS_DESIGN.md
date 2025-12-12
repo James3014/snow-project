@@ -19,12 +19,11 @@ User Core (已有)
 ├── event_catalog.py         # 事件目錄
 └── event_schema_registry.py # 事件模式
 
-各應用 (已有)
+核心應用 (已有)
 ├── Ski Platform            # 主前端應用
 ├── Tour (Trip Planner)     # 行程規劃
 ├── Snowbuddy Matching      # 雪伴媒合
-├── Resort Services         # 雪場服務
-└── 單板教學                # 教學系統
+└── Resort Services         # 雪場服務
 ```
 
 ### 新增分析系統
@@ -73,11 +72,11 @@ Tour 分析:
 ├── 行程完成率
 └── 分享功能使用
 
-單板教學分析:
-├── 課程瀏覽模式
-├── 練習完成率
-├── 付費轉換率
-└── 搜尋行為分析
+Resort Services 分析:
+├── 雪場瀏覽模式
+├── 雪場收藏偏好
+├── 雪況查詢頻率
+└── 雪場評價互動
 ```
 
 #### 跨應用行為
@@ -113,32 +112,13 @@ EVENT_TYPES = {
     'trip_completed': '行程完成',
     'buddy_matched': '雪伴媒合',
     'gear_added': '裝備新增',
-    'lesson_viewed': '課程瀏覽',
-    'practice_completed': '練習完成',
+    'resort_visited': '雪場瀏覽',
     
     # 互動行為
     'search_performed': '執行搜尋',
     'filter_applied': '應用篩選',
     'share_action': '分享動作',
     'error_encountered': '遇到錯誤',
-}
-```
-
-#### 1.2 增強事件收集
-```python
-# services/enhanced_analytics_service.py
-class EnhancedAnalyticsService:
-    def track_user_journey(self, user_id: str, journey_step: str, metadata: dict):
-        """追蹤用戶旅程"""
-        
-    def track_feature_usage(self, user_id: str, feature: str, duration: int, success: bool):
-        """追蹤功能使用"""
-        
-    def track_performance_metric(self, user_id: str, action: str, load_time: float):
-        """追蹤性能指標"""
-        
-    def track_error_event(self, user_id: str, error_type: str, context: dict):
-        """追蹤錯誤事件"""
 ```
 
 ### Phase 2: 分析引擎
@@ -241,7 +221,7 @@ class InsightsGenerator:
 ├── Ski Platform 使用報告
 ├── Tour 行程規劃分析
 ├── Snowbuddy 媒合效果
-├── 單板教學學習分析
+├── Resort Services 雪場分析
 └── 跨應用協同效應
 
 🔍 深度分析
@@ -298,27 +278,27 @@ class InsightsGenerator:
 - 社交功能使用增加
 ```
 
-### 案例 3: 單板教學付費轉換
+### 案例 3: Resort Services 雪場資訊優化
 ```
 問題發現:
-- 課程瀏覽量高，但付費轉換率僅 8%
-- 免費試用後流失率高
+- 雪場瀏覽量高，但收藏和分享率低
+- 用戶停留時間短，深度瀏覽不足
 
 數據分析:
-- 用戶主要瀏覽基礎課程
-- 進階課程價值感知不足
-- 缺少學習進度追蹤
+- 雪場資訊展示不夠吸引人
+- 缺少個性化推薦機制
+- 雪況更新不及時
 
 優化建議:
-1. 新增學習路徑規劃
-2. 強化進階課程價值展示
-3. 新增學習成就系統
-4. 優化付費方案結構
+1. 新增雪場推薦算法
+2. 改善雪場詳情頁設計
+3. 實時雪況更新系統
+4. 新增雪場對比功能
 
 預期效果:
-- 付費轉換率提升至 15%
-- 用戶 LTV 提升
-- 課程完成率提升
+- 雪場收藏率提升至 25%
+- 平均停留時間增加 40%
+- 用戶回訪率提升
 ```
 
 ## 🚀 實施計劃
@@ -353,7 +333,7 @@ class InsightsGenerator:
 - **用戶活躍度**: DAU 提升 20%
 - **功能採用率**: 新功能 30 天採用率 > 40%
 - **用戶留存**: 30 日留存率提升 15%
-- **轉換率**: 付費轉換率提升 50%
+- **用戶參與度**: 平均會話時長提升 25%
 
 ### 運營指標
 - **決策速度**: 產品決策時間縮短 60%
