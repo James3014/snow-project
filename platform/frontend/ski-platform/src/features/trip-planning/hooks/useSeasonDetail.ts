@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { tripPlanningApi } from '@/shared/api/tripPlanningApi';
 import { resortApiService } from '@/shared/api/resortApi';
+import { calendarApi } from '@/shared/api/calendarApi';
 import type { Season, SeasonStats, CalendarTrip, Trip, TripCreate } from '../types';
 import type { Resort } from '@/shared/data/resorts';
 
@@ -48,12 +49,33 @@ export function useSeasonDetail({ seasonId, userId }: UseSeasonDetailOptions) {
     if (!seasonId || !userId) return;
 
     try {
+      // 使用統一行事曆 API 獲取所有事件
+      const sharedCalendar = await calendarApi.getSharedCalendar();
+      
+      // 篩選當月事件並轉換為 CalendarTrip 格式
       const year = currentMonth.getFullYear();
       const month = currentMonth.getMonth() + 1;
-      const data = await tripPlanningApi.getCalendarTrips(userId, year, month);
-      setCalendarTrips(data);
+      const monthStart = new Date(year, month - 1, 1);
+      const monthEnd = new Date(year, month, 0);
+      
+      const monthEvents = sharedCalendar.trips.filter(trip => {
+        const tripStart = new Date(trip.start_date);
+        const tripEnd = new Date(trip.end_date);
+        return (tripStart <= monthEnd && tripEnd >= monthStart);
+      });
+      
+      setCalendarTrips(monthEvents);
     } catch (err) {
-      console.error('載入日曆資料失敗:', err);
+      console.error('載入統一行事曆資料失敗:', err);
+      // 降級到原有 API
+      try {
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth() + 1;
+        const data = await tripPlanningApi.getCalendarTrips(userId, year, month);
+        setCalendarTrips(data);
+      } catch (fallbackErr) {
+        console.error('載入日曆資料失敗:', fallbackErr);
+      }
     }
   }, [seasonId, userId, currentMonth]);
 
@@ -68,13 +90,51 @@ export function useSeasonDetail({ seasonId, userId }: UseSeasonDetailOptions) {
   const createTrips = useCallback(async (newTrips: TripCreate[]) => {
     if (!seasonId || !userId) return;
 
-    await Promise.all(newTrips.map(trip => tripPlanningApi.createTrip(userId, trip)));
-    await loadSeasonData();
-  }, [seasonId, userId, loadSeasonData]);
+    try {
+      // 創建行程
+      const createdTrips = await Promise.all(
+        newTrips.map(trip => tripPlanningApi.createTrip(userId, trip))
+      );
+
+      // 為每個行程創建行事曆事件
+      await Promise.all(
+        createdTrips.map(async (trip) => {
+          try {
+            await calendarApi.createEvent({
+              user_id: userId,
+              type: 'TRIP_PLANNING',
+              title: trip.title || `滑雪行程 - ${trip.resort_id}`,
+              start_date: trip.start_date,
+              end_date: trip.end_date,
+              all_day: true,
+              timezone: 'Asia/Taipei',
+              source_app: 'ski-platform',
+              source_id: trip.trip_id,
+              related_trip_id: trip.trip_id,
+              resort_id: trip.resort_id,
+              description: trip.note || '從 SnowTrace 平台創建的滑雪行程'
+            });
+          } catch (calendarErr) {
+            console.error('創建行事曆事件失敗:', calendarErr);
+            // 不影響行程創建
+          }
+        })
+      );
+
+      await loadSeasonData();
+      await loadCalendarData();
+    } catch (err) {
+      console.error('創建行程失敗:', err);
+      throw err;
+    }
+  }, [seasonId, userId, loadSeasonData, loadCalendarData]);
 
   useEffect(() => {
-    if (seasonId && userId) loadSeasonData();
-  }, [seasonId, userId, loadSeasonData]);
+    if (seasonId && userId) {
+      loadSeasonData();
+      loadCalendarData();
+    }
+  }, [seasonId, userId, loadSeasonData, loadCalendarData]);
 
   return {
     season,

@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store/hooks';
 import { gearApi } from '@/shared/api/gearApi';
+import GearReminders from '../components/GearReminders';
 import type { GearItem, GearItemCreate } from '../types';
 
 export default function MyGear() {
@@ -18,6 +19,7 @@ export default function MyGear() {
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [filter, setFilter] = useState<'all' | 'active' | 'for_sale'>('all');
+  const [activeTab, setActiveTab] = useState<'gear' | 'reminders'>('gear');
 
   useEffect(() => {
     if (!userId) {
@@ -198,37 +200,69 @@ export default function MyGear() {
       </div>
 
       <div className="px-4 max-w-6xl mx-auto">
-        {/* Filter Pills */}
-        <div className="mb-8 animate-slide-up stagger-3">
-          <div className="flex gap-2 overflow-x-auto scroll-snap-x pb-2 -mx-4 px-4">
+        {/* Main Tabs */}
+        <div className="mb-6 animate-slide-up stagger-2">
+          <div className="flex gap-4 border-b border-glacier">
             <button
-              onClick={() => setFilter('all')}
-              className={`filter-pill scroll-snap-item flex-shrink-0 ${
-                filter === 'all' ? 'active' : ''
+              onClick={() => setActiveTab('gear')}
+              className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
+                activeTab === 'gear'
+                  ? 'text-ice-primary border-ice-primary'
+                  : 'text-crystal-blue border-transparent hover:text-ice-primary'
               }`}
             >
-              全部
+              📦 我的裝備
             </button>
             <button
-              onClick={() => setFilter('active')}
-              className={`filter-pill scroll-snap-item flex-shrink-0 ${
-                filter === 'active' ? 'active' : ''
+              onClick={() => setActiveTab('reminders')}
+              className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
+                activeTab === 'reminders'
+                  ? 'text-ice-primary border-ice-primary'
+                  : 'text-crystal-blue border-transparent hover:text-ice-primary'
               }`}
             >
-              使用中
-            </button>
-            <button
-              onClick={() => setFilter('for_sale')}
-              className={`filter-pill scroll-snap-item flex-shrink-0 ${
-                filter === 'for_sale' ? 'active' : ''
-              }`}
-            >
-              💰 待售
+              ⏰ 提醒事項
             </button>
           </div>
         </div>
 
-        {/* Gear Grid */}
+        {activeTab === 'gear' && (
+          <>
+            {/* Filter Pills */}
+            <div className="mb-8 animate-slide-up stagger-3">
+              <div className="flex gap-2 overflow-x-auto scroll-snap-x pb-2 -mx-4 px-4">
+                <button
+                  onClick={() => setFilter('all')}
+                  className={`filter-pill scroll-snap-item flex-shrink-0 ${
+                    filter === 'all' ? 'active' : ''
+                  }`}
+                >
+                  全部
+                </button>
+                <button
+                  onClick={() => setFilter('active')}
+                  className={`filter-pill scroll-snap-item flex-shrink-0 ${
+                    filter === 'active' ? 'active' : ''
+                  }`}
+                >
+                  使用中
+                </button>
+                <button
+                  onClick={() => setFilter('for_sale')}
+                  className={`filter-pill scroll-snap-item flex-shrink-0 ${
+                    filter === 'for_sale' ? 'active' : ''
+                  }`}
+                >
+                  💰 待售
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'gear' && (
+          <>
+            {/* Gear Grid */}
         {gearItems.length === 0 ? (
           <div className="glass-card p-12 text-center animate-slide-up max-w-md mx-auto">
             <div className="text-6xl mb-6">📦</div>
@@ -319,6 +353,14 @@ export default function MyGear() {
                 </div>
               );
             })}
+          </div>
+        )}
+        </>
+        )}
+
+        {activeTab === 'reminders' && userId && (
+          <div className="animate-slide-up stagger-3">
+            <GearReminders userId={userId} />
           </div>
         )}
       </div>

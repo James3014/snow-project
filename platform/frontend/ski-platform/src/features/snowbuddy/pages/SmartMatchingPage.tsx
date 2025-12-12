@@ -9,12 +9,15 @@ import { snowbuddyApi } from '@/shared/api/snowbuddyApi';
 import type { MatchingPreference, SearchResult } from '@/shared/api/snowbuddyApi';
 import MatchingPreferenceForm from '../components/MatchingPreferenceForm';
 import MatchScoreCard from '../components/MatchScoreCard';
+import MeetingScheduler from '../components/MeetingScheduler';
 
 export default function SmartMatchingPage() {
   const [searchId, setSearchId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState<SearchResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showScheduler, setShowScheduler] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState<{ id: string; name: string } | null>(null);
 
   const handleStartSearch = async (preferences: MatchingPreference) => {
     try {
@@ -30,6 +33,17 @@ export default function SmartMatchingPage() {
       setError('搜尋失敗，請稍後再試');
       setSearching(false);
     }
+  };
+
+  const handleMeetingScheduled = () => {
+    setShowScheduler(false);
+    setSelectedMatch(null);
+    alert('約定時間已安排！行事曆事件已創建。');
+  };
+
+  const handleCancelScheduler = () => {
+    setShowScheduler(false);
+    setSelectedMatch(null);
   };
 
   const pollResults = async (id: string) => {
@@ -160,7 +174,23 @@ export default function SmartMatchingPage() {
                     className="animate-slide-up"
                     style={{ animationDelay: `${index * 0.05}s` }}
                   >
-                    <MatchScoreCard match={match} />
+                    <div className="glass-card p-6">
+                      <MatchScoreCard match={match} />
+                      <div className="mt-4 pt-4 border-t border-glacier">
+                        <button
+                          onClick={() => {
+                            setSelectedMatch({
+                              id: match.user_id,
+                              name: match.display_name || '匿名用戶'
+                            });
+                            setShowScheduler(true);
+                          }}
+                          className="w-full btn-neon"
+                        >
+                          🤝 安排約定時間
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ))}
             </div>
@@ -186,6 +216,17 @@ export default function SmartMatchingPage() {
           </div>
         )}
       </div>
+
+      {/* Meeting Scheduler Modal */}
+      {showScheduler && selectedMatch && (
+        <MeetingScheduler
+          matchId={searchId || ''}
+          buddyId={selectedMatch.id}
+          buddyName={selectedMatch.name}
+          onScheduled={handleMeetingScheduled}
+          onCancel={handleCancelScheduler}
+        />
+      )}
     </div>
   );
 }
