@@ -686,7 +686,7 @@ def get_shared_calendar(
 async def apply_to_trip(
     trip_id: str,
     current_user_id: str = Depends(get_current_user_id),
-    db_session: Session = Depends(db.get_session)
+    db_session: Session = Depends(db.get_db)
 ):
     """Apply to join a public trip."""
     # 檢查 trip 是否存在且為公開
@@ -727,7 +727,7 @@ async def respond_to_trip_application(
     request_id: str,
     action: str,  # 'accept' or 'decline'
     current_user_id: str = Depends(get_current_user_id),
-    db_session: Session = Depends(db.get_session)
+    db_session: Session = Depends(db.get_db)
 ):
     """Respond to a trip application (trip owner only)."""
     # 檢查是否為 trip owner
@@ -767,7 +767,7 @@ async def remove_trip_participant(
     trip_id: str,
     user_id: str,
     current_user_id: str = Depends(get_current_user_id),
-    db_session: Session = Depends(db.get_session)
+    db_session: Session = Depends(db.get_db)
 ):
     """Remove a participant from trip (self or trip owner)."""
     # 檢查權限：自己或 trip owner
