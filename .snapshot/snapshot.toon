@@ -1,36 +1,58 @@
 proj: diyski
-desc: SnowTrace - AI-powered ski social platform with trip planning, buddy matching, resort services, and learning management
-v: 2.0.0
-ts: 2025-12-13T00:00:00Z
+desc: SnowTrace - AI-powered ski social platform with trip planning, buddy matching, resort services, and calendar integration
+v: 2.1.0
+ts: 2025-12-13T23:57:00Z
 split: projects
+status: Phase 1 Calendar Integration Complete, Analytics Backend Design Ready
 tech:
   primary_lang: TypeScript|Python
   fw: React|Next.js|FastAPI
-  db: PostgreSQL|SQLite|Supabase
-  arch: Microservices + Frontend SPA
-core_services[8]{name,lang,desc,deploy}:
-  Ski Platform,React,Main SPA frontend (SnowTrace),React SPA
-  Tour (Trip Planner),Next.js 15,Trip planning & calendar sync,Vercel/Zeabur
-  Resort API,FastAPI,43 ski resorts database authority,Docker
-  Snowbuddy Matching,FastAPI,5D buddy matching algorithm,Docker
-  User Core,?,User data + Calendar + Auth,Docker
-  Knowledge Engagement,?,Skill tracking + courses,Docker
-  Single Board Teaching,Next.js 15,CASI-based lesson system,Zeabur
-  API Gateway,FastAPI,Request routing & orchestration,Docker
-subs[8]{name,file,dir,desc}:
-  ski-platform,projects/ski-platform.toon,platform/frontend/ski-platform/,Main React SPA
-  tour,projects/tour.toon,tour/,Trip planner (Next.js)
-  resort-api,projects/resort-api.toon,resort_api/,Resort data API
-  snowbuddy,projects/snowbuddy.toon,snowbuddy_matching/,Buddy matching
-  single-board,projects/single-board.toon,specs/單板教學/,Lesson system
-  group,projects/group.toon,group/,Trip planner v1 (legacy)
-  api-gateway,projects/api-gateway.toon,api_gateway/,API router
-  ski-test,projects/ski-test.toon,ski-test/,Testing & tools
-cfg[4]: docker-compose.yml,deploy_all_services.sh,.env.test,AI_PROJECT_OVERVIEW.md
-docs[6]{name,path,desc}:
-  AI Overview,AI_PROJECT_OVERVIEW.md,System architecture guide
-  Analytics Backend,ANALYTICS_BACKEND_TODO.md,Data pipeline plan
-  Frontend Calendar,FRONTEND_CALENDAR_INTEGRATION_PLAN.md,Calendar integration
-  Clean Code,COMPLETE_CLEAN_CODE_REFACTORING_TODO.md,Refactoring roadmap
-  Deployment,DEPLOYMENT.md,Deployment guide
-  Directory Standard,DIRECTORY_STRUCTURE_STANDARD.md,File structure rules
+  db: PostgreSQL|Redis|Supabase
+  arch: Microservices + Unified Auth + Calendar Infrastructure
+  deploy: Zeabur Cloud + Docker
+core_services[7]{name,lang,desc,status}:
+  Ski Platform,React+TS,Main SPA frontend with calendar integration,✅ Deployed
+  Tour (Trip Planner),Next.js 15,Trip planning with calendar sync,🔄 Ready to Deploy
+  Resort API,FastAPI,43 Japanese ski resorts database,✅ Deployed
+  Snowbuddy Matching,FastAPI,Multi-dimensional buddy matching,✅ Deployed
+  User Core,FastAPI,Auth + User Data + Calendar Service,✅ Deployed
+  API Gateway,FastAPI,Request routing & orchestration,📋 Planned
+  Analytics Backend,FastAPI,User behavior analysis system,📋 Design Complete
+subs[7]{name,file,dir,status}:
+  ski-platform,projects/ski-platform.toon,platform/frontend/ski-platform/,✅ Calendar P1 Complete
+  tour,projects/tour.toon,tour/,🔄 Ready for Zeabur Deploy
+  resort-api,projects/resort-api.toon,resort_api/,✅ Running
+  snowbuddy,projects/snowbuddy.toon,snowbuddy_matching/,✅ Running
+  user-core,projects/user-core.toon,platform/user_core/,✅ Running + Calendar Service
+  api-gateway,projects/api-gateway.toon,api_gateway/,📋 Planned
+  ski-test,projects/ski-test.toon,ski-test/,🔧 Testing Tools
+recent_changes[5]{date,desc}:
+  2025-12-13,Created .snapshot system for agent auto-read
+  2025-12-12,Phase 1 Frontend Calendar Integration Complete
+  2025-12-12,Fixed Zeabur port configuration for all services
+  2025-12-12,TypeScript compilation errors fixed
+  2025-12-11,Clean Code refactoring 70+ tasks complete
+current_priorities[3]{priority,task,timeline}:
+  ⭐⭐⭐,Analytics Backend Phase 1 Implementation,2 weeks
+  ⭐⭐⭐,Tour Project Zeabur Deployment,3 days
+  ⭐⭐,Frontend Calendar Integration Phase 2,1 week
+architecture:
+  pattern: Microservices with Unified Calendar Infrastructure
+  auth: Centralized via User Core (JWT + Bearer Token)
+  calendar: Shared Calendar Service (EventType: TRIP|GEAR|MATCHING)
+  data_flow: Frontend → User Core → Calendar Service → Other Services
+  deployment: GitHub → Zeabur Auto Deploy
+production_urls[4]{service,url,status}:
+  Ski Platform,https://ski-platform.zeabur.app,✅ Running
+  User Core API,https://user-core.zeabur.app,✅ Running
+  Resort API,https://resort-api.zeabur.app,✅ Running
+  Snowbuddy API,https://snowbuddy-matching.zeabur.app,✅ Running
+key_features[6]{feature,status,description}:
+  Trip Planning with AI Assistant,✅ Complete,Natural language trip creation + 43 resorts
+  Smart Buddy Matching,✅ Complete,Multi-dimensional matching algorithm
+  Equipment Management,✅ Complete,CRUD + Reminders + Marketplace
+  Achievement System,✅ Complete,Unlock achievements + Social feed
+  Calendar Integration P1,✅ Complete,Trip/Gear/Buddy events auto-create
+  Analytics Backend,📋 Design Ready,User behavior analysis system
+test_coverage: 146+ tests, 100% pass rate
+code_stats: 109 files, 12891 lines, Enterprise-grade microservices
