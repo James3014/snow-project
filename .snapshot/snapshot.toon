@@ -1,0 +1,36 @@
+proj: diyski
+desc: SnowTrace - AI-powered ski social platform with trip planning, buddy matching, resort services, and learning management
+v: 2.0.0
+ts: 2025-12-13T00:00:00Z
+split: projects
+tech:
+  primary_lang: TypeScript|Python
+  fw: React|Next.js|FastAPI
+  db: PostgreSQL|SQLite|Supabase
+  arch: Microservices + Frontend SPA
+core_services[8]{name,lang,desc,deploy}:
+  Ski Platform,React,Main SPA frontend (SnowTrace),React SPA
+  Tour (Trip Planner),Next.js 15,Trip planning & calendar sync,Vercel/Zeabur
+  Resort API,FastAPI,43 ski resorts database authority,Docker
+  Snowbuddy Matching,FastAPI,5D buddy matching algorithm,Docker
+  User Core,?,User data + Calendar + Auth,Docker
+  Knowledge Engagement,?,Skill tracking + courses,Docker
+  Single Board Teaching,Next.js 15,CASI-based lesson system,Zeabur
+  API Gateway,FastAPI,Request routing & orchestration,Docker
+subs[8]{name,file,dir,desc}:
+  ski-platform,projects/ski-platform.toon,platform/frontend/ski-platform/,Main React SPA
+  tour,projects/tour.toon,tour/,Trip planner (Next.js)
+  resort-api,projects/resort-api.toon,resort_api/,Resort data API
+  snowbuddy,projects/snowbuddy.toon,snowbuddy_matching/,Buddy matching
+  single-board,projects/single-board.toon,specs/單板教學/,Lesson system
+  group,projects/group.toon,group/,Trip planner v1 (legacy)
+  api-gateway,projects/api-gateway.toon,api_gateway/,API router
+  ski-test,projects/ski-test.toon,ski-test/,Testing & tools
+cfg[4]: docker-compose.yml,deploy_all_services.sh,.env.test,AI_PROJECT_OVERVIEW.md
+docs[6]{name,path,desc}:
+  AI Overview,AI_PROJECT_OVERVIEW.md,System architecture guide
+  Analytics Backend,ANALYTICS_BACKEND_TODO.md,Data pipeline plan
+  Frontend Calendar,FRONTEND_CALENDAR_INTEGRATION_PLAN.md,Calendar integration
+  Clean Code,COMPLETE_CLEAN_CODE_REFACTORING_TODO.md,Refactoring roadmap
+  Deployment,DEPLOYMENT.md,Deployment guide
+  Directory Standard,DIRECTORY_STRUCTURE_STANDARD.md,File structure rules

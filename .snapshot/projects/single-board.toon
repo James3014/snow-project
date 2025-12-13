@@ -1,0 +1,57 @@
+proj: single-board-teaching
+parent: diyski
+desc: Snowboard Teaching System - CASI-based curriculum with subscriptions and analytics dashboard
+v: 1.0.0
+ts: 2025-12-13T00:00:00Z
+tech:
+  lang: TypeScript
+  fw: Next.js 15
+  db: Supabase (PostgreSQL)
+  auth: Supabase Auth
+  design: Alpine Velocity
+entry: web/app/layout.tsx
+r[3]{route,handler,tables,desc}:
+  GET /lessons,LessonPage,lessons,Browse courses
+  GET /lessons/search,SearchAPI,lessons,Keyword search
+  GET /dashboard,AnalyticsPage,analytics,Admin insights
+m.page[4]{name,path,desc,deps}:
+  Lessons,web/app/lessons/page.tsx,Course browse,LessonSvc
+  Search,web/app/lessons/search/page.tsx,Search results,LessonSvc
+  Practice,web/app/practice/page.tsx,Practice log,UserProgressSvc
+  Dashboard,web/app/(dashboard)/page.tsx,Analytics,AnalyticsSvc
+m.feat[3]{name,path,desc,deps}:
+  Curriculum,web/components/lessons/,CASI-based courses,
+  Subscription,web/components/subscription/,Billing + Stripe,
+  Analytics,web/components/dashboard/,Insight viz,
+m.svc[4]{name,path,desc,deps}:
+  LessonService,web/lib/services/lesson.ts,Lesson CRUD,Supabase
+  ProgressService,web/lib/services/progress.ts,User progress,Supabase
+  AnalyticsService,web/lib/services/analytics.ts,Data analysis,Supabase
+  PaymentService,web/lib/services/payment.ts,Stripe integration,
+m.model[1]{name,path,desc}:
+  LessonModel,web/lib/models/lesson.ts,Course schema,
+data[3]{coach,count,type}:
+  Sam Cleaned,220+,video+notes
+  Huang Cleaned,145+,video+notes
+  CASI Official,?,specs+standards
+cfg[2]: package.json,tsconfig.json
+build_cmd: npm run build
+deploy: Zeabur+Supabase
+tbl[4]{name,desc}:
+  lessons,CASI course catalog
+  user_progress,Learning tracking
+  subscriptions,Sub plans (7d/30d/annual)
+  analytics_events,Event logging
+pricing[3]{plan,duration,price_jpy}:
+  trial,7 days,500
+  monthly,30 days,1500
+  annual,12 months,12000
+analytics[4]{metric,sample,desc}:
+  view_lesson,course engagement,User views
+  search_no_result,content gap,Missing courses
+  practice_complete,skill mastery,Learning progress
+  subscription_convert,monetization,Trial→Paid
+integrate[3]{svc,feature}:
+  User Core,Learning behavior sync
+  Resort Services,Resort course linkage
+  Snowbuddy,Study buddy matching

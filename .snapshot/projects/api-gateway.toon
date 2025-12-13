@@ -1,0 +1,42 @@
+proj: api-gateway
+parent: diyski
+desc: API Gateway - Central routing, CORS, auth middleware, service orchestration
+v: 1.0.0
+ts: 2025-12-13T00:00:00Z
+tech:
+  lang: Python
+  fw: FastAPI
+  routing: Path-based
+  middleware: CORS,Auth,Logging
+entry: main.py
+r[7]{route,proxy_to,upstream,desc}:
+  /health,health_check,,Gateway health
+  /api/resorts/*,route_resorts,resort-api,Resort services
+  /api/tours/*,route_tours,tour,Tour services
+  /api/groups/*,route_groups,group,Group services
+  /api/auth/*,route_auth,user-core,Authentication
+  /api/snowbuddy/*,route_snowbuddy,snowbuddy,Buddy matching
+  /api/booking/*,route_booking,booking,Booking service
+m.middleware[3]{name,path,desc}:
+  CORSMiddleware,main.py,Cross-origin handling
+  AuthMiddleware,main.py,JWT validation
+  LoggingMiddleware,main.py,Request tracing
+m.router[7]{name,path,desc,upstream}:
+  HealthRouter,main.py:health,Status check,
+  ResortProxy,main.py:resorts,Resort routing,resort-api
+  TourProxy,main.py:tours,Tour routing,tour
+  GroupProxy,main.py:groups,Group routing,group
+  SnowbuddyProxy,main.py:snowbuddy,Matching routing,snowbuddy
+  AuthProxy,main.py:auth,Auth routing,user-core
+  BookingProxy,main.py:booking,Booking routing,booking-service
+cfg[1]: requirements.txt
+build_cmd: docker build -t api-gateway .
+deploy: Docker
+upstream_services[7]{name,url,type,status}:
+  resort-api,http://resort-api:8000,FastAPI,active
+  tour,http://tour:3000,Next.js,active
+  group,http://group:3000,Next.js,active
+  user-core,http://user-core:8001,?,active
+  snowbuddy,http://snowbuddy:8002,FastAPI,active
+  booking,http://booking:8003,?,active
+  knowledge,http://knowledge:8004,?,active

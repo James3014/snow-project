@@ -1,0 +1,10 @@
+proj: ski-test
+parent: diyski
+desc: Testing & tools - Chrome DevTools MCP, spec projects, ski area data
+v: 1.0.0
+ts: 2025-12-13T00:00:00Z
+type: testing-tools
+components[3]{name,path,desc}:
+  Chrome DevTools MCP,ski-test/chrome-devtools-mcp/,Browser automation server
+  Spec Projects,ski-test/my-spec-project/,Design specs
+  Ski Area Data,ski-test/skiarea/,Resort reference data

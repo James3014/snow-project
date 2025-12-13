@@ -1,0 +1,45 @@
+proj: resort-api
+parent: diyski
+desc: SnowTrace Authority - 43 Japanese ski resorts database with share card generation
+v: 1.0.0
+ts: 2025-12-13T00:00:00Z
+tech:
+  lang: Python
+  fw: FastAPI
+  db: YAML files (no DB)
+  auth: JWT
+  monitoring: Sentry
+entry: app/main.py
+r[5]{route,handler,data,svc}:
+  GET /resorts,ResortRouter.list,YAML,ResortSvc
+  GET /resorts/:id,ResortRouter.get,YAML,ResortSvc
+  GET /resorts/:id/share-card,ResortRouter.card,YAML,CardGen
+  POST /users/:uid/ski-history,HistoryRouter.record,history,HistorySvc
+  GET /health,HealthRouter.check,,
+m.router[3]{name,path,desc,deps}:
+  ResortRouter,app/routers/resort_router.py,Resort CRUD,ResortSvc
+  HistoryRouter,app/routers/history_router.py,Ski history,HistorySvc
+  HealthRouter,app/routers/health_router.py,Status check,
+m.svc[3]{name,path,desc,deps}:
+  ResortService,app/services/resort_service.py,Resort logic,DataLoader
+  HistoryService,app/services/history_service.py,History tracking,HistorySvc
+  CardGenerator,app/card_generator.py,Share card gen,
+m.util[2]{name,path,desc}:
+  DataLoader,app/data_loader.py,YAML parser,
+  AuthUtils,app/auth_utils.py,JWT validation,
+m.model[2]{name,path,desc}:
+  ResortModel,app/models/resort.py,Resort schema,
+  HistoryModel,app/models/history.py,History schema,
+data_sources[3]{region,count,path}:
+  Hokkaido,14,data/hokkaido/*.yaml
+  Honshu,18,data/nagano/*.yaml,data/niigata/*.yaml
+  Other,11,data/other/*.yaml
+cfg[2]: requirements.txt,zeabur.json
+build_cmd: docker build -t resort-api .
+deploy: Zeabur
+integrate[5]{svc,usage,dir}:
+  Ski Platform,Resort display + ski history,
+  Tour,Resort validation,
+  Snowbuddy,Location matching,
+  Knowledge Engagement,Course location,
+  Single Board,Resort-specific lessons,

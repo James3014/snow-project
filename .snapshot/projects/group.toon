@@ -1,0 +1,31 @@
+proj: group
+parent: diyski
+desc: Ski Trip Planner v1 - Legacy Next.js trip planner (Supabase multi-tenant)
+v: 0.1.0
+ts: 2025-12-13T00:00:00Z
+status: legacy
+tech:
+  lang: TypeScript
+  fw: Next.js 14.2
+  db: Supabase (PostgreSQL)
+  ui: React 18 + Tailwind CSS
+entry: app/layout.tsx
+r[3]{route,handler,tables,desc}:
+  GET /,page.tsx,,Home
+  GET /groups,GroupListPage,groups,List trips
+  POST /api/groups,GroupCreateAPI,groups,Create trip
+m.svc[2]{name,path,desc,deps}:
+  GroupService,lib/services/group.ts,Group CRUD,Supabase
+  BookingService,lib/services/booking.ts,Booking logic,GroupService
+m.cmp[3]{name,path,desc}:
+  GroupList,app/components/GroupList.tsx,Trip list UI,
+  GroupForm,app/components/GroupForm.tsx,Trip create form,
+  BookingForm,app/components/BookingForm.tsx,Booking UI,
+cfg[2]: package.json,tsconfig.json
+build_cmd: npm run build
+tests: test:stage1
+migration: migrate:stage1
+tbl[2]{name,desc}:
+  groups,Trip bookings
+  bookings,Reservations
+note: Superseded by tour service (Next.js 15 with Calendar integration)

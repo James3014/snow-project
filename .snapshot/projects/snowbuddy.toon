@@ -1,0 +1,43 @@
+proj: snowbuddy-matching
+parent: diyski
+desc: Smart Buddy Matching - 5D algorithm for ski partner matching (skill/location/time/role/knowledge)
+v: 1.0.0
+ts: 2025-12-13T00:00:00Z
+tech:
+  lang: Python
+  fw: FastAPI
+  algo: Weighted scoring (30%/25%/20%/15%/10%)
+  http: httpx (async)
+entry: app/main.py
+r[4]{route,handler,weight,desc}:
+  POST /searches,SearchRouter.search,5D,Multi-dim matching
+  GET /searches/:id,SearchRouter.result,5D,Get matches
+  POST /requests,RequestRouter.create,N/A,Send match req
+  PUT /requests/:id,RequestRouter.respond,N/A,Accept/reject
+m.router[2]{name,path,desc,deps}:
+  SearchRouter,app/routers/search_router.py,Search logic,MatchingSvc
+  RequestRouter,app/routers/requests_router.py,Req mgmt,MatchingSvc
+m.core[1]{name,path,desc}:
+  MatchingLogic,app/core/matching_logic.py,5D algorithm,
+m.svc[4]{name,path,desc,deps}:
+  MatchingService,app/services/matching_service.py,Main logic,MatchLogic
+  NotificationService,app/services/matching_notifications.py,Alerts,
+  TripIntegrationService,app/services/trip_integration.py,Calendar sync,TourAPI|UserCore
+  BehaviorEventService,app/services/behavior_event_service.py,Event tracking,UserCore
+m.client[3]{name,path,desc}:
+  UserCoreClient,app/clients/user_core_client.py,User profiles,
+  ResortClient,app/clients/resort_client.py,Location data,
+  KnowledgeClient,app/clients/knowledge_engagement_client.py,Skills,
+m.model[2]{name,path,desc}:
+  MatchingModel,app/models/matching.py,Match schema,
+  TripParticipantModel,app/models/trip_participant.py,Participant schema,
+algo_weights{skill,location,avail,role,knowledge}:
+  score: 0.30,0.25,0.20,0.15,0.10
+cfg[1]: requirements.txt
+build_cmd: docker build -t snowbuddy .
+deploy: Docker
+integrate[4]{svc,feature}:
+  User Core,Profile + Calendar sync
+  Resort Services,Location matching
+  Knowledge Engagement,Skill matching
+  Tour,Trip participant calendar

@@ -1,0 +1,46 @@
+proj: ski-platform
+parent: diyski
+desc: SnowTrace main frontend - React SPA integrating trips, buddy matching, gear, achievements
+v: 1.0.0
+ts: 2025-12-13T00:00:00Z
+tech:
+  lang: TypeScript
+  fw: React 18
+  state: Redux Toolkit
+  ui: Tailwind CSS
+  design: Glacial Futurism
+  build: Vite
+entry: src/App.tsx
+r[6]{route,handler,svc,desc}:
+  /,HomePage,,Home with resorts
+  /trips,TripsPage,TourAPI,Trip management
+  /snowbuddy,SnowbuddyPage,SnowbuddyAPI,Buddy board
+  /snowbuddy/smart,SmartMatchPage,SnowbuddyAPI,5D matching
+  /gear,GearPage,UserCoreAPI,Gear management
+  /achievements,AchievementsPage,ResortAPI,Achievements
+m.feat[6]{name,path,desc,deps}:
+  AI Assistant,src/features/ai/,Chat for trip creation,ResortAPI|UserCore
+  Trips,src/features/trips/,Trip CRUD + browse,TourAPI
+  Snowbuddy,src/features/snowbuddy/,Buddy board + matching,SnowbuddyAPI
+  Gear,src/features/gear/,Equipment management,UserCore
+  Achievements,src/features/achievements/,Ski history + map,ResortAPI
+  Map,src/features/map/,Conquest map viz,ResortAPI
+m.cmp[8]{name,path,desc,deps}:
+  TripCard,src/components/TripCard.tsx,Trip display,
+  SnowbuddyCard,src/components/SnowbuddyCard.tsx,Buddy profile,
+  GearList,src/components/GearList.tsx,Equipment list,
+  ResortCard,src/components/ResortCard.tsx,Resort showcase,
+  SmartMatchResult,src/components/SmartMatchResult.tsx,Match viz,
+  ActivityFeed,src/components/ActivityFeed.tsx,Social feed,
+  SkiMap,src/components/SkiMap.tsx,Conquest viz,
+  NotificationBell,src/components/NotificationBell.tsx,Notifications,
+m.svc[5]{name,path,desc,deps}:
+  TourAPI,src/services/api/tour.ts,Trip endpoints,
+  SnowbuddyAPI,src/services/api/snowbuddy.ts,Matching endpoints,
+  ResortAPI,src/services/api/resort.ts,Resort endpoints,
+  UserCore,src/services/api/usercore.ts,Auth + profile,
+  Analytics,src/services/analytics.ts,Event tracking,
+cfg[3]: package.json,vite.config.ts,tailwind.config.js
+build_cmd: vite build
+tests: 21+ test suites
+patterns[2]: Redux,Container/Presentational

@@ -1,0 +1,48 @@
+proj: tour
+parent: diyski
+desc: Trip Planner - Next.js service for trip CRUD, calendar sync, day/item editing, checklists
+v: 0.1.0
+ts: 2025-12-13T00:00:00Z
+tech:
+  lang: TypeScript
+  fw: Next.js 15 App Router
+  db: PostgreSQL (Prisma ORM)
+  ui: Tailwind CSS
+  auth: User Core (Bearer Token)
+entry: app/layout.tsx
+r[7]{route,handler,tables,svc}:
+  GET /api/trips,TripRoutes.list,trips|resort,TourSvc
+  POST /api/trips,TripRoutes.create,trips,TourSvc|CalendarSvc
+  GET /api/trips/[id],TripRoutes.get,trips|days|items,TourSvc
+  PUT /api/trips/[id],TripRoutes.update,trips,TourSvc|CalendarSvc
+  DELETE /api/trips/[id],TripRoutes.delete,trips,TourSvc|CalendarSvc
+  GET /api/days/[id],DayRoutes.get,days|items,
+  POST /api/items,ItemRoutes.create,items,
+m.page[3]{name,path,desc,deps}:
+  Trips,app/trips/page.tsx,Trip list + create,TourSvc
+  TripDetail,app/trips/[id]/page.tsx,Trip editor,TourSvc|CalendarSvc
+  Create,app/trips/create/page.tsx,Quick create,TourSvc
+m.cmp[5]{name,path,desc,deps}:
+  TripCard,components/TripCard.tsx,Trip summary,
+  DayEditor,components/DayEditor.tsx,Day planning,
+  ItemList,components/ItemList.tsx,Day items,
+  ChecklistManager,components/ChecklistManager.tsx,Checklists,
+  PackingList,components/PackingList.tsx,Packing tracker,
+m.svc[4]{name,path,desc,deps}:
+  TourService,lib/services/tour.ts,Trip CRUD,PrismaClient
+  CalendarService,lib/services/calendar.ts,Calendar sync,UserCore
+  ResortService,lib/services/resort.ts,Resort validation,ResortAPI
+  PreferenceSync,lib/services/preference.ts,Pref update,UserCore
+m.repo[2]{name,path,desc,deps}:
+  TripRepo,lib/repo/trip.ts,Trip queries,Prisma
+  DayItemRepo,lib/repo/dayitem.ts,Day/Item queries,Prisma
+cfg[3]: package.json,tsconfig.json,prisma/schema.prisma
+build_cmd: prisma generate && prisma db push && next build
+tests: test,test:watch
+tbl[5]{name,desc}:
+  trips,Trip bookings with user/resort/dates
+  days,Daily schedules within trip
+  items,Activities/tasks within day
+  checklists,Pre-trip preparation
+  packings,Packing item tracking
+deps[3]: User Core (auth+calendar),Resort Services (validation),Snowbuddy (recommendations)
