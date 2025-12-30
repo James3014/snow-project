@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException
 from gear_service import GearServiceInterface, Gear, GearStatus, create_gear_service
 from services.shared.config_service import get_config_service
 from services.shared.service_discovery import get_service_registry, setup_service_discovery, cleanup_service_discovery
+from services.shared.security_middleware import SecurityHeadersMiddleware
 from typing import List, Optional
 import uvicorn
 
@@ -18,6 +19,13 @@ app = FastAPI(
     version="1.0.0",
     description=f"獨立裝備管理服務 - {service_config.environment.value}"
 )
+
+# 添加安全標頭中間件
+app.add_middleware(
+    SecurityHeadersMiddleware,
+    allowed_origins="https://ski-platform.zeabur.app https://tour.zeabur.app"
+)
+
 gear_service: GearServiceInterface = create_gear_service()
 
 @app.on_event("startup")

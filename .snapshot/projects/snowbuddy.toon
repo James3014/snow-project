@@ -1,43 +1,43 @@
 proj: snowbuddy-matching
 parent: diyski
-desc: Smart Buddy Matching - 5D algorithm for ski partner matching (skill/location/time/role/knowledge)
-v: 1.0.0
-ts: 2025-12-13T00:00:00Z
+desc: Smart Buddy Matching - 5D algorithm with calendar integration, deployed on Zeabur
+v: 1.1.0
+ts: 2025-12-13T23:58:00Z
+status: ✅ Deployed + Calendar Integration
 tech:
   lang: Python
   fw: FastAPI
   algo: Weighted scoring (30%/25%/20%/15%/10%)
   http: httpx (async)
+  deploy: Zeabur (zeabur.json added)
+  calendar: EventType.MATCHING integration
 entry: app/main.py
-r[4]{route,handler,weight,desc}:
-  POST /searches,SearchRouter.search,5D,Multi-dim matching
-  GET /searches/:id,SearchRouter.result,5D,Get matches
-  POST /requests,RequestRouter.create,N/A,Send match req
-  PUT /requests/:id,RequestRouter.respond,N/A,Accept/reject
+deploy_url: https://snowbuddy-matching.zeabur.app
+r[4]{route,handler,calendar_sync,desc}:
+  POST /searches,SearchRouter.search,✅ Meeting events,Multi-dim matching
+  GET /searches/:id,SearchRouter.result,,Get match results
+  POST /requests,RequestRouter.create,✅ Calendar events,Send match request
+  PUT /requests/:id,RequestRouter.respond,✅ Meeting scheduler,Accept/reject + schedule
+calendar_integration[2]{feature,status}:
+  Meeting Events,✅ EventType.MATCHING auto-created
+  Appointment Scheduling,✅ Calendar Service integration
 m.router[2]{name,path,desc,deps}:
   SearchRouter,app/routers/search_router.py,Search logic,MatchingSvc
-  RequestRouter,app/routers/requests_router.py,Req mgmt,MatchingSvc
+  RequestRouter,app/routers/requests_router.py,Request management,MatchingSvc
 m.core[1]{name,path,desc}:
-  MatchingLogic,app/core/matching_logic.py,5D algorithm,
+  MatchingLogic,app/core/matching_logic.py,5D algorithm implementation,
 m.svc[4]{name,path,desc,deps}:
-  MatchingService,app/services/matching_service.py,Main logic,MatchLogic
-  NotificationService,app/services/matching_notifications.py,Alerts,
+  MatchingService,app/services/matching_service.py,Core matching logic,MatchLogic
+  NotificationService,app/services/matching_notifications.py,Match notifications,
   TripIntegrationService,app/services/trip_integration.py,Calendar sync,TourAPI|UserCore
   BehaviorEventService,app/services/behavior_event_service.py,Event tracking,UserCore
-m.client[3]{name,path,desc}:
-  UserCoreClient,app/clients/user_core_client.py,User profiles,
-  ResortClient,app/clients/resort_client.py,Location data,
-  KnowledgeClient,app/clients/knowledge_engagement_client.py,Skills,
-m.model[2]{name,path,desc}:
-  MatchingModel,app/models/matching.py,Match schema,
-  TripParticipantModel,app/models/trip_participant.py,Participant schema,
 algo_weights{skill,location,avail,role,knowledge}:
   score: 0.30,0.25,0.20,0.15,0.10
-cfg[1]: requirements.txt
+zeabur_config: zeabur.json (PORT env var support)
+cfg[2]: requirements.txt,zeabur.json
 build_cmd: docker build -t snowbuddy .
-deploy: Docker
-integrate[4]{svc,feature}:
-  User Core,Profile + Calendar sync
-  Resort Services,Location matching
-  Knowledge Engagement,Skill matching
-  Tour,Trip participant calendar
+deploy_status: ✅ Running on Zeabur
+integrate[3]{svc,feature,calendar}:
+  User Core,Profile + Auth,✅ Calendar events
+  Resort Services,Location matching,
+  Ski Platform,Meeting scheduler UI,✅ MeetingScheduler component

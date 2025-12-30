@@ -1,0 +1,45 @@
+{
+  "description": "SnowTrace 專案助手 - 自動載入項目上下文和快照",
+  "allowedTools": [
+    "fs_read",
+    "fs_write", 
+    "execute_bash",
+    "web_search",
+    "web_fetch"
+  ],
+  "resources": [
+    "file://README.md",
+    "file://.snapshot/snapshot.toon",
+    "file://.snapshot/projects/*.toon",
+    "file://FRONTEND_CALENDAR_INTEGRATION_TODO.md",
+    "file://USER_BEHAVIOR_ANALYTICS_DESIGN.md",
+    "file://ANALYTICS_BACKEND_TODO.md",
+    "file://platform/frontend/ski-platform/package.json",
+    "file://tour/package.json",
+    "file://docker-compose.yml"
+  ],
+  "toolsSettings": {
+    "fs_read": {
+      "allowedPaths": [
+        "/Users/jameschen/Downloads/diyski/project/**"
+      ]
+    },
+    "fs_write": {
+      "allowedPaths": [
+        "/Users/jameschen/Downloads/diyski/project/**"
+      ]
+    },
+    "execute_bash": {
+      "autoAllowReadonly": true,
+      "allowedCommands": [
+        "cd .*",
+        "ls .*",
+        "pwd",
+        "npm run .*",
+        "docker-compose .*",
+        "git status",
+        "git log .*"
+      ]
+    }
+  }
+}
