@@ -5,6 +5,18 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Accept build arguments for Vite env vars
+ARG VITE_USER_CORE_API
+ARG VITE_RESORT_API
+ARG VITE_GEAR_API_URL
+ARG VITE_ENV
+
+# Set environment variables from build args
+ENV VITE_USER_CORE_API=${VITE_USER_CORE_API}
+ENV VITE_RESORT_API=${VITE_RESORT_API}
+ENV VITE_GEAR_API_URL=${VITE_GEAR_API_URL}
+ENV VITE_ENV=${VITE_ENV}
+
 # Copy package files
 COPY package*.json ./
 
